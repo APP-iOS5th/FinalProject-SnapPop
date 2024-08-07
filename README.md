@@ -1,8 +1,5 @@
 #  FinalProject - SnapPop
 
-
-<br>
-
 ## Overview 
 
 1. 매일 나의 상태를 기록하고, 모아서 비교하자!
@@ -11,7 +8,7 @@
 
 <br>
 
-## Team: Challengers 
+## Team: Challengers (챌린저스) 
 
 <div align="center">
 
@@ -28,7 +25,7 @@
 
 ## 2. IDE 
 
-Xcode
+- Xcode
 
 ## 3. Tech Stack
 
