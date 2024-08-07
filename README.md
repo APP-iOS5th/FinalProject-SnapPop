@@ -14,9 +14,10 @@
 
 | **김형준** | **이인호** | **장예진** | **정종원** | **정희지** |
 | :------: |  :------: | :------: | :------: | :------: |
-| [<img src="https://avatars.githubusercontent.com/u/164502736?v=4" height=200 width=500> <br/> @sven-kor](https://github.com/sven-kor) | [<img src="https://avatars.githubusercontent.com/u/28581796?v=4" height=200 width=500> <br/> @womyo](https://github.com/womyo) | [<img src="https://avatars.githubusercontent.com/u/101628142?v=4" height=200 width=500> <br/> @yehjinjang](https://github.com/yehjinjang) | [<img src="https://avatars.githubusercontent.com/u/45623603?v=4" height=200 width=500> <br/> @jjwon2149](https://github.com/jjwon2149) | [<img src="https://avatars.githubusercontent.com/u/51356820?v=4" height=200 width=500> <br/> @Jeongheeji](https://github.com/Jeongheeji) | 
+| [<img src="https://avatars.githubusercontent.com/u/164502736?v=4" height=200 width=200> <br/> @sven-kor](https://github.com/sven-kor) | [<img src="https://avatars.githubusercontent.com/u/28581796?v=4" height=200 width=200> <br/> @womyo](https://github.com/womyo) | [<img src="https://avatars.githubusercontent.com/u/101628142?v=4" height=200 width=200> <br/> @yehjinjang](https://github.com/yehjinjang) | [<img src="https://avatars.githubusercontent.com/u/45623603?v=4" height=200 width=200> <br/> @jjwon2149](https://github.com/jjwon2149) | [<img src="https://avatars.githubusercontent.com/u/51356820?v=4" height=200 width=200> <br/> @Jeongheeji](https://github.com/Jeongheeji) |
 
 </div>
+
 
 <br>
 
