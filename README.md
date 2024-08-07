@@ -32,7 +32,7 @@ Xcode
 
 ## 3. Tech Stack
 
-UIKit
-SwiftUI 
-EventKit 
+- UIKit
+- SwiftUI 
+- EventKit 
 
