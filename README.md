@@ -1,5 +1,7 @@
 #  FinalProject - SnapPop
 
+<br> 
+
 ## Overview 
 
 1. 매일 나의 상태를 기록하고, 모아서 비교하자!
@@ -18,6 +20,7 @@
 
 </div>
 
+<br>
 
 ## 1. Period
 
@@ -33,7 +36,7 @@
 - SwiftUI 
 - EventKit 
 
-
+<br> 
 
 
 ---------
