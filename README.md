@@ -40,4 +40,4 @@
 
 
 ---------
-##### © 2024 Challengers Team. All rights reserved. This project was developed by the Challengers team for the APP-iOS5th final project.
+##### © 2024 Challengers Team. This project was developed by the Challengers team for the APP-iOS5th final project.
