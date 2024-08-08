@@ -1,0 +1,85 @@
+# 실행에서 제외할 디폴트규칙
+disabled_rules:
+    - trailing_whitespace # 행 끝의 공백
+    - force_cast # 강제 캐스팅
+
+# 선택적으로 적용할 규칙
+opt_in_rules:
+    - empty_count # isEmpty 사용
+    - explicit_init # 구조체, 클래스의 initialize를 명시적으로 선언 .init() 불가능
+    - contains_over_first_not_nil
+    - closure_end_indentation # 클로저의 종료 괄호는 클로저를 시작한는 줄과 동일한 수준으로 들여쓰기
+    - discouraged_optional_boolean # Bool을 옵셔널하게 선언하면 안됨
+    - legacy_random # Swift 4.2 이상부터 arc4random -> Int.random으로 작성
+    - switch_case_on_newline # case 와 : 사이에 새 줄을 넣는 것을 선호
+
+# 지정룰만 활성화
+#only_rules:
+
+force_unwrapping: error # 암시적으로 지정
+force_try:
+    severity: warning # 명시적으로 지정
+
+
+# 코드의 줄 길이
+line_length:
+    warning: 200 # 줄 길이가 140자를 넘을 경우 경고
+    error: 250 # 줄 길이가 200자를 넘을 경우 오류
+
+# 파일의 길이
+file_length:
+    warning: 500 # 파일 길이가 500줄을 넘을 경우 경고
+    error: 800 # 파일 길이가 800줄을 넘을 경우 오류
+
+#included: # 포함할 경로
+
+# 클래스, 구조체, 열거형의 본문 길이 제한
+type_body_length:
+    warning: 500
+    error: 800
+
+# 타입 이름의 길이를 제한
+type_name:
+    min_length: 1    # 최소 길이
+    max_length:      # 최대 길이
+        warning: 50    # 최대 길이를 초과할 경우 경고
+        error: 60      # 최대 길이를 초과할 경우 에러
+    excluded: ["Name"] # 이름 길이 제한에서 제외할 특정 타입 이름
+
+# 변수, 상수, 함수 등의 식별자 이름의 길이를 제한
+identifier_name:
+    min_length: 1    # 최소 길이
+    max_length:      # 최대 길이
+        warning: 50    # 최대 길이를 초과할 경우 경고
+        error: 60      # 최대 길이를 초과할 경우 에러
+    excluded: ["id", "x", "y", "z"] # 이름 길이 제한에서 제외할 특정 식별자 이름
+
+# 함수의 본문 길이
+function_body_length:
+    warning: 15
+    error: 30
+    
+# 함수의 복잡성(조건문, 반복문 등의 중첩)를 제한합니다
+#cyclomatic_complexity:
+#    warning: 2    # 복잡도가 2를 초과할 경우 경고
+#    error: 5      # 복잡도가 5를 초과할 경우 에러
+    
+
+
+# 규칙에서 제외할 파일들
+excluded:
+    - Pods
+    - SwiftLint/AppDelegate.swift
+    - SwiftLint/SceneDelegate.swift
+
+# 커스텀 룰
+custom_rules:
+    included: ".*\\.swift"
+    no_hell_word: # 사용자 정의 규칙의 이름
+        name: "No 'Hell' Word" # 규칙의 설명
+        regex: "hell" # 검색하려는 정규 표현식
+        message: "The word 'hell' is not allowed." # 위반 시 표시되는 메시지
+        severity: error # 위반 시의 심각도 (warning 또는 error)
+
+# 보고 유형
+reporter: "xcode"
