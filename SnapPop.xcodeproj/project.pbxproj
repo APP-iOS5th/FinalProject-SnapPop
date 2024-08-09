@@ -16,6 +16,7 @@
 		8F16854B2C6360180010F8D8 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854A2C6360180010F8D8 /* FirebaseFirestore */; };
 		8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854C2C6360180010F8D8 /* FirebaseStorage */; };
 		B81C035A2C64B86900AC23BD /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C03592C64B86900AC23BD /* AddManagementViewController.swift */; };
+		B81C035C2C65953600AC23BD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B81C035B2C65953600AC23BD /* GoogleService-Info.plist */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 		8F16853B2C63545A0010F8D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F16853D2C63545A0010F8D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B81C03592C64B86900AC23BD /* AddManagementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddManagementViewController.swift; sourceTree = "<group>"; };
+		B81C035B2C65953600AC23BD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,6 +67,7 @@
 		8F16852E2C6354590010F8D8 /* SnapPop */ = {
 			isa = PBXGroup;
 			children = (
+				B81C035B2C65953600AC23BD /* GoogleService-Info.plist */,
 				C24BFA572C647E7800A5B40A /* Application */,
 				C24BFA5C2C64809C00A5B40A /* Common */,
 				C24BFA5D2C64817300A5B40A /* FirebaseManager */,
@@ -201,6 +204,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
+				B81C035C2C65953600AC23BD /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
 			);
@@ -393,7 +397,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.codegrove.SnapPop;
+				PRODUCT_BUNDLE_IDENTIFIER = com.codegrove.SnapPop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -420,7 +424,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.codegrove.SnapPop;
+				PRODUCT_BUNDLE_IDENTIFIER = com.codegrove.SnapPop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
