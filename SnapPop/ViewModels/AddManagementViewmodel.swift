@@ -70,14 +70,12 @@ class AddManagementViewModel {
     }
     
     func save(completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let management = management else {
+        guard management != nil else {
             completion(.failure(NSError(domain: "AddManagementViewModel", code: 0, userInfo: [NSLocalizedDescriptionKey: "No management data to save"])))
             return
         }
         
-        // 실제 저장 로직을 여기에 구현합니다.
-        // 예: DatabaseManager.shared.save(management)
-        
+
         // 저장이 성공했다고 가정합니다.
         completion(.success(()))
     }
