@@ -274,8 +274,7 @@ class AddManagementViewController: UIViewController {
     }
     
     @objc private func repeatTypeChanged() {
-        let selectedRepeatType = RepeatType.allCases[repeatSegmentedControl.selectedSegmentIndex]
-        viewModel.updateRepeatType(selectedRepeatType)
+        viewModel.updateRepeatCycle(repeatSegmentedControl.selectedSegmentIndex)
     }
     
     @objc private func timeSwitchChanged() {
@@ -292,8 +291,8 @@ class AddManagementViewController: UIViewController {
     }
     
     @objc private func addDetailButtonTapped() {
-        // 상세 비용 추가 화면으로 이동하는 로직을 여기에 구현
-        print("상세 비용 추가하기 버튼이 탭되었습니다.")
+        // TODO: 상세 비용 추가 화면으로 이동하는 로직 구현 해야됨여기
+        print("상세 비용 추가하기 버튼이 탭됨.")
     }
     
     @objc private func saveButtonTapped() {
@@ -302,7 +301,6 @@ class AddManagementViewController: UIViewController {
             case .success:
                 self?.navigationController?.popViewController(animated: true)
             case .failure(let error):
-                // 에러 처리
                 print("Error saving management: \(error)")
             }
         }

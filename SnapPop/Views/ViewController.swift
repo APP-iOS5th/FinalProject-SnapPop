@@ -11,7 +11,7 @@ class ViewController: UIViewController {
 
     private let addManagementButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("새로운 관리 추가하기", for: .normal)
+        button.setTitle("관리 추가하기 +", for: .normal)
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 10
@@ -39,8 +39,8 @@ class ViewController: UIViewController {
     }
 
     @objc private func addManagementButtonTapped() {
-        let viewModel = AddManagementViewModel()
-        let addManagementViewController = AddManagementViewController(viewModel: viewModel)
-        navigationController?.pushViewController(addManagementViewController, animated: true)
+        let viewModel = AddManagementViewModel(categoryId: "default")
+        let addManagementVC = AddManagementViewController(viewModel: viewModel)
+        navigationController?.pushViewController(addManagementVC, animated: true)
     }
 }

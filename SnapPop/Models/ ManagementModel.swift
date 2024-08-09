@@ -5,33 +5,38 @@
 //  Created by 장예진 on 8/9/24.
 //
 
-import UIKit
+// MARK: 기존에 설정된 데이터 모델에 맞게 수정
 
-struct Management {
-    let id: UUID
+import Foundation
+
+struct Management: Codable {
+    let id: String
+    let categoryId: String
     var title: String
-    var color: UIColor
+    var color: String 
     var memo: String
-    var date: Date
-    var repeatType: RepeatType
-    var hasTimeAlert: Bool
-    var time: Date?
-    var hasNotification: Bool
-    var details: [ManagementDetail]
-}
-
-struct ManagementDetail {
-    let id: UUID
-    var title: String
-    var description: String
-    var cost: Double?
-    var purchasePrice: Double?
-    var estimatedUses: Int?
-}
-
-enum RepeatType: String, CaseIterable {
-    case none = "안함"
-    case daily = "매일"
-    case weekly = "매주"
-    case monthly = "매달"
+    var status: Bool
+    var createdAt: Date
+    var repeatCycle: Int
+    var endDate: Date?
+    
+    init(id: String = UUID().uuidString,
+         categoryId: String,
+         title: String,
+         color: String,
+         memo: String,
+         status: Bool = true,
+         createdAt: Date = Date(),
+         repeatCycle: Int,
+         endDate: Date? = nil) {
+        self.id = id
+        self.categoryId = categoryId
+        self.title = title
+        self.color = color
+        self.memo = memo
+        self.status = status
+        self.createdAt = createdAt
+        self.repeatCycle = repeatCycle
+        self.endDate = endDate
+    }
 }
