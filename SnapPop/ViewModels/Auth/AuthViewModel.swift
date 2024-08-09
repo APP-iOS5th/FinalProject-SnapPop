@@ -21,6 +21,10 @@ final class AuthViewModel {
         Auth.auth().currentUser
     }
     
+    func listenAuthState(_ listeningBlock: @escaping (Auth, User?) -> Void) {
+        Auth.auth().addStateDidChangeListener(listeningBlock)
+    }
+    
     func signInWithGoogle(on viewController: UIViewController,
                           completion: @escaping (Result<User, Error>) -> Void) {
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
@@ -68,7 +72,7 @@ final class AuthViewModel {
     
     func signInWithApple(idToken: String, rawNonce: String, fullName: PersonNameComponents?,
                          completion: @escaping (Result<User, Error>) -> Void) {
-        guard let _ = currentNonce else {
+        guard currentNonce != nil else {
             completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid state: A login callback was received, but no login request was sent."])))
             return
         }

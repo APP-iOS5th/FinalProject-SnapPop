@@ -13,10 +13,19 @@ import AuthenticationServices
 
 class SignInViewController: UIViewController {
     
+    private lazy var appName: UILabel = {
+        let label = UILabel()
+        label.text = "SNAP POP"
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        
+        return label
+    }()
+    
     private lazy var googleSignInButton: GIDSignInButton = {
         let signInButton = GIDSignInButton()
         
         signInButton.style = .wide
+        
         signInButton.addAction(UIAction { [weak self] _ in
             AuthViewModel.shared.signInWithGoogle(on: self ?? UIViewController()) { result in
                 switch result {
@@ -56,17 +65,27 @@ class SignInViewController: UIViewController {
     func configureUI() {
         view.backgroundColor = .systemBackground
         
+        view.addSubview(appName)
         view.addSubview(googleSignInButton)
         view.addSubview(appleSignInButton)
         
+        appName.translatesAutoresizingMaskIntoConstraints = false
         googleSignInButton.translatesAutoresizingMaskIntoConstraints = false
         appleSignInButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            appName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            appName.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
             googleSignInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            googleSignInButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            googleSignInButton.topAnchor.constraint(equalTo: appName.bottomAnchor, constant: 16),
+            googleSignInButton.widthAnchor.constraint(equalToConstant: 200),
+            googleSignInButton.heightAnchor.constraint(equalToConstant: 40),
+            
             appleSignInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            appleSignInButton.topAnchor.constraint(equalTo: googleSignInButton.bottomAnchor, constant: 16)
+            appleSignInButton.topAnchor.constraint(equalTo: googleSignInButton.bottomAnchor, constant: 8),
+            appleSignInButton.widthAnchor.constraint(equalToConstant: 200),
+            appleSignInButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
 }
@@ -86,7 +105,7 @@ extension SignInViewController: ASAuthorizationControllerDelegate {
                 return
             }
             // 파이어베이스에 애플 인증 전달
-            AuthViewModel.shared.signInWithApple(idToken: idTokenString, rawNonce: nonce, fullName: appleIDCredential.fullName) { [weak self] result in
+            AuthViewModel.shared.signInWithApple(idToken: idTokenString, rawNonce: nonce, fullName: appleIDCredential.fullName) { result in
                 switch result {
                 case .success(let user):
                     print("Successfully signed in as user: \(user.uid)")
