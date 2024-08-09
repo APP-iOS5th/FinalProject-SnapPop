@@ -97,6 +97,38 @@ final class AuthViewModel {
         }
     }
     
+    func deleteCurrentUser(on viewController: UIViewController) {
+        guard let user = currentUser else {
+            print("No current user found")
+            return
+        }
+        
+        guard let providerID = user.providerData.first?.providerID else {
+            print("No provider ID found")
+            return
+        }
+        
+        if providerID == "google.com" {
+            signInWithGoogle(on: viewController) { result in
+                switch result {
+                case .success:
+                    AuthViewModel.shared.currentUser?.delete { error in
+                        if let error = error {
+                            print("Error deleting user: \(error.localizedDescription)")
+                        } else {
+                            print("Successfully deleted user")
+                        }
+                    }
+                case .failure(let error):
+                    print("Error signing in: \(error.localizedDescription)")
+                }
+            }
+        } else if providerID == "apple.com" {
+            startSignInWithAppleFlow(on: viewController) { _ in
+            }
+        }
+    }
+    
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
         let charset: [Character] =
