@@ -48,11 +48,8 @@ class NavigationViewController: UIViewController {
             navigationBar.scrollEdgeAppearance = appearance
         }
         
-        //카테고리 버튼
         let categoryButtonItem = UIBarButtonItem(customView: categoryButton)
-        //알림 버튼
         let alarmButton = UIBarButtonItem(image: UIImage(systemName: "bell"), style: .plain, target: self, action: #selector(alarmButtonTapped))
-        //설정 버튼
         let settingsButton = UIBarButtonItem(image: UIImage(named: "SettingsIcon"), style: .plain, target: self, action: #selector(settingsButtonTapped))
         
         navigationItem.leftBarButtonItem = categoryButtonItem
@@ -61,6 +58,9 @@ class NavigationViewController: UIViewController {
     
     // MARK: 카테고리 버튼 클릭 시 메뉴 항목이 호출되는 메서드입니다.
     @objc private func menuButtonTapped(_ sender: UIButton) {
+        // 애니메이션 추가
+        toggleMenuState()
+        
         let actions: [UIAction] = viewModel.categories.map { category in
             UIAction(title: category) { _ in
                 self.handleMenuSelection(item: category)
@@ -74,9 +74,6 @@ class NavigationViewController: UIViewController {
         
         categoryButton.menu = menu
         categoryButton.showsMenuAsPrimaryAction = true
-        
-        // 애니메이션 추가
-        toggleMenuState()
     }
     
     // MARK: Toggle menu state
