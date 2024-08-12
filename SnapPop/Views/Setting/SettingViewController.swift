@@ -19,6 +19,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.dataSource = self
         tableView.register(AccountInfoTableViewCell.self, forCellReuseIdentifier: AccountInfoTableViewCell.identifier)
         tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.identifier)
+        tableView.register(AppLockSettingTableViewCell.self, forCellReuseIdentifier: AppLockSettingTableViewCell.identifier)
         
         return tableView
     }()
@@ -73,6 +74,8 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 0:
             return 1 // 계정 정보
         case 1:
+            return 1 // 보안 및 개인정보
+        case 2:
             return 1 // 로그아웃
         default:
             return 0
@@ -92,6 +95,12 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.selectionStyle = .none
             return cell
         case 1:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: AppLockSettingTableViewCell.identifier, for: indexPath) as? AppLockSettingTableViewCell else {
+                return UITableViewCell()
+            }
+            cell.selectionStyle = .none
+            return cell
+        case 2:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
                 return UITableViewCell()
             }
@@ -106,7 +115,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
-        case 1:
+        case 2:
             showLogoutAlert()
         default:
             break
@@ -118,6 +127,8 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 0:
             return "계정 정보"
         case 1:
+            return "보안 및 개인정보"
+        case 2:
             return "계정 관리"
         default:
             return nil
@@ -126,7 +137,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch section {
-        case 1: 
+        case 2:
             return footerView
         default:
             return nil
