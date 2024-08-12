@@ -117,6 +117,10 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let sheetViewController = SnapComparisonSheetViewController()
         sheetViewController.modalPresentationStyle = .pageSheet
+        //snapPhotos의 indexPath.row 가 해당 스냅 사진. 전체사진, index 전달 후 PageView 만들기
+        sheetViewController.snapPhotos = snapPhotos
+        sheetViewController.selectedIndex = indexPath.row
+        sheetViewController.snapDateLabel.text = snapCellDateLabel.text
         
         if let sheet = sheetViewController.sheetPresentationController {
             sheet.detents = [.medium()]

@@ -12,6 +12,7 @@
 		4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */; };
 		4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA72C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift */; };
 		4AD29AAC2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AAB2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift */; };
+		4AD29AD32C699DF200A9BEDD /* SnapPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AD22C699DF200A9BEDD /* SnapPhotoViewController.swift */; };
 		8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F16852F2C6354590010F8D8 /* AppDelegate.swift */; };
 		8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685312C6354590010F8D8 /* SceneDelegate.swift */; };
 		8F1685342C6354590010F8D8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685332C6354590010F8D8 /* ViewController.swift */; };
@@ -29,6 +30,7 @@
 		4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCollectionViewCell.swift; sourceTree = "<group>"; };
 		4AD29AA72C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalSnapPhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 		4AD29AAB2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonSheetViewController.swift; sourceTree = "<group>"; };
+		4AD29AD22C699DF200A9BEDD /* SnapPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapPhotoViewController.swift; sourceTree = "<group>"; };
 		8F16852C2C6354590010F8D8 /* SnapPop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnapPop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F16852F2C6354590010F8D8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F1685312C6354590010F8D8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				8F1685332C6354590010F8D8 /* ViewController.swift */,
 				4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */,
 				4AD29AAB2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift */,
+				4AD29AD22C699DF200A9BEDD /* SnapPhotoViewController.swift */,
 				4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */,
 				4AD29AA72C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift */,
 			);
@@ -249,6 +252,7 @@
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
+				4AD29AD32C699DF200A9BEDD /* SnapPhotoViewController.swift in Sources */,
 				4AD29AA42C65051B00A9BEDD /* SnapComparisonViewModel.swift in Sources */,
 				4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
