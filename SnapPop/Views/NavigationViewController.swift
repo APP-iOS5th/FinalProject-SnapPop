@@ -22,7 +22,6 @@ class NavigationViewController: UIViewController {
         button.setTitleColor(.black, for: .normal)
         button.addTarget(self, action: #selector(menuButtonTapped), for: .touchUpInside)
         button.contentHorizontalAlignment = .left
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
         
         return button
     }()

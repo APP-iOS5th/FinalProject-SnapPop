@@ -17,6 +17,7 @@
 		8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854C2C6360180010F8D8 /* FirebaseStorage */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
 		EA5047592C648F7E0033D807 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA5047582C648F7E0033D807 /* GoogleService-Info.plist */; };
+		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
 		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
 		EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */; };
 		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
@@ -33,6 +34,7 @@
 		8F16853D2C63545A0010F8D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		EA5047582C648F7E0033D807 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionViewCell.swift; sourceTree = "<group>"; };
 		EA50475A2C64A1390033D807 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
 		EA5047602C6500870033D807 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
