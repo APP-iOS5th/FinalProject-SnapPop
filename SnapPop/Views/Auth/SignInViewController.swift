@@ -13,7 +13,7 @@ import AuthenticationServices
 
 class SignInViewController: UIViewController {
     
-    private lazy var appName: UILabel = {
+    private let appName: UILabel = {
         let label = UILabel()
         label.text = "SNAP POP"
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
@@ -27,7 +27,9 @@ class SignInViewController: UIViewController {
         signInButton.style = .wide
         
         signInButton.addAction(UIAction { [weak self] _ in
-            AuthViewModel.shared.signInWithGoogle(on: self ?? UIViewController()) { result in
+            guard let self = self else { return }
+            
+            AuthViewModel.shared.signInWithGoogle(on: self) { result in
                 switch result {
                 case .success(let user):
                     print("Successfully signed in as user: \(user.uid)")
@@ -44,7 +46,8 @@ class SignInViewController: UIViewController {
         let signInButton = ASAuthorizationAppleIDButton()
         
         signInButton.addAction(UIAction { [weak self] _ in
-            AuthViewModel.shared.startSignInWithAppleFlow(on: self ?? UIViewController()) { result in
+            guard let self = self else { return }
+            AuthViewModel.shared.startSignInWithAppleFlow(on: self) { result in
                 switch result {
                 case .success(let user):
                     print("Successfully signed in as user: \(user.uid)")
