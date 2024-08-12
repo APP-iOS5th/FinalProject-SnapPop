@@ -133,7 +133,6 @@ class SnapComparisonViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(SnapComparisonCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
-        // 1TODO: - TEST
         collectionView.backgroundColor = .white
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
@@ -186,7 +185,6 @@ class SnapComparisonViewController: UIViewController {
         selectSnapPeriodButton.showsMenuAsPrimaryAction = true
         
     }
-    
     
     func reloadCollectionView() {
         DispatchQueue.main.async {
