@@ -7,106 +7,15 @@
 
 import UIKit
 
-class AddManagementViewController: UIViewController {
+class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     private let viewModel: AddManagementViewModel
-    
-    private let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
+
+    private let tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .grouped)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
     }()
-    
-    private let contentView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "제목"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let titleTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "제목 입력"
-        textField.borderStyle = .roundedRect
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
-    }()
-    
-    private let colorLabel: UILabel = {
-        let label = UILabel()
-        label.text = "색상"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let colorPicker: UIColorWell = {
-        let colorWell = UIColorWell()
-        colorWell.supportsAlpha = false
-        colorWell.translatesAutoresizingMaskIntoConstraints = false
-        return colorWell
-    }()
-    
-    private let memoLabel: UILabel = {
-        let label = UILabel()
-        label.text = "메모"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let memoTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "메모 입력"
-        textField.borderStyle = .roundedRect
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
-    }()
-    
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.text = "날짜"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let datePicker: UIDatePicker = {
-        let picker = UIDatePicker()
-        picker.datePickerMode = .date
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        return picker
-    }()
-    
-    private let repeatLabel: UILabel = {
-        let label = UILabel()
-        label.text = "반복"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let repeatButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("반복 주기 선택", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    private let timeLabel: UILabel = {
-        let label = UILabel()
-        label.text = "시간"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let timeSwitch: UISwitch = {
-        let switchControl = UISwitch()
-        switchControl.translatesAutoresizingMaskIntoConstraints = false
-        return switchControl
-    }()
-    
+
     private let timePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.datePickerMode = .time
@@ -115,153 +24,61 @@ class AddManagementViewController: UIViewController {
         picker.translatesAutoresizingMaskIntoConstraints = false
         return picker
     }()
-    
-    private let notificationLabel: UILabel = {
-        let label = UILabel()
-        label.text = "알림"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let notificationSwitch: UISwitch = {
-        let switchControl = UISwitch()
-        switchControl.translatesAutoresizingMaskIntoConstraints = false
-        return switchControl
-    }()
-    
-    private let detailsLabel: UILabel = {
-        let label = UILabel()
-        label.text = "상세 내역 및 비용"
-        label.font = UIFont.boldSystemFont(ofSize: 18)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let addDetailButton: UIButton = {
+
+    private let repeatButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("상세 비용 추가하기 +", for: .normal)
-        button.backgroundColor = .systemBlue
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
+        button.setTitle("반복 주기 선택", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
+
     init(viewModel: AddManagementViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupBindings()
-    }
-    
-    private func setupUI() {
-        view.backgroundColor = .white
-        
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        
-        [titleLabel, titleTextField, colorLabel, colorPicker, memoLabel, memoTextField,
-         dateLabel, datePicker, repeatLabel, repeatButton, timeLabel, timeSwitch,
-         timePicker, notificationLabel, notificationSwitch, detailsLabel, addDetailButton].forEach { contentView.addSubview($0) }
-        
-        setupConstraints()
-        
-        title = "새로운 자기 관리"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveButtonTapped))
-        
         setupRepeatButtonMenu()
     }
-    
+
+    private func setupUI() {
+        view.backgroundColor = .white
+
+        view.addSubview(tableView)
+        view.addSubview(timePicker)
+
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+
+        setupConstraints()
+
+        title = "새로운 자기 관리"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveButtonTapped))
+    }
+
     private func setupConstraints() {
-        let margin: CGFloat = 20
-        let spacing: CGFloat = 15
-        
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: margin),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            titleTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: spacing),
-            titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            titleTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            colorLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: margin),
-            colorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            colorPicker.centerYAnchor.constraint(equalTo: colorLabel.centerYAnchor),
-            colorPicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            memoLabel.topAnchor.constraint(equalTo: colorLabel.bottomAnchor, constant: margin),
-            memoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            memoTextField.topAnchor.constraint(equalTo: memoLabel.bottomAnchor, constant: spacing),
-            memoTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            memoTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            dateLabel.topAnchor.constraint(equalTo: memoTextField.bottomAnchor, constant: margin),
-            dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            datePicker.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
-            datePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            repeatLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: margin),
-            repeatLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            repeatButton.centerYAnchor.constraint(equalTo: repeatLabel.centerYAnchor),
-            repeatButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            timeLabel.topAnchor.constraint(equalTo: repeatLabel.bottomAnchor, constant: margin),
-            timeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            timeSwitch.centerYAnchor.constraint(equalTo: timeLabel.centerYAnchor),
-            timeSwitch.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            timePicker.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: spacing),
-            timePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            notificationLabel.topAnchor.constraint(equalTo: timePicker.bottomAnchor, constant: margin),
-            notificationLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            notificationSwitch.centerYAnchor.constraint(equalTo: notificationLabel.centerYAnchor),
-            notificationSwitch.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            detailsLabel.topAnchor.constraint(equalTo: notificationLabel.bottomAnchor, constant: margin * 2),
-            detailsLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            detailsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            
-            addDetailButton.topAnchor.constraint(equalTo: detailsLabel.bottomAnchor, constant: spacing),
-            addDetailButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            addDetailButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
-            addDetailButton.heightAnchor.constraint(equalToConstant: 44),
-            addDetailButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -margin)
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: timePicker.topAnchor),
+
+            timePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            timePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            timePicker.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
-    
-    private func setupBindings() {
-        titleTextField.addTarget(self, action: #selector(titleChanged), for: .editingChanged)
-        colorPicker.addTarget(self, action: #selector(colorChanged), for: .valueChanged)
-        memoTextField.addTarget(self, action: #selector(memoChanged), for: .editingChanged)
-        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-        timeSwitch.addTarget(self, action: #selector(timeSwitchChanged), for: .valueChanged)
-        timePicker.addTarget(self, action: #selector(timeChanged), for: .valueChanged)
-        notificationSwitch.addTarget(self, action: #selector(notificationChanged), for: .valueChanged)
-        addDetailButton.addTarget(self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
-    }
-    
+
     private func setupRepeatButtonMenu() {
         var actions: [UIAction] = []
-        
+
         for (index, option) in viewModel.repeatOptions.enumerated() {
             let action = UIAction(title: option) { [weak self] _ in
                 self?.viewModel.updateRepeatCycle(index)
@@ -269,45 +86,114 @@ class AddManagementViewController: UIViewController {
             }
             actions.append(action)
         }
-        
+
         repeatButton.menu = UIMenu(title: "반복 주기 선택", children: actions)
         repeatButton.showsMenuAsPrimaryAction = true
     }
-    
-    @objc private func titleChanged() {
-        viewModel.updateTitle(titleTextField.text ?? "")
+
+    // MARK: - UITableViewDataSource
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
     }
-    
-    @objc private func colorChanged() {
-        viewModel.updateColor(colorPicker.selectedColor ?? .black)
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 8 //  제목, 메모, 색상, 날짜, 반복, 시간, 알림, 상세 비용 추가 (8개임총)
     }
-    
-    @objc private func memoChanged() {
-        viewModel.updateMemo(memoTextField.text ?? "")
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+
+        switch indexPath.row {
+        case 0:
+            cell.textLabel?.text = "제목"
+            let textField = UITextField(frame: CGRect(x: 0, y: 0, width: 200, height: 30))
+            textField.placeholder = "제목 입력"
+            textField.addTarget(self, action: #selector(titleChanged(_:)), for: .editingChanged)
+            cell.accessoryView = textField
+        case 1:
+            cell.textLabel?.text = "메모"
+            let textField = UITextField(frame: CGRect(x: 0, y: 0, width: 200, height: 30))
+            textField.placeholder = "메모 입력"
+            textField.addTarget(self, action: #selector(memoChanged(_:)), for: .editingChanged)
+            cell.accessoryView = textField
+        case 2:
+            cell.textLabel?.text = "색상"
+            let colorPicker = UIColorWell(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
+            colorPicker.supportsAlpha = false
+            colorPicker.addTarget(self, action: #selector(colorChanged(_:)), for: .valueChanged)
+            cell.accessoryView = colorPicker
+        case 3:
+            cell.textLabel?.text = "날짜"
+            let datePicker = UIDatePicker()
+            datePicker.datePickerMode = .date
+            datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
+            cell.accessoryView = datePicker
+        case 4:
+            cell.textLabel?.text = "반복"
+            cell.accessoryView = repeatButton
+        case 5:
+            cell.textLabel?.text = "시간"
+            let switchControl = UISwitch()
+            switchControl.addTarget(self, action: #selector(timeSwitchChanged(_:)), for: .valueChanged)
+            cell.accessoryView = switchControl
+        case 6:
+            cell.textLabel?.text = "알림"
+            let switchControl = UISwitch()
+            switchControl.addTarget(self, action: #selector(notificationChanged(_:)), for: .valueChanged)
+            cell.accessoryView = switchControl
+        case 7:
+            cell.textLabel?.text = "상세 비용 추가하기 +"
+            cell.textLabel?.textAlignment = .center
+            cell.textLabel?.textColor = .systemBlue
+        default:
+            break
+        }
+
+        return cell
     }
-    
-    @objc private func dateChanged() {
-        viewModel.updateDate(datePicker.date)
+
+    // MARK: - UITableViewDelegate
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 7 {
+            addDetailButtonTapped()
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    @objc private func timeSwitchChanged() {
-        timePicker.isHidden = !timeSwitch.isOn
-        viewModel.updateHasTimeAlert(timeSwitch.isOn)
+
+    // MARK: - Actions
+
+    @objc private func titleChanged(_ sender: UITextField) {
+        viewModel.updateTitle(sender.text ?? "")
     }
-    
-    @objc private func timeChanged() {
-        viewModel.updateTime(timePicker.date)
+
+    @objc private func memoChanged(_ sender: UITextField) {
+        viewModel.updateMemo(sender.text ?? "")
     }
-    
-    @objc private func notificationChanged() {
-        viewModel.updateHasNotification(notificationSwitch.isOn)
+
+    @objc private func colorChanged(_ sender: UIColorWell) {
+        viewModel.updateColor(sender.selectedColor ?? .black)
     }
-    
+
+    @objc private func dateChanged(_ sender: UIDatePicker) {
+        viewModel.updateDate(sender.date)
+    }
+
+    @objc private func timeSwitchChanged(_ sender: UISwitch) {
+        timePicker.isHidden = !sender.isOn
+        viewModel.updateHasTimeAlert(sender.isOn)
+    }
+
+    @objc private func notificationChanged(_ sender: UISwitch) {
+        viewModel.updateHasNotification(sender.isOn)
+    }
+
     @objc private func addDetailButtonTapped() {
         // TODO: 상세 비용 추가 화면으로 이동하는 로직 구현
         print("상세 비용 추가하기 버튼이 탭됨.")
     }
-    
+
     @objc private func saveButtonTapped() {
         viewModel.save { [weak self] result in
             switch result {
