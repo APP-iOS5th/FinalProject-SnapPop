@@ -193,11 +193,13 @@ class HomeViewController: NavigationViewController, UIImagePickerControllerDeleg
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
-        
-        let image = viewModel.tempimagedata[indexPath.item]
-        cell.snapimageView.image = image
-        
-        return cell
+          
+          let image = viewModel.tempimagedata[indexPath.item]
+          let isFirst = indexPath.item == 0
+          let isEditing = false 
+          cell.configure(with: image, isFirst: isFirst, isEditing: isEditing)
+          
+          return cell
     }
     
     // MARK: UICollectionViewDelegateFlowLayout
