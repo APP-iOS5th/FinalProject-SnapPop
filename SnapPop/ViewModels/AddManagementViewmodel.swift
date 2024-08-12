@@ -10,11 +10,13 @@ import UIKit
 class AddManagementViewModel {
     private var management: Management
     
+    let repeatOptions = ["매일", "매주", "매달", "안함"] 
+    
     init(categoryId: String) {
         self.management = Management(
             categoryId: categoryId,
             title: "",
-            color: "#000000", 
+            color: "#000000",
             memo: "",
             repeatCycle: 0
         )

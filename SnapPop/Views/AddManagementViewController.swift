@@ -87,11 +87,11 @@ class AddManagementViewController: UIViewController {
         return label
     }()
     
-    private let repeatSegmentedControl: UISegmentedControl = {
-        let items = ["매주", "매일", "매달", "안함"]
-        let control = UISegmentedControl(items: items)
-        control.translatesAutoresizingMaskIntoConstraints = false
-        return control
+    private let repeatButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("반복 주기 선택", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     private let timeLabel: UILabel = {
@@ -110,6 +110,7 @@ class AddManagementViewController: UIViewController {
     private let timePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.datePickerMode = .time
+        picker.preferredDatePickerStyle = .wheels
         picker.isHidden = true
         picker.translatesAutoresizingMaskIntoConstraints = false
         return picker
@@ -168,13 +169,15 @@ class AddManagementViewController: UIViewController {
         scrollView.addSubview(contentView)
         
         [titleLabel, titleTextField, colorLabel, colorPicker, memoLabel, memoTextField,
-         dateLabel, datePicker, repeatLabel, repeatSegmentedControl, timeLabel, timeSwitch,
+         dateLabel, datePicker, repeatLabel, repeatButton, timeLabel, timeSwitch,
          timePicker, notificationLabel, notificationSwitch, detailsLabel, addDetailButton].forEach { contentView.addSubview($0) }
         
         setupConstraints()
         
         title = "새로운 자기 관리"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveButtonTapped))
+        
+        setupRepeatButtonMenu()
     }
     
     private func setupConstraints() {
@@ -217,8 +220,8 @@ class AddManagementViewController: UIViewController {
             
             repeatLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: margin),
             repeatLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
-            repeatSegmentedControl.centerYAnchor.constraint(equalTo: repeatLabel.centerYAnchor),
-            repeatSegmentedControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
+            repeatButton.centerYAnchor.constraint(equalTo: repeatLabel.centerYAnchor),
+            repeatButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
             
             timeLabel.topAnchor.constraint(equalTo: repeatLabel.bottomAnchor, constant: margin),
             timeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: margin),
@@ -250,11 +253,25 @@ class AddManagementViewController: UIViewController {
         colorPicker.addTarget(self, action: #selector(colorChanged), for: .valueChanged)
         memoTextField.addTarget(self, action: #selector(memoChanged), for: .editingChanged)
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-        repeatSegmentedControl.addTarget(self, action: #selector(repeatTypeChanged), for: .valueChanged)
         timeSwitch.addTarget(self, action: #selector(timeSwitchChanged), for: .valueChanged)
         timePicker.addTarget(self, action: #selector(timeChanged), for: .valueChanged)
         notificationSwitch.addTarget(self, action: #selector(notificationChanged), for: .valueChanged)
         addDetailButton.addTarget(self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
+    }
+    
+    private func setupRepeatButtonMenu() {
+        var actions: [UIAction] = []
+        
+        for (index, option) in viewModel.repeatOptions.enumerated() {
+            let action = UIAction(title: option) { [weak self] _ in
+                self?.viewModel.updateRepeatCycle(index)
+                self?.repeatButton.setTitle(option, for: .normal)
+            }
+            actions.append(action)
+        }
+        
+        repeatButton.menu = UIMenu(title: "반복 주기 선택", children: actions)
+        repeatButton.showsMenuAsPrimaryAction = true
     }
     
     @objc private func titleChanged() {
@@ -273,10 +290,6 @@ class AddManagementViewController: UIViewController {
         viewModel.updateDate(datePicker.date)
     }
     
-    @objc private func repeatTypeChanged() {
-        viewModel.updateRepeatCycle(repeatSegmentedControl.selectedSegmentIndex)
-    }
-    
     @objc private func timeSwitchChanged() {
         timePicker.isHidden = !timeSwitch.isOn
         viewModel.updateHasTimeAlert(timeSwitch.isOn)
@@ -291,7 +304,7 @@ class AddManagementViewController: UIViewController {
     }
     
     @objc private func addDetailButtonTapped() {
-        // TODO: 상세 비용 추가 화면으로 이동하는 로직 구현 해야됨여기
+        // TODO: 상세 비용 추가 화면으로 이동하는 로직 구현
         print("상세 비용 추가하기 버튼이 탭됨.")
     }
     
