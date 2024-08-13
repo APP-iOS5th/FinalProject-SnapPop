@@ -13,7 +13,7 @@ class NavigationViewController: UIViewController {
     
     private lazy var categoryButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle(viewModel.categories[0], for: .normal)
+        button.setTitle(viewModel.categories.first?.name ?? "", for: .normal)
 
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
         let icon = UIImage(systemName: "chevron.down", withConfiguration: symbolConfig)
@@ -61,7 +61,7 @@ class NavigationViewController: UIViewController {
         toggleMenuState()
         
         let actions: [UIAction] = viewModel.categories.map { category in
-            UIAction(title: category) { _ in
+            UIAction(title: category.name) { _ in
                 self.handleMenuSelection(item: category)
             }
         }
@@ -90,11 +90,9 @@ class NavigationViewController: UIViewController {
     }
     
     // MARK: 선택된 카테고리를 처리하는 메서드
-    private func handleMenuSelection(item: String) {
-        print("Selected category: \(item)")
-        
+    private func handleMenuSelection(item: Category) {
         // 카테고리 버튼의 제목을 선택된 카테고리로 업데이트
-        categoryButton.setTitle(item, for: .normal)
+        categoryButton.setTitle(item.name, for: .normal)
         
         toggleMenuState() // 메뉴 상태 토글 및 애니메이션
     }
