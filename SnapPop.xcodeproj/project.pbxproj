@@ -67,7 +67,7 @@
 			path = SnapComparison;
 			sourceTree = "<group>";
 		};
-		4AD29AD62C6AE33000A9BEDD /* SnapComparisonViews */ = {
+		4AD29AD62C6AE33000A9BEDD /* SnapComparison */ = {
 			isa = PBXGroup;
 			children = (
 				4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */,
@@ -76,7 +76,7 @@
 				4AD29AAB2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift */,
 				4AD29AD22C699DF200A9BEDD /* SnapPhotoViewController.swift */,
 			);
-			path = SnapComparisonViews;
+			path = SnapComparison;
 			sourceTree = "<group>";
 		};
 		8F1685232C6354590010F8D8 = {
@@ -140,7 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				8F1685332C6354590010F8D8 /* ViewController.swift */,
-				4AD29AD62C6AE33000A9BEDD /* SnapComparisonViews */,
+				4AD29AD62C6AE33000A9BEDD /* SnapComparison */,
 			);
 			path = Views;
 			sourceTree = "<group>";
