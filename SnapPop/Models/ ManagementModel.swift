@@ -8,17 +8,20 @@
 // MARK: 기존에 설정된 데이터 모델에 맞게 수정
 
 import Foundation
+import UIKit
 
 struct Management: Codable {
     let id: String
     let categoryId: String
     var title: String
-    var color: String 
+    var color: String
     var memo: String
     var status: Bool
     var createdAt: Date
     var repeatCycle: Int
     var endDate: Date?
+    var hasTimeAlert: Bool
+    var hasNotification: Bool
     
     init(id: String = UUID().uuidString,
          categoryId: String,
@@ -28,7 +31,9 @@ struct Management: Codable {
          status: Bool = true,
          createdAt: Date = Date(),
          repeatCycle: Int,
-         endDate: Date? = nil) {
+         endDate: Date? = nil,
+         hasTimeAlert: Bool = false,
+         hasNotification: Bool = false) {
         self.id = id
         self.categoryId = categoryId
         self.title = title
@@ -38,5 +43,7 @@ struct Management: Codable {
         self.createdAt = createdAt
         self.repeatCycle = repeatCycle
         self.endDate = endDate
+        self.hasTimeAlert = hasTimeAlert
+        self.hasNotification = hasNotification
     }
 }

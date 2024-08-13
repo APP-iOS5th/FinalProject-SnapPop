@@ -5,12 +5,22 @@
 //  Created by 장예진 on 8/9/24.
 //
 
+import Combine
 import UIKit
 
 class AddManagementViewModel {
+    @Published var title: String = ""
+    @Published var memo: String = ""
+    @Published var color: UIColor = .black
+    @Published var createdAt: Date = Date()
+    @Published var repeatCycle: Int = 0
+    @Published var hasTimeAlert: Bool = false
+    @Published var hasNotification: Bool = false
+
+    let repeatOptions = ["매일", "매주", "매달", "안함"]
+
+    private var cancellables = Set<AnyCancellable>()
     private var management: Management
-    
-    let repeatOptions = ["매일", "매주", "매달", "안함"] 
     
     init(categoryId: String) {
         self.management = Management(
@@ -20,44 +30,45 @@ class AddManagementViewModel {
             memo: "",
             repeatCycle: 0
         )
+        
+        bindManagementData()
     }
-    
-    func updateTitle(_ title: String) {
-        management.title = title
+
+    private func bindManagementData() {
+        $title
+            .assign(to: \.management.title, on: self)
+            .store(in: &cancellables)
+
+        $memo
+            .assign(to: \.management.memo, on: self)
+            .store(in: &cancellables)
+
+        $color
+            .map { $0.toHexString() }
+            .assign(to: \.management.color, on: self)
+            .store(in: &cancellables)
+
+        $createdAt
+            .assign(to: \.management.createdAt, on: self)
+            .store(in: &cancellables)
+
+        $repeatCycle
+            .assign(to: \.management.repeatCycle, on: self)
+            .store(in: &cancellables)
+
+        $hasTimeAlert
+            .assign(to: \.management.hasTimeAlert, on: self)
+            .store(in: &cancellables)
+
+        $hasNotification
+            .assign(to: \.management.hasNotification, on: self)
+            .store(in: &cancellables)
     }
-    
-    func updateColor(_ color: UIColor) {
-        management.color = color.toHexString()
-    }
-    
-    func updateMemo(_ memo: String) {
-        management.memo = memo
-    }
-    
-    func updateDate(_ date: Date) {
-        management.createdAt = date
-    }
-    
+
     func updateRepeatCycle(_ repeatCycle: Int) {
-        management.repeatCycle = repeatCycle
+        self.repeatCycle = repeatCycle
     }
-    
-    func updateEndDate(_ endDate: Date?) {
-        management.endDate = endDate
-    }
-    
-    func updateHasTimeAlert(_ hasTimeAlert: Bool) {
-        // TODO: 시간 알림을 켜고 끄는거 업데이트
-    }
-    
-    func updateTime(_ time: Date) {
-        // TODO: 시간 업데이트 구현
-    }
-    
-    func updateHasNotification(_ hasNotification: Bool) {
-        // TODO: 알림 상태를 업데이트
-    }
-    
+
     func save(completion: @escaping (Result<Void, Error>) -> Void) {
         // TODO: 실제 저장 로직
         completion(.success(()))
