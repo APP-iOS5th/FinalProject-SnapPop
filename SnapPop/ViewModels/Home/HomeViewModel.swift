@@ -29,7 +29,6 @@ struct ChecklistItem {
     let endDate: Date
 }
 
-
 class HomeViewModel {
     
     // MARK: - Properties
@@ -37,6 +36,8 @@ class HomeViewModel {
     
     // 임시 이미지 파일
     var tempimagedata: [UIImage] = {
+        let imageNames = ["snaptest1", "snaptest2", "snaptest3", "snaptest4"]
+        return imageNames.compactMap { UIImage(named: $0) } // nil이 아닌 이미지만 반환
     }()
     
     // 체크리스트 임시 데이터
