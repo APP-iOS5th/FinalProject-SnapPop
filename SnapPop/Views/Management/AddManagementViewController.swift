@@ -8,8 +8,6 @@
 import Combine
 import UIKit
 
-import UIKit
-
 class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     private let viewModel: AddManagementViewModel
     private var cancellables = Set<AnyCancellable>()
