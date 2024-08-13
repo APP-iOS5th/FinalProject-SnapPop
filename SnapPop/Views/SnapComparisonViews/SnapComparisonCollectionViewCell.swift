@@ -6,30 +6,20 @@
 //
 
 import UIKit
-// TODO: - 요거 처리하셈 ㅇㅋ?
-extension UIView {
-    func parentViewController() -> UIViewController? {
-        var parentResponder: UIResponder? = self
-        while parentResponder != nil {
-            parentResponder = parentResponder!.next
-            if let viewController = parentResponder as? UIViewController {
-                return viewController
-            }
-        }
-        return nil
-    }
-}
 
 class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
+    private var viewModel: SnapComparisonViewModel?
     private var snapPhotos: [UIImage] = []
+    /// 현재 섹션의 인덱스 저장 변수
+    private var currentSectionIndex: Int = 0
     
     // MARK: - UIComponents
     /// 스냅 날자 레이블
     lazy var snapCellDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024년 3월 12일" // test
+        label.text = ""
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -80,10 +70,12 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
         
     }
     
-    func configure(with data: Snap) {
+    func configure(with data: Snap, viewModel: SnapComparisonViewModel, sectionIndex: Int) {
         snapCellDateLabel.text = data.date
         snapPhotos = data.images
         horizontalSnapPhotoCollectionView.reloadData()
+        self.viewModel = viewModel
+        self.currentSectionIndex = sectionIndex
     }
 }
 
@@ -117,9 +109,10 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let sheetViewController = SnapComparisonSheetViewController()
         sheetViewController.modalPresentationStyle = .pageSheet
-        //snapPhotos의 indexPath.row 가 해당 스냅 사진. 전체사진, index 전달 후 PageView 만들기
+        sheetViewController.viewModel = self.viewModel
         sheetViewController.snapPhotos = snapPhotos
         sheetViewController.selectedIndex = indexPath.row
+        sheetViewController.currentDateIndex = self.currentSectionIndex
         sheetViewController.snapDateLabel.text = snapCellDateLabel.text
         
         if let sheet = sheetViewController.sheetPresentationController {

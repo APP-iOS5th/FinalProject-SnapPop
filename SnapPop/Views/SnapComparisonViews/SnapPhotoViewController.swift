@@ -8,7 +8,7 @@
 import UIKit
 
 class SnapPhotoViewController: UIViewController {
-
+    
     // MARK: - Properties
     var image: UIImage?
     var index: Int = 0
@@ -36,6 +36,8 @@ class SnapPhotoViewController: UIViewController {
         
         if let image = image {
             imageView.image = image
+        } else {
+            print("nil Image")
         }
     }
 }

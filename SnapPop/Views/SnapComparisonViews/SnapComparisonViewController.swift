@@ -8,15 +8,6 @@
 import UIKit
 
 // jjTODO: Color 통합하기.
-// jjTODO: 폰트추가하기....?
-// jjTODO: Extension으로 빼기
-extension UIView {
-    func addSubviews(_ views: [UIView]) {
-        for view in views {
-            self.addSubview(view)
-        }
-    }
-}
 
 class SnapComparisonViewController: UIViewController {
     
@@ -209,7 +200,7 @@ extension SnapComparisonViewController: UICollectionViewDelegate, UICollectionVi
             return UICollectionViewCell()
         }
         
-        cell.configure(with: viewModel.item(at: indexPath))
+        cell.configure(with: viewModel.item(at: indexPath), viewModel: viewModel, sectionIndex: indexPath.section)
         
         return cell
     }

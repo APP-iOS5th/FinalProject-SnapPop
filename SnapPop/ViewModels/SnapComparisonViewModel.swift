@@ -26,10 +26,10 @@ class SnapComparisonViewModel {
                                             UIImage(systemName: "person.fill")!,
                                             UIImage(systemName: "person.fill")!,
                                             UIImage(systemName: "person.fill")!]),
-        Snap(date: "2024년 8월 24일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
-        Snap(date: "2024년 8월 24일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
-        Snap(date: "2024년 8월 24일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
-        Snap(date: "2024년 8월 24일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!])
+        Snap(date: "2024년 8월 1일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
+        Snap(date: "2024년 8월 2일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
+        Snap(date: "2024년 8월 3일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
+        Snap(date: "2024년 8월 4일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!])
     ]
     var filteredSnapData: [Snap] = []
     var snapPhotoSelectionType: String = "전체" {
