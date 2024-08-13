@@ -107,12 +107,12 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let viewModel = viewModel else { return }
         let sheetViewController = SnapComparisonSheetViewController()
         sheetViewController.modalPresentationStyle = .pageSheet
+        viewModel.selectedIndex = indexPath.row
+        viewModel.currentDateIndex = self.currentSectionIndex
         sheetViewController.viewModel = self.viewModel
-        sheetViewController.snapPhotos = snapPhotos
-        sheetViewController.selectedIndex = indexPath.row
-        sheetViewController.currentDateIndex = self.currentSectionIndex
         sheetViewController.snapDateLabel.text = snapCellDateLabel.text
         
         if let sheet = sheetViewController.sheetPresentationController {

@@ -59,6 +59,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A20F6452C6B3D4000F263FF /* SnapComparison */ = {
+			isa = PBXGroup;
+			children = (
+				4AD29AA32C65051B00A9BEDD /* SnapComparisonViewModel.swift */,
+			);
+			path = SnapComparison;
+			sourceTree = "<group>";
+		};
 		4AD29AD62C6AE33000A9BEDD /* SnapComparisonViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -140,7 +148,7 @@
 		C24BFA5B2C64801100A5B40A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				4AD29AA32C65051B00A9BEDD /* SnapComparisonViewModel.swift */,
+				4A20F6452C6B3D4000F263FF /* SnapComparison */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";

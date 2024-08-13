@@ -10,13 +10,7 @@ import UIKit
 class SnapComparisonSheetViewController: UIViewController {
     // MARK: - Properties
     var viewModel: SnapComparisonViewModel?
-    var snapPhotos: [UIImage] = []
-    var selectedIndex: Int = 0
-    var currentDateIndex: Int = 0
-    var currentPhotoIndex: Int = 0
-    private var currentSnap: Snap? {
-        return viewModel?.filteredSnapData[currentDateIndex]
-    }
+    
     // MARK: - UIComponents
     /// 스냅 날자
     lazy var snapDateLabel: UILabel = {
@@ -56,8 +50,8 @@ class SnapComparisonSheetViewController: UIViewController {
     /// 페이지 컨트롤
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = snapPhotos.count
-        pageControl.currentPage = selectedIndex
+        pageControl.numberOfPages = viewModel?.currentSnap?.images.count ?? 0
+        pageControl.currentPage = viewModel?.currentPhotoIndex ?? 0
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .systemGray5
         pageControl.translatesAutoresizingMaskIntoConstraints = false
@@ -72,11 +66,11 @@ class SnapComparisonSheetViewController: UIViewController {
         setupLayout()
         setupPageViewController()
         setupPageControl()
+        setupBindings()
         updateUI()
     }
     
     // MARK: - Methods
-    
     private func setupLayout() {
         view.addSubviews([
             snapDateLabel,
@@ -105,11 +99,12 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     private func setupPageViewController() {
+        guard let viewModel = viewModel else { return }
         pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         pageViewController.dataSource = self
         pageViewController.delegate = self
         
-        if let startViewController = viewControllerAt(index: selectedIndex) {
+        if let startViewController = viewControllerAt(index: viewModel.selectedIndex) {
             pageViewController.setViewControllers([startViewController], direction: .forward, animated: true, completion: nil)
         }
         
@@ -135,49 +130,60 @@ class SnapComparisonSheetViewController: UIViewController {
         ])
     }
     
-    private func updateUI() {
-        guard let viewModel = viewModel else { return }
-        guard let currentSnap = currentSnap else { return }
-        snapDateLabel.text = currentSnap.date
-        pageControl.numberOfPages = currentSnap.images.count
-        pageControl.currentPage = currentPhotoIndex
+    private func setupBindings() {
+        viewModel?.updateUI = { [weak self] in
+            self?.updateUI()
+        }
         
-        // 화살표 버튼 숨김
-        leftArrowButton.isHidden = currentDateIndex == 0
-        rightArrowButton.isHidden = currentDateIndex == viewModel.filteredSnapData.count - 1
+        viewModel?.updatePageControl = { [weak self] currentPage, numberOfPages in
+            self?.pageControl.currentPage = currentPage
+            self?.pageControl.numberOfPages = numberOfPages
+        }
+        
+        viewModel?.updateArrowVisibility = { [weak self] isLeftHidden, isRightHidden in
+            self?.leftArrowButton.isHidden = isLeftHidden
+            self?.rightArrowButton.isHidden = isRightHidden
+        }
     }
     
+    private func updateUI() {
+        guard let viewModel = viewModel,
+              let currentSnap = viewModel.currentSnap else { return }
+        snapDateLabel.text = viewModel.currentSnap?.date
+        pageControl.numberOfPages = currentSnap.images.count
+        pageControl.currentPage = viewModel.currentPhotoIndex
+        
+        // 화살표 버튼 숨김
+        leftArrowButton.isHidden = viewModel.isLeftArrowHidden
+        rightArrowButton.isHidden = viewModel.isRightArrowHidden
+    }
+    /// 인덱스에 해당하는 SnapPhotoViewController 나타내는 메소드
     private func viewControllerAt(index: Int) -> UIViewController? {
-        guard index >= 0 && index < snapPhotos.count else { return nil }
+        guard let image = viewModel?.getSnapPhoto(at: index) else { return nil }
         let photoViewController = SnapPhotoViewController()
-        photoViewController.image = snapPhotos[index]
+        photoViewController.image = image
         photoViewController.index = index
         return photoViewController
     }
     
     @objc private func didTapLeftArrow() {
         guard let viewModel = viewModel else { return }
-        if currentDateIndex > 0 {
-            currentDateIndex -= 1
-            currentPhotoIndex = 0
-            snapPhotos = viewModel.filteredSnapData[currentDateIndex].images
-            updateUI()
-            if let viewController = viewControllerAt(index: currentPhotoIndex) {
-                pageViewController.setViewControllers([viewController], direction: .reverse, animated: true, completion: nil)
-            }
+        
+        viewModel.moveToPreviousSnap()
+        
+        if let viewController = viewControllerAt(index: viewModel.currentPhotoIndex) {
+            // PageViewController에서 보여줄 ViewController들을 설정
+            pageViewController.setViewControllers([viewController], direction: .reverse, animated: true, completion: nil)
         }
     }
     
     @objc private func didTapRightArrow() {
         guard let viewModel = viewModel else { return }
-        if currentDateIndex < viewModel.filteredSnapData.count - 1 {
-            currentDateIndex += 1
-            currentPhotoIndex = 0
-            snapPhotos = viewModel.filteredSnapData[currentDateIndex].images
-            updateUI()
-            if let viewController = viewControllerAt(index: currentPhotoIndex) {
-                pageViewController.setViewControllers([viewController], direction: .forward, animated: true, completion: nil)
-            }
+        viewModel.moveToNextSnap()
+        
+        if let viewController = viewControllerAt(index: viewModel.currentPhotoIndex) {
+            // PageViewController에서 보여줄 ViewController들을 설정해주는 메소드
+            pageViewController.setViewControllers([viewController], direction: .forward, animated: true, completion: nil)
         }
     }
 }
@@ -199,8 +205,9 @@ extension SnapComparisonSheetViewController: UIPageViewControllerDelegate, UIPag
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed, let viewController = pageViewController.viewControllers?.first as? SnapPhotoViewController {
-            currentPhotoIndex = viewController.index
-            pageControl.currentPage = currentPhotoIndex
+            guard let viewModel = viewModel else { return }
+            viewModel.currentPhotoIndex = viewController.index
+            viewModel.updateSnapData()
         }
     }
 }

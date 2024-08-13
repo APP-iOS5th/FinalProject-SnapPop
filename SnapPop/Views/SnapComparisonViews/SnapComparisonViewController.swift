@@ -17,72 +17,12 @@ class SnapComparisonViewController: UIViewController {
     
     /// 스냅 사진 선택 메뉴
     private var snapPhotoMenuItems: [UIAction] {
-        
-        let allSnapPhoto = UIAction(
-            title: "전체",
-            handler: { _ in
-                self.selectSnapPhotoButton.setTitle("전체", for: .normal)
-                self.viewModel.changeSnapPhotoSelection(type: "전체") {
-                    self.reloadCollectionView()
-                }
-            })
-        
-        let mainSnapPhoto = UIAction(
-            title: "메인 사진",
-            handler: { _ in
-                self.selectSnapPhotoButton.setTitle("메인 사진", for: .normal)
-                self.viewModel.changeSnapPhotoSelection(type: "메인 사진") {
-                    self.reloadCollectionView()
-                }
-            })
-        
-        let items = [mainSnapPhoto, allSnapPhoto]
-        
-        return items
+        return viewModel.snapPhotoMenuItems
     }
     
     /// 스냅 주기 선택 메뉴
     private var snapPeriodMenuItems: [UIAction] {
-        
-        let perWeek = UIAction(
-            title: "일주일",
-            handler: { _ in
-                self.selectSnapPeriodButton.setTitle("일주일", for: .normal)
-                self.viewModel.changeSnapPeriod(type: "일주일") {
-                    self.reloadCollectionView()
-                }
-            })
-        
-        let perMonth = UIAction(
-            title: "한달",
-            handler: { _ in
-                self.selectSnapPeriodButton.setTitle("한달", for: .normal)
-                self.viewModel.changeSnapPeriod(type: "한달") {
-                    self.reloadCollectionView()
-                }
-            })
-        
-        let perYear = UIAction(
-            title: "일년",
-            handler: { _ in
-                self.selectSnapPeriodButton.setTitle("일년", for: .normal)
-                self.viewModel.changeSnapPeriod(type: "일년") {
-                    self.reloadCollectionView()
-                }
-            })
-        
-        let allPeriod = UIAction(
-            title: "전체",
-            handler: { _ in
-                self.selectSnapPeriodButton.setTitle("전체", for: .normal)
-                self.viewModel.changeSnapPeriod(type: "전체") {
-                    self.reloadCollectionView()
-                }
-            })
-        
-        let items = [perWeek, perMonth, perYear, allPeriod]
-        
-        return items
+        return viewModel.snapPeriodMenuItems
     }
     
     // MARK: - UIComponents
@@ -92,7 +32,7 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.title = "전체"
         buttonConfig.image = UIImage(systemName: "photo")
         buttonConfig.imagePadding = 5
-        buttonConfig.baseBackgroundColor = UIColor(red: 0.57, green: 0.87, blue: 0.91, alpha: 1.00)
+        buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
         let button = UIButton(configuration: buttonConfig)
@@ -106,7 +46,7 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.title = "전체"
         buttonConfig.image = UIImage(systemName: "slider.vertical.3")
         buttonConfig.imagePadding = 5
-        buttonConfig.baseBackgroundColor = UIColor(red: 0.57, green: 0.87, blue: 0.91, alpha: 1.00)
+        buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
         let button = UIButton(configuration: buttonConfig)
@@ -133,6 +73,16 @@ class SnapComparisonViewController: UIViewController {
     override func viewDidLoad() {
         
         self.view.backgroundColor = .white
+        
+        viewModel.reloadCollectionView = { [weak self] in
+            self?.reloadCollectionView()
+        }
+        viewModel.updateSnapPhotoButtonTitle = { [weak self] title in
+            self?.selectSnapPhotoButton.setTitle(title, for: .normal)
+        }
+        viewModel.updateSnapPeriodButtonTitle = { [weak self] title in
+            self?.selectSnapPeriodButton.setTitle(title, for: .normal)
+        }
         
         setupLayout()
         setupMenu()
