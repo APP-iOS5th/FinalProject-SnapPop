@@ -25,10 +25,6 @@
 		C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */; };
 		C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */; };
 		C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */; };
-		EA141F962C65C10D00DD4B29 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = EA141F932C65C10D00DD4B29 /* 1.png */; };
-		EA141F972C65C10D00DD4B29 /* 2.png in Resources */ = {isa = PBXBuildFile; fileRef = EA141F942C65C10D00DD4B29 /* 2.png */; };
-		EA141F982C65C10D00DD4B29 /* 3.png in Resources */ = {isa = PBXBuildFile; fileRef = EA141F952C65C10D00DD4B29 /* 3.png */; };
-		EA141F9A2C65DECD00DD4B29 /* 4.png in Resources */ = {isa = PBXBuildFile; fileRef = EA141F992C65DECD00DD4B29 /* 4.png */; };
 		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
 		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
 		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
@@ -56,10 +52,6 @@
 		C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
 		C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
-		EA141F932C65C10D00DD4B29 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
-		EA141F942C65C10D00DD4B29 /* 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2.png; sourceTree = "<group>"; };
-		EA141F952C65C10D00DD4B29 /* 3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 3.png; sourceTree = "<group>"; };
-		EA141F992C65DECD00DD4B29 /* 4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 4.png; sourceTree = "<group>"; };
 		EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionViewCell.swift; sourceTree = "<group>"; };
 		EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewCell.swift; sourceTree = "<group>"; };
 		EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewController.swift; sourceTree = "<group>"; };
@@ -116,10 +108,6 @@
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
 				EA141FA12C6B2E2800DD4B29 /* GoogleService-Info.plist */,
-				EA141F932C65C10D00DD4B29 /* 1.png */,
-				EA141F942C65C10D00DD4B29 /* 2.png */,
-				EA141F952C65C10D00DD4B29 /* 3.png */,
-				EA141F992C65DECD00DD4B29 /* 4.png */,
 			);
 			path = SnapPop;
 			sourceTree = "<group>";
@@ -152,15 +140,10 @@
 		C24BFA5A2C647EBA00A5B40A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				EA141FA32C6B31C600DD4B29 /* Home */,
 				C25F38292C65B24F00EF9A2E /* Setting */,
 				C24BFA602C649C8100A5B40A /* Auth */,
 				8F1685332C6354590010F8D8 /* ViewController.swift */,
-				EA5047622C6510EE0033D807 /* NavigationViewController.swift */,
-				EA50475A2C64A1390033D807 /* HomeViewController.swift */,
-				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
-				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
-				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
-				EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -168,7 +151,7 @@
 		C24BFA5B2C64801100A5B40A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				EA5047602C6500870033D807 /* HomeViewModel.swift */,
+				EA141FA42C6B31DE00DD4B29 /* Home */,
 				C2599B362C699AC5004EF6E7 /* Setting */,
 				C24BFA612C649CA700A5B40A /* Auth */,
 			);
@@ -222,6 +205,27 @@
 				C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */,
 			);
 			path = Setting;
+			sourceTree = "<group>";
+		};
+		EA141FA32C6B31C600DD4B29 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EA5047622C6510EE0033D807 /* NavigationViewController.swift */,
+				EA50475A2C64A1390033D807 /* HomeViewController.swift */,
+				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
+				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
+				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
+				EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		EA141FA42C6B31DE00DD4B29 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EA5047602C6500870033D807 /* HomeViewModel.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -295,14 +299,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA141F972C65C10D00DD4B29 /* 2.png in Resources */,
 				EA141FA22C6B2E2800DD4B29 /* GoogleService-Info.plist in Resources */,
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
-				EA141F9A2C65DECD00DD4B29 /* 4.png in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
-				EA141F982C65C10D00DD4B29 /* 3.png in Resources */,
-				EA141F962C65C10D00DD4B29 /* 1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
