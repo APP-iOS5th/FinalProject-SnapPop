@@ -46,9 +46,12 @@ class ChecklistTableViewController: UITableViewController {
             selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8) // 너비 비율 조정
         ])
     }
-    
+    // AddmanagementViewController navigation 연결
     @objc private func didselfcareAddButton() {
-        print("새로운 관리 추가하기 탭")
+        let addManagementViewModel = AddManagementViewModel(categoryId: "default")
+        let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
+    
+        navigationController?.pushViewController(addManagementVC, animated: true)
     }
     
     // MARK: - Table view data source

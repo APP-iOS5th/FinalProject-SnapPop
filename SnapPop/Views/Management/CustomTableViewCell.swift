@@ -21,7 +21,15 @@ class BaseTableViewCell: UITableViewCell {
     func setupUI() {
         // 상속된 클래스에서 오버라이드하여 사용
     }
+    
+    func setCornerRadius(corners: UIRectCorner, radius: CGFloat) {
+        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        layer.mask = mask
+    }
 }
+
 // -MARK: 제목
 
 class TitleCell: BaseTableViewCell {

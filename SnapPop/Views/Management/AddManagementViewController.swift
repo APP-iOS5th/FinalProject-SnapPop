@@ -67,6 +67,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         setupConstraints()
         
         title = "새로운 자기 관리"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveButtonTapped))
     }
     
@@ -113,11 +114,13 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         bind(viewModel.$createdAt) { [weak self] date in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? DateCell {
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy.MM.dd"
+//                dateFormatter.dateFormat = "yyyy.MM.dd"
+//                dateFormatter.locale = Locale(identifier: "ko_KR") // 로케일 설정 추가
                 let formattedDate = dateFormatter.string(from: date)
                 cell.datePicker.date = date
                 cell.textLabel?.text = "날짜"
                 cell.detailTextLabel?.text = formattedDate
+                cell.imageView?.tintColor = .black
             }
         }
         
@@ -180,14 +183,11 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             switch indexPath.row {
             case 0:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "DateCell", for: indexPath) as? DateCell else { return UITableViewCell() }
-                let calendarImage = UIImage(systemName: "calendar")
-                cell.imageView?.image = calendarImage
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy.MM.dd"
                 cell.textLabel?.text = "날짜"
-                cell.detailTextLabel?.text = dateFormatter.string(from: viewModel.createdAt)
                 cell.datePicker.date = viewModel.createdAt
                 cell.datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
+                cell.imageView?.image = UIImage(systemName: "calendar")
+                cell.imageView?.tintColor = .black
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "RepeatCell", for: indexPath) as? RepeatCell else { return UITableViewCell() }
@@ -229,6 +229,29 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     
     // MARK: - UITableViewDelegate
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let baseCell = cell as? BaseTableViewCell else { return }
+
+        let cornerRadius: CGFloat = 10.0
+        let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
+
+        if numberOfRows == 1 {
+            // 섹션에 셀이 하나만 있을 때
+            baseCell.setCornerRadius(corners: [.allCorners], radius: cornerRadius)
+        } else if indexPath.row == 0 {
+            // 첫 번째 셀일 때
+            baseCell.setCornerRadius(corners: [.topLeft, .topRight], radius: cornerRadius)
+        } else if indexPath.row == numberOfRows - 1 {
+            // 마지막 셀일 때
+            baseCell.setCornerRadius(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
+        } else {
+            // 중간 셀은 코너를 둥글게 하지 않음
+            baseCell.setCornerRadius(corners: [], radius: 0)
+        }
+
+        baseCell.layer.masksToBounds = true
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 3 {
             addDetailButtonTapped()
@@ -237,6 +260,11 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     // MARK: - Actions
+    
+    @objc private func cancelButtonTapped() {
+        // HomeViewController로 돌아가기
+        navigationController?.popViewController(animated: true)
+    }
     
     @objc private func titleChanged(_ sender: UITextField) {
         viewModel.title = sender.text ?? ""

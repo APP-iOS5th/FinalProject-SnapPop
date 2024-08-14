@@ -8,39 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController {
-
-    private let addManagementButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("관리 추가하기 +", for: .normal)
-        button.backgroundColor = .systemBlue
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
-    }
-
-    private func setupUI() {
-        view.backgroundColor = .white
-        view.addSubview(addManagementButton)
-        
-        NSLayoutConstraint.activate([
-            addManagementButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            addManagementButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            addManagementButton.widthAnchor.constraint(equalToConstant: 200),
-            addManagementButton.heightAnchor.constraint(equalToConstant: 50)
-        ])
-        
-        addManagementButton.addTarget(self, action: #selector(addManagementButtonTapped), for: .touchUpInside)
-    }
-
-    @objc private func addManagementButtonTapped() {
-        let viewModel = AddManagementViewModel(categoryId: "default")
-        let addManagementVC = AddManagementViewController(viewModel: viewModel)
-        navigationController?.pushViewController(addManagementVC, animated: true)
     }
 }
