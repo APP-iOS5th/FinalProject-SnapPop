@@ -26,6 +26,23 @@
 		8F16854B2C6360180010F8D8 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854A2C6360180010F8D8 /* FirebaseFirestore */; };
 		8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854C2C6360180010F8D8 /* FirebaseStorage */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
+		C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA622C649CBA00A5B40A /* SignInViewController.swift */; };
+		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
+		C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA692C649E4300A5B40A /* GoogleSignIn */; };
+		C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */; };
+		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
+		C2599B3A2C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */; };
+		C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */; };
+		C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */; };
+		C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */; };
+		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
+		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
+		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
+		EA141FA22C6B2E2800DD4B29 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA141FA12C6B2E2800DD4B29 /* GoogleService-Info.plist */; };
+		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
+		EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */; };
+		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
+		EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047622C6510EE0033D807 /* NavigationViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +64,22 @@
 		8F16853B2C63545A0010F8D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F16853D2C63545A0010F8D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		C24BFA722C64B01400A5B40A /* SnapPop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnapPop.entitlements; sourceTree = "<group>"; };
+		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
+		C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockSettingTableViewCell.swift; sourceTree = "<group>"; };
+		C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
+		C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
+		EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionViewCell.swift; sourceTree = "<group>"; };
+		EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewCell.swift; sourceTree = "<group>"; };
+		EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewController.swift; sourceTree = "<group>"; };
+		EA141FA12C6B2E2800DD4B29 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EA50475A2C64A1390033D807 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
+		EA5047602C6500870033D807 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		EA5047622C6510EE0033D807 /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +87,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */,
 				8F1685492C6360180010F8D8 /* FirebaseAuth in Frameworks */,
+				C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */,
 				8F16854B2C6360180010F8D8 /* FirebaseFirestore in Frameworks */,
 				8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */,
 			);
@@ -105,6 +140,7 @@
 		8F16852E2C6354590010F8D8 /* SnapPop */ = {
 			isa = PBXGroup;
 			children = (
+				C24BFA722C64B01400A5B40A /* SnapPop.entitlements */,
 				C24BFA572C647E7800A5B40A /* Application */,
 				C24BFA5C2C64809C00A5B40A /* Common */,
 				C24BFA5D2C64817300A5B40A /* FirebaseManager */,
@@ -113,6 +149,7 @@
 				C24BFA5B2C64801100A5B40A /* ViewModels */,
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
+				EA141FA12C6B2E2800DD4B29 /* GoogleService-Info.plist */,
 			);
 			path = SnapPop;
 			sourceTree = "<group>";
@@ -145,6 +182,9 @@
 		C24BFA5A2C647EBA00A5B40A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				EA141FA32C6B31C600DD4B29 /* Home */,
+				C25F38292C65B24F00EF9A2E /* Setting */,
+				C24BFA602C649C8100A5B40A /* Auth */,
 				8F1685332C6354590010F8D8 /* ViewController.swift */,
 				4AD29AD62C6AE33000A9BEDD /* SnapComparison */,
 			);
@@ -154,6 +194,9 @@
 		C24BFA5B2C64801100A5B40A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				EA141FA42C6B31DE00DD4B29 /* Home */,
+				C2599B362C699AC5004EF6E7 /* Setting */,
+				C24BFA612C649CA700A5B40A /* Auth */,
 				4A20F6452C6B3D4000F263FF /* SnapComparison */,
 			);
 			path = ViewModels;
@@ -173,6 +216,62 @@
 			children = (
 			);
 			path = FirebaseManager;
+			sourceTree = "<group>";
+		};
+		C24BFA602C649C8100A5B40A /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				C24BFA622C649CBA00A5B40A /* SignInViewController.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		C24BFA612C649CA700A5B40A /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				C24BFA662C649CF700A5B40A /* AuthViewModel.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		C2599B362C699AC5004EF6E7 /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		C25F38292C65B24F00EF9A2E /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */,
+				C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */,
+				C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */,
+				C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		EA141FA32C6B31C600DD4B29 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EA5047622C6510EE0033D807 /* NavigationViewController.swift */,
+				EA50475A2C64A1390033D807 /* HomeViewController.swift */,
+				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
+				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
+				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
+				EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		EA141FA42C6B31DE00DD4B29 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EA5047602C6500870033D807 /* HomeViewModel.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,6 +295,8 @@
 				8F1685482C6360180010F8D8 /* FirebaseAuth */,
 				8F16854A2C6360180010F8D8 /* FirebaseFirestore */,
 				8F16854C2C6360180010F8D8 /* FirebaseStorage */,
+				C24BFA692C649E4300A5B40A /* GoogleSignIn */,
+				C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */,
 			);
 			productName = SnapPop;
 			productReference = 8F16852C2C6354590010F8D8 /* SnapPop.app */;
@@ -228,6 +329,7 @@
 			packageReferences = (
 				8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C24BFA522C647B6900A5B40A /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				C24BFA682C649E4300A5B40A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = 8F16852D2C6354590010F8D8 /* Products */;
 			projectDirPath = "";
@@ -243,6 +345,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA141FA22C6B2E2800DD4B29 /* GoogleService-Info.plist in Resources */,
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
@@ -277,8 +380,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
+				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,
+				C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */,
+				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
+				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
 				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
@@ -286,8 +394,17 @@
 				4AD29AA42C65051B00A9BEDD /* SnapComparisonViewModel.swift in Sources */,
 				4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
+				EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */,
+				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
+				C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */,
+				C2599B3A2C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift in Sources */,
+				C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */,
 				4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */,
 				8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */,
+				EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */,
+				EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */,
+				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
+				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
 				4AD29AD82C6B35BE00A9BEDD /* Color+Extensions.swift in Sources */,
 				4AD29AAC2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift in Sources */,
 			);
@@ -431,11 +548,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SnapPop/SnapPop.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 59FP2PXRXK;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -447,6 +567,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codegrove.SnapPop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -458,11 +579,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SnapPop/SnapPop.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 59FP2PXRXK;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -474,6 +598,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codegrove.SnapPop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -520,6 +645,14 @@
 				minimumVersion = 0.56.1;
 			};
 		};
+		C24BFA682C649E4300A5B40A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -537,6 +670,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		C24BFA692C649E4300A5B40A /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C24BFA682C649E4300A5B40A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C24BFA682C649E4300A5B40A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
