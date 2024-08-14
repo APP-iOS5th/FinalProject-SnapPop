@@ -43,7 +43,8 @@ class TitleCell: BaseTableViewCell {
     override func setupUI() {
         super.setupUI()
         contentView.addSubview(textField)
-        
+        selectionStyle = .none
+
         NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
@@ -64,7 +65,8 @@ class MemoCell: BaseTableViewCell {
     override func setupUI() {
         super.setupUI()
         contentView.addSubview(textField)
-        
+        selectionStyle = .none
+
         NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
@@ -84,7 +86,8 @@ class ColorCell: BaseTableViewCell {
     override func setupUI() {
         super.setupUI()
         contentView.addSubview(colorPicker)
-        
+        selectionStyle = .none
+
         NSLayoutConstraint.activate([
             colorPicker.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             colorPicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
@@ -104,7 +107,8 @@ class DateCell: BaseTableViewCell {
     override func setupUI() {
         super.setupUI()
         contentView.addSubview(datePicker)
-        
+        selectionStyle = .none
+
         NSLayoutConstraint.activate([
             datePicker.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             datePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
@@ -113,9 +117,20 @@ class DateCell: BaseTableViewCell {
 }
 // -MARK: 반복
 class RepeatCell: BaseTableViewCell {
+    
     let repeatButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("반복 주기 선택", for: .normal)
+        button.setTitle("안함", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        
+        // SF Symbols의 "chevron.up.chevron.down" 아이콘을 사용
+        let arrowImage = UIImage(systemName: "chevron.up.chevron.down")
+        button.setImage(arrowImage, for: .normal)
+        
+        // 텍스트와 이미지 간의 간격 조정
+        button.semanticContentAttribute = .forceRightToLeft
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8)
+        button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -123,7 +138,8 @@ class RepeatCell: BaseTableViewCell {
     override func setupUI() {
         super.setupUI()
         contentView.addSubview(repeatButton)
-        
+        selectionStyle = .none
+
         NSLayoutConstraint.activate([
             repeatButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
             repeatButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
@@ -138,14 +154,18 @@ class RepeatCell: BaseTableViewCell {
             }
         }
         
-        repeatButton.menu = UIMenu(title: "반복 주기 선택", children: actions)
+        repeatButton.menu = UIMenu(title: "", children: actions)
         repeatButton.showsMenuAsPrimaryAction = true
     }
 }
+
 // -MARK: 시간
 class TimeCell: BaseTableViewCell {
     let switchControl: UISwitch = {
         let switchControl = UISwitch()
+        if let toggleColor = UIColor(named: "toggleSwitchColor") {
+            switchControl.onTintColor = toggleColor
+        }
         switchControl.translatesAutoresizingMaskIntoConstraints = false
         return switchControl
     }()
@@ -153,7 +173,8 @@ class TimeCell: BaseTableViewCell {
     override func setupUI() {
         super.setupUI()
         contentView.addSubview(switchControl)
-        
+        selectionStyle = .none
+
         NSLayoutConstraint.activate([
             switchControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
             switchControl.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
@@ -165,6 +186,9 @@ class TimeCell: BaseTableViewCell {
 class NotificationCell: BaseTableViewCell {
     let switchControl: UISwitch = {
         let switchControl = UISwitch()
+        if let toggleColor = UIColor(named: "toggleSwitchColor") {
+            switchControl.onTintColor = toggleColor
+        }
         switchControl.translatesAutoresizingMaskIntoConstraints = false
         return switchControl
     }()
@@ -172,10 +196,11 @@ class NotificationCell: BaseTableViewCell {
     override func setupUI() {
         super.setupUI()
         contentView.addSubview(switchControl)
-        
+        selectionStyle = .none
+
         NSLayoutConstraint.activate([
-            switchControl.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            switchControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
+            switchControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            switchControl.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 }

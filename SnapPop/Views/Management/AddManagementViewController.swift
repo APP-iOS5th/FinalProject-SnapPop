@@ -27,6 +27,17 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         return picker
     }()
     
+    private let addDetailButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("상세 비용 추가하기", for: .normal)
+        button.setTitleColor(.white, for: .normal)  // 버튼 텍스트 색상
+        button.backgroundColor = UIColor(red: 146/255, green: 223/255, blue: 231/255, alpha: 1.0)  // RGB 색상 코드 적용
+        button.layer.cornerRadius = 10
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     init(viewModel: AddManagementViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -47,6 +58,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         
         view.addSubview(tableView)
         view.addSubview(timePicker)
+        view.addSubview(addDetailButton)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -57,7 +69,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             (ColorCell.self, "ColorCell"),
             (DateCell.self, "DateCell"),
             (NotificationCell.self, "NotificationCell"),
-            (RepeatCell.self, "RepeatCell")
+            (RepeatCell.self, "RepeatCell"),
+            (TimeCell.self, "TimeCell")
         ]
         
         for (cellClass, identifier) in cells {
@@ -76,11 +89,16 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: timePicker.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: addDetailButton.topAnchor, constant: -10),
             
             timePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             timePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            timePicker.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            timePicker.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            addDetailButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            addDetailButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            addDetailButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            addDetailButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
@@ -114,8 +132,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         bind(viewModel.$createdAt) { [weak self] date in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? DateCell {
                 let dateFormatter = DateFormatter()
-//                dateFormatter.dateFormat = "yyyy.MM.dd"
-//                dateFormatter.locale = Locale(identifier: "ko_KR") // 로케일 설정 추가
+                dateFormatter.dateFormat = "yyyy.MM.dd"
+                dateFormatter.locale = Locale(identifier: "ko_KR") // 로케일 설정 추가
                 let formattedDate = dateFormatter.string(from: date)
                 cell.datePicker.date = date
                 cell.textLabel?.text = "날짜"
@@ -138,7 +156,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // MARK: - UITableViewDataSource
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 4 // 네 번째 섹션 추가
+        return 3 // 네 번째 섹션 제거
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -149,8 +167,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             return 2 // 날짜, 반복
         case 2:
             return 2 // 시간, 알림
-        case 3:
-            return 1 // 상세 비용 추가하기 버튼
         default:
             return 0
         }
@@ -200,12 +216,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         case 2:
             switch indexPath.row {
             case 0:
-                let cell = UITableViewCell()
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "TimeCell", for: indexPath) as? TimeCell else { return UITableViewCell() }
                 cell.textLabel?.text = "시간"
-                let switchControl = UISwitch()
-                switchControl.isOn = viewModel.hasTimeAlert
-                switchControl.addTarget(self, action: #selector(timeSwitchChanged(_:)), for: .valueChanged)
-                cell.accessoryView = switchControl
+                cell.switchControl.isOn = viewModel.hasTimeAlert
+                cell.switchControl.addTarget(self, action: #selector(timeSwitchChanged(_:)), for: .valueChanged)
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell", for: indexPath) as? NotificationCell else { return UITableViewCell() }
@@ -216,12 +230,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             default:
                 return UITableViewCell()
             }
-        case 3:
-            let cell = UITableViewCell()
-            cell.textLabel?.text = "상세 비용 추가하기"
-            cell.textLabel?.textAlignment = .center
-            cell.textLabel?.textColor = .systemBlue
-            return cell
         default:
             return UITableViewCell()
         }
@@ -250,13 +258,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         }
 
         baseCell.layer.masksToBounds = true
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 3 {
-            addDetailButtonTapped()
-        }
-        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     // MARK: - Actions
@@ -291,7 +292,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func addDetailButtonTapped() {
-        // TODO: 상세 비용 추가 화면으로 이동하는 로직 구현
+        // 상세 비용 추가 화면으로 이동하는 로직을 여기서 구현
         print("상세 비용 추가하기 버튼이 탭됨.")
     }
     
