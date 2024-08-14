@@ -18,6 +18,7 @@
 		8F1685512C6598C00010F8D8 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685522C6599A20010F8D8 /* CalendarViewController.swift */; };
 		8F4C73BF2C6AF771000AACDA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */; };
+		8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C73C12C6B1E71000AACDA /* svenmodels.swift */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
 		C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA622C649CBA00A5B40A /* SignInViewController.swift */; };
 		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
@@ -41,6 +42,7 @@
 		8F1685522C6599A20010F8D8 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		8F4C73BD2C6AF6AF000AACDA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8F4C73C12C6B1E71000AACDA /* svenmodels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = svenmodels.swift; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -103,6 +105,14 @@
 			path = SnapPop;
 			sourceTree = "<group>";
 		};
+		8F4C73C02C6AFA71000AACDA /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				8F1685522C6599A20010F8D8 /* CalendarViewController.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
 		C24BFA572C647E7800A5B40A /* Application */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,6 +134,7 @@
 		C24BFA592C647EB600A5B40A /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8F4C73C12C6B1E71000AACDA /* svenmodels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -131,10 +142,10 @@
 		C24BFA5A2C647EBA00A5B40A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8F4C73C02C6AFA71000AACDA /* Calendar */,
 				C25F38292C65B24F00EF9A2E /* Setting */,
 				C24BFA602C649C8100A5B40A /* Auth */,
 				8F1685332C6354590010F8D8 /* ViewController.swift */,
-				8F1685522C6599A20010F8D8 /* CalendarViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -311,6 +322,7 @@
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
 				8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */,
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
+				8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */,
 				C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */,
 				C2599B3A2C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift in Sources */,
 				C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */,
