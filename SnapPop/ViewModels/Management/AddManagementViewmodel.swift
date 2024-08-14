@@ -16,6 +16,7 @@ class AddManagementViewModel {
     @Published var repeatCycle: Int = 0
     @Published var hasTimeAlert: Bool = false
     @Published var hasNotification: Bool = false
+    @Published var isTimeCellExpanded: Bool = false
 
     let repeatOptions = ["매일", "매주", "매달", "안함"]
 
@@ -70,7 +71,6 @@ class AddManagementViewModel {
     }
 
     func save(completion: @escaping (Result<Void, Error>) -> Void) {
-        // TODO: 실제 저장 로직
         completion(.success(()))
     }
 }

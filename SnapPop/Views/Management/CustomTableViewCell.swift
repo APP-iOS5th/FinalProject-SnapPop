@@ -9,6 +9,8 @@
 import UIKit
 
 class BaseTableViewCell: UITableViewCell {
+    private var maskLayer: CAShapeLayer?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -22,11 +24,39 @@ class BaseTableViewCell: UITableViewCell {
         // 상속된 클래스에서 오버라이드하여 사용
     }
     
-    func setCornerRadius(corners: UIRectCorner, radius: CGFloat) {
-        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        let mask = CAShapeLayer()
-        mask.path = path.cgPath
-        layer.mask = mask
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if bounds.width > 0 && bounds.height > 0 {
+            if maskLayer == nil {
+                maskLayer = CAShapeLayer()
+                layer.mask = maskLayer
+            }
+            
+            if let tableView = superview as? UITableView,
+               let indexPath = tableView.indexPath(for: self) {
+                let cornerRadius: CGFloat = 10.0
+                let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
+
+                var corners: UIRectCorner = []
+                if numberOfRows == 1 {
+                    corners = .allCorners
+                } else if indexPath.row == 0 {
+                    corners = [.topLeft, .topRight]
+                } else if indexPath.row == numberOfRows - 1 {
+                    corners = [.bottomLeft, .bottomRight]
+                }
+                
+                let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+                maskLayer?.path = path.cgPath
+            }
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        maskLayer?.removeFromSuperlayer()
+        maskLayer = nil
     }
 }
 
@@ -95,17 +125,28 @@ class ColorCell: BaseTableViewCell {
     }
 }
 // -MARK: 날짜
-
 class DateCell: BaseTableViewCell {
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd"
+        formatter.locale = Locale(identifier: "ko_KR")
+        return formatter
+    }()
+    
     let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.locale = Locale(identifier: "ko_KR")
         return datePicker
     }()
     
     override func setupUI() {
         super.setupUI()
+        textLabel?.text = "날짜"
+        imageView?.image = UIImage(systemName: "calendar")
+        imageView?.tintColor = .black
+        
         contentView.addSubview(datePicker)
         selectionStyle = .none
 
@@ -113,22 +154,30 @@ class DateCell: BaseTableViewCell {
             datePicker.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             datePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         ])
+        
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+    }
+    
+    func configure(with date: Date) {
+        datePicker.date = date
+    }
+    
+    @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
+        // 추후 데이터담을 때를 위해..
     }
 }
 // -MARK: 반복
 class RepeatCell: BaseTableViewCell {
-    
     let repeatButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("안함", for: .normal)
         button.setTitleColor(.black, for: .normal)
         
-        // SF Symbols의 "chevron.up.chevron.down" 아이콘을 사용
         let arrowImage = UIImage(systemName: "chevron.up.chevron.down")
         button.setImage(arrowImage, for: .normal)
         
-        // 텍스트와 이미지 간의 간격 조정
         button.semanticContentAttribute = .forceRightToLeft
+        // 심볼 간격
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8)
         button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false

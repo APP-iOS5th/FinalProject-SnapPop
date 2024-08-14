@@ -136,14 +136,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         
         bind(viewModel.$createdAt) { [weak self] date in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? DateCell {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy.MM.dd"
-                dateFormatter.locale = Locale(identifier: "ko_KR") // 로케일 설정 추가
-                let formattedDate = dateFormatter.string(from: date)
-                cell.datePicker.date = date
-                cell.textLabel?.text = "날짜"
-                cell.detailTextLabel?.text = formattedDate
-                cell.imageView?.tintColor = .black
+                cell.configure(with: date)
             }
         }
         
@@ -203,13 +196,13 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         case 1:
             switch indexPath.row {
             case 0:
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: "DateCell", for: indexPath) as? DateCell else { return UITableViewCell() }
-                cell.textLabel?.text = "날짜"
-                cell.datePicker.date = viewModel.createdAt
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "DateCell", for: indexPath) as? DateCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(with: viewModel.createdAt)
                 cell.datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
-                cell.imageView?.image = UIImage(systemName: "calendar")
-                cell.imageView?.tintColor = .black
                 return cell
+
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "RepeatCell", for: indexPath) as? RepeatCell else { return UITableViewCell() }
                 cell.textLabel?.text = "반복"
@@ -240,30 +233,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         }
     }
     
-    // MARK: - UITableViewDelegate
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard let baseCell = cell as? BaseTableViewCell else { return }
-
-        let cornerRadius: CGFloat = 10.0
-        let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
-
-        if numberOfRows == 1 {
-            // 섹션에 셀이 하나만 있을 때
-            baseCell.setCornerRadius(corners: [.allCorners], radius: cornerRadius)
-        } else if indexPath.row == 0 {
-            // 첫 번째 셀일 때
-            baseCell.setCornerRadius(corners: [.topLeft, .topRight], radius: cornerRadius)
-        } else if indexPath.row == numberOfRows - 1 {
-            // 마지막 셀일 때
-            baseCell.setCornerRadius(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
-        } else {
-            // 중간 셀은 코너를 둥글게 하지 않음
-            baseCell.setCornerRadius(corners: [], radius: 0)
-        }
-
-        baseCell.layer.masksToBounds = true
-    }
     
     // MARK: - Actions
     
