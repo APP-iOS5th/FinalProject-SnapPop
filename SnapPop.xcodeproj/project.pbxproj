@@ -30,6 +30,14 @@
 		C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */; };
 		C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */; };
 		C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */; };
+		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
+		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
+		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
+		EA141FA22C6B2E2800DD4B29 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA141FA12C6B2E2800DD4B29 /* GoogleService-Info.plist */; };
+		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
+		EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */; };
+		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
+		EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047622C6510EE0033D807 /* NavigationViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +62,14 @@
 		C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
 		C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
+		EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionViewCell.swift; sourceTree = "<group>"; };
+		EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewCell.swift; sourceTree = "<group>"; };
+		EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewController.swift; sourceTree = "<group>"; };
+		EA141FA12C6B2E2800DD4B29 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EA50475A2C64A1390033D807 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
+		EA5047602C6500870033D807 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		EA5047622C6510EE0033D807 /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +118,7 @@
 				C24BFA5B2C64801100A5B40A /* ViewModels */,
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
+				EA141FA12C6B2E2800DD4B29 /* GoogleService-Info.plist */,
 			);
 			path = SnapPop;
 			sourceTree = "<group>";
@@ -154,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				B81931002C6AE35D00177C69 /* Management */,
+				EA141FA32C6B31C600DD4B29 /* Home */,
 				C25F38292C65B24F00EF9A2E /* Setting */,
 				C24BFA602C649C8100A5B40A /* Auth */,
 			);
@@ -164,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				B81930FF2C6AE33800177C69 /* Management */,
+				EA141FA42C6B31DE00DD4B29 /* Home */,
 				C2599B362C699AC5004EF6E7 /* Setting */,
 				C24BFA612C649CA700A5B40A /* Auth */,
 			);
@@ -217,6 +236,27 @@
 				C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */,
 			);
 			path = Setting;
+			sourceTree = "<group>";
+		};
+		EA141FA32C6B31C600DD4B29 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EA5047622C6510EE0033D807 /* NavigationViewController.swift */,
+				EA50475A2C64A1390033D807 /* HomeViewController.swift */,
+				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
+				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
+				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
+				EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		EA141FA42C6B31DE00DD4B29 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EA5047602C6500870033D807 /* HomeViewModel.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -290,6 +330,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA141FA22C6B2E2800DD4B29 /* GoogleService-Info.plist in Resources */,
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
 				B81930FE2C6AE32900177C69 /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
@@ -325,11 +366,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,
 				C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */,
 				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
+				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
+				EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */,
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
 				C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */,
 				C2599B3A2C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift in Sources */,
@@ -339,6 +383,10 @@
 				B81C03602C659BA000AC23BD /* AddManagementViewmodel.swift in Sources */,
 				B81C035E2C659B7400AC23BD /*  ManagementModel.swift in Sources */,
 				B81C035A2C64B86900AC23BD /* AddManagementViewController.swift in Sources */,
+				EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */,
+				EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */,
+				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
+				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,6 +533,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KM8D8UY7M5;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
@@ -516,6 +565,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KM8D8UY7M5;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
