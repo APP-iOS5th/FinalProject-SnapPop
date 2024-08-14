@@ -7,8 +7,6 @@
 
 import UIKit
 
-// jjTODO: Color 통합하기.
-
 class SnapComparisonViewController: UIViewController {
     
     // MARK: - Properties
@@ -74,16 +72,7 @@ class SnapComparisonViewController: UIViewController {
         
         self.view.backgroundColor = .white
         
-        viewModel.reloadCollectionView = { [weak self] in
-            self?.reloadCollectionView()
-        }
-        viewModel.updateSnapPhotoButtonTitle = { [weak self] title in
-            self?.selectSnapPhotoButton.setTitle(title, for: .normal)
-        }
-        viewModel.updateSnapPeriodButtonTitle = { [weak self] title in
-            self?.selectSnapPeriodButton.setTitle(title, for: .normal)
-        }
-        
+        setupBindings()
         setupLayout()
         setupMenu()
         
@@ -127,6 +116,18 @@ class SnapComparisonViewController: UIViewController {
         
     }
     
+    func setupBindings() {
+        viewModel.reloadCollectionView = { [weak self] in
+            self?.reloadCollectionView()
+        }
+        viewModel.updateSnapPhotoButtonTitle = { [weak self] title in
+            self?.selectSnapPhotoButton.setTitle(title, for: .normal)
+        }
+        viewModel.updateSnapPeriodButtonTitle = { [weak self] title in
+            self?.selectSnapPeriodButton.setTitle(title, for: .normal)
+        }
+    }
+    
     func reloadCollectionView() {
         DispatchQueue.main.async {
             self.collectionView.reloadData()
@@ -165,8 +166,4 @@ extension SnapComparisonViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: 250)
     }
     
-}
-
-#Preview {
-    SnapComparisonViewController()
 }

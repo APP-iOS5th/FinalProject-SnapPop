@@ -9,7 +9,7 @@ import UIKit
 
 class SnapComparisonSheetViewController: UIViewController {
     // MARK: - Properties
-    var viewModel: SnapComparisonViewModel?
+    var viewModel = SnapComparisonSheetViewModel()
     
     // MARK: - UIComponents
     /// 스냅 날자
@@ -50,8 +50,8 @@ class SnapComparisonSheetViewController: UIViewController {
     /// 페이지 컨트롤
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = viewModel?.currentSnap?.images.count ?? 0
-        pageControl.currentPage = viewModel?.currentPhotoIndex ?? 0
+        pageControl.numberOfPages = viewModel.currentSnap?.images.count ?? 0
+        pageControl.currentPage = viewModel.currentPhotoIndex
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .systemGray5
         pageControl.translatesAutoresizingMaskIntoConstraints = false
@@ -99,7 +99,6 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     private func setupPageViewController() {
-        guard let viewModel = viewModel else { return }
         pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         pageViewController.dataSource = self
         pageViewController.delegate = self
@@ -131,25 +130,24 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     private func setupBindings() {
-        viewModel?.updateUI = { [weak self] in
+        viewModel.updateUI = { [weak self] in
             self?.updateUI()
         }
         
-        viewModel?.updatePageControl = { [weak self] currentPage, numberOfPages in
+        viewModel.updatePageControl = { [weak self] currentPage, numberOfPages in
             self?.pageControl.currentPage = currentPage
             self?.pageControl.numberOfPages = numberOfPages
         }
         
-        viewModel?.updateArrowVisibility = { [weak self] isLeftHidden, isRightHidden in
+        viewModel.updateArrowVisibility = { [weak self] isLeftHidden, isRightHidden in
             self?.leftArrowButton.isHidden = isLeftHidden
             self?.rightArrowButton.isHidden = isRightHidden
         }
     }
     
     private func updateUI() {
-        guard let viewModel = viewModel,
-              let currentSnap = viewModel.currentSnap else { return }
-        snapDateLabel.text = viewModel.currentSnap?.date
+        guard let currentSnap = viewModel.currentSnap else { return }
+        snapDateLabel.text = currentSnap.date
         pageControl.numberOfPages = currentSnap.images.count
         pageControl.currentPage = viewModel.currentPhotoIndex
         
@@ -159,7 +157,7 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     /// 인덱스에 해당하는 SnapPhotoViewController 나타내는 메소드
     private func viewControllerAt(index: Int) -> UIViewController? {
-        guard let image = viewModel?.getSnapPhoto(at: index) else { return nil }
+        guard let image = viewModel.getSnapPhoto(at: index) else { return nil }
         let photoViewController = SnapPhotoViewController()
         photoViewController.image = image
         photoViewController.index = index
@@ -167,8 +165,6 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     @objc private func didTapLeftArrow() {
-        guard let viewModel = viewModel else { return }
-        
         viewModel.moveToPreviousSnap()
         
         if let viewController = viewControllerAt(index: viewModel.currentPhotoIndex) {
@@ -178,7 +174,6 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     @objc private func didTapRightArrow() {
-        guard let viewModel = viewModel else { return }
         viewModel.moveToNextSnap()
         
         if let viewController = viewControllerAt(index: viewModel.currentPhotoIndex) {
@@ -205,7 +200,6 @@ extension SnapComparisonSheetViewController: UIPageViewControllerDelegate, UIPag
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed, let viewController = pageViewController.viewControllers?.first as? SnapPhotoViewController {
-            guard let viewModel = viewModel else { return }
             viewModel.currentPhotoIndex = viewController.index
             viewModel.updateSnapData()
         }

@@ -10,10 +10,7 @@ import UIKit
 class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
-    private var viewModel: SnapComparisonViewModel?
-    private var snapPhotos: [UIImage] = []
-    /// 현재 섹션의 인덱스 저장 변수
-    private var currentSectionIndex: Int = 0
+    private var viewModel = SnapComparisonCellViewModel()
     
     // MARK: - UIComponents
     /// 스냅 날자 레이블
@@ -72,17 +69,17 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
     func configure(with data: Snap, viewModel: SnapComparisonViewModel, sectionIndex: Int) {
         snapCellDateLabel.text = data.date
-        snapPhotos = data.images
+        self.viewModel.snapPhotos = data.images
+        self.viewModel.filteredSnapData = viewModel.filteredSnapData
         horizontalSnapPhotoCollectionView.reloadData()
-        self.viewModel = viewModel
-        self.currentSectionIndex = sectionIndex
+        self.viewModel.currentSectionIndex = sectionIndex
     }
 }
 
 // MARK: - UICollectionViewDelegate, DataSource Methods
 extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        snapPhotos.count
+        viewModel.numberOfSections()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -90,7 +87,7 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
             return UICollectionViewCell()
         }
         
-        cell.snapPhoto.image = snapPhotos[indexPath.row]
+        cell.snapPhoto.image = viewModel.snapPhotos[indexPath.row]
         
         if indexPath.row == 0 {
             // 절대값 수정 해야할듯
@@ -107,12 +104,9 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let viewModel = viewModel else { return }
         let sheetViewController = SnapComparisonSheetViewController()
         sheetViewController.modalPresentationStyle = .pageSheet
-        viewModel.selectedIndex = indexPath.row
-        viewModel.currentDateIndex = self.currentSectionIndex
-        sheetViewController.viewModel = self.viewModel
+        sheetViewController.viewModel.filteredSnapData = viewModel.filteredSnapData
         sheetViewController.snapDateLabel.text = snapCellDateLabel.text
         
         if let sheet = sheetViewController.sheetPresentationController {
@@ -134,8 +128,4 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegateFlowLayout {
         return CGSize(width: height, height: height)
     }
     
-}
-
-#Preview {
-    SnapComparisonCollectionViewCell()
 }
