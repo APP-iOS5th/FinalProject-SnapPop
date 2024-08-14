@@ -31,10 +31,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         let button = UIButton(type: .system)
         button.setTitle("상세 비용 추가하기", for: .normal)
         button.setTitleColor(.white, for: .normal)  // 버튼 텍스트 색상
-        button.backgroundColor = UIColor(red: 146/255, green: 223/255, blue: 231/255, alpha: 1.0)  // RGB 색상 코드 적용
+        button.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 1.0)
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
+        button.addTarget(AddManagementViewController.self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -80,8 +80,13 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         setupConstraints()
         
         title = "새로운 자기 관리"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveButtonTapped))
+        let cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
+        cancelButton.tintColor = .systemBlue
+        let saveButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveButtonTapped))
+        saveButton.tintColor = .systemBlue
+        
+        navigationItem.leftBarButtonItem = cancelButton
+        navigationItem.rightBarButtonItem = saveButton
     }
     
     private func setupConstraints() {
