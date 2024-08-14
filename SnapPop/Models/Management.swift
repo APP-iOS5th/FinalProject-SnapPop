@@ -16,14 +16,16 @@ struct Management: Identifiable, Hashable, Codable {
     let color: String
     let startDate: Date
     let repeatCycle: Int
-    let status: Bool
+    let alertTime: Date
+    let alertStatus: Bool
     
-    init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, status: Bool) {
+    init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, alertTime: Date, alertStatus: Bool) {
         self.title = title
         self.memo = memo
         self.color = color
         self.startDate = startDate
         self.repeatCycle = repeatCycle
-        self.status = status
+        self.alertTime = alertTime
+        self.alertStatus = alertStatus
     }
 }

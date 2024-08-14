@@ -15,53 +15,63 @@ final class CategoryService {
     
     func saveCategory(category: Category, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
-            try db.collection("Categories").addDocument(from: category) { error in
-                if let error = error {
-                    completion(.failure(error))
-                } else {
+            try db.collection("Users")
+                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .collection("Categories")
+                .addDocument(from: category) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                        return
+                    }
                     completion(.success(()))
                 }
-            }
         } catch {
             completion(.failure(error))
         }
     }
     
     func loadCategories(completion: @escaping (Result<[Category], Error>) -> Void) {
-        db.collection("Categories")
-            .whereField("userId", isEqualTo: AuthViewModel.shared.currentUser?.uid ?? "")
+        db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
             .order(by: "title")
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
                     completion(.failure(error))
-                } else {
-                    guard let documents = querySnapshot?.documents else { return }
-                    
-                    let categories = documents.compactMap { document in
-                        try? document.data(as: Category.self)
-                    }
-                    
-                    completion(.success(categories))
+                    return
                 }
+                guard let documents = querySnapshot?.documents else { return }
+                
+                let categories = documents.compactMap { document in
+                    try? document.data(as: Category.self)
+                }
+                
+                completion(.success(categories))
             }
     }
     
-    func updateCategory(categoryId: String, title: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        db.collection("Categories")
-            .document(categoryId)
-            .updateData([
-                "title": title
-            ]) { error in
-                if let error = error {
-                    completion(.failure(error))
-                } else {
+    func updateCategory(categoryId: String, updatedCategory: Category, completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try db.collection("Users")
+                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .collection("Categories")
+                .document(categoryId)
+                .setData(from: updatedCategory, merge: true) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                        return
+                    }
                     completion(.success(()))
                 }
-            }
+        } catch {
+            completion(.failure(error))
+        }
     }
     
     func deleteCategory(categoryId: String, completion: @escaping (Error?) -> Void) {
-        db.collection("Categories")
+        db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
             .document(categoryId)
             .delete { error in
                 if let error = error {

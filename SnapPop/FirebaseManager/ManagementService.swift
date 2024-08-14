@@ -15,15 +15,17 @@ final class ManagementService {
     
     func saveManagement(categoryId: String, management: Management, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
-            try db.collection("Categories")
+            try db.collection("Users")
+                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .collection("Categories")
                 .document(categoryId)
                 .collection("Managements")
                 .addDocument(from: management) { error in
                     if let error = error {
                         completion(.failure(error))
-                    } else {
-                        completion(.success(()))
+                        return
                     }
+                    completion(.success(()))
                 }
         } catch {
             completion(.failure(error))
@@ -31,36 +33,40 @@ final class ManagementService {
     }
     
     func loadManagements(categoryId: String, completion: @escaping (Result<[Management], Error>) -> Void) {
-        db.collection("Categories")
+        db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
             .document(categoryId)
             .collection("Managements")
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
                     completion(.failure(error))
-                } else {
-                    guard let documents = querySnapshot?.documents else { return }
-                    
-                    let managements = documents.compactMap { document in
-                        try? document.data(as: Management.self)
-                    }
-                    
-                    completion(.success(managements))
+                    return
                 }
+                guard let documents = querySnapshot?.documents else { return }
+                
+                let managements = documents.compactMap { document in
+                    try? document.data(as: Management.self)
+                }
+                
+                completion(.success(managements))
             }
     }
     
     func updateManagement(categoryId: String, managementId: String, updatedManagement: Management, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
-            try db.collection("Categories")
+            try db.collection("Users")
+                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .collection("Categories")
                 .document(categoryId)
                 .collection("Managements")
                 .document(managementId)
                 .setData(from: updatedManagement, merge: true) { error in
                     if let error = error {
                         completion(.failure(error))
-                    } else {
-                        completion(.success(()))
+                        return
                     }
+                    completion(.success(()))
                 }
         } catch {
             completion(.failure(error))
@@ -68,7 +74,9 @@ final class ManagementService {
     }
     
     func deleteManagement(categoryId: String, managementId: String, completion: @escaping (Error?) -> Void) {
-        db.collection("Categories")
+        db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
             .document(categoryId)
             .collection("Managements")
             .document(managementId)
