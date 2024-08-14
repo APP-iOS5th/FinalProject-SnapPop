@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */; };
+		4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */; };
+		4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */; };
+		4AD29AA42C65051B00A9BEDD /* SnapComparisonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA32C65051B00A9BEDD /* SnapComparisonViewModel.swift */; };
+		4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */; };
+		4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA72C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift */; };
+		4AD29AAC2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AAB2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift */; };
+		4AD29AD32C699DF200A9BEDD /* SnapPhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AD22C699DF200A9BEDD /* SnapPhotoViewController.swift */; };
+		4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AD42C6AE1F200A9BEDD /* UIView+Extensions.swift */; };
+		4AD29AD82C6B35BE00A9BEDD /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */; };
 		8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F16852F2C6354590010F8D8 /* AppDelegate.swift */; };
 		8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685312C6354590010F8D8 /* SceneDelegate.swift */; };
 		8F1685342C6354590010F8D8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685332C6354590010F8D8 /* ViewController.swift */; };
@@ -33,9 +43,26 @@
 		C2F416492C6B39AF00A2F544 /* Snap.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F416482C6B39AF00A2F544 /* Snap.swift */; };
 		C2F8B19D2C6A4D1400D73071 /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F8B19C2C6A4D1400D73071 /* Management.swift */; };
 		C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F8B19E2C6A4FD900D73071 /* ManagementService.swift */; };
+		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
+		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
+		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
+		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
+		EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */; };
+		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
+		EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047622C6510EE0033D807 /* NavigationViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonSheetViewModel.swift; sourceTree = "<group>"; };
+		4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCellViewModel.swift; sourceTree = "<group>"; };
+		4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonViewController.swift; sourceTree = "<group>"; };
+		4AD29AA32C65051B00A9BEDD /* SnapComparisonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonViewModel.swift; sourceTree = "<group>"; };
+		4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCollectionViewCell.swift; sourceTree = "<group>"; };
+		4AD29AA72C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalSnapPhotoCollectionViewCell.swift; sourceTree = "<group>"; };
+		4AD29AAB2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonSheetViewController.swift; sourceTree = "<group>"; };
+		4AD29AD22C699DF200A9BEDD /* SnapPhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapPhotoViewController.swift; sourceTree = "<group>"; };
+		4AD29AD42C6AE1F200A9BEDD /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		8F16852C2C6354590010F8D8 /* SnapPop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnapPop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F16852F2C6354590010F8D8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F1685312C6354590010F8D8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -44,7 +71,6 @@
 		8F16853B2C63545A0010F8D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F16853D2C63545A0010F8D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
-		C24BFA562C647E2500A5B40A /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		C24BFA722C64B01400A5B40A /* SnapPop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnapPop.entitlements; sourceTree = "<group>"; };
@@ -61,6 +87,13 @@
 		C2F416482C6B39AF00A2F544 /* Snap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snap.swift; sourceTree = "<group>"; };
 		C2F8B19C2C6A4D1400D73071 /* Management.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Management.swift; sourceTree = "<group>"; };
 		C2F8B19E2C6A4FD900D73071 /* ManagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementService.swift; sourceTree = "<group>"; };
+		EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionViewCell.swift; sourceTree = "<group>"; };
+		EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewCell.swift; sourceTree = "<group>"; };
+		EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewController.swift; sourceTree = "<group>"; };
+		EA50475A2C64A1390033D807 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
+		EA5047602C6500870033D807 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		EA5047622C6510EE0033D807 /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,10 +112,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A20F6452C6B3D4000F263FF /* SnapComparison */ = {
+			isa = PBXGroup;
+			children = (
+				4AD29AA32C65051B00A9BEDD /* SnapComparisonViewModel.swift */,
+				4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */,
+				4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */,
+			);
+			path = SnapComparison;
+			sourceTree = "<group>";
+		};
+		4AD29AD62C6AE33000A9BEDD /* SnapComparison */ = {
+			isa = PBXGroup;
+			children = (
+				4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */,
+				4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */,
+				4AD29AA72C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift */,
+				4AD29AAB2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift */,
+				4AD29AD22C699DF200A9BEDD /* SnapPhotoViewController.swift */,
+			);
+			path = SnapComparison;
+			sourceTree = "<group>";
+		};
 		8F1685232C6354590010F8D8 = {
 			isa = PBXGroup;
 			children = (
-				C24BFA562C647E2500A5B40A /* Config.xcconfig */,
 				C24BFA542C647BA600A5B40A /* .swiftlint.yml */,
 				8F16852E2C6354590010F8D8 /* SnapPop */,
 				8F16852D2C6354590010F8D8 /* Products */,
@@ -145,10 +199,12 @@
 		C24BFA5A2C647EBA00A5B40A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				EA141FA32C6B31C600DD4B29 /* Home */,
 				C25F38292C65B24F00EF9A2E /* Setting */,
 				C24BFA602C649C8100A5B40A /* Auth */,
 				8F1685332C6354590010F8D8 /* ViewController.swift */,
 				C2C005952C6A3FBD00963EC3 /* TestViewController.swift */,
+				4AD29AD62C6AE33000A9BEDD /* SnapComparison */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -156,8 +212,10 @@
 		C24BFA5B2C64801100A5B40A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				EA141FA42C6B31DE00DD4B29 /* Home */,
 				C2599B362C699AC5004EF6E7 /* Setting */,
 				C24BFA612C649CA700A5B40A /* Auth */,
+				4A20F6452C6B3D4000F263FF /* SnapComparison */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -165,6 +223,8 @@
 		C24BFA5C2C64809C00A5B40A /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				4AD29AD42C6AE1F200A9BEDD /* UIView+Extensions.swift */,
+				4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -212,6 +272,27 @@
 				C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */,
 			);
 			path = Setting;
+			sourceTree = "<group>";
+		};
+		EA141FA32C6B31C600DD4B29 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EA5047622C6510EE0033D807 /* NavigationViewController.swift */,
+				EA50475A2C64A1390033D807 /* HomeViewController.swift */,
+				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
+				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
+				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
+				EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		EA141FA42C6B31DE00DD4B29 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EA5047602C6500870033D807 /* HomeViewModel.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -285,8 +366,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA141FA22C6B2E2800DD4B29 /* GoogleService-Info.plist in Resources */,
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
-				C2F416452C6B255700A2F544 /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
 			);
@@ -320,6 +401,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,
 				C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */,
 				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
@@ -329,14 +411,31 @@
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
 				C2C005962C6A3FBD00963EC3 /* TestViewController.swift in Sources */,
+				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
+				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
+				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
+				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
+				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
+				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
+				4AD29AD32C699DF200A9BEDD /* SnapPhotoViewController.swift in Sources */,
+				4AD29AA42C65051B00A9BEDD /* SnapComparisonViewModel.swift in Sources */,
+				4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
+				EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */,
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
 				C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */,
 				C2599B3A2C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift in Sources */,
 				C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */,
+				4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */,
 				8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */,
 				C2734C382C69EDAF00E45294 /* Category.swift in Sources */,
 				C2F416472C6B397800A2F544 /* SnapService.swift in Sources */,
+				EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */,
+				EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */,
+				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
+				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
+				4AD29AD82C6B35BE00A9BEDD /* Color+Extensions.swift in Sources */,
+				4AD29AAC2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,7 +455,6 @@
 /* Begin XCBuildConfiguration section */
 		8F16853E2C63545A0010F8D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C24BFA562C647E2500A5B40A /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -420,7 +518,6 @@
 		};
 		8F16853F2C63545A0010F8D8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C24BFA562C647E2500A5B40A /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -484,7 +581,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 59FP2PXRXK;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
@@ -515,7 +612,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 59FP2PXRXK;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
