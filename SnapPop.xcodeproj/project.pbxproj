@@ -37,8 +37,6 @@
 		C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */; };
 		C2734C382C69EDAF00E45294 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C372C69EDAF00E45294 /* Category.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
-		C2C005962C6A3FBD00963EC3 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C005952C6A3FBD00963EC3 /* TestViewController.swift */; };
-		C2F416452C6B255700A2F544 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C2F416442C6B255700A2F544 /* GoogleService-Info.plist */; };
 		C2F416472C6B397800A2F544 /* SnapService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F416462C6B397800A2F544 /* SnapService.swift */; };
 		C2F416492C6B39AF00A2F544 /* Snap.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F416482C6B39AF00A2F544 /* Snap.swift */; };
 		C2F8B19D2C6A4D1400D73071 /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F8B19C2C6A4D1400D73071 /* Management.swift */; };
@@ -81,7 +79,6 @@
 		C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
 		C2734C372C69EDAF00E45294 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
-		C2C005952C6A3FBD00963EC3 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		C2F416442C6B255700A2F544 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2F416462C6B397800A2F544 /* SnapService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapService.swift; sourceTree = "<group>"; };
 		C2F416482C6B39AF00A2F544 /* Snap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snap.swift; sourceTree = "<group>"; };
@@ -203,7 +200,6 @@
 				C25F38292C65B24F00EF9A2E /* Setting */,
 				C24BFA602C649C8100A5B40A /* Auth */,
 				8F1685332C6354590010F8D8 /* ViewController.swift */,
-				C2C005952C6A3FBD00963EC3 /* TestViewController.swift */,
 				4AD29AD62C6AE33000A9BEDD /* SnapComparison */,
 			);
 			path = Views;
@@ -366,7 +362,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA141FA22C6B2E2800DD4B29 /* GoogleService-Info.plist in Resources */,
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
@@ -410,7 +405,6 @@
 				C2F8B19D2C6A4D1400D73071 /* Management.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
-				C2C005962C6A3FBD00963EC3 /* TestViewController.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,

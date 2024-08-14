@@ -21,7 +21,7 @@ class AppLockSettingTableViewCell: UITableViewCell {
         let toggleSwitch = UISwitch()
         
         toggleSwitch.isOn = UserDefaults.standard.bool(forKey: "appLockState")
-        toggleSwitch.onTintColor = UIColor(named: "toggleSwitchColor")
+        toggleSwitch.onTintColor = UIColor.customToggleColor
         toggleSwitch.addAction(UIAction { _ in
             UserDefaults.standard.set(toggleSwitch.isOn, forKey: "appLockState")
         }, for: .valueChanged)
