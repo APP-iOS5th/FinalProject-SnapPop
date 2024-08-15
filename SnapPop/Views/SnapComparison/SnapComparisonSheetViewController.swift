@@ -113,7 +113,7 @@ class SnapComparisonSheetViewController: UIViewController {
         pageViewController.dataSource = self
         pageViewController.delegate = self
         
-        if let startViewController = viewControllerAt(index: viewModel.selectedIndex) {
+        if let startViewController = viewControllerAt(index: viewModel.currentPhotoIndex) {
             pageViewController.setViewControllers([startViewController], direction: .forward, animated: true, completion: nil)
         }
         
@@ -203,8 +203,8 @@ extension SnapComparisonSheetViewController: UIPageViewControllerDelegate, UIPag
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? SnapPhotoViewController else { return nil }
-        let index = viewController.index
-        return viewControllerAt(index: index + 1)
+        let index = viewController.index + 1
+        return viewControllerAt(index: index)
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {

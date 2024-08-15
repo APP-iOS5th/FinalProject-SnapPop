@@ -39,19 +39,37 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     // MARK: - Properties
     // TODO: - 이후 이미지는 이미지URL로 바꾸는 작업 필요
     private var mockData: [MockSnap] = [
-        MockSnap(date: "2024년 3월 12일", images: [UIImage(systemName: "person.fill")!,
-                                            UIImage(systemName: "globe")!,
-                                            UIImage(systemName: "person.fill")!,
-                                            UIImage(systemName: "person.fill")!,
-                                            UIImage(systemName: "person.fill")!,
-                                            UIImage(systemName: "person.fill")!,
-                                            UIImage(systemName: "person.fill")!,
-                                            UIImage(systemName: "person.fill")!,
-                                            UIImage(systemName: "person.fill")!]),
-        MockSnap(date: "2024년 8월 1일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
-        MockSnap(date: "2024년 8월 2일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
-        MockSnap(date: "2024년 8월 3일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!]),
-        MockSnap(date: "2024년 8월 4일", images: [UIImage(systemName: "person.fill")!, UIImage(systemName: "person.fill")!])
+        MockSnap(date: "2024년 3월 12일", images: [
+            UIImage(systemName: "square.and.arrow.up")!,
+            UIImage(systemName: "pencil")!,
+            UIImage(systemName: "trash")!,
+            UIImage(systemName: "folder.fill")!,
+            UIImage(systemName: "eraser.fill")!,
+            UIImage(systemName: "scribble.variable")!,
+            UIImage(systemName: "highlighter")!,
+            UIImage(systemName: "lasso")!,
+            UIImage(systemName: "arrow.up.trash.fill")!
+        ]),
+
+        MockSnap(date: "2024년 8월 1일", images: [
+            UIImage(systemName: "square.and.arrow.down.fill")!,
+            UIImage(systemName: "pencil.circle")!
+        ]),
+
+        MockSnap(date: "2024년 8월 2일", images: [
+            UIImage(systemName: "trash.slash")!,
+            UIImage(systemName: "folder.badge.plus")!
+        ]),
+
+        MockSnap(date: "2024년 8월 3일", images: [
+            UIImage(systemName: "pencil.tip.crop.circle.badge.plus")!,
+            UIImage(systemName: "folder.fill.badge.plus")!
+        ]),
+
+        MockSnap(date: "2024년 8월 4일", images: [
+            UIImage(systemName: "trash.circle.fill")!,
+            UIImage(systemName: "square.and.pencil.circle.fill")!
+        ])
     ]
     var filteredSnapData: [MockSnap] = []
     var snapPhotoSelectionType: String = "전체" {

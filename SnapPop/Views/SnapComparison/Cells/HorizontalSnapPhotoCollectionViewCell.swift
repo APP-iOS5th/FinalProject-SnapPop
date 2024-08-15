@@ -10,7 +10,8 @@ import UIKit
 class HorizontalSnapPhotoCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
-    
+    static let identifier = "HorizontalSnapPhotoCollectionViewCell"
+
     /// 스냅 사진
     lazy var snapPhoto: UIImageView = {
         let image = UIImageView(image: UIImage(systemName: "person.fill"))

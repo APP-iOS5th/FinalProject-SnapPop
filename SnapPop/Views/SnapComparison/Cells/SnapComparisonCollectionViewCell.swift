@@ -11,6 +11,7 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     private var viewModel: SnapComparisonCellViewModelProtocol?
+    static let identifier = "SnapCollectionViewCell"
     
     // MARK: - UIComponents
     /// 스냅 날자 레이블
@@ -30,7 +31,7 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(HorizontalSnapPhotoCollectionViewCell.self, forCellWithReuseIdentifier: "HorizontalSnapPhotoCollectionViewCell")
+        collectionView.register(HorizontalSnapPhotoCollectionViewCell.self, forCellWithReuseIdentifier: HorizontalSnapPhotoCollectionViewCell.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .white
         return collectionView
@@ -93,7 +94,7 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let viewModel = viewModel else { return UICollectionViewCell() }
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HorizontalSnapPhotoCollectionViewCell", for: indexPath) as? HorizontalSnapPhotoCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HorizontalSnapPhotoCollectionViewCell.identifier, for: indexPath) as? HorizontalSnapPhotoCollectionViewCell else {
             return UICollectionViewCell()
         }
         
@@ -118,10 +119,15 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
         let sheetViewController = SnapComparisonSheetViewController(viewModel: viewModel)
         sheetViewController.modalPresentationStyle = .pageSheet
         
-        guard let testViewModel = self.viewModel else { return }
+        guard let snapComparisonCellViewModel = self.viewModel else { return }
         
-        sheetViewController.viewModel.filteredSnapData = testViewModel.filteredSnapData
+        sheetViewController.viewModel.filteredSnapData = snapComparisonCellViewModel.filteredSnapData
+        viewModel.currentDateIndex = snapComparisonCellViewModel.currentSectionIndex
+        viewModel.currentPhotoIndex = indexPath.row
         sheetViewController.snapDateLabel.text = snapCellDateLabel.text
+        
+        print("Selected Index: \(indexPath.section)")
+        print("Current Date Index: \(viewModel.currentDateIndex)")
         
         if let sheet = sheetViewController.sheetPresentationController {
             sheet.detents = [.medium()]
