@@ -18,8 +18,7 @@ class HomeViewModel {
     var tempSnapData: [Snap] = Snap.sampleData()
     var selectedImageURL: URL?
     var selectedImage: UIImage?
-    
-    /// 선택된 카메라 소스
+    var isEditingMode: Bool = false
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
     
     // MARK: - Methods
@@ -35,7 +34,7 @@ class HomeViewModel {
         
         let itemToMove = tempSnapData[sourceIndex]
         tempSnapData.remove(at: sourceIndex)
-                               
+        
         if destinationIndex >= tempSnapData.count {
             tempSnapData.append(itemToMove)
         } else {
@@ -131,7 +130,7 @@ class HomeViewModel {
             completion(false)
         }
     }
-
+    
     func requestPhotoLibraryAccess(completion: @escaping (Bool) -> Void) {
         switch PHPhotoLibrary.authorizationStatus() {
         case .authorized, .limited:
@@ -163,5 +162,27 @@ class HomeViewModel {
         })
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         viewController.present(alert, animated: true)
+    }
+    
+    /// 편집 모드 토글
+    func toggleEditingMode() {
+        isEditingMode.toggle()
+    }
+    
+    /// 특정 인덱스의 스냅 데이터 삭제
+    func deleteSnap(at index: Int) {
+        guard index >= 0 && index < tempSnapData.count else { return }
+        tempSnapData.remove(at: index)
+    }
+    
+    func saveEditedData() {
+        var updatedData: [Snap] = []
+        
+        for (index, snap) in tempSnapData.enumerated() {
+            let updatedSnap = snap
+            updatedData.append(updatedSnap)
+        }
+        
+        tempSnapData = updatedData
     }
 }
