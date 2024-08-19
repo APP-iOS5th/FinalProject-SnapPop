@@ -15,6 +15,7 @@
         
         private var segmentedControlTopConstraint: NSLayoutConstraint?
         private var tableViewHeightConstraint: NSLayoutConstraint?
+        private var donutChart: DoughnutChartViewController!
         
         private let scrollView: UIScrollView = {
             let scrollView = UIScrollView()
@@ -30,7 +31,7 @@
             return view
         }()
         
-        private let calendarAndTableView: UIStackView = {
+        private let firstStackViewView: UIStackView = {
             var stackView = UIStackView()
             stackView.axis = .vertical
             stackView.spacing = 0
@@ -40,13 +41,6 @@
             stackView.layer.borderColor = UIColor.lightGray.cgColor
             stackView.layer.cornerRadius = 20
             stackView.clipsToBounds = true
-
-//            let backgroundView = UIView(frame: .zero)
-//                backgroundView.backgroundColor = .white
-//                backgroundView.layer.cornerRadius = 20
-//                backgroundView.layer.masksToBounds = true
-//                stackView.insertSubview(backgroundView, at: 0)
-            
             return stackView
         }()
         
@@ -68,13 +62,6 @@
             return view
         }()
         
-        private let headerView: UIView = {
-            let view = UIView()
-            view.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 0.2)
-            view.translatesAutoresizingMaskIntoConstraints = false
-            return view
-        }()
-        
         private let dashButton: UIButton = {
             let button = UIButton()
             button.backgroundColor = UIColor(red: 94/255, green: 230/255, blue: 245/255, alpha: 0.2)
@@ -89,6 +76,16 @@
             return button
         }()
         
+        private let secondStackView: UIStackView = {
+            let stackView = UIStackView()
+            stackView.axis = .vertical
+            stackView.spacing = 10
+            stackView.alignment = .fill
+            stackView.distribution = .fill
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            return stackView
+        }()
+        
         private let segmentedControl = {
             let segmentedControl = UISegmentedControl(items: ["달성률", "비용"])
             segmentedControl.translatesAutoresizingMaskIntoConstraints = false
@@ -98,10 +95,11 @@
         }()
         
         private let graphView: UIView = {
-            let graphview = UIView()
-            graphview.translatesAutoresizingMaskIntoConstraints = false
-            return graphview
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            return view
         }()
+
         
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -115,28 +113,37 @@
         }
         
         private func setupViews() {
+            
+            donutChart = DoughnutChartViewController()
+            addChild(donutChart)
+            donutChart.view.frame = graphView.bounds
+            
             view.backgroundColor = .white
             view.addSubview(scrollView)
+            
             scrollView.addSubview(contentView)
-            contentView.addSubview(calendarAndTableView)
-            calendarAndTableView.addSubview(headerView)
-            calendarAndTableView.addArrangedSubview(calendarView)
-            calendarAndTableView.addArrangedSubview(tableView)
-            calendarAndTableView.addArrangedSubview(dashButton)
-            contentView.addSubview(segmentedControl)
-            contentView.addSubview(graphView)
+            contentView.addSubview(firstStackViewView)
+            contentView.addSubview(secondStackView)
+            firstStackViewView.addArrangedSubview(calendarView)
+            firstStackViewView.addArrangedSubview(tableView)
+            firstStackViewView.addArrangedSubview(dashButton)
+            secondStackView.addArrangedSubview(segmentedControl)
+            secondStackView.addArrangedSubview(graphView)
+            graphView.addSubview(donutChart.view)
+            
         }
         
         private func setupConstraints() {
             setupScrollViewConstraints()
             setupContentViewConstraints()
-            setupCalenderAndTableViewConstraints()
-            setupheaderViewConstraints()
+            setupFirstStackViewConstraints()
             setupCalendarViewConstraints()
             setupTableViewConstraints()
             setupdashButtonConstraints()
             setupSegmentedControlConstraints()
-            setupGraphViewConstraints()
+            setupsecondStackViewConstraints()
+            setupDonutChartViewConstraints()
+            setupgraphViewConstraints()
             
         }
         
@@ -158,29 +165,21 @@
                 contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
             ])
         }
-        private func setupCalenderAndTableViewConstraints() {
+        private func setupFirstStackViewConstraints() {
             NSLayoutConstraint.activate([
-                calendarAndTableView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                calendarAndTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                calendarAndTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+                firstStackViewView.topAnchor.constraint(equalTo: contentView.topAnchor),
+                firstStackViewView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                firstStackViewView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
             ])
         }
         
-        private func setupheaderViewConstraints() {
-            NSLayoutConstraint.activate([
-                headerView.topAnchor.constraint(equalTo: calendarView.topAnchor),
-                headerView.leadingAnchor.constraint(equalTo: calendarAndTableView.leadingAnchor),
-                headerView.trailingAnchor.constraint(equalTo: calendarAndTableView.trailingAnchor),
-                headerView.heightAnchor.constraint(equalToConstant: 20)
-            ])
-        }
-        
+    
         private func setupCalendarViewConstraints() {
             calendarView.locale = Locale(identifier: "ko_KR")
             NSLayoutConstraint.activate([
-                calendarView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-                calendarView.leadingAnchor.constraint(equalTo: calendarAndTableView.leadingAnchor),
-                calendarView.trailingAnchor.constraint(equalTo: calendarAndTableView.trailingAnchor),
+                calendarView.topAnchor.constraint(equalTo: firstStackViewView.topAnchor),
+                calendarView.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
+                calendarView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor)
             ])
         }
         
@@ -202,37 +201,55 @@
             tableView.separatorInset = .zero
             NSLayoutConstraint.activate([
                 tableView.topAnchor.constraint(equalTo: calendarView.bottomAnchor),
-                tableView.leadingAnchor.constraint(equalTo: calendarAndTableView.leadingAnchor),
-                tableView.trailingAnchor.constraint(equalTo: calendarAndTableView.trailingAnchor),
+                tableView.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor),
                 tableViewHeightConstraint!
             ])
         }
         private func setupdashButtonConstraints() {
             NSLayoutConstraint.activate([
                 dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-                dashButton.leadingAnchor.constraint(equalTo: calendarAndTableView.leadingAnchor),
-                dashButton.trailingAnchor.constraint(equalTo: calendarAndTableView.trailingAnchor),
+                dashButton.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
+                dashButton.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor),
                 dashButton.heightAnchor.constraint(equalToConstant: 20)
+            ])
+        }
+        
+        private func setupsecondStackViewConstraints() {
+            NSLayoutConstraint.activate([
+                secondStackView.topAnchor.constraint(equalTo: firstStackViewView.bottomAnchor),
+                secondStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+                secondStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+                secondStackView.heightAnchor.constraint(equalToConstant: 300)
             ])
         }
         
         private func setupSegmentedControlConstraints() {
             NSLayoutConstraint.activate([
-                segmentedControl.topAnchor.constraint(equalTo: calendarAndTableView.bottomAnchor, constant: 10),
-                segmentedControl.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-                segmentedControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
+                segmentedControl.topAnchor.constraint(equalTo: secondStackView.topAnchor),
+                segmentedControl.leadingAnchor.constraint(equalTo: secondStackView.leadingAnchor, constant: 5),
+                segmentedControl.trailingAnchor.constraint(equalTo: secondStackView.trailingAnchor, constant: -5)
             ])
         }
         
-        private func setupGraphViewConstraints() {
+        private func setupgraphViewConstraints() {
             NSLayoutConstraint.activate([
-                graphView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 20),
-                graphView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                graphView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                graphView.heightAnchor.constraint(equalToConstant: 300),
-                graphView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+                graphView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 30),
+                graphView.leadingAnchor.constraint(equalTo: secondStackView.leadingAnchor, constant: 5),
+                graphView.trailingAnchor.constraint(equalTo: secondStackView.trailingAnchor, constant: -5),
+                graphView.heightAnchor.constraint(equalToConstant: 200)
             ])
         }
+        
+        private func setupDonutChartViewConstraints() {
+            NSLayoutConstraint.activate([
+                donutChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
+                donutChart.view.leadingAnchor.constraint(equalTo: secondStackView.leadingAnchor, constant: 30),
+                donutChart.view.trailingAnchor.constraint(equalTo: secondStackView.trailingAnchor, constant: -30)
+            ])
+        }
+        
+     
         
     }
 
