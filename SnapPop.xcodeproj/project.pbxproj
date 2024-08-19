@@ -35,11 +35,8 @@
 		C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */; };
 		C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */; };
 		C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */; };
-		C2734C382C69EDAF00E45294 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C372C69EDAF00E45294 /* Category.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2F416472C6B397800A2F544 /* SnapService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F416462C6B397800A2F544 /* SnapService.swift */; };
-		C2F416492C6B39AF00A2F544 /* Snap.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F416482C6B39AF00A2F544 /* Snap.swift */; };
-		C2F8B19D2C6A4D1400D73071 /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F8B19C2C6A4D1400D73071 /* Management.swift */; };
 		C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F8B19E2C6A4FD900D73071 /* ManagementService.swift */; };
 		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
 		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
@@ -407,8 +404,6 @@
 				C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */,
 				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
 				C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */,
-				C2F416492C6B39AF00A2F544 /* Snap.swift in Sources */,
-				C2F8B19D2C6A4D1400D73071 /* Management.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
@@ -430,7 +425,6 @@
 				C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */,
 				4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */,
 				8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */,
-				C2734C382C69EDAF00E45294 /* Category.swift in Sources */,
 				C2F416472C6B397800A2F544 /* SnapService.swift in Sources */,
 				EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */,
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
