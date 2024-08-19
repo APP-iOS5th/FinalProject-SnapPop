@@ -11,9 +11,14 @@ import FirebaseAuth
 import GoogleSignIn
 import AuthenticationServices
 import CryptoKit
+import FirebaseFirestore
+import FirebaseStorage
 
 final class AuthViewModel {
     static let shared = AuthViewModel()
+    
+    private let db = Firestore.firestore()
+    private let storage = Storage.storage().reference()
     
     var currentNonce: String?
     
@@ -48,6 +53,9 @@ final class AuthViewModel {
                 if let error = error {
                     completion(.failure(error))
                 } else if let user = authResult?.user {
+                    self.db.collection("Users")
+                        .document(user.uid)
+                        .setData([:])
                     completion(.success(user))
                 }
             }
