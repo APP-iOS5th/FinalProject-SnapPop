@@ -13,6 +13,8 @@ class CalendarViewController: UIViewController {
     
     var selectedDate: DateComponents?
     
+    var sampledata = Management1.generateSampleManagementItems()
+    
     private var segmentedControlTopConstraint: NSLayoutConstraint?
     private var tableViewHeightConstraint: NSLayoutConstraint?
     private var donutChart: DoughnutChartViewController!
@@ -20,7 +22,7 @@ class CalendarViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = .clear
+        scrollView.backgroundColor = .systemBackground
         scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = true
         scrollView.showsHorizontalScrollIndicator = false
@@ -28,7 +30,7 @@ class CalendarViewController: UIViewController {
     }()
     private let contentView: UIStackView = {
         let view = UIStackView()
-        view.backgroundColor = .clear
+        view.backgroundColor = .systemBackground
         view.axis = .vertical
         view.spacing = 20
         view.alignment = .center
@@ -41,7 +43,8 @@ class CalendarViewController: UIViewController {
         stackView.axis = .vertical
         stackView.spacing = 0
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.backgroundColor = .clear
+        stackView.alignment = .center
+        stackView.backgroundColor = .systemBackground
         stackView.layer.borderWidth = 0.5
         stackView.layer.borderColor = UIColor.lightGray.cgColor
         stackView.layer.cornerRadius = 20
@@ -54,7 +57,7 @@ class CalendarViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsDateDecorations = true
         view.tintColor = UIColor(red: 120/255, green: 200/255, blue: 200/255, alpha: 0.8)
-        view.backgroundColor = .clear
+        view.backgroundColor = .systemBackground
         return view
     }()
     
@@ -62,8 +65,9 @@ class CalendarViewController: UIViewController {
         var view = UITableView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         view.sectionIndexColor = UIColor.black
+        view.register(TodoTableViewCell.self, forCellReuseIdentifier: "TodoCell")
         return view
     }()
     
@@ -84,6 +88,7 @@ class CalendarViewController: UIViewController {
     private let secondStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
+        stackView.alignment = .center
         stackView.spacing = 10
         stackView.alignment = .fill
         stackView.distribution = .fill
@@ -112,6 +117,7 @@ class CalendarViewController: UIViewController {
         calendarView.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.isScrollEnabled = false
         calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
         scrollView.isUserInteractionEnabled = true
         contentView.isUserInteractionEnabled = true
@@ -177,22 +183,21 @@ class CalendarViewController: UIViewController {
         ])
     }
     
-    
     private func setupFirstStackViewConstraints() {
         NSLayoutConstraint.activate([
-            firstStackViewView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            firstStackViewView.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 10),
             firstStackViewView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             firstStackViewView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
         ])
     }
     
-    
     private func setupCalendarViewConstraints() {
         calendarView.locale = Locale(identifier: "ko_KR")
         NSLayoutConstraint.activate([
-            calendarView.topAnchor.constraint(equalTo: firstStackViewView.topAnchor),
+            calendarView.topAnchor.constraint(equalTo: firstStackViewView.topAnchor, constant: -10),
             calendarView.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
-            calendarView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor)            ])
+            calendarView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor)          
+        ])
     }
     
     private func setupTableViewConstraints() {
@@ -223,24 +228,25 @@ class CalendarViewController: UIViewController {
             dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor),
             dashButton.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
             dashButton.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor),
-            dashButton.heightAnchor.constraint(equalToConstant: 20)
+            dashButton.heightAnchor.constraint(equalToConstant: 17)
         ])
     }
     
     private func setupsecondStackViewConstraints() {
         NSLayoutConstraint.activate([
             secondStackView.topAnchor.constraint(equalTo: firstStackViewView.bottomAnchor, constant: 30),
+            secondStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             secondStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             secondStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            secondStackView.heightAnchor.constraint(equalToConstant: 300)
+            secondStackView.heightAnchor.constraint(equalToConstant: 400)
         ])
     }
     
     private func setupSegmentedControlConstraints() {
         NSLayoutConstraint.activate([
             segmentedControl.topAnchor.constraint(equalTo: secondStackView.topAnchor),
-            segmentedControl.leadingAnchor.constraint(equalTo: secondStackView.leadingAnchor, constant: 5),
-            segmentedControl.trailingAnchor.constraint(equalTo: secondStackView.trailingAnchor, constant: -5),
+            segmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            segmentedControl.widthAnchor.constraint(equalTo: secondStackView.widthAnchor, constant: -20),
             segmentedControl.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
@@ -261,8 +267,7 @@ class CalendarViewController: UIViewController {
         ])
     }
     
-    
-    
+        
 }
 
 extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
@@ -293,18 +298,32 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionSin
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return max(1, dailymodels.todoList.count)
+        return max(1, sampledata.count)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell") ??
-        UITableViewCell(style: .default, reuseIdentifier: "TodoCell")
-        if dailymodels.todoList.isEmpty {
-            cell.textLabel?.text = "등록된 자기관리가 없습니다."
-        } else {
-            cell.textLabel?.text = dailymodels.todoList[indexPath.row]
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell", for: indexPath) as? TodoTableViewCell else {
+            fatalError("Unable to dequeue CustomTableViewCell")
         }
+        if sampledata.isEmpty {
+            cell.label.text = "등록된 자기관리가 없습니다."
+        } else {
+            cell.label.text = sampledata[indexPath.row].title
+        }
+        cell.updateCheckbocState(isChecked: sampledata[indexPath.row].isDone)
+        cell.checkboxButton.addTarget(self, action: #selector(checkboxTapped(_:)), for: .touchUpInside)
+        cell.checkboxButton.tag = indexPath.row
+        cell.checkboxButton.isSelected = sampledata[indexPath.row].isDone
+        
         return cell
+    }
+    
+    @objc func checkboxTapped(_ sender: UIButton) {
+        let index = sender.tag
+        sender.isSelected.toggle()
+        if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? TodoTableViewCell {
+            cell.updateCheckbocState(isChecked: sampledata[index].isDone)
+        }
     }
 }
 

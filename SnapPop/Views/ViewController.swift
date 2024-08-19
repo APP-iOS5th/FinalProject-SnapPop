@@ -33,12 +33,10 @@ class ViewController: UIViewController {
         let calendarView = CalendarViewController()
         navigationController?.pushViewController(calendarView, animated: true)
     }
-<<<<<<< HEAD
 
-=======
     override func viewWillAppear(_ animated: Bool) {
           super.viewWillAppear(animated)
           // Additional setup here
       }
->>>>>>> main
+
 }

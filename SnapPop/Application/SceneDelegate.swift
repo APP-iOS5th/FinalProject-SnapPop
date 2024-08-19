@@ -16,7 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windowScene)
         let homeViewController = HomeViewController()
-        let navigationController = UINavigationController(rootViewController: homeViewController)
+        let svenView = CalendarViewController()
+        let navigationController = UINavigationController(rootViewController: svenView)
         
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
@@ -50,8 +51,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> main
 }
