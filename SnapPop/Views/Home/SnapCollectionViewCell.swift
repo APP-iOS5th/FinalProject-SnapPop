@@ -7,7 +7,6 @@
 
 import UIKit
 
-// MARK : 스냅사진 컬렉션 뷰에 사용 되는 사진 셀
 class SnapCollectionViewCell: UICollectionViewCell {
     
     let snapImageView: UIImageView = {
@@ -70,6 +69,12 @@ class SnapCollectionViewCell: UICollectionViewCell {
         
         // 편집 모드에 따라 삭제 버튼 표시
         deleteButton.isHidden = !isEditing
+        
+        if let imageUrlString = snap.imageUrls.first {
+            loadImage(from: imageUrlString)
+        } else {
+            snapImageView.image = nil
+        }
     }
     
     private func loadImage(from urlString: String) {
