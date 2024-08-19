@@ -13,18 +13,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
-        let window = UIWindow(windowScene: windowScene)
-        
-        // Create the initial view controller
-        let homeViewController = HomeViewController()
-        
-        // Optional: If using navigation controller
-        // let navigationController = UINavigationController(rootViewController: homeViewController)
-        
-        // Set the root view controller (use `homeViewController` or `navigationController`)
-        window.rootViewController = homeViewController // Change this to `navigationController` if using navigation
-        window.makeKeyAndVisible()
+ 
+        window = UIWindow(windowScene: windowScene)
+        window?.backgroundColor = .systemBackground
+        window?.rootViewController = CustomTabBarController()
+        window?.makeKeyAndVisible()
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
