@@ -94,7 +94,13 @@ class CustomNavigationBarController: UINavigationController {
         }
         
         menuActions.append(UIAction(title: "카테고리 설정", handler: { _ in
-            // TODO: - 카테고리 설정 모달뷰 띄우기
+            // TODO: - 카테고리 설정 구현
+            let sheetViewController = CategorySettingsViewController()
+            if let sheet = sheetViewController.sheetPresentationController {
+                sheet.detents = [.medium()]
+                sheet.prefersGrabberVisible = true
+            }
+            self.present(sheetViewController, animated: true)
         }))
         
         return UIMenu(title: "카테고리 목록", children: menuActions)
