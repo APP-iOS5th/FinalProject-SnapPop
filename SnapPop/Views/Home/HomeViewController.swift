@@ -4,6 +4,7 @@
 //
 //  Created by Heeji Jung on 8/8/24.
 //
+
 import UIKit
 import SwiftUI
 import Photos
@@ -74,15 +75,15 @@ class HomeViewController: NavigationViewController,
     }()
     
     // 스냅 컬렉션
-    private let snapcollectionView: UICollectionView = {
+    private let snapCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
-        let snapcollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        snapcollectionView.backgroundColor = .clear
-        snapcollectionView.translatesAutoresizingMaskIntoConstraints = false
-        return snapcollectionView
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        return collectionView
     }()
     
     // 체크리스트 테이블
@@ -94,10 +95,12 @@ class HomeViewController: NavigationViewController,
         setupDatePickerView()
         setupSnapCollectionConstraints()
         setupChecklistConstraints()
-
-        snapcollectionView.dragDelegate = self
-        snapcollectionView.dropDelegate = self
-        snapcollectionView.dataSource = self
+        
+        viewModel.tempSnapData = Snap.sampleData()
+        snapCollectionView.dataSource = self
+        snapCollectionView.delegate = self
+        snapCollectionView.dragDelegate = self
+        snapCollectionView.dropDelegate = self
     }
     
     // MARK: - 날짜 선택 DatePicker UI 설정
@@ -151,13 +154,13 @@ class HomeViewController: NavigationViewController,
             // DatePicker 제약 조건
             datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: 8),
             datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor, constant: -8),
-            datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
+            datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor)
         ])
     }
     
     // MARK: - 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
-        let selectedDate = viewModel.dateChanged(sender)
+        _ = viewModel.dateChanged(sender)
     }
     
     // MARK: - 체크리스트 관련 요소 제약조건
@@ -166,15 +169,13 @@ class HomeViewController: NavigationViewController,
         
         addChild(checklistTableViewController)
         view.addSubview(checklistTableViewController.view)
-        checklistTableViewController.view.frame = view.bounds
         checklistTableViewController.didMove(toParent: self)
         
-        view.addSubview(checklistTableViewController.view)
         checklistTableViewController.view.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            checklistTableViewController.view.topAnchor.constraint(equalTo: snapcollectionView.bottomAnchor, constant: 20),
-            checklistTableViewController.view.leadingAnchor.constraint(equalTo: snapcollectionView.leadingAnchor),
+            checklistTableViewController.view.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: 20),
+            checklistTableViewController.view.leadingAnchor.constraint(equalTo: snapCollectionView.leadingAnchor),
             checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             checklistTableViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
         ])
@@ -189,19 +190,19 @@ class HomeViewController: NavigationViewController,
     
     // MARK: UITableViewDataSource - Cell Configuration
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CheckListCell", for: indexPath) as! ChecklistTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
         
-        let item = viewModel.checklistItems[indexPath.row] ?? ChecklistItem(id: "", categoryId: "", title: "", color: "", memo: "", status: false, createdAt: Date(), repeatCycle: 0, endDate: Date())
-        
+        let item = viewModel.checklistItems[indexPath.row]
         cell.configure(with: item)
         return cell
     }
+    
     // MARK: - 스냅뷰 컬렉션 관련 요소 제약조건
     private func setupSnapCollectionConstraints() {
         view.addSubview(snapTitle)
         view.addSubview(editButton)
         view.addSubview(addButton)
-        view.addSubview(snapcollectionView)
+        view.addSubview(snapCollectionView)
         
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
@@ -215,61 +216,57 @@ class HomeViewController: NavigationViewController,
             editButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
             
             // UICollectionView 제약 조건
-            snapcollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: 20),
-            snapcollectionView.leadingAnchor.constraint(equalTo: snapTitle.leadingAnchor),
-            snapcollectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -70),
-            snapcollectionView.heightAnchor.constraint(equalTo: snapcollectionView.widthAnchor, multiplier: 0.5),
+            snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: 20),
+            snapCollectionView.leadingAnchor.constraint(equalTo: snapTitle.leadingAnchor),
+            snapCollectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -70),
+            snapCollectionView.heightAnchor.constraint(equalTo: snapCollectionView.widthAnchor, multiplier: 0.5),
             
             // 추가 버튼 제약 조건
-            addButton.centerYAnchor.constraint(equalTo: snapcollectionView.centerYAnchor),
-            addButton.leadingAnchor.constraint(equalTo: snapcollectionView.trailingAnchor, constant: 10),
+            addButton.centerYAnchor.constraint(equalTo: snapCollectionView.centerYAnchor),
+            addButton.leadingAnchor.constraint(equalTo: snapCollectionView.trailingAnchor, constant: 10),
             addButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
             addButton.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.1),
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor)
         ])
-        
-        snapcollectionView.dataSource = self
-        snapcollectionView.delegate = self
-        snapcollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
+        snapCollectionView.dragInteractionEnabled = true
+        snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
     }
     
     // MARK: UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.tempimagedata.count
+        return viewModel.tempSnapData.count
     }
     
     // MARK: UICollectionViewDataSource - Cell Configuration
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
+        let snap = viewModel.tempSnapData[indexPath.item] // 'snaps'는 Snap 객체의 배열입니다.
           
-          let image = viewModel.tempimagedata[indexPath.item]
-          let isFirst = indexPath.item == 0
-          let isEditing = false 
-          cell.configure(with: image, isFirst: isFirst, isEditing: isEditing)
-          
+          cell.configure(with: snap, isFirst: indexPath.item == 0, isEditing: isEditing)
           return cell
     }
     
     // MARK: UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = collectionView.bounds.width * 0.95 // 전체 너비의 90%만 사용
+        let availableWidth = collectionView.bounds.width * 0.95 // 전체 너비의 95%만 사용
         let width = availableWidth / 2
         let height = width
         return CGSize(width: width, height: height)
     }
     
-    // MARK: - 스냅 사진 드래그 메서드
+    // MARK: - UICollectionViewDragDelegate
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let image = viewModel.tempimagedata[indexPath.item]
-        let imageProvider = NSItemProvider(object: image)
-        let dragItem = UIDragItem(itemProvider: imageProvider)
-        dragItem.localObject = image
+        let snap = viewModel.tempSnapData[indexPath.item]
+        let itemProvider = NSItemProvider(object: snap.id! as NSString) // ID를 사용하여 드래그 아이템을 식별
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        dragItem.localObject = snap
         return [dragItem]
     }
     
     // MARK: - 스냅 사진 드롭 메서드
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-        var destinationIndexPath: IndexPath
+        let destinationIndexPath: IndexPath
+        
         if let indexPath = coordinator.destinationIndexPath {
             destinationIndexPath = indexPath
         } else {
@@ -277,69 +274,79 @@ class HomeViewController: NavigationViewController,
             destinationIndexPath = IndexPath(item: row - 1, section: 0)
         }
         
-        guard coordinator.proposal.operation == .move else { return }
+        if coordinator.proposal.operation == .move {
+            reloadItems(coordinator: coordinator, destinationIndexPath: destinationIndexPath, collectionView: snapCollectionView)
+        }
+    }
+    // MARK: - Reloading Items after Drag and Drop
+    private func reloadItems(coordinator: UICollectionViewDropCoordinator, destinationIndexPath: IndexPath, collectionView: UICollectionView) {
+        guard let item = coordinator.items.first,
+              let sourceIndexPath = item.sourceIndexPath else { return }
         
-        // 드랍된 항목을 처리
-        for item in coordinator.items {
-            if let sourceIndexPath = item.sourceIndexPath {
-                collectionView.performBatchUpdates({
-                    // sourceIndexPath에서 항목을 제거하고 destinationIndexPath로 삽입
-                    let movedImage = viewModel.tempimagedata.remove(at: sourceIndexPath.item)
-                    viewModel.tempimagedata.insert(movedImage, at: destinationIndexPath.item)
-                    
-                    // 컬렉션 뷰 항목 이동
-                    collectionView.moveItem(at: sourceIndexPath, to: destinationIndexPath)
-                }, completion: nil)
+        collectionView.performBatchUpdates({
+            let temp = viewModel.tempSnapData[sourceIndexPath.item]
+            viewModel.tempSnapData.remove(at: sourceIndexPath.item)
+            viewModel.tempSnapData.insert(temp, at: destinationIndexPath.item)
+            
+            collectionView.deleteItems(at: [sourceIndexPath])
+            collectionView.insertItems(at: [destinationIndexPath])
+        }, completion: nil)
+        
+        coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
+    }
+    
+    // MARK: - UICollectionView Drop Session Handling
+    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: any UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+        if collectionView.hasActiveDrag {
+            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        }
+        
+        return UICollectionViewDropProposal(operation: .forbidden)
+    }
+
+    // MARK: - 사진 추가버튼 이벤트 메소드
+    @objc func addButtonTapped() {
+        viewModel.imagepickerActionSheet(from: self)
+        
+        viewModel.selectedSource = { [weak self] sourceType in
+            guard let self = self else { return }
+            
+            let imagePickerController = UIImagePickerController()
+            imagePickerController.delegate = self
+            imagePickerController.sourceType = sourceType
+            DispatchQueue.main.async {
+                self.present(imagePickerController, animated: true, completion: nil)
             }
         }
     }
     
-    // MARK: 사진 추가버튼 이벤트 메소드 (카메라or갤러리를 선택하라는 alertcontroller show)
-    @objc func addButtonTapped() {
-        // UIAlertController 생성
-        let alert = UIAlertController(title: "사진을 선택해주세요.", message: nil, preferredStyle: .actionSheet)
-        
-        // 카메라 버튼 추가
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            alert.addAction(UIAlertAction(title: "카메라", style: .default, handler: { _ in
-                self.presentImagePicker(with: .camera)
-            }))
-        }
-        
-        // 갤러리 버튼 추가
-        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            alert.addAction(UIAlertAction(title: "갤러리", style: .default, handler: { _ in
-                self.presentImagePicker(with: .photoLibrary)
-            }))
-        }
-        
-        // 취소 버튼 추가
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
-        // 모달 표시
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    // MARK: Present Image Picker
-    func presentImagePicker(with sourceType: UIImagePickerController.SourceType) {
-        let imagePickerController = UIImagePickerController()
-           imagePickerController.delegate = self
-           imagePickerController.sourceType = sourceType
-           self.present(imagePickerController, animated: true, completion: nil)
-       }
-    }
-    
-    // MARK: 이미지 선택 후 처리
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[.originalImage] as? UIImage {
-            // 선택된 이미지를 처리하는 코드 작성
-            print("Selected image: \(selectedImage)")
+        picker.dismiss(animated: true, completion: nil)
+        
+        if let imageURL = info[.imageURL] as? URL {
+            fetchPhotoDetails(from: imageURL)
+        } else if let image = info[.originalImage] as? UIImage {
+            print("선택된 이미지: \(image)")
         }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
+    
+    private func fetchPhotoDetails(from url: URL) {
+        let assets = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil)
+        assets.enumerateObjects { asset, _, _ in
+            let creationDate = asset.creationDate ?? Date()
+            let localIdentifier = asset.localIdentifier
+            let imageUrl = url.absoluteString
+            let snap = Snap(id: localIdentifier, imageUrls: [imageUrl], createdAt: creationDate)
 
-
-
+            self.viewModel.tempSnapData.append(snap)
+        }
+        print("Found asset count: \(assets.count)")
+    }
+}
 
 #if DEBUG
 struct HomeViewControllerPreview: PreviewProvider {
