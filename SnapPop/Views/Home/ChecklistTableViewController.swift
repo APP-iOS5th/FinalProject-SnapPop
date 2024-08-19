@@ -25,7 +25,6 @@ class ChecklistTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.addSubview(selfcareAddButton)
         setupButtonConstraints()
         
@@ -39,6 +38,7 @@ class ChecklistTableViewController: UITableViewController {
     
     private func setupButtonConstraints() {
         NSLayoutConstraint.activate([
+            
             selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor), // 수평 중앙 정렬
             selfcareAddButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10), // 셀 하단에 위치
             selfcareAddButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1), // 높이 비율 조정

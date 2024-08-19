@@ -45,8 +45,6 @@ class HomeViewModel {
         print("Updated tempSnapData: \(tempSnapData)")
     }
     
-    
-    
     /// 액션시트에 선택된 옵션에 따른 처리 메소드
     func showImagePickerActionSheet(from viewController: UIViewController) {
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)

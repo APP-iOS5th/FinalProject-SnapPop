@@ -18,7 +18,7 @@ class SnapCollectionViewCell: UICollectionViewCell {
     
     let deleteButton: UIButton = {
         let button = UIButton(type: .custom)
-        let deleteImage = UIImage(systemName: "minus.circle")
+        let deleteImage = UIImage(systemName: "minus.circle.fill")
         button.setImage(deleteImage, for: .normal)
         button.tintColor = .red
         button.isHidden = true
@@ -79,32 +79,35 @@ class SnapCollectionViewCell: UICollectionViewCell {
     
     private func loadImage(from urlString: String) {
         
-//        이건 테스트용!
-        guard URL(string: urlString) != nil else {
+        //        이건 테스트용!
+        //        guard URL(string: urlString) != nil else {
+        //            snapImageView.image = nil
+        //            return
+        //        }
+        //        // 로컬 이미지
+        //        if let image = UIImage(named: urlString) {
+        //            snapImageView.image = image
+        //        } else {
+        //            snapImageView.image = nil
+        //        }
+        
+        // URL 객체로 변환
+        guard let url = URL(string: urlString) else {
             snapImageView.image = nil
             return
         }
-        // 로컬 이미지
-        if let image = UIImage(named: urlString) {
-            snapImageView.image = image
-        } else {
-            snapImageView.image = nil
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.snapImageView.image = image
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.snapImageView.image = nil
+                }
+            }
         }
-        
-        // Uncomment this block to load image from URL
-        
-//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-//            if let data = data, let image = UIImage(data: data) {
-//                DispatchQueue.main.async {
-//                    self.snapImageView.image = image
-//                }
-//            } else {
-//                DispatchQueue.main.async {
-//                    self.snapImageView.image = nil
-//                }
-//            }
-//        }
-//        task.resume()
-        
+        task.resume()
     }
 }
