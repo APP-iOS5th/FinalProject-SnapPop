@@ -122,7 +122,7 @@ class HomeViewController:
     // MARK: 날짜 선택 UI 컨트롤
     private func setupDatePickerContainer() {
         datePickerContainer.translatesAutoresizingMaskIntoConstraints = false
-        datePickerContainer.backgroundColor = UIColor(red: 199/255, green: 239/255, blue: 247/255, alpha: 1.0)
+        datePickerContainer.backgroundColor = UIColor.customButtonColor
         datePickerContainer.layer.cornerRadius = 10
         datePickerContainer.layer.masksToBounds = true
         view.addSubview(datePickerContainer)
@@ -149,17 +149,18 @@ class HomeViewController:
     // MARK: 날짜 선택기 제약 조건 설정
     private func setupDatePickerConstraints() {
         NSLayoutConstraint.activate([
-            datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            datePickerContainer.heightAnchor.constraint(equalToConstant: 40),
+            datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.02),
+            //datePickerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
             
-            calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor, constant: 8),
+            calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor, constant: view.bounds.width * 0.02),
             calendarImageView.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
-            calendarImageView.widthAnchor.constraint(equalToConstant: 24),
-            calendarImageView.heightAnchor.constraint(equalToConstant: 24),
+            calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
+            calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
             
-            datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: 8),
-            datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor, constant: -8),
+            datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: view.bounds.width * 0.02),
+            datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor, constant: -view.bounds.width * 0.02),
             datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor)
         ])
     }
@@ -171,7 +172,7 @@ class HomeViewController:
     
     // MARK: - 체크리스트 관련 요소 제약조건
     private func setupChecklistView() {
-        checklistTableViewController.viewModel = viewModel // ViewModel 전달
+        checklistTableViewController.viewModel = viewModel
         
         addChild(checklistTableViewController)
         view.addSubview(checklistTableViewController.view)
@@ -180,10 +181,10 @@ class HomeViewController:
         checklistTableViewController.view.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            checklistTableViewController.view.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: 20),
-            checklistTableViewController.view.leadingAnchor.constraint(equalTo: snapCollectionView.leadingAnchor),
-            checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            checklistTableViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
+            checklistTableViewController.view.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: view.bounds.height * 0.02),
+            checklistTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            checklistTableViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
         checklistTableViewController.tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
@@ -212,28 +213,20 @@ class HomeViewController:
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
-        // Edit button constraints
         NSLayoutConstraint.activate([
-            snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: 20),
+            snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.02),
             
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
-            editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-        ])
-        
-        // Snap collection view constraints
-        NSLayoutConstraint.activate([
-            snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: 20),
-            snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            snapCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -80), // 여백을 추가
+            editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            
+            snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.02),
+            snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            snapCollectionView.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -view.bounds.width * 0.02),
             snapCollectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3),
-        ])
-        
-        // Add button constraints
-        NSLayoutConstraint.activate([
+            
             addButton.centerYAnchor.constraint(equalTo: snapCollectionView.centerYAnchor),
-            addButton.leadingAnchor.constraint(equalTo: snapCollectionView.trailingAnchor, constant: 10),
-            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.1),
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor)
         ])
