@@ -2,9 +2,8 @@
 //  Category.swift
 //  SnapPop
 //
-//  Created by 이인호 on 8/12/24.
+//  Created by Heeji Jung on 8/19/24.
 //
-
 import Foundation
 import FirebaseFirestore
 import FirebaseStorage
