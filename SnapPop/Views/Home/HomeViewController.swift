@@ -26,7 +26,8 @@ extension UIViewController {
     }
 }
 
-class HomeViewController: NavigationViewController,
+class HomeViewController:
+    UIViewController,
     UIImagePickerControllerDelegate,
     UINavigationControllerDelegate,
     UITableViewDataSource,
@@ -69,7 +70,7 @@ class HomeViewController: NavigationViewController,
         let button = UIButton(type: .custom)
         button.setTitle("+", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 1.0)
+        button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -92,11 +93,12 @@ class HomeViewController: NavigationViewController,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 250/255, green: 251/255, blue: 253/255, alpha: 1.0)
+        view.backgroundColor = UIColor.customBackgroundColor
         setupDatePickerView()
         setupSnapCollectionView()
         setupChecklistView()
         
+        viewModel.checklistItems = Management.generateSampleManagementItems()
         viewModel.tempSnapData = Snap.sampleData()
         snapCollectionView.dataSource = self
         snapCollectionView.delegate = self
@@ -169,7 +171,7 @@ class HomeViewController: NavigationViewController,
     
     // MARK: - 체크리스트 관련 요소 제약조건
     private func setupChecklistView() {
-        checklistTableViewController.viewModel = viewModel
+        checklistTableViewController.viewModel = viewModel // ViewModel 전달
         
         addChild(checklistTableViewController)
         view.addSubview(checklistTableViewController.view)
