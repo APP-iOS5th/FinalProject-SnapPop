@@ -11,6 +11,7 @@
 		4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
 		4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */; };
+		4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */; };
 		4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */; };
 		4AD29AA42C65051B00A9BEDD /* SnapComparisonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA32C65051B00A9BEDD /* SnapComparisonViewModel.swift */; };
 		4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */; };
@@ -57,6 +58,7 @@
 		4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCellViewModel.swift; sourceTree = "<group>"; };
 		4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBarController.swift; sourceTree = "<group>"; };
 		4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
+		4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCalendarViewController.swift; sourceTree = "<group>"; };
 		4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonViewController.swift; sourceTree = "<group>"; };
 		4AD29AA32C65051B00A9BEDD /* SnapComparisonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonViewModel.swift; sourceTree = "<group>"; };
 		4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 			children = (
 				4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */,
 				4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */,
+				4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -426,6 +429,7 @@
 				C2F416492C6B39AF00A2F544 /* Snap.swift in Sources */,
 				4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */,
 				C2F8B19D2C6A4D1400D73071 /* Management.swift in Sources */,
+				4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
