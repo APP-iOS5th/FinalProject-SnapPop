@@ -12,12 +12,6 @@ class ChecklistTableViewCell: UITableViewCell {
     // 체크버튼
     let checkBox: UIButton = {
          let button = UIButton(type: .custom)
-         
-         // 체크박스 이미지 설정
-//         let noncheckmarkImage = UIImage(systemName: "circle")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
-//         let checkmarkImage = UIImage(systemName: "circle.fill")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)         
-//         button.setImage(noncheckmarkImage, for: .normal)
-//         button.setImage(checkmarkImage, for: .selected)
          button.translatesAutoresizingMaskIntoConstraints = false
          return button
      }()
@@ -60,7 +54,7 @@ class ChecklistTableViewCell: UITableViewCell {
     }
     
     // MARK: - Configure Cell with Checklist Item
-    func configure(with item: ChecklistItem) {
+    func configure(with item: Management) {
         checkLabel.text = item.title
         
         // 색상 설정
@@ -71,8 +65,8 @@ class ChecklistTableViewCell: UITableViewCell {
             checkLabel.textColor = .black
         }
         
-        // 체크박스 상태 설정
-        checkBox.isSelected = item.status
+        // 체크박스 상태 설정 (일단 임시)
+        checkBox.isSelected = item.alertStatus
     }
     
     // MARK: - Update CheckBox Images with Color
