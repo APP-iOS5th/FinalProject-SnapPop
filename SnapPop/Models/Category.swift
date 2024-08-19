@@ -21,3 +21,15 @@ struct Category: Identifiable, Hashable, Codable {
         self.alertStatus = alertStatus
     }
 }
+
+// MARK: - Category Extension
+extension Category {
+    static func generateSampleCategories() -> [Category] {
+        return [
+            Category(userId: UUID().uuidString, title: "탈모 관리", alertStatus: true),
+            Category(userId: UUID().uuidString, title: "팔자 주름 관리", alertStatus: false),
+            Category(userId: UUID().uuidString, title: "운동 계획", alertStatus: true),
+            Category(userId: UUID().uuidString, title: "식단 관리", alertStatus: false)
+        ]
+    }
+}

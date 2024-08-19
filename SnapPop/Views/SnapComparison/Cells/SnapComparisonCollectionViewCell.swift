@@ -10,7 +10,8 @@ import UIKit
 class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
-    private var viewModel = SnapComparisonCellViewModel()
+    private var viewModel: SnapComparisonCellViewModelProtocol?
+    static let identifier = "SnapCollectionViewCell"
     
     // MARK: - UIComponents
     /// 스냅 날자 레이블
@@ -30,13 +31,20 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(HorizontalSnapPhotoCollectionViewCell.self, forCellWithReuseIdentifier: "HorizontalSnapPhotoCollectionViewCell")
+        collectionView.register(HorizontalSnapPhotoCollectionViewCell.self, forCellWithReuseIdentifier: HorizontalSnapPhotoCollectionViewCell.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .white
         return collectionView
     }()
     
     // MARK: - Initializers
+    
+    init(viewModel: SnapComparisonCellViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(frame: .zero)
+        setupLayout()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -67,23 +75,26 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
         
     }
     
-    func configure(with data: Snap, viewModel: SnapComparisonViewModel, sectionIndex: Int) {
+    func configure(with viewModel: SnapComparisonCellViewModelProtocol, data: MockSnap, filteredData: [MockSnap], sectionIndex: Int) {
+        self.viewModel = viewModel
+        self.viewModel?.snapPhotos = data.images
+        self.viewModel?.currentSectionIndex = sectionIndex
+        self.viewModel?.filteredSnapData = filteredData
         snapCellDateLabel.text = data.date
-        self.viewModel.snapPhotos = data.images
-        self.viewModel.filteredSnapData = viewModel.filteredSnapData
         horizontalSnapPhotoCollectionView.reloadData()
-        self.viewModel.currentSectionIndex = sectionIndex
     }
 }
 
 // MARK: - UICollectionViewDelegate, DataSource Methods
 extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.numberOfSections()
+        guard let viewModel = viewModel else { return 1 }
+        return viewModel.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HorizontalSnapPhotoCollectionViewCell", for: indexPath) as? HorizontalSnapPhotoCollectionViewCell else {
+        guard let viewModel = viewModel else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HorizontalSnapPhotoCollectionViewCell.identifier, for: indexPath) as? HorizontalSnapPhotoCollectionViewCell else {
             return UICollectionViewCell()
         }
         
@@ -104,10 +115,19 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let sheetViewController = SnapComparisonSheetViewController()
+        let viewModel = SnapComparisonSheetViewModel()
+        let sheetViewController = SnapComparisonSheetViewController(viewModel: viewModel)
         sheetViewController.modalPresentationStyle = .pageSheet
-        sheetViewController.viewModel.filteredSnapData = viewModel.filteredSnapData
+        
+        guard let snapComparisonCellViewModel = self.viewModel else { return }
+        
+        sheetViewController.viewModel.filteredSnapData = snapComparisonCellViewModel.filteredSnapData
+        viewModel.currentDateIndex = snapComparisonCellViewModel.currentSectionIndex
+        viewModel.currentPhotoIndex = indexPath.row
         sheetViewController.snapDateLabel.text = snapCellDateLabel.text
+        
+        print("Selected Index: \(indexPath.section)")
+        print("Current Date Index: \(viewModel.currentDateIndex)")
         
         if let sheet = sheetViewController.sheetPresentationController {
             sheet.detents = [.medium()]

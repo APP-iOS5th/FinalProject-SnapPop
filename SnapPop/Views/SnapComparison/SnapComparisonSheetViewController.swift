@@ -9,7 +9,7 @@ import UIKit
 
 class SnapComparisonSheetViewController: UIViewController {
     // MARK: - Properties
-    var viewModel = SnapComparisonSheetViewModel()
+    var viewModel: SnapComparisonSheetViewModelProtocol
     
     // MARK: - UIComponents
     /// 스냅 날자
@@ -50,13 +50,23 @@ class SnapComparisonSheetViewController: UIViewController {
     /// 페이지 컨트롤
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = viewModel.currentSnap?.images.count ?? 0
+        pageControl.numberOfPages = viewModel.currentSnap.images.count
         pageControl.currentPage = viewModel.currentPhotoIndex
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .systemGray5
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
     }()
+    
+    // MARK: - Initializers
+    init(viewModel: SnapComparisonSheetViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -103,7 +113,7 @@ class SnapComparisonSheetViewController: UIViewController {
         pageViewController.dataSource = self
         pageViewController.delegate = self
         
-        if let startViewController = viewControllerAt(index: viewModel.selectedIndex) {
+        if let startViewController = viewControllerAt(index: viewModel.currentPhotoIndex) {
             pageViewController.setViewControllers([startViewController], direction: .forward, animated: true, completion: nil)
         }
         
@@ -146,9 +156,8 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     private func updateUI() {
-        guard let currentSnap = viewModel.currentSnap else { return }
-        snapDateLabel.text = currentSnap.date
-        pageControl.numberOfPages = currentSnap.images.count
+        snapDateLabel.text = viewModel.currentSnap.date
+        pageControl.numberOfPages = viewModel.currentSnap.images.count
         pageControl.currentPage = viewModel.currentPhotoIndex
         
         // 화살표 버튼 숨김
@@ -194,8 +203,8 @@ extension SnapComparisonSheetViewController: UIPageViewControllerDelegate, UIPag
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? SnapPhotoViewController else { return nil }
-        let index = viewController.index
-        return viewControllerAt(index: index + 1)
+        let index = viewController.index + 1
+        return viewControllerAt(index: index)
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {

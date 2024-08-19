@@ -37,8 +37,7 @@ final class SnapService {
     }
     
     func saveSnap(categoryId: String, imageUrls: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-        let snap = Snap(imageUrls: imageUrls)
-        
+        let snap = Snap(id: nil, imageUrls: imageUrls, createdAt: nil)
         do {
             try db.collection("Users")
                 .document(AuthViewModel.shared.currentUser?.uid ?? "")
