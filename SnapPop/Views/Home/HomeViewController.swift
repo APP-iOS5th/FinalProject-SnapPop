@@ -240,14 +240,10 @@ class HomeViewController: NavigationViewController,
     // MARK: UICollectionViewDataSource - Cell Configuration
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
-        
-        let snap = viewModel.tempSnapData[indexPath.item]
-        let isFirst = indexPath.item == 0
-        let isEditing = false
-        
-        cell.configure(with: snap, isFirst: isFirst, isEditing: isEditing)
-        
-        return cell
+        let snap = viewModel.tempSnapData[indexPath.item] // 'snaps'는 Snap 객체의 배열입니다.
+          
+          cell.configure(with: snap, isFirst: indexPath.item == 0, isEditing: isEditing)
+          return cell
     }
     
     // MARK: UICollectionViewDelegateFlowLayout

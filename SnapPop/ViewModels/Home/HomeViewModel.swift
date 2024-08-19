@@ -16,7 +16,7 @@ class HomeViewModel {
     var checklistItems: [Management] = Management.generateSampleManagementItems()
     var selectedImageURL: URL?
     var selectedImage: UIImage?
-    var tempSnapData: [Snap] = []
+    var tempSnapData: [Snap] = Snap.sampleData()
     
     // 선택된 카메라 소스
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
