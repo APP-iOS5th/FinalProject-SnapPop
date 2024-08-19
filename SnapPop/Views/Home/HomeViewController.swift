@@ -101,6 +101,11 @@ class HomeViewController: NavigationViewController,
         snapCollectionView.delegate = self
         snapCollectionView.dragDelegate = self
         snapCollectionView.dropDelegate = self
+        
+        viewModel.selectedSource = { [weak self] sourceType in
+            guard let self = self else { return }
+            self.viewModel.handleImageSource(sourceType, from: self)
+        }
     }
     
     // MARK: - 날짜 선택 DatePicker UI 설정
@@ -278,21 +283,19 @@ class HomeViewController: NavigationViewController,
             reloadItems(coordinator: coordinator, destinationIndexPath: destinationIndexPath, collectionView: snapCollectionView)
         }
     }
-    // MARK: - Reloading Items after Drag and Drop
+    // MARK: - 스냅 사진 드랍 후, 스냅사진 리로딩
     private func reloadItems(coordinator: UICollectionViewDropCoordinator, destinationIndexPath: IndexPath, collectionView: UICollectionView) {
         guard let item = coordinator.items.first,
               let sourceIndexPath = item.sourceIndexPath else { return }
         
+        viewModel.droptoSnapUpdate(from: sourceIndexPath.item, to: destinationIndexPath.item)
+        
         collectionView.performBatchUpdates({
-            let temp = viewModel.tempSnapData[sourceIndexPath.item]
-            viewModel.tempSnapData.remove(at: sourceIndexPath.item)
-            viewModel.tempSnapData.insert(temp, at: destinationIndexPath.item)
-            
             collectionView.deleteItems(at: [sourceIndexPath])
             collectionView.insertItems(at: [destinationIndexPath])
-        }, completion: nil)
-        
-        coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
+        }, completion: { _ in
+            coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
+        })
     }
     
     // MARK: - UICollectionView Drop Session Handling

@@ -30,6 +30,24 @@ class HomeViewModel {
     
     // MARK: 액션시트에 선택된 옵션에 따른 처리 메소드
     func imagepickerActionSheet(from viewController: UIViewController) {
+    /// 스냅 사진 드랍   후 배열 재정의
+    func droptoSnapUpdate(from sourceIndex: Int, to destinationIndex: Int) {
+        guard sourceIndex != destinationIndex, sourceIndex < tempSnapData.count else { return }
+        
+        let itemToMove = tempSnapData[sourceIndex]
+        tempSnapData.remove(at: sourceIndex)
+                               
+        if destinationIndex >= tempSnapData.count {
+            tempSnapData.append(itemToMove)
+        } else {
+            tempSnapData.insert(itemToMove, at: destinationIndex)
+        }
+        
+        print("Item moved from index \(sourceIndex) to \(destinationIndex)")
+        print("Updated tempSnapData: \(tempSnapData)")
+    }
+    
+    
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)
         
         if UIImagePickerController.isSourceTypeAvailable(.camera) {

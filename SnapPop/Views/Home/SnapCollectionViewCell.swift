@@ -77,18 +77,24 @@ class SnapCollectionViewCell: UICollectionViewCell {
             snapImageView.image = nil
             return
         }
-        // 이미지 다운로드
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data, let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.snapImageView.image = image
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.snapImageView.image = nil
-                }
-            }
+        // 로컬 이미지
+        if let image = UIImage(named: urlString) {
+            snapImageView.image = image
+        } else {
+            snapImageView.image = nil
         }
-        task.resume()
+        
+//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+//            if let data = data, let image = UIImage(data: data) {
+//                DispatchQueue.main.async {
+//                    self.snapImageView.image = image
+//                }
+//            } else {
+//                DispatchQueue.main.async {
+//                    self.snapImageView.image = nil
+//                }
+//            }
+//        }
+//        task.resume()
     }
 }
