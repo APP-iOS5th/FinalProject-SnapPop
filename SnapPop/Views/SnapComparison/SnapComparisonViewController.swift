@@ -11,7 +11,7 @@ class SnapComparisonViewController: UIViewController {
     
     // MARK: - Properties
     /// 스냅 비교 뷰 모델
-    private let viewModel = SnapComparisonViewModel()
+    private var viewModel: SnapComparisonViewModelProtocol
     
     /// 스냅 사진 선택 메뉴
     private var snapPhotoMenuItems: [UIAction] {
@@ -61,11 +61,21 @@ class SnapComparisonViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(SnapComparisonCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
+        collectionView.register(SnapComparisonCollectionViewCell.self, forCellWithReuseIdentifier: SnapComparisonCollectionViewCell.identifier)
         collectionView.backgroundColor = .white
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
+    
+    // MARK: - Initializers
+    init(viewModel: SnapComparisonViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -139,7 +149,7 @@ class SnapComparisonViewController: UIViewController {
 extension SnapComparisonViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        viewModel.numberOfSections()
+        viewModel.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -147,11 +157,15 @@ extension SnapComparisonViewController: UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as? SnapComparisonCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SnapComparisonCollectionViewCell.identifier, for: indexPath) as? SnapComparisonCollectionViewCell else {
             return UICollectionViewCell()
         }
+                
+        let cellViewModel = SnapComparisonCellViewModel()
+        let data = viewModel.item(at: indexPath)
+        let filteredSnapData = viewModel.filteredSnapData
         
-        cell.configure(with: viewModel.item(at: indexPath), viewModel: viewModel, sectionIndex: indexPath.section)
+        cell.configure(with: cellViewModel, data: data, filteredData: filteredSnapData, sectionIndex: indexPath.section)
         
         return cell
     }

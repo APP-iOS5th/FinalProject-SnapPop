@@ -119,14 +119,22 @@
 			path = SnapComparison;
 			sourceTree = "<group>";
 		};
+		4AC9A00F2C6DBE6500EB5FFC /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */,
+				4AD29AA72C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		4AD29AD62C6AE33000A9BEDD /* SnapComparison */ = {
 			isa = PBXGroup;
 			children = (
 				4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */,
-				4AD29AA52C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift */,
-				4AD29AA72C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift */,
 				4AD29AAB2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift */,
 				4AD29AD22C699DF200A9BEDD /* SnapPhotoViewController.swift */,
+				4AC9A00F2C6DBE6500EB5FFC /* Cells */,
 			);
 			path = SnapComparison;
 			sourceTree = "<group>";
