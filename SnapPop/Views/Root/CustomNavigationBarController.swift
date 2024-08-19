@@ -25,7 +25,7 @@ class CustomNavigationBarController: UINavigationController {
         button.menu = self.createCategoryMenu(categories: viewModel.categories)
         button.showsMenuAsPrimaryAction = true
         button.sizeToFit()
-        
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -49,7 +49,9 @@ class CustomNavigationBarController: UINavigationController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarItems()
+        if topViewController?.navigationItem.leftBarButtonItem == nil {
+            setupNavigationBarItems()
+        }
         updateCategoryTitle()
     }
     
@@ -77,6 +79,14 @@ class CustomNavigationBarController: UINavigationController {
         
         topViewController?.navigationItem.leftBarButtonItem = menuButtonItem
         topViewController?.navigationItem.rightBarButtonItems = [gearButton, bellButton]
+        
+        view.addSubview(categoryButton)
+        NSLayoutConstraint.activate([
+            categoryButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            categoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
+            categoryButton.heightAnchor.constraint(equalToConstant: 44)
+            
+        ])
     }
     
     private func createCategoryMenu(categories: [Category]) -> UIMenu {
