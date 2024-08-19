@@ -20,6 +20,7 @@
 		8F4C73BF2C6AF771000AACDA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */; };
 		8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C73C12C6B1E71000AACDA /* svenmodels.swift */; };
 		8F5EE7EC2C6C798C007AF73B /* DonutChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* DonutChartViewController.swift */; };
+		8FA2158F2C72D5D400891F93 /* DonutChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2158E2C72D5D400891F93 /* DonutChart.swift */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
 		C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA622C649CBA00A5B40A /* SignInViewController.swift */; };
 		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
@@ -45,6 +46,7 @@
 		8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8F4C73C12C6B1E71000AACDA /* svenmodels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = svenmodels.swift; sourceTree = "<group>"; };
 		8F5EE7EB2C6C798C007AF73B /* DonutChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChartViewController.swift; sourceTree = "<group>"; };
+		8FA2158E2C72D5D400891F93 /* DonutChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChart.swift; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 			children = (
 				8F1685522C6599A20010F8D8 /* CalendarViewController.swift */,
 				8F5EE7EB2C6C798C007AF73B /* DonutChartViewController.swift */,
+				8FA2158E2C72D5D400891F93 /* DonutChart.swift */,
 			);
 			path = Calendar;
 			sourceTree = "<group>";
@@ -321,6 +324,7 @@
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,
 				C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */,
 				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
+				8FA2158F2C72D5D400891F93 /* DonutChart.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
 				8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */,
