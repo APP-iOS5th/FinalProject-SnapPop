@@ -18,7 +18,7 @@ class CustomTabBarController: UITabBarController {
     private func setupTabbarLayout() {
         tabBar.tintColor = .customMain
         tabBar.barTintColor = .systemGray
-        tabBar.backgroundColor = .white
+        tabBar.backgroundColor = .customBackground
     }
     
     private func setupTabbarItem() {
@@ -43,10 +43,11 @@ class CustomTabBarController: UITabBarController {
             image: UIImage(systemName: "arrow.left.arrow.right.square"),
             selectedImage: UIImage(systemName: "arrow.left.arrow.right.square.fill")
         )
-        
-        let firstNavController = CustomNavigationController(rootViewController: firstViewController)
-        let secondNavController = CustomNavigationController(rootViewController: secondViewController)
-        let thirdNavController = CustomNavigationController(rootViewController: thirdViewController)
+                
+        let customNavigationBarViewModel = CustomNavigationBarViewModel()
+        let firstNavController = CustomNavigationBarController(viewModel: customNavigationBarViewModel, rootViewController: firstViewController)
+        let secondNavController = CustomNavigationBarController(viewModel: customNavigationBarViewModel, rootViewController: secondViewController)
+        let thirdNavController = CustomNavigationBarController(viewModel: customNavigationBarViewModel, rootViewController: thirdViewController)
         
         viewControllers = [
             firstNavController,
@@ -55,4 +56,3 @@ class CustomTabBarController: UITabBarController {
         ]
     }
 }
-
