@@ -261,7 +261,7 @@ class HomeViewController: NavigationViewController,
     // MARK: - UICollectionViewDragDelegate
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         let snap = viewModel.tempSnapData[indexPath.item]
-        let itemProvider = NSItemProvider(object: snap.id as! NSString) // ID를 사용하여 드래그 아이템을 식별
+        let itemProvider = NSItemProvider(object: snap.id! as NSString) // ID를 사용하여 드래그 아이템을 식별
         let dragItem = UIDragItem(itemProvider: itemProvider)
         dragItem.localObject = snap
         return [dragItem]
@@ -343,10 +343,9 @@ class HomeViewController: NavigationViewController,
         assets.enumerateObjects { asset, _, _ in
             let creationDate = asset.creationDate ?? Date()
             let localIdentifier = asset.localIdentifier
-            let categoryId = "defaultCategoryId"
             let imageUrl = url.absoluteString
-            
-            let snap = Snap(id: localIdentifier, imageUrls: [imageUrl], createdAt: creationDate)  // 수정된 부분
+            let snap = Snap(id: localIdentifier, imageUrls: [imageUrl], createdAt: creationDate)
+
             self.viewModel.tempSnapData.append(snap)
         }
         print("Found asset count: \(assets.count)")
