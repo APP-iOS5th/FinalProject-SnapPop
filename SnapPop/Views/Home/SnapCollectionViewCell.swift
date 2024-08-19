@@ -60,7 +60,7 @@ class SnapCollectionViewCell: UICollectionViewCell {
         // 첫 번째 셀의 테두리 설정
         if isFirst {
             contentView.layer.borderWidth = 3
-            contentView.layer.borderColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 1.0).cgColor
+            contentView.layer.borderColor = UIColor.customMainColor?.cgColor
         } else {
             contentView.layer.borderWidth = 0
             contentView.layer.borderColor = nil
@@ -78,6 +78,8 @@ class SnapCollectionViewCell: UICollectionViewCell {
     }
     
     private func loadImage(from urlString: String) {
+        
+//        이건 테스트용!
         guard URL(string: urlString) != nil else {
             snapImageView.image = nil
             return
@@ -90,19 +92,19 @@ class SnapCollectionViewCell: UICollectionViewCell {
         }
         
         // Uncomment this block to load image from URL
-        /*
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data, let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.snapImageView.image = image
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.snapImageView.image = nil
-                }
-            }
-        }
-        task.resume()
-        */
+        
+//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+//            if let data = data, let image = UIImage(data: data) {
+//                DispatchQueue.main.async {
+//                    self.snapImageView.image = image
+//                }
+//            } else {
+//                DispatchQueue.main.async {
+//                    self.snapImageView.image = nil
+//                }
+//            }
+//        }
+//        task.resume()
+        
     }
 }

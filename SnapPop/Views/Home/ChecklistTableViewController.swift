@@ -16,7 +16,7 @@ class ChecklistTableViewController: UITableViewController {
         let button = UIButton(type: .system)
         button.setTitle("새로운 관리 추가하기 + ", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 1.0)
+        button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(ChecklistTableViewController.self, action: #selector(didselfcareAddButton), for: .touchUpInside)
