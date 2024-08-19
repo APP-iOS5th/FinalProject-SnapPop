@@ -245,10 +245,13 @@ class HomeViewController: NavigationViewController,
     // MARK: UICollectionViewDataSource - Cell Configuration
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
-        let snap = viewModel.tempSnapData[indexPath.item] // 'snaps'는 Snap 객체의 배열입니다.
-          
-          cell.configure(with: snap, isFirst: indexPath.item == 0, isEditing: isEditing)
-          return cell
+        let snap = viewModel.tempSnapData[indexPath.item] // your data source array
+        let isEditing = self.isEditing // replace with your editing state
+        let isFirst = indexPath.item == 0 // 첫 번째 셀 여부 판단
+        
+        cell.configure(with: snap, isFirst: isFirst, isEditing: isEditing)
+        
+        return cell
     }
     
     // MARK: UICollectionViewDelegateFlowLayout
@@ -306,48 +309,25 @@ class HomeViewController: NavigationViewController,
         
         return UICollectionViewDropProposal(operation: .forbidden)
     }
-
     // MARK: - 사진 추가버튼 이벤트 메소드
     @objc func addButtonTapped() {
-        viewModel.imagepickerActionSheet(from: self)
-        
-        viewModel.selectedSource = { [weak self] sourceType in
-            guard let self = self else { return }
-            
-            let imagePickerController = UIImagePickerController()
-            imagePickerController.delegate = self
-            imagePickerController.sourceType = sourceType
-            DispatchQueue.main.async {
-                self.present(imagePickerController, animated: true, completion: nil)
-            }
-        }
+        viewModel.showImagePickerActionSheet(from: self)
     }
-    
+
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         
         if let imageURL = info[.imageURL] as? URL {
-            fetchPhotoDetails(from: imageURL)
-        } else if let image = info[.originalImage] as? UIImage {
-            print("선택된 이미지: \(image)")
+            viewModel.fetchPhotoDetails(from: imageURL) { success in
+                if success {
+                    // Handle success (e.g., reload collection view)
+                    print("사진 로드 성공")
+                } else {
+                    // Handle error
+                    print("사진 로드 실패")
+                }
+            }
         }
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true, completion: nil)
-    }
-    
-    private func fetchPhotoDetails(from url: URL) {
-        let assets = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil)
-        assets.enumerateObjects { asset, _, _ in
-            let creationDate = asset.creationDate ?? Date()
-            let localIdentifier = asset.localIdentifier
-            let imageUrl = url.absoluteString
-            let snap = Snap(id: localIdentifier, imageUrls: [imageUrl], createdAt: creationDate)
-
-            self.viewModel.tempSnapData.append(snap)
-        }
-        print("Found asset count: \(assets.count)")
     }
 }
 
