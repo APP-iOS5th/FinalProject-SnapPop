@@ -2,7 +2,7 @@
 //  Management.swift
 //  SnapPop
 //
-//  Created by Heeji Jung on 8/19/24.
+//  Created by 이인호 on 8/12/24.
 //
 
 import Foundation
