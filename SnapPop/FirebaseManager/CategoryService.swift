@@ -37,7 +37,7 @@ final class CategoryService {
     
     func loadCategories(completion: @escaping (Result<[Category], Error>) -> Void) {
         db.collection("Users")
-            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "pKfnEhNFSYVTz0HE6w9QmDIzkBk2")
             .collection("Categories")
             .order(by: "title")
             .getDocuments { (querySnapshot, error) in

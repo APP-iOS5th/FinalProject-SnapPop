@@ -13,9 +13,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
- 
-        window = UIWindow(windowScene: windowScene)
-        window?.backgroundColor = .systemBackground
+        
+        var sample = CustomNavigationBarViewModel()
+        let window = UIWindow(windowScene: windowScene)
+        let customTabBarContrller = CustomTabBarController()
+        window.backgroundColor = .systemBackground
+        window.rootViewController = customTabBarContrller
+        window.makeKeyAndVisible()
+        self.window = window
         
         AuthViewModel.shared.listenAuthState { _, user in
             let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
@@ -70,4 +75,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
+
 }

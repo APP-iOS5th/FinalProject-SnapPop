@@ -22,7 +22,7 @@ class CustomTabBarController: UITabBarController {
     }
     
     private func setupTabbarItem() {
-        let firstViewController = TestCalendarViewController()
+        let firstViewController = CalendarViewController()
         firstViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(systemName: "calendar"),
