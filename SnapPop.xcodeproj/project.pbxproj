@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */; };
 		4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */; };
+		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
 		4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */; };
 		4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */; };
@@ -57,6 +58,7 @@
 /* Begin PBXFileReference section */
 		4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonSheetViewModel.swift; sourceTree = "<group>"; };
 		4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCellViewModel.swift; sourceTree = "<group>"; };
+		4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySettingsTableViewCell.swift; sourceTree = "<group>"; };
 		4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBarController.swift; sourceTree = "<group>"; };
 		4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
 		4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCalendarViewController.swift; sourceTree = "<group>"; };
@@ -126,6 +128,14 @@
 			path = SnapComparison;
 			sourceTree = "<group>";
 		};
+		4A82A7E72C7392AE00E27228 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
 		4AC9A00F2C6DBE6500EB5FFC /* Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -138,6 +148,7 @@
 		4AC9A02E2C72DD9B00EB5FFC /* Root */ = {
 			isa = PBXGroup;
 			children = (
+				4A82A7E72C7392AE00E27228 /* Cell */,
 				4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */,
 				4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */,
 				4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */,
@@ -439,6 +450,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
+				4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */,
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,
 				C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */,
 				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
