@@ -114,8 +114,6 @@ class HomeViewController:
         setupSnapCollectionView()
         setupChecklistView()
         
-        viewModel.checklistItems = Management.generateSampleManagementItems()
-        
         snapCollectionView.dataSource = self
         snapCollectionView.delegate = self
         
