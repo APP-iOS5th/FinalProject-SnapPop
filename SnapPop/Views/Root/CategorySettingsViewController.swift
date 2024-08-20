@@ -111,6 +111,7 @@ class CategorySettingsViewController: UIViewController {
         ])
     }
     
+    // MARK: - Methods
     func hideKeyboardWhenTappedAround() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
@@ -149,7 +150,7 @@ class CategorySettingsViewController: UIViewController {
         // TODO: - uid 삭제해야함
         guard let categoryName = categoryTextField.text else { return }
         if !(categoryName.isEmpty)  {
-            var newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
+            let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
             viewModel.saveCategory(category: newCategory) {
                 DispatchQueue.main.async {
                     self.categoryTable.reloadData()
@@ -176,19 +177,51 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
         
         let category = viewModel.categories[indexPath.row]
         cell.categoryNameLabel.text = category.title
+        
+        if category.alertStatus {
+            cell.notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
+        } else {
+            cell.notificationButton.setImage(UIImage(systemName: "bell.slash"), for: .normal)
+        }
+        
+        // cell의 "checkmark" 버튼을 눌렀을때 실행되는 클로저
+        cell.saveEditButtonTapped = { [weak self] newName in
+            guard let self = self else { return }
+            var updatedCategory = self.viewModel.categories[indexPath.row]
+            updatedCategory.title = newName
+            self.viewModel.updateCategory(categoryId: updatedCategory.id!, category: updatedCategory) {
+                self.viewModel.categories[indexPath.row] = updatedCategory
+                DispatchQueue.main.async {
+                    self.categoryTable.reloadRows(at: [indexPath], with: .none)
+                }
+            }
+        }
+        
+        // cell의 "bell" 버튼을 눌렀을때 실행되는 클로저
+        cell.notificationButtonTapped = { [weak self] in
+            guard let self = self else { return }
+            let index = indexPath.row
+            self.viewModel.categories[index].alertStatus.toggle()
+            
+            let alertStatusImage = self.viewModel.categories[index].alertStatus ? "bell" : "bell.slash"
+            cell.notificationButton.setImage(UIImage(systemName: alertStatusImage), for: .normal)
+            
+            let updatedCategory = self.viewModel.categories[index]
+            self.viewModel.updateCategory(categoryId: updatedCategory.id!, category: updatedCategory) {
+                DispatchQueue.main.async {
+                    self.categoryTable.reloadRows(at: [indexPath], with: .none)
+                }
+            }
+        }
+        
         cell.selectionStyle = .none
         cell.backgroundColor = .customBackground
         return cell
     }
     
+    // TODO: - ViewModel 사용하여 파이어베이스에 알림 추가/ 분기해야함
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let notification = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
-            // TODO: - ViewModel 사용하여 파이어베이스에 알림 추가/ 분기해야함
-            success(true)
-        }
-        notification.backgroundColor = .systemGray4
-        notification.image = UIImage(systemName: "bell")
         
         let trash = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
             self.viewModel.deleteCategory(at: indexPath.row) {
@@ -207,7 +240,7 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
         trash.backgroundColor = .red
         trash.image = UIImage(systemName: "trash")
         
-        return UISwipeActionsConfiguration(actions:[notification, trash])
+        return UISwipeActionsConfiguration(actions:[trash])
     }
 }
 

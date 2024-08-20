@@ -13,6 +13,7 @@ protocol CustomNavigationBarViewModelProtocol {
     var categoryisUpdated: (() -> Void)? { get set }
     func loadCategories(completion: @escaping () -> Void)
     func saveCategory(category: Category, completion: @escaping () -> Void)
+    func updateCategory(categoryId: String, category: Category, completion: @escaping () -> Void)
     func deleteCategory(at index: Int, completion: @escaping () -> Void)
     func selectCategory(at index: Int)
 }
@@ -51,6 +52,19 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
             case .success(let savedCategory):
                 print("success save Category")
                 self.categories.append(savedCategory)
+                self.categoryisUpdated?()
+                completion()
+            case .failure(let error):
+                print("Failed to save error: \(error.localizedDescription)")
+                completion()
+            }
+        }
+    }
+    
+    func updateCategory(categoryId: String, category: Category, completion: @escaping () -> Void) {
+        categoryService.updateCategory(categoryId: categoryId, updatedCategory: category) { result in
+            switch result {
+            case .success:
                 self.categoryisUpdated?()
                 completion()
             case .failure(let error):

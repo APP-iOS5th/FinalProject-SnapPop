@@ -9,8 +9,12 @@ import UIKit
 
 class CategorySettingsTableViewCell: UITableViewCell {
     // MARK: - Properties
-    
     static let identifier = "CategorySettingsTableViewCell"
+    
+    var notificationButtonTapped: (() -> Void)?
+    var saveEditButtonTapped: ((String) -> Void)?
+    
+    var isCategoryNameEditing = false
     
     // MARK: - UIComponents
     lazy var categoryNameLabel: UILabel = {
@@ -18,6 +22,36 @@ class CategorySettingsTableViewCell: UITableViewCell {
         label.text = ""
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    lazy var categoryNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.borderStyle = .roundedRect
+        textField.isHidden = true
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
+    }()
+    
+    lazy var notificationButton: UIButton = {
+        var config = UIButton.Configuration.filled()
+        config.image = UIImage(systemName: "bell")
+        config.baseForegroundColor = .black
+        config.baseBackgroundColor = .customBackground
+        let button = UIButton(configuration: config)
+        button.addTarget(self, action: #selector(didTapNotificationButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    lazy var editCategoryNameButton: UIButton = {
+        var config = UIButton.Configuration.filled()
+        config.image = UIImage(systemName: "pencil")
+        config.baseForegroundColor = .black
+        config.baseBackgroundColor = .customBackground
+        let button = UIButton(configuration: config)
+        button.addTarget(self, action: #selector(didTapEditButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     // MARK: - Initializers
@@ -32,11 +66,49 @@ class CategorySettingsTableViewCell: UITableViewCell {
     
     // MARK: - Methods
     func setupLayout() {
-        contentView.addSubview(categoryNameLabel)
+        contentView.addSubviews([
+            categoryNameLabel,
+            categoryNameTextField,
+            notificationButton,
+            editCategoryNameButton
+        ])
         
         NSLayoutConstraint.activate([
             categoryNameLabel.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            categoryNameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            categoryNameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            categoryNameTextField.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            categoryNameTextField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            categoryNameTextField.trailingAnchor.constraint(equalTo: editCategoryNameButton.leadingAnchor, constant: -10),
+            
+            notificationButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            notificationButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            editCategoryNameButton.trailingAnchor.constraint(equalTo: notificationButton.leadingAnchor),
+            editCategoryNameButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
+    }
+    
+    // MARK: - Actions
+    @objc func didTapNotificationButton() {
+        notificationButtonTapped?()
+    }
+    
+    @objc func didTapEditButton() {
+        self.isCategoryNameEditing.toggle()
+        if isCategoryNameEditing {
+            categoryNameLabel.isHidden = true
+            categoryNameTextField.isHidden = false
+            categoryNameTextField.text = categoryNameLabel.text
+            categoryNameTextField.becomeFirstResponder()
+            editCategoryNameButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+        } else {
+            categoryNameLabel.isHidden = false
+            categoryNameTextField.isHidden = true
+            if let newName = categoryNameTextField.text, !newName.isEmpty {
+                saveEditButtonTapped?(newName)
+            }
+            editCategoryNameButton.setImage(UIImage(systemName: "pencil"), for: .normal)
+        }
     }
 }
