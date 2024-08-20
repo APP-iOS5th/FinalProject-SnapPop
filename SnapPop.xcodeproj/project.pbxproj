@@ -44,6 +44,7 @@
 		C246CE602C74EF8200A631BE /* LegalType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5D2C74EF8200A631BE /* LegalType.swift */; };
 		C246CE612C74EF8200A631BE /* LegalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5E2C74EF8200A631BE /* LegalViewController.swift */; };
 		C246CE622C74EF8200A631BE /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5F2C74EF8200A631BE /* SettingViewController.swift */; };
+		C246CE642C74F11300A631BE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C246CE632C74F11300A631BE /* GoogleService-Info.plist */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
 		C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA622C649CBA00A5B40A /* SignInViewController.swift */; };
 		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
@@ -65,7 +66,6 @@
 		EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB492C72CAD2007F8987 /* Management.swift */; };
 		EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB4B2C72CAEC007F8987 /* Snap.swift */; };
 		EA664E4E2C73914B0034B998 /* CustomCropToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */; };
-		EA664E582C74E0DD0034B998 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA664E572C74E0DD0034B998 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -105,6 +105,7 @@
 		C246CE5D2C74EF8200A631BE /* LegalType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegalType.swift; sourceTree = "<group>"; };
 		C246CE5E2C74EF8200A631BE /* LegalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegalViewController.swift; sourceTree = "<group>"; };
 		C246CE5F2C74EF8200A631BE /* SettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		C246CE632C74F11300A631BE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -125,7 +126,6 @@
 		EA57EB4B2C72CAEC007F8987 /* Snap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snap.swift; sourceTree = "<group>"; };
 		EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCropToolbar.swift; sourceTree = "<group>"; };
 		EA664E532C7455F80034B998 /* CropViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropViewController.swift; sourceTree = "<group>"; };
-		EA664E572C74E0DD0034B998 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,7 +239,7 @@
 				C24BFA5B2C64801100A5B40A /* ViewModels */,
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
-				EA664E572C74E0DD0034B998 /* GoogleService-Info.plist */,
+				C246CE632C74F11300A631BE /* GoogleService-Info.plist */,
 			);
 			path = SnapPop;
 			sourceTree = "<group>";
@@ -487,7 +487,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
-				EA664E582C74E0DD0034B998 /* GoogleService-Info.plist in Resources */,
+				C246CE642C74F11300A631BE /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
 			);
