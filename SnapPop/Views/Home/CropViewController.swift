@@ -51,9 +51,13 @@ class CropViewController: UIViewController {
         imageView.addGestureRecognizer(rotationGesture)
         imageView.addGestureRecognizer(tapGesture)
 
-        // Add pan gesture to move the crop rectangle
-//        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-//        cropRectView.addGestureRecognizer(panGesture)
+      // 크롭 가이드라인을 이동하기 위한 팬 제스처 추가
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        cropRectView.addGestureRecognizer(panGesture)
+
+        // 크롭 가이드라인에 핀치 제스처 추가
+        let cropPinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handleCropPinch(_:)))
+        cropRectView.addGestureRecognizer(cropPinchGesture)
     }
 
     private func setupCropToolbar() {
@@ -155,15 +159,24 @@ class CropViewController: UIViewController {
         updateCropRectView()
     }
 
-    @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+     @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: self.view)
         if gesture.state == .changed {
-            // Move the cropRectView based on the pan gesture
+            // 팬 제스처에 따라 cropRectView 이동
             cropRectView.center = CGPoint(x: cropRectView.center.x + translation.x, y: cropRectView.center.y + translation.y)
-            gesture.setTranslation(.zero, in: self.view) // Reset translation
+            gesture.setTranslation(.zero, in: self.view) // 변환 초기화
         }
     }
 
+  @objc func handleCropPinch(_ gesture: UIPinchGestureRecognizer) {
+        guard let view = gesture.view else { return }
+        
+        // 핀치 제스처에 따라 cropRectView의 크기 조정
+        if gesture.state == .changed {
+            view.transform = view.transform.scaledBy(x: gesture.scale, y: gesture.scale)
+            gesture.scale = 1.0 // 다음 변화를 위해 scale 초기화
+        }
+    }
     @objc func resetImageOrientation() {
         imageView.transform = .identity
         rotationLabel.text = "Rotation: 0.0°"
