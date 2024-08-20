@@ -9,22 +9,44 @@ import UIKit
 import Photos // Import Photos framework for saving images
 
 class CropViewController: UIViewController {
+    
     var imageView: UIImageView!
-    var image: UIImage!
-    private var homeViewModel = HomeViewModel()
+    var asset: PHAsset! // PHAsset을 저장할 변수
+    var viewModel = HomeViewModel()
+    var navigationBarViewModel: CustomNavigationBarViewModelProtocol?
+    
+    let categoryId: String = ""
     
     private var cropToolbar: CustomCropToolbar!
     private var cropRectView: UIView!
     private var cropRect: CGRect = CGRect.zero
     private var rotationLabel: UILabel!
 
-    var didGetCroppedImage: ((UIImage) -> Void)?
+    var didGetCroppedImage: ((Snap) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupCropRectView() // Ensure cropRectView is set up first
         setupUI()
-        setupCropRectView()
         setupRotationLabel()
+        loadImageFromAsset() // PHAsset에서 이미지 로드
+        
+        if let categoryId = navigationBarViewModel?.currentCategory {
+            print("Current Category ID in HomeViewController: \(categoryId)")
+            // categoryId를 사용하여 필요한 작업 수행
+        }
+    }
+
+    private func loadImageFromAsset() {
+        let imageManager = PHImageManager.default()
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isSynchronous = true // 동기 요청
+        requestOptions.deliveryMode = .highQualityFormat
+
+        imageManager.requestImage(for: asset, targetSize: self.view.bounds.size, contentMode: .aspectFit, options: requestOptions) { [weak self] image, _ in
+            guard let self = self, let image = image else { return }
+            self.imageView.image = image // 이미지 뷰에 설정
+        }
     }
 
     private func setupUI() {
@@ -38,12 +60,13 @@ class CropViewController: UIViewController {
     private func setupImageView() {
         imageView = UIImageView(frame: self.view.bounds)
         imageView.contentMode = .scaleAspectFit
-        imageView.image = image
         imageView.isUserInteractionEnabled = true
         self.view.addSubview(imageView)
     }
 
     private func setupGestureRecognizers() {
+        // Ensure cropRectView is initialized before adding gestures
+        guard cropRectView != nil else { return } // Add this check
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
         let rotationGesture = UIRotationGestureRecognizer(target: self, action: #selector(handleRotation(_:)))
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(resetImageOrientation))
@@ -187,22 +210,33 @@ class CropViewController: UIViewController {
         let scaleX = image.size.width / imageView.bounds.width
         let scaleY = image.size.height / imageView.bounds.height
         let scale = min(scaleX, scaleY)
-
+        
         let scaledCropRect = CGRect(
             x: (cropRectView.frame.origin.x - imageView.frame.origin.x) * scale,
             y: (cropRectView.frame.origin.y - imageView.frame.origin.y) * scale,
             width: cropRectView.frame.size.width * scale,
             height: cropRectView.frame.size.height * scale
         )
-
+        
         guard let cgImage = image.cgImage?.cropping(to: scaledCropRect) else { return }
         let croppedImage = UIImage(cgImage: cgImage)
-
-        didGetCroppedImage?(croppedImage)
-
-        // Save the cropped image using HomeViewModel
-        homeViewModel.saveCroppedImage(croppedImage)
-
+        
+        // HomeViewModel에 이미지 저장 요청
+        viewModel.saveCroppedSnapData(image: croppedImage, assetIdentifier: asset.localIdentifier, categoryId: categoryId) { [weak self] imageUrl in
+            guard let self = self else { return }
+            
+//            switch result {
+//            case .success(let imageUrl):
+                // 크롭된 이미지의 URL과 PHAsset의 식별자를 사용하여 Snap 객체 생성
+                //let newSnap = Snap(id: self.asset.localIdentifier, imageUrls: [imageUrl], createdAt: Date())
+                //self.didGetCroppedImage?(newSnap) // Snap 객체를 전달
+                
+//            case .failure(let error):
+//                // 에러 처리
+//                print("이미지 저장 실패: \(error.localizedDescription)")
+//            }
+        }
+        
         let croppedImageView = UIImageView(image: croppedImage)
         croppedImageView.frame = self.view.bounds
         self.view.addSubview(croppedImageView)
