@@ -13,23 +13,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-<<<<<<< HEAD
         
+        var sample = CustomNavigationBarViewModel()
         let window = UIWindow(windowScene: windowScene)
-        let homeViewController = HomeViewController()
-        let svenView = CalendarViewController()
-        let navigationController = UINavigationController(rootViewController: svenView)
-        
-        window.rootViewController = navigationController
+        let customTabBarContrller = CustomTabBarController()
+        window.backgroundColor = .systemBackground
+        window.rootViewController = customTabBarContrller
         window.makeKeyAndVisible()
         self.window = window
-=======
- 
-        window = UIWindow(windowScene: windowScene)
-        window?.backgroundColor = .systemBackground
-        window?.rootViewController = CustomTabBarController()
-        window?.makeKeyAndVisible()
->>>>>>> main
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

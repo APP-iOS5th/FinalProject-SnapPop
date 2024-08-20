@@ -7,11 +7,27 @@
 
 import UIKit
 
-class DoughnutChartViewController: UIViewController {
+class IsDonePercentageChart: UIViewController {
     
     // MARK: - Properties
     
-    var circularView: DoughnutChartCircular!
+    var circularView: IsDoneDoughnut!
+
+    var formatter: DateFormatter = {
+        let df = DateFormatter()
+        df.dateFormat = "M"
+        return df
+    }()
+    
+    private let monthLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textAlignment = .center
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     // MARK: - View Lifecycle
     
@@ -19,33 +35,47 @@ class DoughnutChartViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        setupCircularView()
+        setupDoneChart(isDone: 50)
+        setupMonthLabel()
     }
     
     // MARK: - Setup Circular View
     
-    private func setupCircularView() {
-        let percentages: [Double] = [25, 25, 25, 15, 10] // Example data percentages
-        let colors: [UIColor] = [.red, .green, .blue, .orange, .systemYellow] // Example colors
-        
+    private func setupDoneChart(isDone: Double) {
+        let percentages: [Double] = [isDone, 100 - isDone]
         // Initialize Doughnut Chart view
-        circularView = DoughnutChartCircular(percentages: percentages, colors: colors)
+        circularView = IsDoneDoughnut(percentages: percentages)
         circularView.translatesAutoresizingMaskIntoConstraints = false
         
         // Add Doughnut Chart view to the main view
         view.addSubview(circularView)
+        view.addSubview(monthLabel)
         
         // Setup constraints for Doughnut Chart view
         NSLayoutConstraint.activate([
+            
+            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            monthLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
+            
+            circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
             circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             circularView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            circularView.widthAnchor.constraint(equalToConstant: 200),
-            circularView.heightAnchor.constraint(equalToConstant: 200)
+            circularView.widthAnchor.constraint(equalToConstant: 250),
+            circularView.heightAnchor.constraint(equalToConstant: 250)
         ])
+    }
+    
+    func setupMonthLabel() {
+        let current = Date()
+        monthLabel.text = "\(formatter.string(from: current))월"
+    }
+    public func updateMonthLabel(month: Int, year: Int) {
+        monthLabel.text = "\(month)월"
     }
 }
 
-open class DoughnutChartCircular: UIView {
+
+open class IsDoneDoughnut: UIView {
     
     // MARK: - Public Properties
     public var lineWidth: CGFloat {
@@ -58,16 +88,24 @@ open class DoughnutChartCircular: UIView {
         }
     }
     
+    public var percentageColor: UIColor = .black {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+
     // MARK: - Private Variables
     private var _percentages: [Double]
-    private var _colors: [UIColor]
-    private var _lineWidth = CGFloat(10.0)
-    
+    private var _colors: [UIColor] = [.red, .lightGray]
+    private var _lineWidth = CGFloat(5.0)
+    lazy var donePercentage = "\(_percentages[0])%" {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
     // MARK: - Initialization
-    public init(percentages: [Double], colors: [UIColor], lineWidth: CGFloat = 10.0) {
+    public init(percentages: [Double], lineWidth: CGFloat = 5.0) {
         self._percentages = percentages
-        self._colors = colors
-        self._lineWidth = lineWidth
         super.init(frame: CGRect.zero)
         self.backgroundColor = .clear
         self.clipsToBounds = false
@@ -81,7 +119,7 @@ open class DoughnutChartCircular: UIView {
     override public func draw(_ rect: CGRect) {
         let center = CGPoint(x: rect.midX, y: rect.midY)
         let outerRadius = min(rect.width, rect.height) / 2 - _lineWidth / 2
-        let innerRadius = outerRadius * 0.5 // Adjust the multiplier as needed for the size of the hole
+        let innerRadius = outerRadius * 0.70 // Adjust the multiplier as needed for the size of the hole
         
         var startAngle: CGFloat = -CGFloat.pi / 2
         
@@ -101,6 +139,20 @@ open class DoughnutChartCircular: UIView {
             layer.addSublayer(shapeLayer)
             
             startAngle = endAngle
+            
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 20),
+                .foregroundColor: percentageColor
+            ]
+            let textSize = donePercentage.size(withAttributes: attributes)
+            let textRect = CGRect(
+                x: rect.midX - textSize.width / 2,
+                y: rect.midY - textSize.height / 2,
+                width: textSize.width,
+                height: textSize.height
+            )
+            donePercentage.draw(in: textRect, withAttributes: attributes)
+                
         }
     }
 }

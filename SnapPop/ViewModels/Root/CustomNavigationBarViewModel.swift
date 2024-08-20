@@ -48,3 +48,4 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
     }
         
 }
+

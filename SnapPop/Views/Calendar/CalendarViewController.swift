@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Foundation
 
 class CalendarViewController: UIViewController {
     
@@ -14,10 +15,11 @@ class CalendarViewController: UIViewController {
     var selectedDate: DateComponents?
     
     var sampledata = Management1.generateSampleManagementItems()
-    
+   
     private var segmentedControlTopConstraint: NSLayoutConstraint?
     private var tableViewHeightConstraint: NSLayoutConstraint?
-    private var donutChart: DoughnutChartViewController!
+    private var isDoneChart: IsDonePercentageChart!
+    private var costChart: CostChart!
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -126,14 +128,18 @@ class CalendarViewController: UIViewController {
         dashButton.isUserInteractionEnabled = true
         segmentedControl.isUserInteractionEnabled = true
         secondStackView.distribution = .equalCentering
-
+        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
+            updateChartVisibility()
     }
     
     private func setupViews() {
         
-        donutChart = DoughnutChartViewController()
-        addChild(donutChart)
-        donutChart.view.frame = graphView.bounds
+        isDoneChart = IsDonePercentageChart()
+        costChart = CostChart()
+        addChild(isDoneChart)
+        addChild(costChart)
+        isDoneChart.view.frame = graphView.bounds
+        costChart.view.frame = graphView.bounds
         
         view.backgroundColor = .white
         view.addSubview(scrollView)
@@ -145,8 +151,8 @@ class CalendarViewController: UIViewController {
         firstStackViewView.addArrangedSubview(dashButton)
         secondStackView.addArrangedSubview(segmentedControl)
         secondStackView.addArrangedSubview(graphView)
-        graphView.addSubview(donutChart.view)
-        
+        graphView.addSubview(isDoneChart.view)
+        graphView.addSubview(costChart.view)
     }
     
     private func setupConstraints() {
@@ -159,7 +165,7 @@ class CalendarViewController: UIViewController {
         setupsecondStackViewConstraints()
         setupgraphViewConstraints()
         setupContentViewConstraints()
-        setupDonutChartViewConstraints()
+        setupIsDoneChartViewConstraints()
         
     }
     
@@ -259,15 +265,39 @@ class CalendarViewController: UIViewController {
         ])
     }
     
-    private func setupDonutChartViewConstraints() {
+    private func setupIsDoneChartViewConstraints() {
         NSLayoutConstraint.activate([
-            donutChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
-            donutChart.view.leadingAnchor.constraint(equalTo: graphView.leadingAnchor, constant: 30),
-            donutChart.view.trailingAnchor.constraint(equalTo: graphView.trailingAnchor, constant: -30)
+            isDoneChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
+            isDoneChart.view.leadingAnchor.constraint(equalTo: graphView.leadingAnchor, constant: 30),
+            isDoneChart.view.trailingAnchor.constraint(equalTo: graphView.trailingAnchor, constant: -30)
         ])
     }
     
-        
+    private func setupCostChartViewConstraints() {
+        NSLayoutConstraint.activate([
+            costChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
+            costChart.view.leadingAnchor.constraint(equalTo: graphView.leadingAnchor, constant: 30),
+            costChart.view.trailingAnchor.constraint(equalTo: graphView.trailingAnchor, constant: -30)
+        ])
+    }
+    
+    @objc func segmentedControlValueChanged() {
+        updateChartVisibility()
+    }
+    
+    private func updateChartVisibility() {
+        switch segmentedControl.selectedSegmentIndex {
+        case 0: // 달성률
+            isDoneChart.view.isHidden = false
+            costChart.view.isHidden = true
+        case 1: // 비용
+            isDoneChart.view.isHidden = true
+            costChart.view.isHidden = false
+        default:
+            break
+        }
+    }
+    
 }
 
 extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
@@ -291,9 +321,23 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionSin
                 return imageView
             }
         }
+        
         else {return nil}
     }
     
+    func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
+        guard let visibleMonth = calendarView.visibleDateComponents.month,
+              let visibleYear = calendarView.visibleDateComponents.year else {
+            return
+        }
+    updatMonthlyInfo(month: visibleMonth, year: visibleYear)
+
+    }
+    
+    func updatMonthlyInfo(month: Int, year: Int) {
+        isDoneChart.updateMonthLabel(month: month, year: year)
+        costChart.updateMonthLabel(month: month, year: year)
+            }
 }
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {

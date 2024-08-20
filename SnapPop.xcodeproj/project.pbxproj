@@ -35,9 +35,9 @@
 		8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685522C6599A20010F8D8 /* CalendarViewController.swift */; };
 		8F4C73BF2C6AF771000AACDA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */; };
 		8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C73C12C6B1E71000AACDA /* svenmodels.swift */; };
-		8F5EE7EC2C6C798C007AF73B /* DonutChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* DonutChartViewController.swift */; };
-		8FA2158F2C72D5D400891F93 /* DonutChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2158E2C72D5D400891F93 /* DonutChart.swift */; };
+		8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
+		8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215932C745B4300891F93 /* CostChartViewController.swift */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
 		C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA622C649CBA00A5B40A /* SignInViewController.swift */; };
 		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
@@ -91,9 +91,9 @@
 		8F4C73BD2C6AF6AF000AACDA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8F4C73C12C6B1E71000AACDA /* svenmodels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = svenmodels.swift; sourceTree = "<group>"; };
-		8F5EE7EB2C6C798C007AF73B /* DonutChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChartViewController.swift; sourceTree = "<group>"; };
-		8FA2158E2C72D5D400891F93 /* DonutChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChart.swift; sourceTree = "<group>"; };
+		8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isDonePercentageChartViewController.swift; sourceTree = "<group>"; };
 		8FA215902C731E0500891F93 /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
+		8FA215932C745B4300891F93 /* CostChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostChartViewController.swift; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -230,9 +230,9 @@
 			isa = PBXGroup;
 			children = (
 				8F1685522C6599A20010F8D8 /* CalendarViewController.swift */,
-				8F5EE7EB2C6C798C007AF73B /* DonutChartViewController.swift */,
-				8FA2158E2C72D5D400891F93 /* DonutChart.swift */,
+				8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */,
 				8FA215902C731E0500891F93 /* TodoTableViewCell.swift */,
+				8FA215932C745B4300891F93 /* CostChartViewController.swift */,
 			);
 			path = Calendar;
 			sourceTree = "<group>";
@@ -487,7 +487,6 @@
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,
 				C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */,
 				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
-				8FA2158F2C72D5D400891F93 /* DonutChart.swift in Sources */,
 				C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */,
 				4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */,
 				4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */,
@@ -498,6 +497,7 @@
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
+				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
 				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
 				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
@@ -510,7 +510,7 @@
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
 				8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */,
 				C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */,
-				8F5EE7EC2C6C798C007AF73B /* DonutChartViewController.swift in Sources */,
+				8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */,
 				EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */,
 				C2599B3A2C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift in Sources */,
 				C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */,
