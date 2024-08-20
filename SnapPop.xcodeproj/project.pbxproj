@@ -325,8 +325,8 @@
 				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
 				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
 				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
-				EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */,
 				EA664E532C7455F80034B998 /* CropViewController.swift */,
+				EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
