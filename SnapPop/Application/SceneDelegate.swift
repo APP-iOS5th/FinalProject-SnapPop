@@ -10,16 +10,39 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
  
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .systemBackground
-        window?.rootViewController = CustomTabBarController()
-        window?.makeKeyAndVisible()
+        
+        AuthViewModel.shared.listenAuthState { _, user in
+            let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
+            
+            if user != nil {
+                if appLockState {
+                    LocalAuthenticationViewModel.execute { (success, error) in
+                        DispatchQueue.main.async {
+                            if success {
+                                self.window?.rootViewController = CustomTabBarController()
+                            } else {
+                                // 잠금 인증 실패
+                            }
+                            self.window?.makeKeyAndVisible()
+                        }
+                    }
+                } else {
+                    self.window?.rootViewController = CustomTabBarController()
+                    self.window?.makeKeyAndVisible()
+                }
+            } else {
+                self.window?.rootViewController = SignInViewController()
+                self.window?.makeKeyAndVisible()
+            }
+        }
     }
-
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
