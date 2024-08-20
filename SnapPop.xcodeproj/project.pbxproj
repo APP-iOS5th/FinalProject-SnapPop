@@ -56,6 +56,7 @@
 		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
 		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
 		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
+		EA49D3722C74EAC70002F243 /* CropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA664E532C7455F80034B998 /* CropViewController.swift */; };
 		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
 		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
 		EA57EB482C72CAAC007F8987 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB472C72CAAC007F8987 /* Category.swift */; };
@@ -506,6 +507,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA49D3722C74EAC70002F243 /* CropViewController.swift in Sources */,
 				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
 				4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */,
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,

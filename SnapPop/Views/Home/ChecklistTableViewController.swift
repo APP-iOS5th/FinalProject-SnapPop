@@ -40,8 +40,6 @@ class ChecklistTableViewController: UITableViewController {
     }
     
     private func setupTestData() {
-        // generateSampleManagementItems 메서드를 호출하여 임시 데이터 생성
-        viewModel?.checklistItems = Management.generateSampleManagementItems()
         tableView.reloadData() // 데이터 변경 반영
     }
     
