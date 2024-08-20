@@ -8,43 +8,139 @@
 import UIKit
 import Photos
 import AVFoundation
+import Combine
 
 // MARK: - ViewModel
-class HomeViewModel {
+class HomeViewModel: ObservableObject {
+    
+    private let snapService = SnapService()
+    private let managementService = ManagementService() // ManagementService 인스턴스
     
     // MARK: - Properties
-    var categories: [Category] = Category.generateSampleCategories()
-    var checklistItems: [Management] = Management.generateSampleManagementItems()
-    var tempSnapData: [Snap] = Snap.sampleData()
-    var selectedImageURL: URL?
-    var selectedImage: UIImage?
-    var isEditingMode: Bool = false
+    @Published var checklistItems: [Management] = []
+    @Published var snapData: [Snap] = []
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
+    var selectedCategoryId: String? // 선택된 카테고리 ID
+
+    // MARK: - Initialization
+    init() {
+        loadChecklistItems() // 초기 로드
+    }
     
-    // MARK: - Methods
+    /// Image Picker Methods
     func dateChanged(_ sender: UIDatePicker) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.string(from: sender.date)
     }
     
-    /// 스냅 사진 드랍   후 배열 재정의
-    func droptoSnapUpdate(from sourceIndex: Int, to destinationIndex: Int) {
-        guard sourceIndex != destinationIndex, sourceIndex < tempSnapData.count else { return }
+    // 이미지와 assetIdentifier를 저장하는 메서드 예제
+    func saveCroppedSnapData(image: UIImage, assetIdentifier: String, categoryId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        // assetIdentifier를 문자열 배열로 변환
+        let imageUrls = [assetIdentifier]
         
-        let itemToMove = tempSnapData[sourceIndex]
-        tempSnapData.remove(at: sourceIndex)
-        
-        if destinationIndex >= tempSnapData.count {
-            tempSnapData.append(itemToMove)
-        } else {
-            tempSnapData.insert(itemToMove, at: destinationIndex)
+        // `saveSnap` 함수를 호출하여 Firestore에 저장합니다.
+        snapService.saveSnap(categoryId: categoryId, imageUrls: imageUrls) { result in
+            switch result {
+            case .success():
+                print("Snap 저장 성공")
+                completion(.success(()))
+            case .failure(let error):
+                print("Snap 저장 실패: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
         }
-        
-        print("Item moved from index \(sourceIndex) to \(destinationIndex)")
-        print("Updated tempSnapData: \(tempSnapData)")
+    }
+    /// 스냅 사진 드랍 후 배열 재정의
+//    func droptoSnapUpdate(from sourceIndex: Int, to destinationIndex: Int) {
+//        guard sourceIndex != destinationIndex, sourceIndex < snapData.count else { return }
+//        
+//        let itemToMove = snapData[sourceIndex]
+//        snapData.remove(at: sourceIndex)
+//        
+//        if destinationIndex >= snapData.count {
+//            snapData.append(itemToMove)
+//        } else {
+//            snapData.insert(itemToMove, at: destinationIndex)
+//        }
+//        
+//        print("Item moved from index \(sourceIndex) to \(destinationIndex)")
+//        print("Updated tempSnapData: \(snapData)")
+//        
+//        // Firebase에 업데이트된 스냅 사진 배열 저장
+//        saveSnapsToFirebase()
+//    }
+//    
+//    func saveSnapsToFirebase() {
+//        guard let categoryId = selectedCategoryId else { return }
+//        
+//        // Extract image URLs from tempSnapData
+//        let imageUrls = snapData.flatMap { $0.imageUrls }
+//        
+//        // Call the SnapService to save the Snap data
+//        snapService.saveSnap(categoryId: categoryId, imageUrls: imageUrls) { result in
+//            switch result {
+//            case .success:
+//                print("Snaps saved to Firebase successfully.")
+//            case .failure(let error):
+//                print("Error saving snaps to Firebase: \(error)")
+//            }
+//        }
+//    }
+//    
+    // 스냅 사진 삭제 기능
+    func deletePhoto(categoryId: String, snap: Snap, imageUrlToDelete: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        snapService.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrlToDelete) { result in
+            switch result {
+            case .success:
+                completion(.success(()))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
     
+    // 스냅 로드 기능
+    func loadSnap(categoryId: String, snapDate: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
+        snapService.loadSnap(categoryId: categoryId, snapDate: snapDate, completion: completion)
+    }
+    
+    // 스냅 리스트 로드 기능
+    func loadSnaps(categoryId: String) {
+        snapService.loadSnaps(categoryId: categoryId) { [weak self] result in
+            switch result {
+            case .success(let snaps):
+                DispatchQueue.main.async {
+                    self?.snapData = snaps // Combine을 통해 UI에 자동으로 반영
+                    print("Snaps loaded successfully.")
+                }
+            case .failure(let error):
+                print("Error loading snaps: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    // 체크리스트 아이템 로드
+    func loadChecklistItems() {
+        guard let categoryId = selectedCategoryId else {
+            print("Category ID is missing.")
+            return
+        }
+        
+        managementService.loadManagements(categoryId: categoryId) { [weak self] result in
+            switch result {
+            case .success(let items):
+                DispatchQueue.main.async {
+                    self?.checklistItems = items // Combine을 통해 UI에 자동으로 반영
+                    print("Checklist items loaded successfully.")
+                }
+            case .failure(let error):
+                print("Error loading checklist items: \(error.localizedDescription)")
+            }
+        }
+    }
+
+        
     /// 액션시트에 선택된 옵션에 따른 처리 메소드
     func showImagePickerActionSheet(from viewController: UIViewController) {
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)
@@ -91,26 +187,7 @@ class HomeViewModel {
         viewController.present(imagePickerController, animated: true, completion: nil)
     }
     
-    // Fetch photo details from URL 메소드
-    func fetchPhotoDetails(from url: URL, completion: @escaping (Bool) -> Void) {
-        let assets = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil)
-        var fetchedSnapData: [Snap] = []
-        
-        assets.enumerateObjects { asset, _, _ in
-            let creationDate = asset.creationDate ?? Date()
-            let localIdentifier = asset.localIdentifier
-            let imageUrl = url.absoluteString
-            let snap = Snap(id: localIdentifier, imageUrls: [imageUrl], createdAt: creationDate)
-            
-            fetchedSnapData.append(snap)
-        }
-        
-        DispatchQueue.main.async {
-            self.tempSnapData.append(contentsOf: fetchedSnapData)
-            completion(true)
-        }
-    }
-    
+    // MARK: - Permission Methods
     // 카메라 접근 제한 명령 메소드
     func requestCameraAccess(completion: @escaping (Bool) -> Void) {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -129,6 +206,7 @@ class HomeViewModel {
         }
     }
     
+    /// 캘러리 접근 제한 명령 메소드
     func requestPhotoLibraryAccess(completion: @escaping (Bool) -> Void) {
         switch PHPhotoLibrary.authorizationStatus() {
         case .authorized, .limited:
@@ -162,25 +240,53 @@ class HomeViewModel {
         viewController.present(alert, animated: true)
     }
     
-    /// 편집 모드 토글
-    func toggleEditingMode() {
-        isEditingMode.toggle()
-    }
-    
-    /// 특정 인덱스의 스냅 데이터 삭제
-    func deleteSnap(at index: Int) {
-        guard index >= 0 && index < tempSnapData.count else { return }
-        tempSnapData.remove(at: index)
-    }
-    
-    func saveEditedData() {
-        var updatedData: [Snap] = []
-        
-        for (index, snap) in tempSnapData.enumerated() {
-            let updatedSnap = snap
-            updatedData.append(updatedSnap)
-        }
-        
-        tempSnapData = updatedData
-    }
+//    // 체크리스트 아이템 저장
+//    func saveChecklistItem(_ item: Management) {
+//        guard let categoryId = selectedCategoryId else {
+//            print("Category ID is missing.")
+//            return
+//        }
+//        
+//        managementService.saveManagement(categoryId: categoryId, management: item) { [weak self] result in
+//            switch result {
+//            case .success:
+//                print("Checklist item saved successfully.")
+//                self?.loadChecklistItems() // 저장 후 로드
+//            case .failure(let error):
+//                print("Error saving checklist item: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+//    
+//    // 체크리스트 아이템 삭제
+//    func deleteChecklistItem(at index: Int) {
+//        guard index < checklistItems.count else { return }
+//        
+//        let itemToDelete = checklistItems[index]
+//        
+//        managementService.deleteManagement(itemId: itemToDelete.id) { [weak self] result in
+//            switch result {
+//            case .success:
+//                print("Checklist item deleted successfully.")
+//                self?.checklistItems.remove(at: index) // 로컬에서 삭제
+//            case .failure(let error):
+//                print("Error deleting checklist item: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+//
+//    // 체크리스트 아이템 로드
+//    func loadChecklistItems() {
+//        managementService.loadManagements(categoryId: <#String#>) { [weak self] result in
+//            switch result {
+//            case .success(let items):
+//                DispatchQueue.main.async {
+//                    self?.checklistItems = items // Combine을 통해 UI에 자동으로 반영
+//                    print("Checklist items loaded successfully.")
+//                }
+//            case .failure(let error):
+//                print("Error loading checklist items: \(error.localizedDescription)")
+//            }
+//        }
+//    }
 }

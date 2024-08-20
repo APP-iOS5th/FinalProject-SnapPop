@@ -45,10 +45,10 @@ class SnapCollectionViewCell: UICollectionViewCell {
             snapImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
             // 삭제 버튼 제약 조건
-            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            deleteButton.widthAnchor.constraint(equalToConstant: 30),
-            deleteButton.heightAnchor.constraint(equalToConstant: 30)
+            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: contentView.bounds.height * 0.02),
+            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentView.bounds.width * 0.02),
+            deleteButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1),
+            deleteButton.heightAnchor.constraint(equalTo: deleteButton.widthAnchor)
         ])
     }
     
@@ -69,8 +69,9 @@ class SnapCollectionViewCell: UICollectionViewCell {
         // 편집 모드에 따라 삭제 버튼 표시
         deleteButton.isHidden = !isEditing
         
-        // 이미지 로드
+        // Load the image from the first URL in the imageUrls array
         if let imageUrlString = snap.imageUrls.first {
+            // Load the image using the original URL
             loadImage(from: imageUrlString)
         } else {
             snapImageView.image = nil
@@ -78,34 +79,31 @@ class SnapCollectionViewCell: UICollectionViewCell {
     }
     
     private func loadImage(from urlString: String) {
-        
-        //        이건 테스트용!
-        //        guard URL(string: urlString) != nil else {
-        //            snapImageView.image = nil
-        //            return
-        //        }
-        //        // 로컬 이미지
-        //        if let image = UIImage(named: urlString) {
-        //            snapImageView.image = image
-        //        } else {
-        //            snapImageView.image = nil
-        //        }
-        
-        // URL 객체로 변환
         guard let url = URL(string: urlString) else {
+            print("Invalid URL: \(urlString)") // URL 확인
             snapImageView.image = nil
             return
         }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data, let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.snapImageView.image = image
-                }
-            } else {
+            if let error = error {
+                print("Error fetching image: \(error.localizedDescription)") // 에러 확인
                 DispatchQueue.main.async {
                     self.snapImageView.image = nil
                 }
+                return
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("Failed to load image data.") // 데이터 확인
+                DispatchQueue.main.async {
+                    self.snapImageView.image = nil
+                }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.snapImageView.image = image
             }
         }
         task.resume()

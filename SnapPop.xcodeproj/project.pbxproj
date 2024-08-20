@@ -32,9 +32,7 @@
 		8F1685492C6360180010F8D8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8F1685482C6360180010F8D8 /* FirebaseAuth */; };
 		8F16854B2C6360180010F8D8 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854A2C6360180010F8D8 /* FirebaseFirestore */; };
 		8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854C2C6360180010F8D8 /* FirebaseStorage */; };
-		8F1685512C6598C00010F8D8 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685522C6599A20010F8D8 /* CalendarViewController.swift */; };
-		8F4C73BF2C6AF771000AACDA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */; };
 		8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C73C12C6B1E71000AACDA /* svenmodels.swift */; };
 		8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
@@ -51,8 +49,6 @@
 		C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */; };
 		C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
-		C2D401542C72E806000E0343 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = C2D401532C72E806000E0343 /* Config.xcconfig */; };
-		C2D401562C72E811000E0343 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C2D401552C72E811000E0343 /* GoogleService-Info.plist */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
 		C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */; };
 		C2F416472C6B397800A2F544 /* SnapService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F416462C6B397800A2F544 /* SnapService.swift */; };
@@ -60,11 +56,14 @@
 		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
 		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
 		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
+		EA49D3722C74EAC70002F243 /* CropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA664E532C7455F80034B998 /* CropViewController.swift */; };
 		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
 		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
 		EA57EB482C72CAAC007F8987 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB472C72CAAC007F8987 /* Category.swift */; };
 		EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB492C72CAD2007F8987 /* Management.swift */; };
 		EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB4B2C72CAEC007F8987 /* Snap.swift */; };
+		EA664E4E2C73914B0034B998 /* CustomCropToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */; };
+		EA664E582C74E0DD0034B998 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA664E572C74E0DD0034B998 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -93,8 +92,6 @@
 		8F16853B2C63545A0010F8D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F16853D2C63545A0010F8D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F1685522C6599A20010F8D8 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
-		8F4C73BD2C6AF6AF000AACDA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8F4C73C12C6B1E71000AACDA /* svenmodels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = svenmodels.swift; sourceTree = "<group>"; };
 		8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isDonePercentageChartViewController.swift; sourceTree = "<group>"; };
 		8FA215902C731E0500891F93 /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
@@ -110,8 +107,6 @@
 		C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
 		C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
-		C2D401532C72E806000E0343 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		C2D401552C72E811000E0343 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
 		C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		C2F416462C6B397800A2F544 /* SnapService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapService.swift; sourceTree = "<group>"; };
@@ -124,6 +119,9 @@
 		EA57EB472C72CAAC007F8987 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		EA57EB492C72CAD2007F8987 /* Management.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Management.swift; sourceTree = "<group>"; };
 		EA57EB4B2C72CAEC007F8987 /* Snap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snap.swift; sourceTree = "<group>"; };
+		EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCropToolbar.swift; sourceTree = "<group>"; };
+		EA664E532C7455F80034B998 /* CropViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropViewController.swift; sourceTree = "<group>"; };
+		EA664E572C74E0DD0034B998 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,7 +209,6 @@
 		8F1685232C6354590010F8D8 = {
 			isa = PBXGroup;
 			children = (
-				C2D401532C72E806000E0343 /* Config.xcconfig */,
 				C24BFA542C647BA600A5B40A /* .swiftlint.yml */,
 				8F16852E2C6354590010F8D8 /* SnapPop */,
 				8F16852D2C6354590010F8D8 /* Products */,
@@ -238,17 +235,9 @@
 				C24BFA5B2C64801100A5B40A /* ViewModels */,
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
-				C2D401552C72E811000E0343 /* GoogleService-Info.plist */,
+				EA664E572C74E0DD0034B998 /* GoogleService-Info.plist */,
 			);
 			path = SnapPop;
-			sourceTree = "<group>";
-		};
-		C2008C282C7461EB005FC906 /* DetailCost */ = {
-			isa = PBXGroup;
-			children = (
-				C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */,
-			);
-			path = DetailCost;
 			sourceTree = "<group>";
 		};
 		8F4C73C02C6AFA71000AACDA /* Calendar */ = {
@@ -262,11 +251,12 @@
 			path = Calendar;
 			sourceTree = "<group>";
 		};
-		8FA215922C732C4500891F93 /* Calendar */ = {
+		C2008C282C7461EB005FC906 /* DetailCost */ = {
 			isa = PBXGroup;
 			children = (
+				C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */,
 			);
-			path = Calendar;
+			path = DetailCost;
 			sourceTree = "<group>";
 		};
 		C24BFA572C647E7800A5B40A /* Application */ = {
@@ -317,7 +307,6 @@
 		C24BFA5B2C64801100A5B40A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				8FA215922C732C4500891F93 /* Calendar */,
 				C2008C282C7461EB005FC906 /* DetailCost */,
 				4AC9A03D2C731E1200EB5FFC /* Root */,
 				EA141FA42C6B31DE00DD4B29 /* Home */,
@@ -398,6 +387,8 @@
 				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
 				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
 				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
+				EA664E532C7455F80034B998 /* CropViewController.swift */,
+				EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -481,9 +472,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2D401542C72E806000E0343 /* Config.xcconfig in Resources */,
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
-				C2D401562C72E811000E0343 /* GoogleService-Info.plist in Resources */,
+				EA664E582C74E0DD0034B998 /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
 			);
@@ -517,6 +507,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA49D3722C74EAC70002F243 /* CropViewController.swift in Sources */,
 				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
 				4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */,
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,
@@ -560,8 +551,8 @@
 				C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */,
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
 				8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */,
-				EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */,
 				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
+				EA664E4E2C73914B0034B998 /* CustomCropToolbar.swift in Sources */,
 				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
 				4AD29AD82C6B35BE00A9BEDD /* Color+Extensions.swift in Sources */,
 				4AD29AAC2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift in Sources */,
@@ -584,7 +575,6 @@
 /* Begin XCBuildConfiguration section */
 		8F16853E2C63545A0010F8D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2D401532C72E806000E0343 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -648,7 +638,6 @@
 		};
 		8F16853F2C63545A0010F8D8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2D401532C72E806000E0343 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
