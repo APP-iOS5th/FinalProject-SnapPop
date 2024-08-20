@@ -10,21 +10,21 @@ import UIKit
 class CustomCropToolbar: UIView {
     
     // UI Components
-    private var cropButton: UIButton?
-    private var cancelButton: UIButton?
-    private var ratioButton: UIButton?
-    private var stackView: UIStackView?
+    private var ratioButton: UIButton!
+    private var rotateButton: UIButton! // New rotate button
+    private var flipButton: UIButton! // New flip button
+    private var stackView: UIStackView!
     
     // Customizable properties
     var customBackgroundColor: UIColor = .black {
-            didSet { self.updateBackgroundColor() }
-        }
+        didSet { self.updateBackgroundColor() }
+    }
     var foregroundColor: UIColor = .white
     
     // Callbacks for button actions
-    var onCrop: (() -> Void)?
-    var onCancel: (() -> Void)?
     var onRatio: (() -> Void)?
+    var onRotate: (() -> Void)? // Callback for rotation
+    var onFlip: (() -> Void)? // Callback for flipping
     
     // Constants based on relative screen sizes
     private var buttonWidthRatio: CGFloat = 0.3
@@ -42,30 +42,30 @@ class CustomCropToolbar: UIView {
     
     private func setupUI() {
         // Create buttons
-        cropButton = createButton(withTitle: "Crop", action: #selector(crop))
-        cancelButton = createButton(withTitle: "Cancel", action: #selector(cancel))
         ratioButton = createButton(withTitle: "Ratio", action: #selector(showRatio))
+        rotateButton = createButton(withTitle: "Rotate", action: #selector(rotate)) // Rotate button
+        flipButton = createButton(withTitle: "Flip", action: #selector(flip)) // Flip button
         
-        // Create stack view
-        stackView = UIStackView(arrangedSubviews: [cancelButton!, ratioButton!, cropButton!])
-        stackView?.translatesAutoresizingMaskIntoConstraints = false
-        stackView?.alignment = .center
-        stackView?.distribution = .fillEqually
-        stackView?.axis = .horizontal
+        // Create stack view and add buttons
+        stackView = UIStackView(arrangedSubviews: [ratioButton, rotateButton, flipButton])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.alignment = .center
+        stackView.distribution = .fillEqually
+        stackView.axis = .horizontal
         
         // Add stack view to the toolbar
-        addSubview(stackView!)
+        addSubview(stackView)
         
         // Layout constraints for stack view
         NSLayoutConstraint.activate([
-            stackView!.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView!.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView!.topAnchor.constraint(equalTo: topAnchor),
-            stackView!.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         
         // Set background color
-        self.backgroundColor = backgroundColor
+        self.backgroundColor = customBackgroundColor
     }
     
     private func createButton(withTitle title: String?, action: Selector) -> UIButton {
@@ -79,20 +79,20 @@ class CustomCropToolbar: UIView {
         return button
     }
     
-    @objc private func crop() {
-        onCrop?()
-    }
-    
-    @objc private func cancel() {
-        onCancel?()
-    }
-    
     @objc private func showRatio() {
         onRatio?()
     }
     
+    @objc private func rotate() {
+        onRotate?() // Call the rotate callback
+    }
+    
+    @objc private func flip() {
+        onFlip?() // Call the flip callback
+    }
+    
     func adjustLayout(forOrientation isPortrait: Bool) {
-        stackView?.axis = isPortrait ? .horizontal : .vertical
+        stackView.axis = isPortrait ? .horizontal : .vertical
         updateButtonSizes()
     }
     
@@ -101,14 +101,14 @@ class CustomCropToolbar: UIView {
         let buttonWidth = screenSize.width * buttonWidthRatio
         let buttonHeight = screenSize.height * buttonHeightRatio
         
-        cropButton?.frame.size = CGSize(width: buttonWidth, height: buttonHeight)
-        cancelButton?.frame.size = CGSize(width: buttonWidth, height: buttonHeight)
-        ratioButton?.frame.size = CGSize(width: buttonWidth, height: buttonHeight)
+        ratioButton.frame.size = CGSize(width: buttonWidth, height: buttonHeight)
+        rotateButton.frame.size = CGSize(width: buttonWidth, height: buttonHeight) // Set size for rotate button
+        flipButton.frame.size = CGSize(width: buttonWidth, height: buttonHeight) // Set size for flip button
     }
     
     private func updateBackgroundColor() {
-         self.backgroundColor = customBackgroundColor
-     }
+        self.backgroundColor = customBackgroundColor
+    }
     
     override var intrinsicContentSize: CGSize {
         let screenSize = UIScreen.main.bounds.size

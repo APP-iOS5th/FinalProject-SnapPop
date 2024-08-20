@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 import Photos
 import MobileCoreServices
+import Combine
 
 extension UIViewController {
     private struct Preview: UIViewControllerRepresentable {
@@ -76,6 +77,20 @@ class HomeViewController:
         return button
     }()
     
+    // 선택된 이미지를 저장할 속성
+    private var selectedImage: UIImage?
+    
+    // 관리 목록 타이틀
+    private let managementTitle: UILabel = {
+        let label = UILabel()
+        label.text = "관리 목록"
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    
     // 스냅 컬렉션
     private let snapCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -90,6 +105,9 @@ class HomeViewController:
     
     // 체크리스트 테이블
     private let checklistTableViewController = ChecklistTableViewController()
+    
+    // Add a property to hold the cancellables
+    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -151,7 +169,6 @@ class HomeViewController:
         NSLayoutConstraint.activate([
             datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.02),
-            //datePickerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
             
             calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor, constant: view.bounds.width * 0.02),
@@ -172,6 +189,9 @@ class HomeViewController:
     
     // MARK: - 체크리스트 관련 요소 제약조건
     private func setupChecklistView() {
+        // Add managementTitle to the view
+        view.addSubview(managementTitle)
+        
         checklistTableViewController.viewModel = viewModel
         
         addChild(checklistTableViewController)
@@ -179,9 +199,16 @@ class HomeViewController:
         checklistTableViewController.didMove(toParent: self)
         
         checklistTableViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        managementTitle.translatesAutoresizingMaskIntoConstraints = false // Enable Auto Layout for managementTitle
         
         NSLayoutConstraint.activate([
-            checklistTableViewController.view.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: view.bounds.height * 0.02),
+            // 관리 목록 타이틀 제약 조건
+            managementTitle.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: view.bounds.height * 0.02),
+            managementTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            managementTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            
+            // 체크리스트 테이블 제약 조건
+            checklistTableViewController.view.topAnchor.constraint(equalTo: managementTitle.bottomAnchor, constant: view.bounds.height * 0.02),
             checklistTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             checklistTableViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -212,24 +239,26 @@ class HomeViewController:
         
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-        
+
         NSLayoutConstraint.activate([
             snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.02),
+            snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.01),
+            snapTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
-            snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.02),
+            snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.01),
             snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             snapCollectionView.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -view.bounds.width * 0.02),
-            snapCollectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3),
+            snapCollectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.20),
             
             addButton.centerYAnchor.constraint(equalTo: snapCollectionView.centerYAnchor),
             addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
-            addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.1),
+            addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.10),
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor)
         ])
+        
         
         snapCollectionView.dragInteractionEnabled = true
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
@@ -255,7 +284,7 @@ class HomeViewController:
     
     // MARK: UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = collectionView.bounds.width * 0.95 // 전체 너비의 95%만 사용
+        let availableWidth = collectionView.bounds.width * 0.95
         let width = availableWidth / 2
         return CGSize(width: width, height: width)
     }
@@ -325,10 +354,6 @@ class HomeViewController:
             }
             
             snapCollectionView.reloadData() // 데이터 변경 반영
-//        
-//        isEditingMode.toggle()
-//        editButton.setTitle(isEditingMode ? "완료" : "편집", for: .normal)
-//        snapCollectionView.reloadData()
     }
     
     @objc private func deleteButtonTapped(_ sender: UIButton) {
@@ -340,16 +365,46 @@ class HomeViewController:
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         
-        if let imageURL = info[.imageURL] as? URL {
-            viewModel.fetchPhotoDetails(from: imageURL) { success in
-                if success {
-                    print("사진 로드 성공")
-                } else {
-                    print("사진 로드 실패")
-                }
-            }
+//        if let imageURL = info[.imageURL] as? URL {
+//            viewModel.fetchPhotoDetails(from: imageURL) { success in
+//                if success {
+//                    self.selectedImage = image
+//                    self.presentImageCropper()
+//                    print("사진 로드 성공")
+//                } else {
+//                    print("사진 로드 실패")
+//                }
+//            }
+//        }
+        
+        if let image = info[.originalImage] as? UIImage {
+            self.selectedImage = image // 선택한 이미지를 저장
+            self.presentImageCropper() // 이미지 크롭퍼 뷰 컨트롤러 표시
+            print("사진 로드 성공")
+        } else {
+            print("사진 로드 실패")
         }
     }
+    
+    private func presentImageCropper() {
+        guard let image = selectedImage else { return }
+        
+        let cropViewController = CropViewController() // CropViewController 초기화
+        cropViewController.image = image // 선택한 이미지를 설정
+        cropViewController.modalPresentationStyle = .fullScreen
+        
+        // 크롭 후 작업을 처리할 수 있도록 클로저 설정
+        cropViewController.didGetCroppedImage = { [weak self] (croppedImage: UIImage) in
+            // 크롭된 이미지를 처리할 코드
+            // 예: UIImageView에 표시하거나 저장하는 로직 추가
+            print("크롭된 이미지 처리 완료")
+            // 예: UIImageView에 표시
+            // self?.imageView.image = croppedImage
+        }
+        
+        present(cropViewController, animated: true, completion: nil)
+    }
+    
 }
 
 #if DEBUG

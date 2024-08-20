@@ -54,12 +54,6 @@ class CropViewController: UIViewController {
 
     private func setupCropToolbar() {
         cropToolbar = CustomCropToolbar(frame: CGRect.zero)
-        cropToolbar.onCrop = { [weak self] in
-            self?.cropImage()
-        }
-        cropToolbar.onCancel = { [weak self] in
-            self?.dismiss(animated: true, completion: nil)
-        }
         self.view.addSubview(cropToolbar)
 
         cropToolbar.translatesAutoresizingMaskIntoConstraints = false
@@ -82,7 +76,7 @@ class CropViewController: UIViewController {
 
         let doneButton = UIButton(type: .system)
         doneButton.setTitle("완료", for: .normal)
-        doneButton.addTarget(self, action: #selector(doneCrop), for: .touchUpInside)
+        doneButton.addTarget(self, action: #selector(cropImage), for: .touchUpInside)
         doneButton.backgroundColor = UIColor.yellow
         doneButton.setTitleColor(.black, for: .normal)
         doneButton.layer.cornerRadius = 10
@@ -165,11 +159,14 @@ class CropViewController: UIViewController {
         let scaleY = image.size.height / imageView.bounds.height
         let scale = min(scaleX, scaleY)
 
+        // Reduce the scale by half
+        let reducedScale = scale / 2.0
+
         let scaledCropRect = CGRect(
-            x: (cropRect.origin.x - imageView.frame.origin.x) * scale,
-            y: (cropRect.origin.y - imageView.frame.origin.y) * scale,
-            width: cropRect.size.width * scale,
-            height: cropRect.size.height * scale
+            x: (cropRect.origin.x - imageView.frame.origin.x) * reducedScale,
+            y: (cropRect.origin.y - imageView.frame.origin.y) * reducedScale,
+            width: cropRect.size.width * reducedScale,
+            height: cropRect.size.height * reducedScale
         )
 
         guard let cgImage = image.cgImage?.cropping(to: scaledCropRect) else { return }
@@ -183,13 +180,12 @@ class CropViewController: UIViewController {
         let croppedImageView = UIImageView(image: croppedImage)
         croppedImageView.frame = self.view.bounds
         self.view.addSubview(croppedImageView)
+
+        // Optionally dismiss the CropViewController after saving
+        self.dismiss(animated: true, completion: nil)
     }
     
     @objc func cancelCrop() {
         self.dismiss(animated: true, completion: nil)
-    }
-
-    @objc func doneCrop() {
-        cropImage()
     }
 }
