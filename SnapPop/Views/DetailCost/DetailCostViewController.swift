@@ -8,9 +8,14 @@
 import UIKit
 
 class DetailCostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    // MARK: - Properties
     private let viewModel: DetailCostViewModel
+    
+    // 금액 계산 셀 열기위한 변수
     private var isOpen = false
     
+    // MARK: - UIComponents
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.delegate = self
@@ -21,6 +26,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         return tableView
     }()
     
+    // MARK: - Initializers
     init(viewModel: DetailCostViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -30,12 +36,14 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureUI()
     }
     
+    // MARK: - Methods
     func configureUI() {
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
@@ -61,6 +69,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         ])
     }
     
+    // MARK: - UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }

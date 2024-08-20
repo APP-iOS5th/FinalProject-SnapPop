@@ -20,6 +20,7 @@ class BaseTableViewCell: UITableViewCell {
     func configureUI() {}
 }
 
+// -MARK: 제목
 final class TitleCell: BaseTableViewCell {
     static let identifier = "title"
     
@@ -45,6 +46,7 @@ final class TitleCell: BaseTableViewCell {
     }
 }
 
+// -MARK: 설명
 final class DescriptionCell: BaseTableViewCell {
     static let identifier = "description"
     
@@ -70,6 +72,7 @@ final class DescriptionCell: BaseTableViewCell {
     }
 }
 
+// -MARK: 비용 추가
 final class AddCostCell: BaseTableViewCell {
     static let identifier = "addCost"
     
@@ -112,6 +115,7 @@ final class AddCostCell: BaseTableViewCell {
     }
 }
 
+// -MARK: 1회 비용
 final class OneTimeCostCell: BaseTableViewCell {
     static let identifier = "oneTimeCost"
     
@@ -152,6 +156,7 @@ final class OneTimeCostCell: BaseTableViewCell {
     }
 }
 
+// -MARK: 계산
 final class CalculateCostCell: BaseTableViewCell {
     static let identifier = "calculateCost"
     
@@ -262,17 +267,23 @@ final class CalculateCostCell: BaseTableViewCell {
     }
 }
 
+// MARK: - UITableViewDataSource
 extension CalculateCostCell: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        var currentText = textField.text?.replacingOccurrences(of: "원", with: "").replacingOccurrences(of: "회", with: "") ?? ""
         
-        // 전체 선택 삭제
-        if string.isEmpty, range.length == textField.text?.count {
-            textField.text = ""
+        // 숫자가 아닌 경우 입력을 막음
+        guard CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: string)) else {
             return false
         }
-    
+        
+        var currentText = textField.text?.replacingOccurrences(of: "원", with: "").replacingOccurrences(of: "회", with: "") ?? ""
+        
         if string.isEmpty {
+            // 전체 선택 후 삭제 처리
+            if range.length == textField.text?.count {
+                textField.text = ""
+                return false
+            }
             currentText = String(currentText.dropLast()) // 백스페이스
         } else {
             currentText += string
