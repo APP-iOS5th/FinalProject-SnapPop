@@ -48,9 +48,7 @@
 		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
 		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
 		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
-		EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */; };
 		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
-		EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047622C6510EE0033D807 /* NavigationViewController.swift */; };
 		EA57EB482C72CAAC007F8987 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB472C72CAAC007F8987 /* Category.swift */; };
 		EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB492C72CAD2007F8987 /* Management.swift */; };
 		EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB4B2C72CAEC007F8987 /* Snap.swift */; };
@@ -96,9 +94,7 @@
 		EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewCell.swift; sourceTree = "<group>"; };
 		EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewController.swift; sourceTree = "<group>"; };
 		EA50475A2C64A1390033D807 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
 		EA5047602C6500870033D807 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
-		EA5047622C6510EE0033D807 /* NavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 		EA57EB472C72CAAC007F8987 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		EA57EB492C72CAD2007F8987 /* Management.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Management.swift; sourceTree = "<group>"; };
 		EA57EB4B2C72CAEC007F8987 /* Snap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snap.swift; sourceTree = "<group>"; };
@@ -321,12 +317,10 @@
 		EA141FA32C6B31C600DD4B29 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				EA5047622C6510EE0033D807 /* NavigationViewController.swift */,
 				EA50475A2C64A1390033D807 /* HomeViewController.swift */,
 				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
 				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
 				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
-				EA50475E2C64B9DF0033D807 /* EmptyViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -477,9 +471,7 @@
 				8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */,
 				4AC9A03F2C731E2200EB5FFC /* CustomNavigationBarViewModel.swift in Sources */,
 				C2F416472C6B397800A2F544 /* SnapService.swift in Sources */,
-				EA50475F2C64B9DF0033D807 /* EmptyViewController.swift in Sources */,
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
-				EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */,
 				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
 				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
 				4AD29AD82C6B35BE00A9BEDD /* Color+Extensions.swift in Sources */,
