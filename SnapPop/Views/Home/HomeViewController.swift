@@ -340,8 +340,7 @@ class HomeViewController:
         
         cropViewController.didGetCroppedImage = { [weak self] (snap: Snap) in
             self?.viewModel.snapData.append(snap) // Snap 객체를 viewModel에 추가
-            // SnapCollectionView를 업데이트
-            self?.snapCollectionView.reloadData()
+            self?.snapCollectionView.reloadData() // SnapCollectionView를 업데이트
         }
         
         present(cropViewController, animated: true, completion: nil)
