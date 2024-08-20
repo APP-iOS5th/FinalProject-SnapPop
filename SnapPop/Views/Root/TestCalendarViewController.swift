@@ -1,24 +1,21 @@
 //
-//  SecondViewController.swift
+//  TestCalendarViewController.swift
 //  SnapPop
 //
-//  Created by Heeji Jung on 8/8/24.
+//  Created by 정종원 on 8/19/24.
 //
 
 import UIKit
 
-class EmptyViewController: NavigationViewController {
-    
+class TestCalendarViewController: UIViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-          super.viewWillAppear(animated)
-          // Additional setup here
-      }
+
     /*
     // MARK: - Navigation
 
