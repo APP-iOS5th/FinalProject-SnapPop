@@ -8,7 +8,7 @@
 import UIKit
 
 class DetailCostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+    private let viewModel: DetailCostViewModel
     private var isOpen = false
     
     private lazy var tableView: UITableView = {
@@ -20,6 +20,15 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         
         return tableView
     }()
+    
+    init(viewModel: DetailCostViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,6 +121,10 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         case 2:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CalculateCostCell.identifier, for: indexPath) as? CalculateCostCell else { return UITableViewCell() }
+            cell.onCalculate = { result in
+                guard let oneTimeCostCell = tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as? OneTimeCostCell else { return }
+                oneTimeCostCell.updateCost(with: result)
+            }
             return cell
         default:
             return UITableViewCell()

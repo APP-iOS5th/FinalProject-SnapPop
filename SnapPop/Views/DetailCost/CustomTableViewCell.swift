@@ -122,7 +122,7 @@ final class OneTimeCostCell: BaseTableViewCell {
         return label
     }()
     
-    private let cost: UILabel = {
+    private let costLabel: UILabel = {
         let label = UILabel()
         label.text = "000 원"
         label.textColor = .gray
@@ -132,24 +132,30 @@ final class OneTimeCostCell: BaseTableViewCell {
     
     override func configureUI() {
         contentView.addSubview(label)
-        contentView.addSubview(cost)
+        contentView.addSubview(costLabel)
         selectionStyle = .none
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        cost.translatesAutoresizingMaskIntoConstraints = false
+        costLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            cost.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            cost.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            costLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            costLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
+    }
+    
+    func updateCost(with result: Int) {
+        costLabel.text = "\(result) 원"
     }
 }
 
 final class CalculateCostCell: BaseTableViewCell {
     static let identifier = "calculateCost"
+    
+    var onCalculate: ((Int) -> Void)?
     
     private let purchasePriceLabel: UILabel = {
         let label = UILabel()
@@ -160,11 +166,12 @@ final class CalculateCostCell: BaseTableViewCell {
         return label
     }()
     
-    private let purchasePriceTextField: UITextField = {
+    private lazy var purchasePriceTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "000"
+        textField.placeholder = "가격을 입력해주세요"
         textField.borderStyle = .roundedRect
         textField.keyboardType = .numberPad
+        textField.delegate = self
         
         return textField
     }()
@@ -178,24 +185,25 @@ final class CalculateCostCell: BaseTableViewCell {
         return label
     }()
     
-    private let usageCoutTextField: UITextField = {
+    private lazy var usageCountTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "000"
+        textField.placeholder = "얼마나 쓸수있을까?"
         textField.borderStyle = .roundedRect
         textField.keyboardType = .numberPad
+        textField.delegate = self
         
         return textField
     }()
     
-    private let calculateButton: UIButton = {
+    private lazy var calculateButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("계산하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         
-        button.addAction(UIAction { _ in
-            print("hi")
+        button.addAction(UIAction { [weak self] _ in
+            self?.calculate()
         }, for: .touchUpInside)
         return button
     }()
@@ -204,14 +212,14 @@ final class CalculateCostCell: BaseTableViewCell {
         contentView.addSubview(purchasePriceLabel)
         contentView.addSubview(purchasePriceTextField)
         contentView.addSubview(usageCountLabel)
-        contentView.addSubview(usageCoutTextField)
+        contentView.addSubview(usageCountTextField)
         contentView.addSubview(calculateButton)
         selectionStyle = .none
         
         purchasePriceLabel.translatesAutoresizingMaskIntoConstraints = false
         purchasePriceTextField.translatesAutoresizingMaskIntoConstraints = false
         usageCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        usageCoutTextField.translatesAutoresizingMaskIntoConstraints = false
+        usageCountTextField.translatesAutoresizingMaskIntoConstraints = false
         calculateButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -228,16 +236,58 @@ final class CalculateCostCell: BaseTableViewCell {
             usageCountLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             usageCountLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            usageCoutTextField.topAnchor.constraint(equalTo: usageCountLabel.bottomAnchor, constant: 8),
-            usageCoutTextField.leadingAnchor.constraint(equalTo: usageCountLabel.leadingAnchor),
-            usageCoutTextField.trailingAnchor.constraint(equalTo: usageCountLabel.trailingAnchor),
-            usageCoutTextField.heightAnchor.constraint(equalToConstant: 40),
+            usageCountTextField.topAnchor.constraint(equalTo: usageCountLabel.bottomAnchor, constant: 8),
+            usageCountTextField.leadingAnchor.constraint(equalTo: usageCountLabel.leadingAnchor),
+            usageCountTextField.trailingAnchor.constraint(equalTo: usageCountLabel.trailingAnchor),
+            usageCountTextField.heightAnchor.constraint(equalToConstant: 40),
             
-            calculateButton.topAnchor.constraint(equalTo: usageCoutTextField.bottomAnchor, constant: 32),
-            calculateButton.leadingAnchor.constraint(equalTo: usageCoutTextField.leadingAnchor),
-            calculateButton.trailingAnchor.constraint(equalTo: usageCoutTextField.trailingAnchor),
+            calculateButton.topAnchor.constraint(equalTo: usageCountTextField.bottomAnchor, constant: 32),
+            calculateButton.leadingAnchor.constraint(equalTo: usageCountTextField.leadingAnchor),
+            calculateButton.trailingAnchor.constraint(equalTo: usageCountTextField.trailingAnchor),
             calculateButton.heightAnchor.constraint(equalToConstant: 40),
             calculateButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
+    }
+    
+    private func calculate() {
+        guard let purchasePriceText = purchasePriceTextField.text?.replacingOccurrences(of: "원", with: ""),
+              let usageCountText = usageCountTextField.text?.replacingOccurrences(of: "회", with: ""),
+              let purchasePrice = Int(purchasePriceText),
+              let usageCount = Int(usageCountText),
+              usageCount != 0 else {
+            return
+        }
+        
+        onCalculate?(purchasePrice / usageCount)
+    }
+}
+
+extension CalculateCostCell: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        var currentText = textField.text?.replacingOccurrences(of: "원", with: "").replacingOccurrences(of: "회", with: "") ?? ""
+        
+        // 전체 선택 삭제
+        if string.isEmpty, range.length == textField.text?.count {
+            textField.text = ""
+            return false
+        }
+    
+        if string.isEmpty {
+            currentText = String(currentText.dropLast()) // 백스페이스
+        } else {
+            currentText += string
+        }
+        
+        if currentText.isEmpty {
+            textField.text = ""
+        } else {
+            if textField == purchasePriceTextField {
+                textField.text = "\(currentText)원"
+            } else if textField == usageCountTextField {
+                textField.text = "\(currentText)회"
+            }
+        }
+        
+        return false
     }
 }
