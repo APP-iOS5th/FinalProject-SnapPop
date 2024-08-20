@@ -16,7 +16,7 @@ class ChecklistTableViewController: UITableViewController {
         let button = UIButton(type: .system)
         button.setTitle("새로운 관리 추가하기 + ", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 1.0)
+        button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(ChecklistTableViewController.self, action: #selector(didselfcareAddButton), for: .touchUpInside)
@@ -25,7 +25,6 @@ class ChecklistTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.addSubview(selfcareAddButton)
         setupButtonConstraints()
         
@@ -39,6 +38,7 @@ class ChecklistTableViewController: UITableViewController {
     
     private func setupButtonConstraints() {
         NSLayoutConstraint.activate([
+            
             selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor), // 수평 중앙 정렬
             selfcareAddButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10), // 셀 하단에 위치
             selfcareAddButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1), // 높이 비율 조정

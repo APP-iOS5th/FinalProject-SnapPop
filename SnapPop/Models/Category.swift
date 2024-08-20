@@ -11,8 +11,8 @@ import FirebaseStorage
 struct Category: Identifiable, Hashable, Codable {
     @DocumentID var id: String?
     let userId: String
-    let title: String
-    let alertStatus: Bool
+    var title: String
+    var alertStatus: Bool
     
     init(userId: String, title: String, alertStatus: Bool) {
         self.userId = userId

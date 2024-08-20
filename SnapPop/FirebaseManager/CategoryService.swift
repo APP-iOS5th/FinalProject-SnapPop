@@ -13,18 +13,23 @@ final class CategoryService {
     private let db = Firestore.firestore()
     private let storage = Storage.storage().reference()
     
-    func saveCategory(category: Category, completion: @escaping (Result<Void, Error>) -> Void) {
+    func saveCategory(category: Category, completion: @escaping (Result<Category, Error>) -> Void) {
+        let documentRef = db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
+            .document()
+        
+        var categoryWithID = category
+        categoryWithID.id = documentRef.documentID
+        
         do {
-            try db.collection("Users")
-                .document(AuthViewModel.shared.currentUser?.uid ?? "")
-                .collection("Categories")
-                .addDocument(from: category) { error in
-                    if let error = error {
-                        completion(.failure(error))
-                        return
-                    }
-                    completion(.success(()))
+            try documentRef.setData(from: categoryWithID) { error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
                 }
+                completion(.success(categoryWithID))
+            }
         } catch {
             completion(.failure(error))
         }
