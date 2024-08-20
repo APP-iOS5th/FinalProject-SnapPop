@@ -9,10 +9,14 @@ import UIKit
 
 class DetailCostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    private var isOpen = false
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 100
         
         return tableView
     }()
@@ -30,7 +34,9 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         let cells: [(AnyClass, String)] = [
             (TitleCell.self, TitleCell.identifier),
             (DescriptionCell.self, DescriptionCell.identifier),
-            (AddCostCell.self, AddCostCell.identifier)
+            (AddCostCell.self, AddCostCell.identifier),
+            (OneTimeCostCell.self, OneTimeCostCell.identifier),
+            (CalculateCostCell.self, CalculateCostCell.identifier)
         ]
         
         for (cellClass, identifier) in cells {
@@ -55,9 +61,9 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         case 0:
             return 2
         case 1:
-            return 2
+            return isOpen ? 2 : 1
         case 2:
-            return 2
+            return isOpen ? 1 : 0
         default:
             return 0
         }
@@ -69,8 +75,6 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             return "상세 정보"
         case 1:
             return "상세 비용"
-        case 2:
-            return "구매 가격"
         default:
             return nil
         }
@@ -93,10 +97,22 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             switch indexPath.row {
             case 0:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: AddCostCell.identifier, for: indexPath) as? AddCostCell else { return UITableViewCell() }
+                cell.toggleSwitch.isOn = self.isOpen
+                
+                cell.onToggleSwitchChanged = { [weak self] isOn in
+                    self?.isOpen = isOn
+                    tableView.reloadSections([1, 2], with: .automatic)
+                }
+                return cell
+            case 1:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: OneTimeCostCell.identifier, for: indexPath) as? OneTimeCostCell else { return UITableViewCell() }
                 return cell
             default:
                 return UITableViewCell()
             }
+        case 2:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CalculateCostCell.identifier, for: indexPath) as? CalculateCostCell else { return UITableViewCell() }
+            return cell
         default:
             return UITableViewCell()
         }
