@@ -45,10 +45,10 @@ class SnapCollectionViewCell: UICollectionViewCell {
             snapImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
             // 삭제 버튼 제약 조건
-            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            deleteButton.widthAnchor.constraint(equalToConstant: 30),
-            deleteButton.heightAnchor.constraint(equalToConstant: 30)
+            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: contentView.bounds.height * 0.02),
+            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentView.bounds.width * 0.02),
+            deleteButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1),
+            deleteButton.heightAnchor.constraint(equalTo: deleteButton.widthAnchor)
         ])
     }
     
