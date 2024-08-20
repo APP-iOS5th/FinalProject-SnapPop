@@ -13,6 +13,7 @@ class CustomCropToolbar: UIView {
     private var ratioButton: UIButton!
     private var rotateButton: UIButton! // New rotate button
     private var flipButton: UIButton! // New flip button
+    private var cropButton: UIButton! // New crop button
     private var stackView: UIStackView!
     
     // Customizable properties
@@ -25,6 +26,7 @@ class CustomCropToolbar: UIView {
     var onRatio: (() -> Void)?
     var onRotate: (() -> Void)? // Callback for rotation
     var onFlip: (() -> Void)? // Callback for flipping
+    var onCrop: (() -> Void)? // Callback for cropping
     
     // Constants based on relative screen sizes
     private var buttonWidthRatio: CGFloat = 0.3
@@ -45,9 +47,10 @@ class CustomCropToolbar: UIView {
         ratioButton = createButton(withTitle: "Ratio", action: #selector(showRatio))
         rotateButton = createButton(withTitle: "Rotate", action: #selector(rotate)) // Rotate button
         flipButton = createButton(withTitle: "Flip", action: #selector(flip)) // Flip button
+        cropButton = createButton(withTitle: "Crop", action: #selector(crop)) // New crop button
         
         // Create stack view and add buttons
-        stackView = UIStackView(arrangedSubviews: [ratioButton, rotateButton, flipButton])
+        stackView = UIStackView(arrangedSubviews: [ratioButton, rotateButton, flipButton, cropButton])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .center
         stackView.distribution = .fillEqually
@@ -91,6 +94,10 @@ class CustomCropToolbar: UIView {
         onFlip?() // Call the flip callback
     }
     
+    @objc private func crop() {
+        onCrop?() // Call the crop callback
+    }
+    
     func adjustLayout(forOrientation isPortrait: Bool) {
         stackView.axis = isPortrait ? .horizontal : .vertical
         updateButtonSizes()
@@ -104,6 +111,7 @@ class CustomCropToolbar: UIView {
         ratioButton.frame.size = CGSize(width: buttonWidth, height: buttonHeight)
         rotateButton.frame.size = CGSize(width: buttonWidth, height: buttonHeight) // Set size for rotate button
         flipButton.frame.size = CGSize(width: buttonWidth, height: buttonHeight) // Set size for flip button
+        cropButton.frame.size = CGSize(width: buttonWidth, height: buttonHeight) // Set size for crop button
     }
     
     private func updateBackgroundColor() {

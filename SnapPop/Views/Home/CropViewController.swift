@@ -50,10 +50,17 @@ class CropViewController: UIViewController {
         imageView.addGestureRecognizer(pinchGesture)
         imageView.addGestureRecognizer(rotationGesture)
         imageView.addGestureRecognizer(tapGesture)
+
+        // Add pan gesture to move the crop rectangle
+//        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+//        cropRectView.addGestureRecognizer(panGesture)
     }
 
     private func setupCropToolbar() {
         cropToolbar = CustomCropToolbar(frame: CGRect.zero)
+        cropToolbar.onCrop = { [weak self] in
+            self?.cropImage() // Call the crop method when the crop button is pressed
+        }
         self.view.addSubview(cropToolbar)
 
         cropToolbar.translatesAutoresizingMaskIntoConstraints = false
@@ -100,7 +107,7 @@ class CropViewController: UIViewController {
         cropRectView = UIView()
         cropRectView.layer.borderColor = UIColor.white.cgColor
         cropRectView.layer.borderWidth = 2.0
-        cropRectView.isUserInteractionEnabled = false
+        cropRectView.isUserInteractionEnabled = true // Enable user interaction
         self.view.addSubview(cropRectView)
         
         updateCropRectView()
@@ -148,6 +155,15 @@ class CropViewController: UIViewController {
         updateCropRectView()
     }
 
+    @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: self.view)
+        if gesture.state == .changed {
+            // Move the cropRectView based on the pan gesture
+            cropRectView.center = CGPoint(x: cropRectView.center.x + translation.x, y: cropRectView.center.y + translation.y)
+            gesture.setTranslation(.zero, in: self.view) // Reset translation
+        }
+    }
+
     @objc func resetImageOrientation() {
         imageView.transform = .identity
         rotationLabel.text = "Rotation: 0.0°"
@@ -159,14 +175,11 @@ class CropViewController: UIViewController {
         let scaleY = image.size.height / imageView.bounds.height
         let scale = min(scaleX, scaleY)
 
-        // Reduce the scale by half
-        let reducedScale = scale / 2.0
-
         let scaledCropRect = CGRect(
-            x: (cropRect.origin.x - imageView.frame.origin.x) * reducedScale,
-            y: (cropRect.origin.y - imageView.frame.origin.y) * reducedScale,
-            width: cropRect.size.width * reducedScale,
-            height: cropRect.size.height * reducedScale
+            x: (cropRectView.frame.origin.x - imageView.frame.origin.x) * scale,
+            y: (cropRectView.frame.origin.y - imageView.frame.origin.y) * scale,
+            width: cropRectView.frame.size.width * scale,
+            height: cropRectView.frame.size.height * scale
         )
 
         guard let cgImage = image.cgImage?.cropping(to: scaledCropRect) else { return }
