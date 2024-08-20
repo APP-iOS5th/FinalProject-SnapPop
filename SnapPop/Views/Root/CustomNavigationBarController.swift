@@ -23,6 +23,7 @@ class CustomNavigationBarController: UINavigationController {
         
         let button = UIButton(configuration: config, primaryAction: nil)
         button.menu = self.createCategoryMenu(categories: viewModel.categories)
+        button.addTarget(self, action: #selector(categoryButtonTapped), for: .menuActionTriggered)
         button.showsMenuAsPrimaryAction = true
         button.sizeToFit()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -43,8 +44,13 @@ class CustomNavigationBarController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCustomNavigationBar()
-        loadCategories()
         updateCategoryTitle()
+        viewModel.categoryisUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.updateCategoryMenu()
+            }
+        }
+        loadCategories()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -53,6 +59,12 @@ class CustomNavigationBarController: UINavigationController {
             setupNavigationBarItems()
         }
         updateCategoryTitle()
+        updateCategoryMenu()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        updateCategoryMenu()
     }
     
     // MARK: - Methods
@@ -90,7 +102,6 @@ class CustomNavigationBarController: UINavigationController {
     }
     
     private func createCategoryMenu(categories: [Category]) -> UIMenu {
-        var categories = categories
         var menuActions: [UIAction] = []
         
         for (index, category) in viewModel.categories.enumerated() {
@@ -104,7 +115,6 @@ class CustomNavigationBarController: UINavigationController {
         }
         
         menuActions.append(UIAction(title: "카테고리 설정", handler: { _ in
-            // TODO: - 카테고리 설정 구현
             let sheetViewController = CategorySettingsViewController(viewModel: self.viewModel)
             if let sheet = sheetViewController.sheetPresentationController {
                 sheet.detents = [.medium()]
@@ -117,34 +127,40 @@ class CustomNavigationBarController: UINavigationController {
     }
     
     private func updateCategoryMenu() {
-        let menu = createCategoryMenu(categories: viewModel.categories)
-        categoryButton.menu = menu
+        DispatchQueue.main.async {
+            let menu = self.createCategoryMenu(categories: self.viewModel.categories)
+            self.categoryButton.menu = menu
+        }
         categoryButton.showsMenuAsPrimaryAction = true
     }
     
     private func loadCategories() {
         viewModel.loadCategories { [weak self] in
-            DispatchQueue.main.async {
-                self?.updateCategoryMenu()
-            }
+            self?.updateCategoryMenu()
+            self?.updateCategoryTitle()
         }
     }
     
     private func updateCategoryTitle() {
-        guard let currentCategory = viewModel.currentCategory else { return }
-        self.categoryButton.setTitle(currentCategory.title, for: .normal)
+        guard let currentCategory = self.viewModel.currentCategory else { return }
+        categoryButton.setTitle(currentCategory.title, for: .normal)
+        categoryButton.sizeToFit()
     }
     
     // MARK: - Actions
     
     @objc private func bellButtonTapped() {
-        print("Bell button tapped")
         pushViewController(NotificationViewController(), animated: true)
     }
     
     @objc private func gearButtonTapped() {
-        print("Gear button tapped")
         pushViewController(SettingViewController(), animated: true)
+    }
+    
+    @objc private func categoryButtonTapped() {
+        DispatchQueue.main.async {
+            self.updateCategoryMenu()
+        }
     }
     
 }

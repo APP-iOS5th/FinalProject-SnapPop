@@ -146,7 +146,20 @@ class CategorySettingsViewController: UIViewController {
     
     // MARK: - Actions
     @objc func addCategoryButtonTapped() {
-        // TODO: - ViewModel 사용하여 파이어베이스에 카테고리 추가
+        // TODO: - uid 삭제해야함
+        guard let categoryName = categoryTextField.text else { return }
+        if !(categoryName.isEmpty)  {
+            var newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
+            viewModel.saveCategory(category: newCategory) {
+                DispatchQueue.main.async {
+                    self.categoryTable.reloadData()
+                }
+            }
+            categoryTextField.text = ""
+        } else {
+            // TODO: - TextField에 입력을 하지 않았을때
+        }
+        
     }
 }
 
@@ -168,19 +181,27 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
         return cell
     }
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        // 오른쪽에 만들기
-        let notification = UIContextualAction(style: .normal, title: "") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
-            print("notification 클릭 됨")
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let notification = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
             // TODO: - ViewModel 사용하여 파이어베이스에 알림 추가/ 분기해야함
             success(true)
         }
         notification.backgroundColor = .systemGray4
         notification.image = UIImage(systemName: "bell")
         
-        let trash = UIContextualAction(style: .normal, title: "") { (UIContextualAction, UIView, success: @escaping (Bool) -> Void) in
-            print("trash 클릭 됨")
-            // TODO: - ViewModel 사용하여 파이어베이스에 카테고리 삭제
+        let trash = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
+            self.viewModel.deleteCategory(at: indexPath.row) {
+                self.viewModel.loadCategories {
+                    DispatchQueue.main.async {
+                        self.categoryTable.reloadData()
+                    }
+                }
+            }
+            DispatchQueue.main.async {
+                self.categoryTable.reloadData()
+            }
+            print("Current Categories: \(self.viewModel.categories)")
             success(true)
         }
         trash.backgroundColor = .red
