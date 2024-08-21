@@ -89,6 +89,36 @@ final class SnapService {
             }
     }
     
+    func loadSnapsForMonth(categoryId: String, year: Int, month: Int, completion: @escaping (Result<[Snap], Error>) -> Void) {
+        let calendar = Calendar.current
+        guard let startOfMonth = calendar.date(from: DateComponents(year: year, month: month)),
+              let startOfNextMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) else {
+            completion(.failure(NSError(domain: "InvalidDate", code: 0, userInfo: nil)))
+            return
+        }
+        
+        db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
+            .document(categoryId)
+            .collection("Snaps")
+            .whereField("createdAt", isGreaterThanOrEqualTo: startOfMonth)
+            .whereField("createdAt", isLessThan: startOfNextMonth)
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                guard let documents = querySnapshot?.documents else { return }
+                
+                let snaps = documents.compactMap { document in
+                    try? document.data(as: Snap.self)
+                }
+                
+                completion(.success(snaps))
+            }
+    }
+    
     func loadSnaps(categoryId: String, completion: @escaping (Result<[Snap], Error>) -> Void) {
         db.collection("Users")
             .document(AuthViewModel.shared.currentUser?.uid ?? "")

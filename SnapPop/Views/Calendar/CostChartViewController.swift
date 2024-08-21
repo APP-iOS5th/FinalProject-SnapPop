@@ -24,7 +24,6 @@ class CostChart: UIViewController {
         label.text = ""
         label.font = UIFont.systemFont(ofSize: 16)
         label.textAlignment = .center
-        label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -48,7 +47,7 @@ class CostChart: UIViewController {
         // Initialize Doughnut Chart view
         circularView = CostDoughnut(percentages: percentages, colors: colors, totalCost: "20000000원")
         circularView.translatesAutoresizingMaskIntoConstraints = false
-        
+//        monthLabel.textColor = dynamicColor(light: .black, dark: .white)
         // Add Doughnut Chart view to the main view
         view.addSubview(circularView)
         view.addSubview(monthLabel)
@@ -170,7 +169,7 @@ open class CostDoughnut: UIView {
         ]
         let centerTextAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 20),
-            .foregroundColor: UIColor.black
+            .foregroundColor: dynamicColor(light: .black, dark: .white)
         ]
         
         // centerText 위치 계산
@@ -222,5 +221,10 @@ open class CostDoughnut: UIView {
             costLabel.text = cost
         }
     }
+    public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
+            return UIColor { traitCollection in
+                return traitCollection.userInterfaceStyle == .dark ? dark : light
+            }
+        }
         
 }

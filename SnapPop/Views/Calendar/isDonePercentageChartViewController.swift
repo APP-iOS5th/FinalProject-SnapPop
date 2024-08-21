@@ -24,7 +24,6 @@ class IsDonePercentageChart: UIViewController {
         label.text = ""
         label.font = UIFont.systemFont(ofSize: 16)
         label.textAlignment = .center
-        label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -44,15 +43,12 @@ class IsDonePercentageChart: UIViewController {
     
     private func setupDoneChart(isDone: Double) {
         let percentages: [Double] = [isDone, 100 - isDone]
-        // Initialize Doughnut Chart view
         circularView = IsDoneDoughnut(percentages: percentages)
         circularView.translatesAutoresizingMaskIntoConstraints = false
         circularView.updateColor()
-        // Add Doughnut Chart view to the main view
         view.addSubview(circularView)
         view.addSubview(monthLabel)
-        
-        // Setup constraints for Doughnut Chart view
+        monthLabel.textColor = dynamicColor(light: .black, dark: .white)
         NSLayoutConstraint.activate([
             
             monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
@@ -73,7 +69,14 @@ class IsDonePercentageChart: UIViewController {
     public func updateMonthLabel(month: Int, year: Int) {
         monthLabel.text = "\(month)월"
     }
+    public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
+            return UIColor { traitCollection in
+                return traitCollection.userInterfaceStyle == .dark ? dark : light
+            }
+        }
 }
+
+
 
 
 open class IsDoneDoughnut: UIView {
@@ -119,7 +122,7 @@ open class IsDoneDoughnut: UIView {
     func updateColor() {
 
         guard let firstPercentage = _percentages.first else {
-            percentageColor = .black
+            percentageColor = dynamicColor(light: .black, dark: .white)
             return
         }
         
@@ -129,13 +132,13 @@ open class IsDoneDoughnut: UIView {
         case 30.01...50.00:
             percentageColor = .orange
         case 50.01...70.00:
-            percentageColor = .black
+            percentageColor = dynamicColor(light: .black, dark: .white)
         case 70.01...85.00:
             percentageColor = .green
         case 85.01...100.00:
             percentageColor = .blue
         default:
-            percentageColor = .black
+            percentageColor = dynamicColor(light: .black, dark: .white)
         }
     }
     
@@ -180,4 +183,9 @@ open class IsDoneDoughnut: UIView {
                 
         }
     }
+    public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
+            return UIColor { traitCollection in
+                return traitCollection.userInterfaceStyle == .dark ? dark : light
+            }
+        }
 }

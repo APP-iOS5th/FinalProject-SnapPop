@@ -11,12 +11,12 @@ import Foundation
 class CalendarViewController: UIViewController {
     
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
-    
     var selectedDate: DateComponents?
     var multiDateSelection: UICalendarSelectionMultiDate!
-    
+    var categoryId = "0qihnS4CfWy45ooH7BSe"
+    var hasSnapDates: Set<DateComponents> = []
     var sampledata = Management1.generateSampleManagementItems()
-   
+    private var snapService = SnapService()
     private var segmentedControlTopConstraint: NSLayoutConstraint?
     private var tableViewHeightConstraint: NSLayoutConstraint?
     private var isDoneChart: IsDonePercentageChart!
@@ -252,7 +252,7 @@ class CalendarViewController: UIViewController {
         NSLayoutConstraint.activate([
             segmentedControl.topAnchor.constraint(equalTo: secondStackView.topAnchor),
             segmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            segmentedControl.widthAnchor.constraint(equalTo: secondStackView.widthAnchor, constant: -20),
+            segmentedControl.widthAnchor.constraint(equalTo: secondStackView.widthAnchor, constant: -60),
             segmentedControl.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
@@ -320,12 +320,12 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         tableView.isHidden = true
         tableView.reloadData()
         setupConstraints()
-
+        
     }
     
-
     func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-        if dailymodels.snap {
+        var date = dateComponents.date
+        if hasSnapDates.contains(dateComponents) {
             return .customView {
                 let imageView = UIImageView()
                 let originalImage = UIImage(named: "filledpop")
@@ -343,14 +343,42 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
               let visibleYear = calendarView.visibleDateComponents.year else {
             return
         }
-    updatMonthlyInfo(month: visibleMonth, year: visibleYear)
-
+        updatMonthlyInfo(month: visibleMonth, year: visibleYear)
+        updateSnapsForMonth()
     }
     
     func updatMonthlyInfo(month: Int, year: Int) {
         isDoneChart.updateMonthLabel(month: month, year: year)
         costChart.updateMonthLabel(month: month, year: year)
+    }
+    func updateSnapsForMonth() {
+        
+        guard let currentDate = calendarView.visibleDateComponents.date else { return }
+            
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.year, .month], from: currentDate)
+            
+            guard let year = components.year, let month = components.month else { return }
+        
+        snapService.loadSnapsForMonth(categoryId: categoryId, year: year, month: month) { [weak self] result in
+            switch result {
+            case .success(let snaps):
+                self?.hasSnapDates = Set(snaps.compactMap { snap in
+                    guard let date = snap.createdAt else { return nil }
+                    return Calendar.current.dateComponents([.year, .month, .day], from: date)
+                })
+                DispatchQueue.main.async {
+                    self?.calendarView.reloadDecorations(forDateComponents: Array(self?.hasSnapDates ?? []), animated: true)
+                }
+            case .failure(let error):
+                print("Failed to load snaps: \(error)")
             }
+            
+        }
+    }
+    func updateManegementData() {
+        
+    }
 }
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
