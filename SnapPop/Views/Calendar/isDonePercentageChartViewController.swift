@@ -189,3 +189,31 @@ open class IsDoneDoughnut: UIView {
             }
         }
 }
+
+//달성률 함수 예시
+//func calculateCompletionRate(schedule: Schedule, year: Int, month: Int) -> Double {
+//    let calendar = Calendar.current
+//    guard let startOfMonth = calendar.date(from: DateComponents(year: year, month: month)),
+//          let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth) else {
+//        return 0
+//    }
+//    
+//    var totalDays = 0
+//    var completedDays = 0
+//    
+//    calendar.enumerateDates(startingAfter: startOfMonth, matching: DateComponents(hour: 0, minute: 0, second: 0), matchingPolicy: .nextTime) { date, _, stop in
+//        guard let date = date, date <= endOfMonth else {
+//            stop = true
+//            return
+//        }
+//        
+//        if isScheduleOccurringOn(date: date, schedule: schedule) {
+//            totalDays += 1
+//            if let completion = getCompletion(scheduleId: schedule.id, date: date), completion.isCompleted {
+//                completedDays += 1
+//            }
+//        }
+//    }
+//    
+//    return totalDays > 0 ? Double(completedDays) / Double(totalDays) : 0
+//}

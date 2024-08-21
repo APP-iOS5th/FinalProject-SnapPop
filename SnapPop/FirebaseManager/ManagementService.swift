@@ -86,4 +86,34 @@ final class ManagementService {
                 }
             }
     }
+    func markCompletion(categoryId: String, managementId: String, isCompletion: IsCompletion, completion: @escaping (Result<Void, Error>) -> Void) {
+        let dateString = ISO8601DateFormatter().string(from: isCompletion.date)
+        
+        do {
+            try db.collection("Users")
+                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .collection("Categories")
+                .document(categoryId)
+                .collection("Managements")
+                .document(managementId)
+                .collection("Completion")
+                .document(dateString)
+                .setData(from: isCompletion, merge: true) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(()))
+                    }
+                }
+        } catch {
+            completion(.failure(error))
+        }
+    }
+//    func getCompletion(categoryId: String ,managementId: String, date: Date) -> Completion? {
+//            // 데이터베이스에서 해당 scheduleId와 date에 맞는 Completion 조회
+//        }
+//
+//        func getCompletionsForMonth(year: Int, month: Int) -> [Completion] {
+//            // 해당 월의 모든 Completion 조회
+//        }
 }

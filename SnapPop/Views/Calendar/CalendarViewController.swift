@@ -53,7 +53,7 @@ class CalendarViewController: UIViewController {
         stackView.backgroundColor = .systemBackground
         stackView.layer.borderWidth = 0.7
         stackView.layer.borderColor = UIColor.lightGray.cgColor
-        stackView.layer.cornerRadius = 20
+        stackView.layer.cornerRadius = 10
         stackView.clipsToBounds = true
         return stackView
     }()

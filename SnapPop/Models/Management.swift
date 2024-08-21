@@ -18,9 +18,8 @@ struct Management: Identifiable, Hashable, Codable {
     let repeatCycle: Int
     let alertTime: Date
     let alertStatus: Bool
-    let isDone: Bool
     
-    init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, alertTime: Date, alertStatus: Bool, isDone: Bool) {
+    init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, alertTime: Date, alertStatus: Bool) {
         self.title = title
         self.memo = memo
         self.color = color
@@ -28,10 +27,19 @@ struct Management: Identifiable, Hashable, Codable {
         self.repeatCycle = repeatCycle
         self.alertTime = alertTime
         self.alertStatus = alertStatus
-        self.isDone = isDone
     }
 }
 
+struct IsCompletion: Hashable, Codable {
+    let managementId: String
+    let date: Date
+    let isCompleted: Bool
+}
+
+struct ManagementException: Hashable, Codable {
+    let managementId: String
+    let date: Date
+}
 
 // MARK: - Management Extension
 extension Management {
@@ -50,8 +58,7 @@ extension Management {
                 startDate: startDate,
                 repeatCycle: 7,
                 alertTime: alertTime,
-                alertStatus: true,
-                isDone: true
+                alertStatus: true
             ),
             Management(
                 title: "립밤 바르기",
@@ -60,8 +67,7 @@ extension Management {
                 startDate: startDate,
                 repeatCycle: 0,
                 alertTime: alertTime,
-                alertStatus: false,
-                isDone: true
+                alertStatus: false
             )
         ]
     }
