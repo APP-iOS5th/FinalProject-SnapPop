@@ -29,7 +29,8 @@ class CustomTabBarController: UITabBarController {
             selectedImage: UIImage(systemName: "calendar.fill")
         )
         
-        let secondViewController = HomeViewController()
+        let customNavViewModel = CustomNavigationBarViewModel()
+        let secondViewController = HomeViewController(navigationBarViewModel: customNavViewModel)
         secondViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(systemName: "house"),
