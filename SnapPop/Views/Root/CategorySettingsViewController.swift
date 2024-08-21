@@ -147,7 +147,6 @@ class CategorySettingsViewController: UIViewController {
     
     // MARK: - Actions
     @objc func addCategoryButtonTapped() {
-        // TODO: - uid 삭제해야함
         guard let categoryName = categoryTextField.text else { return }
         if !(categoryName.isEmpty)  {
             let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
@@ -224,12 +223,13 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let trash = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
-            self.viewModel.deleteCategory(at: indexPath.row) {
+            self.viewModel.deleteCategory(at: indexPath.row) { _ in 
                 self.viewModel.loadCategories {
                     DispatchQueue.main.async {
                         self.categoryTable.reloadData()
                     }
                 }
+                self.viewModel.categoryisUpdated?()
             }
             DispatchQueue.main.async {
                 self.categoryTable.reloadData()

@@ -13,9 +13,9 @@ class CustomNavigationBarController: UINavigationController {
     var viewModel: CustomNavigationBarViewModelProtocol
     
     // MARK: - UI Components
-    private lazy var categoryButton: UIButton = {
+    lazy var categoryButton: UIButton = {
         var config = UIButton.Configuration.plain()
-        config.title = "카테고리"
+        config.title = !viewModel.categories.isEmpty ? "" : "카테고리를 추가해주세요"
         config.image = UIImage(systemName: "chevron.down")
         config.imagePlacement = .trailing
         config.imagePadding = 10
@@ -43,6 +43,7 @@ class CustomNavigationBarController: UINavigationController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("유저 디폴트에 저장된 id: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
         setupCustomNavigationBar()
         updateCategoryTitle()
         viewModel.categoryisUpdated = { [weak self] in
@@ -135,7 +136,9 @@ class CustomNavigationBarController: UINavigationController {
     }
     
     private func loadCategories() {
-        viewModel.loadCategories { [weak self] in
+        viewModel.handleCategoryId { [weak self] title in
+            self?.categoryButton.setTitle(title, for: .normal)
+            self?.categoryButton.sizeToFit()
             self?.updateCategoryMenu()
             self?.updateCategoryTitle()
         }
