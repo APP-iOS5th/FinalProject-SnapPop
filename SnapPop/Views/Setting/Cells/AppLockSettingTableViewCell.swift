@@ -21,7 +21,7 @@ class AppLockSettingTableViewCell: UITableViewCell {
         let toggleSwitch = UISwitch()
         
         toggleSwitch.isOn = UserDefaults.standard.bool(forKey: "appLockState")
-        toggleSwitch.onTintColor = UIColor.customToggleColor
+        toggleSwitch.onTintColor = UIColor(named: "toggleSwitchColor")
         toggleSwitch.addAction(UIAction { _ in
             UserDefaults.standard.set(toggleSwitch.isOn, forKey: "appLockState")
         }, for: .valueChanged)
@@ -41,6 +41,7 @@ class AppLockSettingTableViewCell: UITableViewCell {
     private func configureUI() {
         contentView.addSubview(appLockSettingLabel)
         contentView.addSubview(appLockToggleSwitch)
+        selectionStyle = .none
         
         appLockSettingLabel.translatesAutoresizingMaskIntoConstraints = false
         appLockToggleSwitch.translatesAutoresizingMaskIntoConstraints = false
