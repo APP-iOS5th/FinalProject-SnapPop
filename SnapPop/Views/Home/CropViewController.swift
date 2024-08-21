@@ -11,21 +11,45 @@ import Photos // Import Photos framework for saving images
 class CropViewController: UIViewController {
     
     var imageView: UIImageView!
-    var asset: PHAsset! // PHAsset을 저장할 변수
-    var viewModel = HomeViewModel()
-    var navigationBarViewModel: CustomNavigationBarViewModelProtocol? // 카테고리 ViewModel 추가
+    var asset: PHAsset!
+    let categoryId = ""
+    var viewModel: HomeViewModel
+    var navigationBarViewModel: CustomNavigationBarViewModel
     
     private var cropToolbar: CustomCropToolbar!
     private var cropRectView: UIView!
     private var cropRect: CGRect = CGRect.zero
     private var rotationLabel: UILabel!
     
-    var currentCategoryId: String? {
-        return UserDefaults.standard.string(forKey: "currentCategoryId")
-    }
     
     var didGetCroppedImage: ((Snap) -> Void)?
-
+    
+    // 초기화 메서드 추가
+    init(viewModel: HomeViewModel, navigationBarViewModel: CustomNavigationBarViewModel) {
+        self.viewModel = viewModel
+        self.navigationBarViewModel = navigationBarViewModel
+        super.init(nibName: nil, bundle: nil)
+        
+        // 카테고리 업데이트 콜백 설정
+        self.navigationBarViewModel.categoryisUpdated = { [weak self] in
+            guard let self = self else { return }
+            // 업데이트된 카테고리를 사용한 작업 수행
+            self.handleCategoryUpdate()
+        }
+    }
+    private func handleCategoryUpdate() {
+        if let categoryId = navigationBarViewModel.currentCategory?.userId {
+            print("Updated category ID: \(categoryId)")
+            // 필요한 작업 수행
+        } else {
+            print("No category selected or category ID is nil.")
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCropRectView() // Ensure cropRectView is set up first
@@ -228,22 +252,16 @@ class CropViewController: UIViewController {
             height: cropRectView.frame.size.height * scale
         )
         
-        let fetchOptions = PHFetchOptions()
-        let assets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        print("가져온 asset의 수: \(assets.count)")
-
-        if let firstAsset = assets.firstObject {
-            self.asset = firstAsset
-        } else {
-            print("가져온 asset이 없습니다.")
-        }
-        
-        
         guard let cgImage = image.cgImage?.cropping(to: scaledCropRect) else { return }
         let croppedImage = UIImage(cgImage: cgImage)
-
+        
+        guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
+            print("No current category ID found.")
+            return // categoryId가 nil인 경우, cropImage 메서드를 종료
+        }
+        
         // HomeViewModel에 이미지 저장 요청
-        viewModel.saveCroppedSnapData(image: croppedImage, assetIdentifier: asset.localIdentifier, categoryId: currentCategoryId ?? "") { [weak self] result in
+        viewModel.saveCroppedSnapData(image: croppedImage, assetIdentifier: asset.localIdentifier, categoryId: categoryId) { [weak self] (result: Result<Void, Error>) in
             switch result {
             case .success:
                 print("Cropped image saved successfully.")

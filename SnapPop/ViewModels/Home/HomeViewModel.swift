@@ -15,7 +15,6 @@ class HomeViewModel: ObservableObject {
     
     private let snapService = SnapService()
     private let managementService = ManagementService() // ManagementService 인스턴스
-    
     // MARK: - Properties
     @Published var checklistItems: [Management] = []
     @Published var snapData: [Snap] = []
@@ -24,9 +23,8 @@ class HomeViewModel: ObservableObject {
 
     // MARK: - Initialization
     init() {
-        loadChecklistItems() // 초기 로드
+        //loadChecklistItems() // 초기 로드
     }
-    
     /// Image Picker Methods
     func dateChanged(_ sender: UIDatePicker) -> String {
         let dateFormatter = DateFormatter()
@@ -51,7 +49,8 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
-    /// 스냅 사진 드랍 후 배열 재정의
+    
+    // 스냅 사진 드랍 후 배열 재정의
 //    func droptoSnapUpdate(from sourceIndex: Int, to destinationIndex: Int) {
 //        guard sourceIndex != destinationIndex, sourceIndex < snapData.count else { return }
 //        
@@ -106,39 +105,64 @@ class HomeViewModel: ObservableObject {
     }
     
     // 스냅 리스트 로드 기능
-    func loadSnaps(categoryId: String) {
-        snapService.loadSnaps(categoryId: categoryId) { [weak self] result in
-            switch result {
-            case .success(let snaps):
-                DispatchQueue.main.async {
-                    self?.snapData = snaps // Combine을 통해 UI에 자동으로 반영
-                    print("Snaps loaded successfully.")
-                }
-            case .failure(let error):
-                print("Error loading snaps: \(error.localizedDescription)")
-            }
-        }
-    }
+//    func loadSnaps() {
+////        guard let categoryId = navigationViewModel.currentCategory?.id else {
+////            print("Category ID is missing.")
+////            return
+////        }
+//
+//        snapService.loadSnaps(categoryId: "kzbh5r58xqs95cl2sXEK") { [weak self] result in
+//            switch result {
+//            case .success(let snaps):
+//                DispatchQueue.main.async {
+//                    // PHAsset 관련 기능 제거
+//                    self?.snapData = snaps // Snap 객체를 그대로 사용
+//                    print("Snaps loaded successfully.")
+//                }
+//            case .failure(let error):
+//                print("Error loading snaps: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+    
+    func loadSnaps() {
+        let categoryId = "kzbh5r58xqs95cl2sXEK"
+        let snapDate = Date() // 여기서는 현재 날짜를 사용, 필요에 따라 변경 가능
 
-    // 체크리스트 아이템 로드
-    func loadChecklistItems() {
-        guard let categoryId = selectedCategoryId else {
-            print("Category ID is missing.")
-            return
-        }
-        
-        managementService.loadManagements(categoryId: categoryId) { [weak self] result in
+        snapService.loadSnap(categoryId: categoryId, snapDate: snapDate) { [weak self] result in
             switch result {
-            case .success(let items):
+            case .success(let snap):
                 DispatchQueue.main.async {
-                    self?.checklistItems = items // Combine을 통해 UI에 자동으로 반영
-                    print("Checklist items loaded successfully.")
+                    // 단일 Snap 객체를 snapData 배열에 추가 (또는 배열 전체를 교체)
+                    self?.snapData = [snap] // Snap 객체를 배열로 만들어 사용
+                    print("Snap loaded successfully.")
                 }
             case .failure(let error):
-                print("Error loading checklist items: \(error.localizedDescription)")
+                print("Error loading snap: \(error.localizedDescription)")
             }
         }
     }
+    
+
+//    // 체크리스트 아이템 로드
+//    func loadChecklistItems() {
+//        guard let categoryId = navigationViewModel.currentCategoryId else {
+//            print("Category ID is missing.")
+//            return
+//        }
+//        
+//        managementService.loadManagements(categoryId: categoryId) { [weak self] result in
+//            switch result {
+//            case .success(let items):
+//                DispatchQueue.main.async {
+//                    self?.checklistItems = items // Combine을 통해 UI에 자동으로 반영
+//                    print("Checklist items loaded successfully.")
+//                }
+//            case .failure(let error):
+//                print("Error loading checklist items: \(error.localizedDescription)")
+//            }
+//        }
+//    }
 
         
     /// 액션시트에 선택된 옵션에 따른 처리 메소드
@@ -289,4 +313,11 @@ class HomeViewModel: ObservableObject {
 //            }
 //        }
 //    }
+}
+
+// PHAsset을 가져오는 메서드
+private func fetchPHAsset(for snap: Snap) -> PHAsset? {
+    // PHAsset을 가져오는 로직을 구현합니다.
+    // 예를 들어, imageUrls를 사용하여 PHAsset을 찾는 방법을 구현할 수 있습니다.
+    return nil // 실제 구현 필요
 }

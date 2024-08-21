@@ -35,16 +35,21 @@ final class SnapService {
             }
         }
     }
-    
+      
     func saveSnap(categoryId: String, imageUrls: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-        let snap = Snap(id: nil, imageUrls: imageUrls, createdAt: nil)
+        // 생성할 문서의 ID를 직접 지정
+        let documentID = UUID().uuidString // 또는 원하는 다른 ID를 지정할 수 있습니다.
+        
+        let snap = Snap(id: documentID, imageUrls: imageUrls, createdAt: nil)
+        
         do {
             try db.collection("Users")
                 .document(AuthViewModel.shared.currentUser?.uid ?? "")
                 .collection("Categories")
                 .document(categoryId)
                 .collection("Snaps")
-                .addDocument(from: snap) { error in
+                .document(documentID) // 지정한 documentID로 문서를 생성
+                .setData(from: snap) { error in
                     if let error = error {
                         completion(.failure(error))
                         return
@@ -127,6 +132,7 @@ final class SnapService {
             .collection("Snaps")
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
+                    print("Error fetching documents: \(error.localizedDescription)")
                     completion(.failure(error))
                     return
                 }

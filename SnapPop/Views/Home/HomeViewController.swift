@@ -38,12 +38,23 @@ class HomeViewController:
     
     // ViewModel
     private var viewModel = HomeViewModel()
+    var navigationBarViewModel: CustomNavigationBarViewModelProtocol // 프로퍼티로 선언
+    
+    // 초기화 메서드 추가
+    init(navigationBarViewModel: CustomNavigationBarViewModelProtocol) {
+        self.navigationBarViewModel = navigationBarViewModel
+        super.init(nibName: nil, bundle: nil) // 부모 클래스 초기화
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented") // 스토리보드 사용 시 필요
+    }
     
     // DatePicker UI 요소
     private let datePickerContainer = UIView()
     private let datePicker = UIDatePicker()
     private let calendarImageView = UIImageView()
-        
+    
     // 스냅 타이틀
     private let snapTitle: UILabel = {
         let label = UILabel()
@@ -107,6 +118,7 @@ class HomeViewController:
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
@@ -126,6 +138,12 @@ class HomeViewController:
         viewModel.$snapData.sink { [weak self] _ in
             self?.snapCollectionView.reloadData() // UI 업데이트
         }.store(in: &cancellables)
+        
+        // 카테고리 로드
+        navigationBarViewModel.loadCategories { [weak self] in
+            // 카테고리 로드 후 UI 업데이트
+            self?.updateUIWithCategories()
+        }
     }
     
     @objc private func updateSnapCollectionView() {
@@ -151,7 +169,7 @@ class HomeViewController:
         view.addSubview(datePickerContainer)
     }
     
-    // MARK: 날�� 캘린더 이미지 UI 컨트롤
+    // MARK: 날 캘린더 이미지 UI 컨트롤
     private func setupCalendarImageView() {
         calendarImageView.image = UIImage(named: "CalenderIcon")
         calendarImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -333,9 +351,8 @@ class HomeViewController:
     private func presentImageCropper(with asset: PHAsset?) {
         guard let image = selectedImage, let asset = asset else { return }
         
-        let cropViewController = CropViewController()
+        let cropViewController = CropViewController(viewModel: viewModel, navigationBarViewModel: navigationBarViewModel as! CustomNavigationBarViewModel) // navigationBarViewModel 전달
         cropViewController.asset = asset
-        //cropViewController.image = image
         cropViewController.modalPresentationStyle = .fullScreen
         
         cropViewController.didGetCroppedImage = { [weak self] (snap: Snap) in
@@ -345,12 +362,18 @@ class HomeViewController:
         
         present(cropViewController, animated: true, completion: nil)
     }
+    
+    private func updateUIWithCategories() {
+        // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
+        print("Loaded categories: \(navigationBarViewModel.categories)")
+    }
 }
 
 #if DEBUG
 struct HomeViewControllerPreview: PreviewProvider {
     static var previews: some View {
-        let homeVC = HomeViewController()
+        let navigationViewModel = CustomNavigationBarViewModel() // 기존 인스턴스 생성
+        let homeVC = HomeViewController(navigationBarViewModel: navigationViewModel)
         let navController = UINavigationController(rootViewController: homeVC)
         return navController.toPreview()
     }
