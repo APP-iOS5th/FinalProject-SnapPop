@@ -55,7 +55,7 @@ class CostChart: UIViewController {
         // Setup constraints for Doughnut Chart view
         NSLayoutConstraint.activate([
             
-            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
             monthLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             
             circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
@@ -164,7 +164,7 @@ open class CostDoughnut: UIView {
         let maxHeight = innerRadius * 0.8  // 내부 원 반지름의 80%를 최대 높이로 사용
 
         let totalCostAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 18),
+            .font: UIFont.boldSystemFont(ofSize: 18),
             .foregroundColor: costColor
         ]
         let centerTextAttributes: [NSAttributedString.Key: Any] = [
@@ -176,7 +176,7 @@ open class CostDoughnut: UIView {
         let centerTextSize = centerText.size(withAttributes: centerTextAttributes)
         let centerTextRect = CGRect(
             x: rect.midX - min(centerTextSize.width, maxWidth) / 2,
-            y: rect.midY - maxHeight / 2 - 8,  // 약간 위로 조정
+            y: rect.midY - maxHeight / 2 - 2,
             width: min(centerTextSize.width, maxWidth),
             height: min(centerTextSize.height, maxHeight / 2)
         )

@@ -51,7 +51,7 @@ class IsDonePercentageChart: UIViewController {
         monthLabel.textColor = dynamicColor(light: .black, dark: .white)
         NSLayoutConstraint.activate([
             
-            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
             monthLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             
             circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
@@ -169,7 +169,7 @@ open class IsDoneDoughnut: UIView {
             startAngle = endAngle
             
             let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 20),
+                .font: UIFont.boldSystemFont(ofSize: 20),
                 .foregroundColor: percentageColor
             ]
             let textSize = donePercentage.size(withAttributes: attributes)

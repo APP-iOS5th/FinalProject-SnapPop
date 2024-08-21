@@ -15,10 +15,13 @@ class CalendarViewController: UIViewController {
     var multiDateSelection: UICalendarSelectionMultiDate!
     var categoryId = "0qihnS4CfWy45ooH7BSe"
     var hasSnapDates: Set<DateComponents> = []
+    var managements: [Management] = []
     var sampledata = Management1.generateSampleManagementItems()
     private var snapService = SnapService()
+    private var managementService = ManagementService()
     private var segmentedControlTopConstraint: NSLayoutConstraint?
     private var tableViewHeightConstraint: NSLayoutConstraint?
+    private var dashBarTopConstraint: NSLayoutConstraint?
     private var isDoneChart: IsDonePercentageChart!
     private var costChart: CostChart!
     
@@ -48,7 +51,7 @@ class CalendarViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .center
         stackView.backgroundColor = .systemBackground
-        stackView.layer.borderWidth = 0.5
+        stackView.layer.borderWidth = 0.7
         stackView.layer.borderColor = UIColor.lightGray.cgColor
         stackView.layer.cornerRadius = 20
         stackView.clipsToBounds = true
@@ -96,14 +99,23 @@ class CalendarViewController: UIViewController {
         stackView.alignment = .fill
         stackView.distribution = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.layer.borderWidth = 0.7
+        stackView.layer.borderColor = UIColor.lightGray.cgColor
+        stackView.layer.cornerRadius = 10
+        stackView.clipsToBounds = true
         return stackView
     }()
     
     private let segmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["달성률", "비용"])
+        let font = UIFont.boldSystemFont(ofSize: 16)
+        UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .selected)
+        UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 0.6)
+        segmentedControl.layer.borderColor = UIColor.lightGray.cgColor
+        segmentedControl.layer.borderWidth = 0.5
         return segmentedControl
     }()
     
@@ -130,7 +142,10 @@ class CalendarViewController: UIViewController {
         segmentedControl.isUserInteractionEnabled = true
         secondStackView.distribution = .equalCentering
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-            updateChartVisibility()
+        segmentChange()
+        updateSnapsForMonth()
+        updateManegementData()
+        
     }
     
     private func setupViews() {
@@ -223,15 +238,22 @@ class CalendarViewController: UIViewController {
         tableView.layoutMargins = .zero
         tableView.separatorInset = .zero
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: calendarView.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -20),
             tableView.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor),
             tableViewHeightConstraint!
         ])
     }
     private func setupdashButtonConstraints() {
+        dashBarTopConstraint?.isActive = false
+        if tableView.isHidden {
+            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -30)
+        } else {
+            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor)
+        }
+        dashBarTopConstraint?.isActive = true
         NSLayoutConstraint.activate([
-            dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+            dashBarTopConstraint!,
             dashButton.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
             dashButton.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor),
             dashButton.heightAnchor.constraint(equalToConstant: 17)
@@ -242,8 +264,8 @@ class CalendarViewController: UIViewController {
         NSLayoutConstraint.activate([
             secondStackView.topAnchor.constraint(equalTo: firstStackViewView.bottomAnchor, constant: 30),
             secondStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            secondStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            secondStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            secondStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            secondStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             secondStackView.heightAnchor.constraint(equalToConstant: 400)
         ])
     }
@@ -252,8 +274,8 @@ class CalendarViewController: UIViewController {
         NSLayoutConstraint.activate([
             segmentedControl.topAnchor.constraint(equalTo: secondStackView.topAnchor),
             segmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            segmentedControl.widthAnchor.constraint(equalTo: secondStackView.widthAnchor, constant: -60),
-            segmentedControl.heightAnchor.constraint(equalToConstant: 30)
+            segmentedControl.widthAnchor.constraint(equalTo: secondStackView.widthAnchor),
+            segmentedControl.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
@@ -282,10 +304,10 @@ class CalendarViewController: UIViewController {
     }
     
     @objc func segmentedControlValueChanged() {
-        updateChartVisibility()
+        segmentChange()
     }
     
-    private func updateChartVisibility() {
+    private func segmentChange() {
         switch segmentedControl.selectedSegmentIndex {
         case 0: // 달성률
             isDoneChart.view.isHidden = false
@@ -377,7 +399,14 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         }
     }
     func updateManegementData() {
-        
+        managementService.loadManagements(categoryId: categoryId) { [weak self] result in
+            switch result {
+            case .success(let managements):
+                self?.managements = managements
+            case .failure(let error):
+                print("Failed to load managements: \(error)")
+            }
+        }
     }
 }
 
