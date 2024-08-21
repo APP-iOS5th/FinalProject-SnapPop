@@ -37,6 +37,7 @@ class IsDonePercentageChart: UIViewController {
         
         setupDoneChart(isDone: 50)
         setupMonthLabel()
+        
     }
     
     // MARK: - Setup Circular View
@@ -46,7 +47,7 @@ class IsDonePercentageChart: UIViewController {
         // Initialize Doughnut Chart view
         circularView = IsDoneDoughnut(percentages: percentages)
         circularView.translatesAutoresizingMaskIntoConstraints = false
-        
+        circularView.updateColor()
         // Add Doughnut Chart view to the main view
         view.addSubview(circularView)
         view.addSubview(monthLabel)
@@ -88,12 +89,12 @@ open class IsDoneDoughnut: UIView {
         }
     }
     
-    public var percentageColor: UIColor = .black {
+    lazy var percentageColor: UIColor = .black {
         didSet {
             setNeedsDisplay()
         }
     }
-
+    
     // MARK: - Private Variables
     private var _percentages: [Double]
     private var _colors: [UIColor] = [.red, .lightGray]
@@ -114,6 +115,30 @@ open class IsDoneDoughnut: UIView {
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func updateColor() {
+
+        guard let firstPercentage = _percentages.first else {
+            percentageColor = .black
+            return
+        }
+        
+        switch firstPercentage {
+        case 0.00...30.00:
+            percentageColor = .red
+        case 30.01...50.00:
+            percentageColor = .orange
+        case 50.01...70.00:
+            percentageColor = .black
+        case 70.01...85.00:
+            percentageColor = .green
+        case 85.01...100.00:
+            percentageColor = .blue
+        default:
+            percentageColor = .black
+        }
+    }
+    
     
     // MARK: - Drawing
     override public func draw(_ rect: CGRect) {

@@ -160,7 +160,6 @@ open class CostDoughnut: UIView {
         return path
     }
 
-  
     private func drawCenterText(in rect: CGRect, innerRadius: CGFloat) {
         let maxWidth = innerRadius * 2 * 0.9  // 내부 원 지름의 90%를 최대 너비로 사용
         let maxHeight = innerRadius * 0.8  // 내부 원 반지름의 80%를 최대 높이로 사용
@@ -197,7 +196,6 @@ open class CostDoughnut: UIView {
         totalCost.draw(in: totalCostRect, withAttributes: totalCostAttributes)
     }
     
-
     class EachCostCell: UICollectionViewCell {
         private let colorIndicator = UIView()
         private let nameLabel = UILabel()
@@ -224,6 +222,5 @@ open class CostDoughnut: UIView {
             costLabel.text = cost
         }
     }
-    
-    
+        
 }

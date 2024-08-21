@@ -13,6 +13,7 @@ class CalendarViewController: UIViewController {
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
     
     var selectedDate: DateComponents?
+    var multiDateSelection: UICalendarSelectionMultiDate!
     
     var sampledata = Management1.generateSampleManagementItems()
    
@@ -120,7 +121,7 @@ class CalendarViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.isScrollEnabled = false
-        calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
+        calendarView.selectionBehavior = UICalendarSelectionMultiDate(delegate: self)
         scrollView.isUserInteractionEnabled = true
         contentView.isUserInteractionEnabled = true
         firstStackViewView.isUserInteractionEnabled = true
@@ -140,7 +141,6 @@ class CalendarViewController: UIViewController {
         addChild(costChart)
         isDoneChart.view.frame = graphView.bounds
         costChart.view.frame = graphView.bounds
-        
         view.backgroundColor = .white
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -300,17 +300,30 @@ class CalendarViewController: UIViewController {
     
 }
 
-extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
+extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMultiDateDelegate {
     
-    func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-        selection.setSelected(dateComponents, animated: true)
+    func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didSelectDate dateComponents: DateComponents) {
+        selection.setSelectedDates([dateComponents], animated: true)
         selectedDate = dateComponents
         tableView.isHidden = false
         tableView.reloadData()
         setupConstraints()
-        setupTableViewConstraints()
     }
     
+    func setupMultiSelection() {
+        
+    }
+    
+    func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didDeselectDate dateComponents: DateComponents) {
+        selection.setSelectedDates([], animated: true)
+        selectedDate = nil
+        tableView.isHidden = true
+        tableView.reloadData()
+        setupConstraints()
+
+    }
+    
+
     func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
         if dailymodels.snap {
             return .customView {
@@ -369,35 +382,6 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
             cell.updateCheckbocState(isChecked: sampledata[index].isDone)
         }
     }
-}
-
-extension UIViewController {
-    
-    func setupNavigationsItems() {
-        let titleLabel = UILabel()
-        titleLabel.text = ""
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        
-        let settingButton = UIButton(type: .system)
-        settingButton.setImage(UIImage(systemName: "gear"), for: .normal)
-        settingButton.addTarget(self, action: #selector(settingButtonTapped), for: .touchUpInside)
-        
-        let notificationButton = UIButton(type: .system)
-        notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
-        notificationButton.addTarget(self, action: #selector(notificationButtonTapped), for: .touchUpInside)
-        
-        view.addSubview(settingButton)
-        view.addSubview(titleLabel)
-    }
-    
-    @objc func settingButtonTapped() {
-        print("설정뷰로 이동")
-    }
-    
-    @objc func notificationButtonTapped() {
-        print("알림뷰로 이동")
-    }
-    
 }
 
 extension UIImage {

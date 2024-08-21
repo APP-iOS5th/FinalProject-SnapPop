@@ -12,7 +12,6 @@
 		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
 		4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */; };
-		4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */; };
 		4AC9A0392C72E96700EB5FFC /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0382C72E96700EB5FFC /* NotificationViewController.swift */; };
 		4AC9A03F2C731E2200EB5FFC /* CustomNavigationBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A03E2C731E2200EB5FFC /* CustomNavigationBarViewModel.swift */; };
 		4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */; };
@@ -26,15 +25,12 @@
 		4AF17D802C73298800C1E5A2 /* CategorySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF17D7F2C73298800C1E5A2 /* CategorySettingsViewController.swift */; };
 		8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F16852F2C6354590010F8D8 /* AppDelegate.swift */; };
 		8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685312C6354590010F8D8 /* SceneDelegate.swift */; };
-		8F1685342C6354590010F8D8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685332C6354590010F8D8 /* ViewController.swift */; };
 		8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F1685382C63545A0010F8D8 /* Assets.xcassets */; };
 		8F16853C2C63545A0010F8D8 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 8F16853B2C63545A0010F8D8 /* Base */; };
 		8F1685492C6360180010F8D8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8F1685482C6360180010F8D8 /* FirebaseAuth */; };
 		8F16854B2C6360180010F8D8 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854A2C6360180010F8D8 /* FirebaseFirestore */; };
 		8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8F16854C2C6360180010F8D8 /* FirebaseStorage */; };
-		8F1685512C6598C00010F8D8 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685522C6599A20010F8D8 /* CalendarViewController.swift */; };
-		8F4C73BF2C6AF771000AACDA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */; };
 		8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C73C12C6B1E71000AACDA /* svenmodels.swift */; };
 		8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
@@ -73,7 +69,6 @@
 		4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySettingsTableViewCell.swift; sourceTree = "<group>"; };
 		4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBarController.swift; sourceTree = "<group>"; };
 		4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
-		4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCalendarViewController.swift; sourceTree = "<group>"; };
 		4AC9A0382C72E96700EB5FFC /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
 		4AC9A03E2C731E2200EB5FFC /* CustomNavigationBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBarViewModel.swift; sourceTree = "<group>"; };
 		4AD29AA12C64A03F00A9BEDD /* SnapComparisonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonViewController.swift; sourceTree = "<group>"; };
@@ -88,13 +83,10 @@
 		8F16852C2C6354590010F8D8 /* SnapPop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnapPop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F16852F2C6354590010F8D8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F1685312C6354590010F8D8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		8F1685332C6354590010F8D8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		8F1685382C63545A0010F8D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8F16853B2C63545A0010F8D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8F16853D2C63545A0010F8D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F1685522C6599A20010F8D8 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
-		8F4C73BD2C6AF6AF000AACDA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		8F4C73BE2C6AF771000AACDA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8F4C73C12C6B1E71000AACDA /* svenmodels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = svenmodels.swift; sourceTree = "<group>"; };
 		8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isDonePercentageChartViewController.swift; sourceTree = "<group>"; };
 		8FA215902C731E0500891F93 /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
@@ -175,7 +167,6 @@
 				4A82A7E72C7392AE00E27228 /* Cell */,
 				4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */,
 				4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */,
-				4AC9A0352C72E23900EB5FFC /* TestCalendarViewController.swift */,
 				4AF17D7F2C73298800C1E5A2 /* CategorySettingsViewController.swift */,
 			);
 			path = Root;
@@ -243,14 +234,6 @@
 			path = SnapPop;
 			sourceTree = "<group>";
 		};
-		C2008C282C7461EB005FC906 /* DetailCost */ = {
-			isa = PBXGroup;
-			children = (
-				C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */,
-			);
-			path = DetailCost;
-			sourceTree = "<group>";
-		};
 		8F4C73C02C6AFA71000AACDA /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
@@ -267,6 +250,14 @@
 			children = (
 			);
 			path = Calendar;
+			sourceTree = "<group>";
+		};
+		C2008C282C7461EB005FC906 /* DetailCost */ = {
+			isa = PBXGroup;
+			children = (
+				C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */,
+			);
+			path = DetailCost;
 			sourceTree = "<group>";
 		};
 		C24BFA572C647E7800A5B40A /* Application */ = {
@@ -308,7 +299,6 @@
 				EA141FA32C6B31C600DD4B29 /* Home */,
 				C25F38292C65B24F00EF9A2E /* Setting */,
 				C24BFA602C649C8100A5B40A /* Auth */,
-				8F1685332C6354590010F8D8 /* ViewController.swift */,
 				4AD29AD62C6AE33000A9BEDD /* SnapComparison */,
 			);
 			path = Views;
@@ -524,12 +514,9 @@
 				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
 				C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */,
 				4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */,
-				4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */,
-				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
 				4AC9A0392C72E96700EB5FFC /* NotificationViewController.swift in Sources */,
-				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
@@ -560,7 +547,6 @@
 				C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */,
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
 				8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */,
-				EA5047632C6510EE0033D807 /* NavigationViewController.swift in Sources */,
 				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
 				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
 				4AD29AD82C6B35BE00A9BEDD /* Color+Extensions.swift in Sources */,
