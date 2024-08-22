@@ -142,8 +142,6 @@ class CustomNavigationBarController: UINavigationController {
             self.categoryButton.menu = menu
             self.updateCategoryTitle()
             
-            self.categoryButton.showsMenuAsPrimaryAction = false
-            self.categoryButton.showsMenuAsPrimaryAction = true
             
             self.categoryButton.sizeToFit()
             self.categoryButton.layoutIfNeeded()
