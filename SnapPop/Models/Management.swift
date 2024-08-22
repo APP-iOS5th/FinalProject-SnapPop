@@ -31,7 +31,6 @@ struct Management: Identifiable, Hashable, Codable {
         self.alertStatus = alertStatus
     }
 }
-<<<<<<< HEAD
 
 struct IsCompletion: Hashable, Codable {
     let managementId: String
@@ -75,5 +74,4 @@ extension Management {
         ]
     }
 }
-=======
->>>>>>> main
+
