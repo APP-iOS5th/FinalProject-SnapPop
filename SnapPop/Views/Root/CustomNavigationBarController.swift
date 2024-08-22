@@ -49,10 +49,11 @@ class CustomNavigationBarController: UINavigationController {
         viewModel.categoryisUpdated = { [weak self] in
             DispatchQueue.main.async {
                 self?.updateCategoryMenu()
-                self?.updateCategoryTitle()
             }
         }
         loadCategories()
+        print("CustomNavigationBarController의 viewModel 주소: \(Unmanaged.passUnretained(self.viewModel as AnyObject).toOpaque())")
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,7 +63,12 @@ class CustomNavigationBarController: UINavigationController {
         }
         loadCategories()
         updateCategoryMenu()
-        updateCategoryTitle()
+        viewModel.categoryisUpdated = { [weak self] in
+            print("CustomNavigationBarController에서 categoryisUpdated 클로저 호출됨")
+            DispatchQueue.main.async {
+                self?.updateCategoryMenu()
+            }
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -132,11 +138,16 @@ class CustomNavigationBarController: UINavigationController {
     func updateCategoryMenu() {
         DispatchQueue.main.async { 
             let menu = self.createCategoryMenu(categories: self.viewModel.categories)
+            print("새로운 메뉴가 설정되었습니다: \(menu)")
             self.categoryButton.menu = menu
             self.updateCategoryTitle()
+            
+            self.categoryButton.showsMenuAsPrimaryAction = false
             self.categoryButton.showsMenuAsPrimaryAction = true
+            
             self.categoryButton.sizeToFit()
             self.categoryButton.layoutIfNeeded()
+            print("Current category.id \(self.viewModel.currentCategory?.id)")
         }
         
     }
@@ -146,7 +157,6 @@ class CustomNavigationBarController: UINavigationController {
             self?.categoryButton.setTitle(title, for: .normal)
             self?.categoryButton.sizeToFit()
             self?.updateCategoryMenu()
-            self?.updateCategoryTitle()
         }
     }
     
@@ -155,6 +165,7 @@ class CustomNavigationBarController: UINavigationController {
             self.categoryButton.setTitle("카테고리를 추가해 주세요", for: .normal)
             return }
         self.categoryButton.setTitle(currentCategory.title, for: .normal)
+        print("카테고리 타이틀 업데이트: \(currentCategory.title)")
         self.categoryButton.layoutIfNeeded()
     }
     

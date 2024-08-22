@@ -79,6 +79,7 @@ class CategorySettingsViewController: UIViewController {
         setupLayout()
         hideKeyboardWhenTappedAround()
         viewModel.categoryisUpdated?()
+        print("CategorySettingsViewController의 viewModel 주소: \(Unmanaged.passUnretained(self.viewModel as AnyObject).toOpaque())")
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -232,6 +233,7 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
                 DispatchQueue.main.async {
                     self.categoryTable.reloadData()
                 }
+                print("CategorySettingsViewController에서 categoryisUpdated 클로저 호출 직전")
                 self.viewModel.categoryisUpdated?()
             }
             
