@@ -80,8 +80,11 @@ final class SnapService {
                     completion(.failure(error))
                     return
                 }
-                guard let document = querySnapshot?.documents.first else { return }
-                
+                guard let document = querySnapshot?.documents.first else {
+                    completion(.failure(NSError(domain: "NoDocumentError", code: -1, userInfo: nil)))
+                    return
+                }
+                    
                 do {
                     let snap = try document.data(as: Snap.self)
                     completion(.success(snap))
@@ -143,7 +146,7 @@ final class SnapService {
             }
     }
     
-    func updateSnap(categoryId: String, snap: Snap, newImageUrls: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+    func updateSnap(categoryId: String, snap: Snap, newImageUrls: [String], completion: @escaping (Result<Snap, Error>) -> Void) {
         if let snapId = snap.id {
             var imageUrls = snap.imageUrls
             imageUrls.append(contentsOf: newImageUrls)
@@ -159,7 +162,7 @@ final class SnapService {
                         completion(.failure(error))
                         return
                     }
-                    completion(.success(()))
+                    completion(.success(snap))
                 }
         }
     }
@@ -190,6 +193,22 @@ final class SnapService {
                             return
                         }
                         completion(.success(()))
+                    }
+                }
+        }
+    }
+    
+    func deleteSnap(categoryId: String, snap: Snap, completion: @escaping (Error?) -> Void) {
+        if let snapId = snap.id {
+            db.collection("Users")
+                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .collection("Categories")
+                .document(categoryId)
+                .collection("Snaps")
+                .document(snapId)
+                .delete { error in
+                    if let error = error {
+                        completion(error)
                     }
                 }
         }
