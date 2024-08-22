@@ -17,13 +17,14 @@ class HomeViewModel: ObservableObject {
     private let managementService = ManagementService() // ManagementService 인스턴스
     // MARK: - Properties
     @Published var checklistItems: [Management] = []
-    @Published var snap: Snap = Snap(imageUrls: [], createdAt: Date())
+    @Published var snap: Snap?
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
-    var selectedCategoryId: String? // 선택된 카테고리 ID
+    var selectedCategoryId: String?
     
     // MARK: - Initialization
     init(snapService: SnapService) {
         self.snapService = snapService
+        self.selectedCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId")
         //loadChecklistItems() // 초기 로드
     }
     /// Image Picker Methods
@@ -34,16 +35,16 @@ class HomeViewModel: ObservableObject {
     }
     
     func saveSnap(images: [UIImage], categoryId: String, completion: @escaping (Result<Snap, Error>) -> Void) {
-        var imageUrls: [String] = []
+        var imageUrls: [String?] = Array(repeating: nil, count: images.count)
         let group = DispatchGroup()
         
-        for image in images {
+        for (index, image) in images.enumerated() {
             if let data = image.jpegData(compressionQuality: 1.0) {
                 group.enter()
                 snapService.saveImage(data: data) { result in
                     switch result {
                     case .success(let url):
-                        imageUrls.append(url)
+                        imageUrls[index] = url
                     case .failure(let error):
                         completion(.failure(error))
                         group.leave()
@@ -53,30 +54,74 @@ class HomeViewModel: ObservableObject {
                 }
             }
         }
-        
+    
         // 모든 이미지 업로드 성공시에만 호출됨
         group.notify(queue: .main) {
-            self.snapService.saveSnap(categoryId: categoryId, imageUrls: imageUrls) { result in
-                switch result {
-                case .success(let snap):
-                    completion(.success(snap))
-                case .failure(let error):
-                    completion(.failure(error))
+            let finalImageUrls = imageUrls.compactMap { $0 }
+
+            if finalImageUrls.count == images.count {
+                self.snapService.saveSnap(categoryId: categoryId, imageUrls: finalImageUrls) { result in
+                    switch result {
+                    case .success(let snap):
+                        completion(.success(snap))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
                 }
             }
         }
     }
     
     // 스냅 로드 기능
-    func loadSnap(categoryId: String, snapDate: Date) {
+    func loadSnap(categoryId: String, snapDate: Date, completion: @escaping () -> Void) {
         snapService.loadSnap(categoryId: categoryId, snapDate: snapDate) { result in
             switch result {
             case .success(let snap):
-                DispatchQueue.main.async {
-                    self.snap = snap
-                }
+                self.snap = snap
+                completion()
             case .failure(let error):
-                print(error)
+                print("스냅 로드 실패: \(error.localizedDescription)")
+                self.snap = nil
+                completion()
+            }
+        }
+    }
+    
+    func updateSnap(categoryId: String, snap: Snap, newImages: [UIImage], completion: @escaping (Result<Snap, Error>) -> Void) {
+        var imageUrls: [String?] = Array(repeating: nil, count: newImages.count)
+        let group = DispatchGroup()
+        
+        for (index, image) in newImages.enumerated() {
+            if let data = image.jpegData(compressionQuality: 1.0) {
+                group.enter()
+                snapService.saveImage(data: data) { result in
+                    switch result {
+                    case .success(let url):
+                        imageUrls[index] = url
+                    case .failure(let error):
+                        completion(.failure(error))
+                        group.leave()
+                        return
+                    }
+                    group.leave()
+                }
+            }
+        }
+    
+        // 모든 이미지 업로드 성공시에만 호출됨
+        group.notify(queue: .main) {
+            let finalImageUrls = imageUrls.compactMap { $0 }
+
+            if finalImageUrls.count == newImages.count {
+                self.snapService.updateSnap(categoryId: categoryId, snap: snap, newImageUrls: finalImageUrls) { result in
+                    switch result {
+                    case .success(let snap):
+                        completion(.success(snap))
+                    case .failure(let error):
+                        print("스냅 업데이트 실패: \(error.localizedDescription)")
+                        completion(.failure(error))
+                    }
+                }
             }
         }
     }
@@ -89,6 +134,14 @@ class HomeViewModel: ObservableObject {
                 completion(.success(()))
             case .failure(let error):
                 completion(.failure(error))
+            }
+        }
+    }
+    
+    func deleteSnap(categoryId: String, snap: Snap) {
+        snapService.deleteSnap(categoryId: categoryId, snap: snap) { error in
+            if let error = error {
+                print("스냅 삭제 실패: \(error.localizedDescription)")
             }
         }
     }
@@ -200,7 +253,7 @@ class HomeViewModel: ObservableObject {
             case .success(let snap):
                 DispatchQueue.main.async {
                     // 단일 Snap 객체를 snapData 배열에 추가 (또는 배열 전체를 교체)
-                    self?.snapData = snap // Snap 객체를 배열로 만들어 사용
+                    self?.snap = snap // Snap 객체를 배열로 만들어 사용
                     print("Snap loaded successfully.")
                 }
             case .failure(let error):

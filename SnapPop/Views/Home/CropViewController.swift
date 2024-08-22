@@ -261,14 +261,14 @@ class CropViewController: UIViewController {
         }
         
         // HomeViewModel에 이미지 저장 요청
-        viewModel.saveCroppedSnapData(image: croppedImage, assetIdentifier: asset.localIdentifier, categoryId: categoryId) { [weak self] (result: Result<Void, Error>) in
-            switch result {
-            case .success:
-                print("Cropped image saved successfully.")
-            case .failure(let error):
-                print("Failed to save cropped image: \(error.localizedDescription)")
-            }
-        }
+//        viewModel.saveCroppedSnapData(image: croppedImage, assetIdentifier: asset.localIdentifier, categoryId: categoryId) { [weak self] (result: Result<Void, Error>) in
+//            switch result {
+//            case .success:
+//                print("Cropped image saved successfully.")
+//            case .failure(let error):
+//                print("Failed to save cropped image: \(error.localizedDescription)")
+//            }
+//        }
         
         let croppedImageView = UIImageView(image: croppedImage)
         croppedImageView.frame = self.view.bounds

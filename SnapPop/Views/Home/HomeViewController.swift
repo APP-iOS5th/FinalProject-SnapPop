@@ -41,6 +41,11 @@ class HomeViewController:
     private var viewModel = HomeViewModel(snapService: SnapService())
     var navigationBarViewModel: CustomNavigationBarViewModelProtocol // 프로퍼티로 선언
     
+    private var selections = [String : PHPickerResult]()
+    // 선택한 사진의 순서에 맞게 Identifier들을 배열로 저장해줄 겁니다.
+    // selections은 딕셔너리이기 때문에 순서가 없습니다. 그래서 따로 식별자를 담을 배열 생성
+    private var selectedAssetIdentifiers = [String]()
+    
     // 초기화 메서드 추가
     init(navigationBarViewModel: CustomNavigationBarViewModelProtocol) {
         self.navigationBarViewModel = navigationBarViewModel
@@ -136,9 +141,9 @@ class HomeViewController:
         }
         
         // 스냅 데이터가 변경될 때 UI 업데이트
-        viewModel.$snapData.sink { [weak self] _ in
-            self?.snapCollectionView.reloadData() // UI 업데이트
-        }.store(in: &cancellables)
+//        viewModel.$snap.sink { [weak self] _ in
+//            self?.snapCollectionView.reloadData() // UI 업데이트
+//        }.store(in: &cancellables)
         
         // 카테고리 로드
         navigationBarViewModel.loadCategories { [weak self] in
@@ -146,7 +151,15 @@ class HomeViewController:
             self?.updateUIWithCategories()
         }
         
-        viewModel.loadSnap(categoryId: "nhY7XXG7lm7gy7eUgLxi", snapDate: Date())
+        guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
+            return // categoryId가 nil인 경우, cropImage 메서드를 종료
+        }
+        
+        viewModel.loadSnap(categoryId: categoryId, snapDate: datePicker.date) { [weak self] in
+            DispatchQueue.main.async {
+                self?.snapCollectionView.reloadData()
+            }
+        }
     }
     
     @objc private func updateSnapCollectionView() {
@@ -210,7 +223,15 @@ class HomeViewController:
     
     // MARK: - 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
-        viewModel.dateChanged(sender)
+        guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
+            return // categoryId가 nil인 경우, cropImage 메서드를 종료
+        }
+        
+        viewModel.loadSnap(categoryId: categoryId, snapDate: sender.date) { [weak self] in
+            DispatchQueue.main.async {
+                self?.snapCollectionView.reloadData()
+            }
+        }
     }
     
     // MARK: - 체크리스트 관련 요소 제약조건
@@ -290,7 +311,7 @@ class HomeViewController:
     
     // MARK: UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.snap.imageUrls.count
+        return viewModel.snap?.imageUrls.count ?? 0
     }
     
     // MARK: UICollectionViewDataSource - Cell Configuration
@@ -298,19 +319,14 @@ class HomeViewController:
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
         
         let isFirst = indexPath.item == 0
+        guard let snap = viewModel.snap else {
+            return cell
+        }
         
-        cell.configure(with: viewModel.snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
+        cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
         cell.deleteButton.tag = indexPath.item
         cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
         return cell
-//        let snap =
-//        let isFirst = indexPath.item == 0
-//        
-//        cell.configure(with: snap, isFirst: isFirst, isEditing: isEditingMode)
-//        cell.deleteButton.tag = indexPath.item
-//        cell.deleteButton.addTarget(self, action: #selector(deleteButtonTapped(_:)), for: .touchUpInside)
-//        
-//        return cell
     }
     
     // MARK: UICollectionViewDelegateFlowLayout
@@ -327,16 +343,24 @@ class HomeViewController:
             // 편집 모드로 전환
             editButton.setTitle("완료", for: .normal)
         } else {
-            // 편집 모드 종료, 데이터 저장
-            //viewModel.saveSnapsToFirebase()
+            // 편집 모드 종료
             editButton.setTitle("편집", for: .normal)
         }
         
-        snapCollectionView.reloadData() // 데이터 변경 반영
+        updateVisibleCellsForEditingMode(isEditingMode) // 모드 전환 시 셀 업데이트
+    }
+    
+    private func updateVisibleCellsForEditingMode(_ isEditing: Bool) {
+        let totalItems = snapCollectionView.numberOfItems(inSection: 0)  // 섹션이 하나이므로 0으로 고정
+        for item in 0..<totalItems {
+            let indexPath = IndexPath(item: item, section: 0)
+            if let snapCell = snapCollectionView.cellForItem(at: indexPath) as? SnapCollectionViewCell {
+                snapCell.setEditingMode(isEditing)
+            }
+        }
     }
     
     @objc private func addButtonTapped(_ sender: UIButton) {
-//        viewModel.showImagePickerActionSheet(from: self)
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(title: "카메라", style: .default, handler: { _ in
@@ -353,11 +377,14 @@ class HomeViewController:
     }
     
     func showPHPicker() {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 0
-        configuration.filter = .images
+        var config = PHPickerConfiguration(photoLibrary: .shared())
+        config.filter = .images
+        config.selectionLimit = 0
+        config.selection = .ordered
+        config.preferredAssetRepresentationMode = .current
+        config.preselectedAssetIdentifiers = selectedAssetIdentifiers
         
-        let picker = PHPickerViewController(configuration: configuration)
+        let picker = PHPickerViewController(configuration: config)
         picker.delegate = self
         
         present(picker, animated: true, completion: nil)
@@ -377,20 +404,50 @@ class HomeViewController:
     
     @objc private func deleteButtonTapped(_ sender: UIButton) {
         let index = sender.tag
-        //viewModel.deleteSnap(at: index)
-        //snapCollectionView.deleteItems(at: [IndexPath(item: index, section: 0)])
+        
+        guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId"), let snap = viewModel.snap else {
+            return // categoryId가 nil인 경우, cropImage 메서드를 종료
+        }
+        
+        let imageUrl = snap.imageUrls[index]
+        
+        viewModel.deletePhoto(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
+            switch result {
+            case .success:
+                self.viewModel.snap?.imageUrls.remove(at: index) // 뷰모델의 snap객체에서 삭제할 사진 제거
+                
+                if self.viewModel.snap?.imageUrls.isEmpty == true {
+                    self.viewModel.deleteSnap(categoryId: categoryId, snap: snap)
+                    self.viewModel.snap = nil
+                }
+                
+                self.snapCollectionView.performBatchUpdates({
+                    self.snapCollectionView.deleteItems(at: [IndexPath(item: index, section: 0)]) // 컬렉션뷰에서 인덱스로 삭제
+                }) { _ in
+                    // 삭제 후 나머지 셀들이 있다면 태그 업데이트
+                    if self.viewModel.snap != nil {
+                        self.updateCellTags()
+                    }
+                }
+                print("사진 삭제 성공")
+            case .failure(let error):
+                print("사진 삭제 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    // 사진 삭제 후 바뀐 셀들의 인덱스에 맞게 태그를 다시 설정하는 함수
+    private func updateCellTags() {
+        let totalItems = snapCollectionView.numberOfItems(inSection: 0)  // 섹션이 하나이므로 0번째 섹션 사용
+        for item in 0..<totalItems {
+            let indexPath = IndexPath(item: item, section: 0)
+            if let snapCell = snapCollectionView.cellForItem(at: indexPath) as? SnapCollectionViewCell {
+                snapCell.deleteButton.tag = item
+            }
+        }
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-//        picker.dismiss(animated: true, completion: nil)
-//        
-//        if let image = info[.originalImage] as? UIImage {
-//            self.selectedImage = image
-////            self.presentImageCropper(with: info[.phAsset] as? PHAsset)
-//            print("사진 로드 성공")
-//        } else {
-//            print("사진 로드 실패")
-//        }
         if let image = info[.originalImage] as? UIImage {
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.creationRequestForAsset(from: image)
@@ -409,11 +466,76 @@ class HomeViewController:
         picker.dismiss(animated: true, completion: nil)
     }
     
+    private func displayImage() {
+        let group = DispatchGroup()
+        var imagesDict = [String: UIImage]()
+        
+        for (identifier, result) in selections {
+            group.enter()
+            
+            let itemProvider = result.itemProvider
+            if itemProvider.canLoadObject(ofClass: UIImage.self) {
+                itemProvider.loadObject(ofClass: UIImage.self) { image, error in
+                    guard let image = image as? UIImage else { return }
+                    imagesDict[identifier] = image
+                    group.leave()
+                }
+            }
+        }
+        
+        group.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            var images: [UIImage] = []
+            
+            for identifier in selectedAssetIdentifiers {
+                guard let image = imagesDict[identifier] else { return }
+                images.append(image)
+            }
+            
+            guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
+                return // categoryId가 nil인 경우, cropImage 메서드를 종료
+            }
+            
+            if let snap = viewModel.snap {
+                self.viewModel.updateSnap(categoryId: categoryId, snap: snap, newImages: images) { result in
+                    switch result {
+                    case .success(let snap):
+                        print("Snap 업데이트 성공")
+                        self.viewModel.snap = snap
+                        
+                        // 업데이트 후 데이터 로드 (임시)
+                        self.viewModel.loadSnap(categoryId: categoryId, snapDate: snap.createdAt ?? Date()) { [weak self] in
+                            DispatchQueue.main.async {
+                                self?.snapCollectionView.reloadData()
+                            }
+                        }
+                    case .failure(let error):
+                        print("Snap 업데이트 실패: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                self.viewModel.saveSnap(images: images, categoryId: categoryId) { result in
+                    switch result {
+                    case .success(let snap):
+                        print("Snap 저장 성공")
+                        self.viewModel.snap = snap
+                        
+                        // 저장 후 데이터 로드 (임시)
+                        self.viewModel.loadSnap(categoryId: categoryId, snapDate: snap.createdAt ?? Date()) { [weak self] in
+                            DispatchQueue.main.async {
+                                self?.snapCollectionView.reloadData()
+                            }
+                        }
+                    case .failure(let error):
+                        print("Snap 저장 실패: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
     // PHPickerViewControllerDelegate method
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        var images: [UIImage] = []
-        let group = DispatchGroup()
-        
         picker.dismiss(animated: true, completion: nil)
         
         guard !results.isEmpty else {
@@ -421,36 +543,18 @@ class HomeViewController:
             return
         }
         
+        var newSelections = [String: PHPickerResult]()
+        
         for result in results {
-            if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
-                group.enter()
-                result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
-                    DispatchQueue.main.async {
-                        guard let self = self, let image = image as? UIImage else { return }
-                        images.append(image)
-                        group.leave()
-                    }
-                }
-            }
+            let identifier = result.assetIdentifier!
+            newSelections[identifier] = selections[identifier] ?? result
         }
         
-        group.notify(queue: .main) {
-            guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
-                return // categoryId가 nil인 경우, cropImage 메서드를 종료
-            }
-            
-            self.viewModel.saveSnap(images: images, categoryId: categoryId) { result in
-                switch result {
-                case .success(let snap):
-                    print("Snap 저장 성공")
-                    self.viewModel.snapData = snap
-                    DispatchQueue.main.async {
-                        self.snapCollectionView.reloadData()
-                    }
-                case .failure(let error):
-                    print("Snap 저장 실패: \(error.localizedDescription)")
-                }
-            }
+        selections = newSelections
+        selectedAssetIdentifiers = results.compactMap { $0.assetIdentifier }
+        
+        if !selections.isEmpty {
+            displayImage()
         }
     }
     
@@ -462,7 +566,7 @@ class HomeViewController:
         cropViewController.modalPresentationStyle = .fullScreen
         
         cropViewController.didGetCroppedImage = { [weak self] (snap: Snap) in
-            self?.viewModel.snapData = snap
+            self?.viewModel.snap = snap
 //            self?.viewModel.snapData.append(snap) // Snap 객체를 viewModel에 추가
             self?.snapCollectionView.reloadData() // SnapCollectionView를 업데이트
         }

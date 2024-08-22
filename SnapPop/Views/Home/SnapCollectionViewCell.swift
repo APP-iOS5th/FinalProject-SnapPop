@@ -8,6 +8,20 @@
 import UIKit
 import Photos
 
+extension UIImageView {
+    func load(url: URL) {
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.image = image
+                    }
+                }
+            }
+        }
+    }
+}
+
 class SnapCollectionViewCell: UICollectionViewCell {
     
     let snapImageView: UIImageView = {
@@ -57,7 +71,16 @@ class SnapCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with snap: Snap, isFirst: Bool, isEditing: Bool) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        // 셀의 UI를 초기 상태로 되돌립니다.
+//        snapImageView.image = UIImage()
+//        deleteButton.isHidden = true
+//        deleteButton.tag = 0
+    }
+    
+    func configure(with snap: Snap, index: Int, isFirst: Bool, isEditing: Bool) {
         // 첫 번째 셀의 테두리 설정
         if isFirst {
             contentView.layer.borderWidth = 3
@@ -67,19 +90,27 @@ class SnapCollectionViewCell: UICollectionViewCell {
             contentView.layer.borderColor = nil
         }
         
-        // 편집 모드에 따라 삭제 버튼 표시
-        deleteButton.isHidden = !isEditing
+        let url = URL(string: snap.imageUrls[index])
+        snapImageView.load(url: url!)
         
-        // PHAssetIdentifier를 사용하여 PHAsset을 가져옵니다.
-        if let firstImageUrl = snap.imageUrls.first {
-            if let asset = fetchPHAsset(for: firstImageUrl) {
-                loadImage(from: asset)
-            } else {
-                snapImageView.image = nil // PHAsset을 찾을 수 없는 경우
-            }
-        } else {
-            snapImageView.image = nil // 이미지 URL이 없는 경우
-        }
+        // 편집 모드에 따라 삭제 버튼 표시
+        setEditingMode(isEditing)
+//        // PHAssetIdentifier를 사용하여 PHAsset을 가져옵니다.
+//        if let firstImageUrl = snap.imageUrls.first {
+//            let url = URL(string: firstImageUrl)
+//            snapImageView.load(url: url!)
+////            if let asset = fetchPHAsset(for: firstImageUrl) {
+////                loadImage(from: asset)
+////            } else {
+////                snapImageView.image = nil // PHAsset을 찾을 수 없는 경우
+////            }
+//        } else {
+//            snapImageView.image = nil // 이미지 URL이 없는 경우
+//        }
+    }
+    
+    func setEditingMode(_ isEditing: Bool) {
+        deleteButton.isHidden = !isEditing
     }
     
     private func fetchPHAsset(for identifier: String) -> PHAsset? {
