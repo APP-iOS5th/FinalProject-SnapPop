@@ -37,6 +37,9 @@
 		8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
 		8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215932C745B4300891F93 /* CostChartViewController.swift */; };
+		B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E002C76C7350021A57D /* AddManagementViewController.swift */; };
+		B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */; };
+		B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */; };
 		C2008C2A2C7461FE005FC906 /* DetailCostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */; };
 		C246CE5A2C74EF7D00A631BE /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */; };
 		C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */; };
@@ -98,6 +101,9 @@
 		8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isDonePercentageChartViewController.swift; sourceTree = "<group>"; };
 		8FA215902C731E0500891F93 /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
 		8FA215932C745B4300891F93 /* CostChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostChartViewController.swift; sourceTree = "<group>"; };
+		B8339E002C76C7350021A57D /* AddManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewController.swift; sourceTree = "<group>"; };
+		B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAddTableViewCell.swift; sourceTree = "<group>"; };
+		B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewmodel.swift; sourceTree = "<group>"; };
 		C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewModel.swift; sourceTree = "<group>"; };
 		C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
 		C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockSettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -255,6 +261,23 @@
 			path = Calendar;
 			sourceTree = "<group>";
 		};
+		B8339E032C76C7350021A57D /* Management */ = {
+			isa = PBXGroup;
+			children = (
+				B8339E002C76C7350021A57D /* AddManagementViewController.swift */,
+				B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */,
+			);
+			path = Management;
+			sourceTree = "<group>";
+		};
+		B8339E0A2C76C7E80021A57D /* Management */ = {
+			isa = PBXGroup;
+			children = (
+				B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */,
+			);
+			path = Management;
+			sourceTree = "<group>";
+		};
 		C2008C282C7461EB005FC906 /* DetailCost */ = {
 			isa = PBXGroup;
 			children = (
@@ -305,6 +328,7 @@
 		C24BFA5A2C647EBA00A5B40A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B8339E032C76C7350021A57D /* Management */,
 				8F4C73C02C6AFA71000AACDA /* Calendar */,
 				C2D401592C73787B000E0343 /* DetailCost */,
 				4AC9A0372C72E93000EB5FFC /* Notification */,
@@ -321,6 +345,7 @@
 		C24BFA5B2C64801100A5B40A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				B8339E0A2C76C7E80021A57D /* Management */,
 				C2008C282C7461EB005FC906 /* DetailCost */,
 				4AC9A03D2C731E1200EB5FFC /* Root */,
 				EA141FA42C6B31DE00DD4B29 /* Home */,
@@ -532,10 +557,12 @@
 				4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
+				B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
 				4AC9A0392C72E96700EB5FFC /* NotificationViewController.swift in Sources */,
 				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */,
+				B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */,
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
@@ -562,6 +589,7 @@
 				4AC9A03F2C731E2200EB5FFC /* CustomNavigationBarViewModel.swift in Sources */,
 				C2F416472C6B397800A2F544 /* SnapService.swift in Sources */,
 				C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */,
+				B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */,
 				C246CE612C74EF8200A631BE /* LegalViewController.swift in Sources */,
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
 				8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */,
