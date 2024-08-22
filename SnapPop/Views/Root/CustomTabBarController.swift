@@ -16,9 +16,16 @@ class CustomTabBarController: UITabBarController {
     }
     
     private func setupTabbarLayout() {
-        tabBar.tintColor = .customMain
-        tabBar.barTintColor = .systemGray
-        tabBar.backgroundColor = .customBackground
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .customBackground
+        appearance.shadowColor = .black
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.customMain]
+        appearance.stackedLayoutAppearance.selected.iconColor = .customMain
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
+        appearance.stackedLayoutAppearance.normal.iconColor = .gray
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
     
     private func setupTabbarItem() {
