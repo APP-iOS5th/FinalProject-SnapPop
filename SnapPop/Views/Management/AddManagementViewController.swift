@@ -273,16 +273,9 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func addDetailButtonTapped() {
-        // DetailCostViewModel의 인스턴스 생성
         let detailCostViewModel = DetailCostViewModel()
-        
-        // 생성한 ViewModel을 사용하여 DetailCostViewController 초기화
         let detailCostVC = DetailCostViewController(viewModel: detailCostViewModel)
-        
-        // 모달 프레젠테이션 스타일 설정 (필요한 스타일로 변경 가능)
         detailCostVC.modalPresentationStyle = .formSheet
-        
-        // 모달로 DetailCostViewController 표시
         present(detailCostVC, animated: true, completion: nil)
     }
     
