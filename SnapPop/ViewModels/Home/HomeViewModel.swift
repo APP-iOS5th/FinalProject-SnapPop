@@ -13,16 +13,17 @@ import Combine
 // MARK: - ViewModel
 class HomeViewModel: ObservableObject {
     
-    private let snapService = SnapService()
+    private let snapService: SnapService
     private let managementService = ManagementService() // ManagementService 인스턴스
     // MARK: - Properties
     @Published var checklistItems: [Management] = []
-    @Published var snapData: [Snap] = []
+    @Published var snap: Snap = Snap(imageUrls: [], createdAt: Date())
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
     var selectedCategoryId: String? // 선택된 카테고리 ID
-
+    
     // MARK: - Initialization
-    init() {
+    init(snapService: SnapService) {
+        self.snapService = snapService
         //loadChecklistItems() // 초기 로드
     }
     /// Image Picker Methods
@@ -32,23 +33,104 @@ class HomeViewModel: ObservableObject {
         return dateFormatter.string(from: sender.date)
     }
     
-    // 이미지와 assetIdentifier를 저장하는 메서드 예제
-    func saveCroppedSnapData(image: UIImage, assetIdentifier: String, categoryId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        // assetIdentifier를 문자열 배열로 변환
-        let imageUrls = [assetIdentifier]
+    func saveSnap(images: [UIImage], categoryId: String, completion: @escaping (Result<Snap, Error>) -> Void) {
+        var imageUrls: [String] = []
+        let group = DispatchGroup()
         
-        // `saveSnap` 함수를 호출하여 Firestore에 저장합니다.
-        snapService.saveSnap(categoryId: categoryId, imageUrls: imageUrls) { result in
+        for image in images {
+            if let data = image.jpegData(compressionQuality: 1.0) {
+                group.enter()
+                snapService.saveImage(data: data) { result in
+                    switch result {
+                    case .success(let url):
+                        imageUrls.append(url)
+                    case .failure(let error):
+                        completion(.failure(error))
+                        group.leave()
+                        return
+                    }
+                    group.leave()
+                }
+            }
+        }
+        
+        // 모든 이미지 업로드 성공시에만 호출됨
+        group.notify(queue: .main) {
+            self.snapService.saveSnap(categoryId: categoryId, imageUrls: imageUrls) { result in
+                switch result {
+                case .success(let snap):
+                    completion(.success(snap))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    // 스냅 로드 기능
+    func loadSnap(categoryId: String, snapDate: Date) {
+        snapService.loadSnap(categoryId: categoryId, snapDate: snapDate) { result in
             switch result {
-            case .success():
-                print("Snap 저장 성공")
+            case .success(let snap):
+                DispatchQueue.main.async {
+                    self.snap = snap
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    // 스냅 사진 삭제 기능
+    func deletePhoto(categoryId: String, snap: Snap, imageUrlToDelete: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        snapService.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrlToDelete) { result in
+            switch result {
+            case .success:
                 completion(.success(()))
             case .failure(let error):
-                print("Snap 저장 실패: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }
     }
+    
+    // 이미지와 assetIdentifier를 저장하는 메서드 예제
+//    func saveCroppedSnapData(image: UIImage, assetIdentifier: String, categoryId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+//        // assetIdentifier를 문자열 배열로 변환
+//        let imageUrls = [assetIdentifier]
+//        let imageData = image.jpegData(compressionQuality: 0.8)
+//        
+//        guard let imageData = imageData else { return }
+//              
+//        snapService.saveImage(data: imageData) { result in
+//            switch result {
+//            case .success(let url):
+//                self.snapService.saveSnap(categoryId: categoryId, imageUrls: [url]) { result in
+//                    switch result {
+//                    case .success():
+//                        print("Snap 저장 성공")
+//                        completion(.success(()))
+//                    case .failure(let error):
+//                        print("Snap 저장 실패: \(error.localizedDescription)")
+//                        completion(.failure(error))
+//                    }
+//                }
+//            case .failure(let error):
+//                completion(.failure(error))
+//            }
+//        }
+//        
+////        // `saveSnap` 함수를 호출하여 Firestore에 저장합니다.
+////        snapService.saveSnap(categoryId: categoryId, imageUrls: imageUrls) { result in
+////            switch result {
+////            case .success():
+////                print("Snap 저장 성공")
+////                completion(.success(()))
+////            case .failure(let error):
+////                print("Snap 저장 실패: \(error.localizedDescription)")
+////                completion(.failure(error))
+////            }
+////        }
+//    }
     
     // 스냅 사진 드랍 후 배열 재정의
 //    func droptoSnapUpdate(from sourceIndex: Int, to destinationIndex: Int) {
@@ -86,23 +168,7 @@ class HomeViewModel: ObservableObject {
 //            }
 //        }
 //    }
-//    
-    // 스냅 사진 삭제 기능
-    func deletePhoto(categoryId: String, snap: Snap, imageUrlToDelete: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        snapService.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrlToDelete) { result in
-            switch result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    // 스냅 로드 기능
-    func loadSnap(categoryId: String, snapDate: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
-        snapService.loadSnap(categoryId: categoryId, snapDate: snapDate, completion: completion)
-    }
+//
     
     // 스냅 리스트 로드 기능
 //    func loadSnaps() {
@@ -134,7 +200,7 @@ class HomeViewModel: ObservableObject {
             case .success(let snap):
                 DispatchQueue.main.async {
                     // 단일 Snap 객체를 snapData 배열에 추가 (또는 배열 전체를 교체)
-                    self?.snapData = [snap] // Snap 객체를 배열로 만들어 사용
+                    self?.snapData = snap // Snap 객체를 배열로 만들어 사용
                     print("Snap loaded successfully.")
                 }
             case .failure(let error):
