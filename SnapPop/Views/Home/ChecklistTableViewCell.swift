@@ -7,22 +7,17 @@
 
 import UIKit
 
+
 class ChecklistTableViewCell: UITableViewCell {
     
-    // 체크버튼
+    // 체크박스 버튼
     let checkBox: UIButton = {
-         let button = UIButton(type: .custom)
-         
-         // 체크박스 이미지 설정
-//         let noncheckmarkImage = UIImage(systemName: "circle")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
-//         let checkmarkImage = UIImage(systemName: "circle.fill")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)         
-//         button.setImage(noncheckmarkImage, for: .normal)
-//         button.setImage(checkmarkImage, for: .selected)
-         button.translatesAutoresizingMaskIntoConstraints = false
-         return button
-     }()
+        let button = UIButton(type: .custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
-    // check항목 레이블
+    // 체크리스트 항목 레이블
     let checkLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -32,26 +27,20 @@ class ChecklistTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        // 셀 내부에 UI 요소 추가
         contentView.addSubview(checkBox)
         contentView.addSubview(checkLabel)
         
-        // 체크박스와 텍스트 레이블 제약 조건 설정
         NSLayoutConstraint.activate([
-            
-            // 체크박스 제약 조건
             checkBox.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkBox.widthAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.6),
-            checkBox.heightAnchor.constraint(equalTo: checkBox.widthAnchor), 
+            checkBox.heightAnchor.constraint(equalTo: checkBox.widthAnchor),
             
-            // 텍스트 레이블 제약 조건
             checkLabel.leadingAnchor.constraint(equalTo: checkBox.trailingAnchor, constant: 15),
             checkLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         ])
         
-        // 체크박스 클릭 시 상태 변화
         checkBox.addTarget(self, action: #selector(didTapCheckBox), for: .touchUpInside)
     }
     
@@ -60,7 +49,7 @@ class ChecklistTableViewCell: UITableViewCell {
     }
     
     // MARK: - Configure Cell with Checklist Item
-    func configure(with item: ChecklistItem) {
+    func configure(with item: Management) {
         checkLabel.text = item.title
         
         // 색상 설정
@@ -72,25 +61,25 @@ class ChecklistTableViewCell: UITableViewCell {
         }
         
         // 체크박스 상태 설정
-        checkBox.isSelected = item.status
+        checkBox.isSelected = item.alertStatus
     }
     
-    // MARK: - Update CheckBox Images with Color
+    // MARK: - 체크박스 이미지 업데이트
     private func updateCheckBoxImages(with color: UIColor) {
-          let noncheckmarkImage = UIImage(systemName: "circle")?.withTintColor(color, renderingMode: .alwaysOriginal)
-          let checkmarkImage = UIImage(systemName: "circle.fill")?.withTintColor(color, renderingMode: .alwaysOriginal)
-          checkBox.setImage(noncheckmarkImage, for: .normal)
-          checkBox.setImage(checkmarkImage, for: .selected)
-      }
+        let noncheckmarkImage = UIImage(systemName: "circle")?.withTintColor(color, renderingMode: .alwaysOriginal)
+        let checkmarkImage = UIImage(systemName: "circle.fill")?.withTintColor(color, renderingMode: .alwaysOriginal)
+        checkBox.setImage(noncheckmarkImage, for: .normal)
+        checkBox.setImage(checkmarkImage, for: .selected)
+    }
     
-    // 체크박스 버튼 클릭 시 호출되는 메서드
+    // 체크박스 클릭 시 상태 변화
     @objc private func didTapCheckBox() {
         checkBox.isSelected.toggle()
     }
-    
 }
 
-// 임시 위치
+
+// UIColor 확장 - HEX 문자열을 UIColor로 변환
 extension UIColor {
     convenience init?(hex: String) {
         var rgb: UInt64 = 0

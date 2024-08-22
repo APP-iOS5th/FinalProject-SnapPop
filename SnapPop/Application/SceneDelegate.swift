@@ -10,19 +10,39 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        let window = UIWindow(windowScene: windowScene)
-        let homeViewController = HomeViewController()
-        let navigationController = UINavigationController(rootViewController: homeViewController)
+        window = UIWindow(windowScene: windowScene)
+        window?.backgroundColor = .systemBackground
         
-        window.rootViewController = navigationController
-        window.makeKeyAndVisible()
-        self.window = window
+        AuthViewModel.shared.listenAuthState { _, user in
+            let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
+            
+            if user != nil {
+                if appLockState {
+                    LocalAuthenticationViewModel.execute { (success, error) in
+                        DispatchQueue.main.async {
+                            if success {
+                                self.window?.rootViewController = CustomTabBarController()
+                            } else {
+                                // 잠금 인증 실패
+                            }
+                            self.window?.makeKeyAndVisible()
+                        }
+                    }
+                } else {
+                    self.window?.rootViewController = CustomTabBarController()
+                    self.window?.makeKeyAndVisible()
+                }
+            } else {
+                self.window?.rootViewController = SignInViewController()
+                self.window?.makeKeyAndVisible()
+            }
+        }
     }
-
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
@@ -50,4 +70,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
+
 }

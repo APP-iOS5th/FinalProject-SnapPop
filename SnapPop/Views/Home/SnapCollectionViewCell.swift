@@ -7,23 +7,23 @@
 
 import UIKit
 
-//MARK : 스냅사진 컬렉션 뷰에 사용 되는 사진 셀
 class SnapCollectionViewCell: UICollectionViewCell {
     
-    let snapimageView: UIImageView = {
-        let snapimageView = UIImageView()
-        snapimageView.contentMode = .scaleAspectFill // 이미지 비율 유지
-        snapimageView.clipsToBounds = true
-        return snapimageView
+    let snapImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
     }()
     
     let deleteButton: UIButton = {
-        let deletebutton = UIButton(type: .custom)
-        let deletimage = UIImage(systemName: "minus.circle")
-        deletebutton.setImage(deletimage, for: .normal)
-        deletebutton.tintColor = .red
-        deletebutton.isHidden = true
-        return deletebutton
+        let button = UIButton(type: .custom)
+        let deleteImage = UIImage(systemName: "minus.circle.fill")
+        button.setImage(deleteImage, for: .normal)
+        button.tintColor = .red
+        button.isHidden = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     override init(frame: CGRect) {
@@ -32,44 +32,80 @@ class SnapCollectionViewCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 20
         contentView.layer.masksToBounds = true
         
-        contentView.addSubview(snapimageView)
+        contentView.addSubview(snapImageView)
         contentView.addSubview(deleteButton)
         
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        snapimageView.translatesAutoresizingMaskIntoConstraints = false
+        snapImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             // 이미지 뷰 제약 조건
-            snapimageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            snapimageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            snapimageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            snapimageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            snapImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            snapImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            snapImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            snapImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
-            // 편집 버튼 제약 조건
-            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            deleteButton.widthAnchor.constraint(equalToConstant: 30),
-            deleteButton.heightAnchor.constraint(equalToConstant: 30)
+            // 삭제 버튼 제약 조건
+            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: contentView.bounds.height * 0.02),
+            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentView.bounds.width * 0.02),
+            deleteButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1),
+            deleteButton.heightAnchor.constraint(equalTo: deleteButton.widthAnchor)
         ])
     }
     
-    required init?(coder: NSCoder){
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with image: UIImage?, isFirst: Bool, isEditing: Bool) {
-        snapimageView.image = image
-            
-            // 첫 번째 셀의 테두리 설정
-            if isFirst {
-                contentView.layer.borderWidth = 3
-                contentView.layer.borderColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 1.0).cgColor
-            } else {
-                contentView.layer.borderWidth = 0
-                contentView.layer.borderColor = nil
+    func configure(with snap: Snap, isFirst: Bool, isEditing: Bool) {
+        // 첫 번째 셀의 테두리 설정
+        if isFirst {
+            contentView.layer.borderWidth = 3
+            contentView.layer.borderColor = UIColor.customMainColor?.cgColor
+        } else {
+            contentView.layer.borderWidth = 0
+            contentView.layer.borderColor = nil
+        }
+        
+        // 편집 모드에 따라 삭제 버튼 표시
+        deleteButton.isHidden = !isEditing
+        
+        // Load the image from the first URL in the imageUrls array
+        if let imageUrlString = snap.imageUrls.first {
+            // Load the image using the original URL
+            loadImage(from: imageUrlString)
+        } else {
+            snapImageView.image = nil
+        }
+    }
+    
+    private func loadImage(from urlString: String) {
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL: \(urlString)") // URL 확인
+            snapImageView.image = nil
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error fetching image: \(error.localizedDescription)") // 에러 확인
+                DispatchQueue.main.async {
+                    self.snapImageView.image = nil
+                }
+                return
             }
             
-            // 편집 모드에 따라 삭제 버튼 표시
-            deleteButton.isHidden = !isEditing
+            guard let data = data, let image = UIImage(data: data) else {
+                print("Failed to load image data.") // 데이터 확인
+                DispatchQueue.main.async {
+                    self.snapImageView.image = nil
+                }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.snapImageView.image = image
+            }
+        }
+        task.resume()
     }
 }

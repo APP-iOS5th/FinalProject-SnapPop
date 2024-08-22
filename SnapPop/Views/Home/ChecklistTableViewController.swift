@@ -16,17 +16,15 @@ class ChecklistTableViewController: UITableViewController {
         let button = UIButton(type: .system)
         button.setTitle("새로운 관리 추가하기 + ", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 1.0)
+        button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(didselfcareAddButton), for: .touchUpInside)
+        button.addTarget(ChecklistTableViewController.self, action: #selector(didselfcareAddButton), for: .touchUpInside)
         return button
     }()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.addSubview(selfcareAddButton)
         setupButtonConstraints()
         
@@ -36,6 +34,13 @@ class ChecklistTableViewController: UITableViewController {
         tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
         tableView.dataSource = self
         tableView.delegate = self
+        
+        // 임시 데이터 추가
+        setupTestData()
+    }
+    
+    private func setupTestData() {
+        tableView.reloadData() // 데이터 변경 반영
     }
     
     private func setupButtonConstraints() {
@@ -70,22 +75,25 @@ class ChecklistTableViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        // Delete action
+        // 삭제 액션
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { (action, view, completionHandler) in
-            self.viewModel?.checklistItems.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+            // viewModel에서 항목 삭제
+            if let viewModel = self.viewModel {
+                viewModel.checklistItems.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
             completionHandler(true)
         }
         deleteAction.backgroundColor = .red
-        deleteAction.image = UIImage(systemName: "trash") // SF Symbol for delete action
+        deleteAction.image = UIImage(systemName: "trash") // 삭제 액션을 위한 SF Symbol
         
-        // Alarm action
+        // 알람 액션
         let alarmAction = UIContextualAction(style: .normal, title: nil) { (action, view, completionHandler) in
-            print("Alarm tapped for item at index \(indexPath.row)")
+            print("인덱스 \(indexPath.row)의 항목에 대해 알람 탭")
             completionHandler(true)
         }
         alarmAction.backgroundColor = .gray
-        alarmAction.image = UIImage(systemName: "bell.slash") // SF Symbol for alarm action
+        alarmAction.image = UIImage(systemName: "bell.slash") // 알람 액션을 위한 SF Symbol
         
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, alarmAction])
         configuration.performsFirstActionWithFullSwipe = false

@@ -57,10 +57,10 @@ identifier_name:
         error: 60      # 최대 길이를 초과할 경우 에러
     excluded: ["id", "x", "y", "z"] # 이름 길이 제한에서 제외할 특정 식별자 이름
 
-## 함수의 본문 길이
-#function_body_length:
-#    warning: 15
-#    error: 30
+# 함수의 본문 길이
+function_body_length:
+    warning: 15
+    error: 50
     
 # 함수의 복잡성(조건문, 반복문 등의 중첩)를 제한합니다
 #cyclomatic_complexity:

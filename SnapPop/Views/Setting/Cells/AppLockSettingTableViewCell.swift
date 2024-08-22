@@ -41,6 +41,7 @@ class AppLockSettingTableViewCell: UITableViewCell {
     private func configureUI() {
         contentView.addSubview(appLockSettingLabel)
         contentView.addSubview(appLockToggleSwitch)
+        selectionStyle = .none
         
         appLockSettingLabel.translatesAutoresizingMaskIntoConstraints = false
         appLockToggleSwitch.translatesAutoresizingMaskIntoConstraints = false

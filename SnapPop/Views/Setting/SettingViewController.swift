@@ -45,7 +45,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         configureUI()
     }
     
-    func configureUI() {
+    private func configureUI() {
         view.backgroundColor = .systemBackground
         view.addSubview(settingTableView)
         footerView.addSubview(footerButton)
@@ -74,8 +74,10 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 0:
             return 1 // 계정 정보
         case 1:
-            return 1 // 보안 및 개인정보
+            return 3 // 보안 및 개인정보
         case 2:
+            return 1 // 앱 정보
+        case 3:
             return 1 // 로그아웃
         default:
             return 0
@@ -92,21 +94,41 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
             if let user = AuthViewModel.shared.currentUser {
                 cell.configure(with: user)
             }
-            cell.selectionStyle = .none
             return cell
         case 1:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: AppLockSettingTableViewCell.identifier, for: indexPath) as? AppLockSettingTableViewCell else {
+            switch indexPath.row {
+            case 0:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: AppLockSettingTableViewCell.identifier, for: indexPath) as? AppLockSettingTableViewCell else {
+                    return UITableViewCell()
+                }
+                return cell
+            case 1:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(with: "개인정보 보호 설정")
+                return cell
+            case 2:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(with: "데이터 사용 정책")
+                return cell
+            default:
                 return UITableViewCell()
             }
-            cell.selectionStyle = .none
-            return cell
         case 2:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
+                return UITableViewCell()
+            }
+            cell.configure(with: "이용 약관")
+            return cell
+        case 3:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
                 return UITableViewCell()
             }
             
             cell.configure(with: "로그아웃")
-            cell.selectionStyle = .none
             return cell
         default:
             return UITableViewCell()
@@ -115,7 +137,24 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
+        case 1:
+            switch indexPath.row {
+            case 1:
+                let legalVC = LegalViewController(legalType: .privacyPolicy)
+                legalVC.hidesBottomBarWhenPushed = true // 탭바 숨기기
+                navigationController?.pushViewController(legalVC, animated: true)
+            case 2:
+                let legalVC = LegalViewController(legalType: .dataUsagePolicy)
+                legalVC.hidesBottomBarWhenPushed = true
+                navigationController?.pushViewController(legalVC, animated: true)
+            default:
+                break
+            }
         case 2:
+            let legalVC = LegalViewController(legalType: .termsOfService)
+            legalVC.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(legalVC, animated: true)
+        case 3:
             showLogoutAlert()
         default:
             break
@@ -129,6 +168,8 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 1:
             return "보안 및 개인정보"
         case 2:
+            return "앱 정보"
+        case 3:
             return "계정 관리"
         default:
             return nil
@@ -137,7 +178,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch section {
-        case 2:
+        case 3:
             return footerView
         default:
             return nil
