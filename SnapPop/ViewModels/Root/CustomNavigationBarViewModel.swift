@@ -7,15 +7,21 @@
 
 import Foundation
 
+protocol CategoryChangeDelegate: AnyObject {
+    func categoryDidChange(to newCategoryId: String)
+}
+
 protocol CustomNavigationBarViewModelProtocol {
     var categories: [Category] { get set }
     var currentCategory: Category? { get set }
     var categoryisUpdated: (() -> Void)? { get set }
+    var delegate: CategoryChangeDelegate? { get set }
     func loadCategories(completion: @escaping () -> Void)
     func saveCategory(category: Category, completion: @escaping () -> Void)
     func updateCategory(categoryId: String, category: Category, completion: @escaping () -> Void)
-    func deleteCategory(at index: Int, completion: @escaping () -> Void)
+    func deleteCategory(at index: Int, completion: @escaping (String?) -> Void)
     func selectCategory(at index: Int)
+    func handleCategoryId(completion: @escaping (String) -> Void)
 }
 
 class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
@@ -24,6 +30,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
     var categories: [Category] = []
     var currentCategory: Category?
     var categoryisUpdated: (() -> Void)?
+    weak var delegate: CategoryChangeDelegate?
     
     private let categoryService = CategoryService()
     
@@ -33,7 +40,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
             switch result {
             case .success(let categories):
                 if categories.isEmpty {
-                    // TODO: - 파이어베이스에 카테고리가 없을 경우
+                    // 파이어베이스에 카테고리가 없는 경우
                     print("파이어베이스에 카테고리가 없음")
                 } else {
                     self.categories = categories
@@ -74,7 +81,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
         }
     }
     
-    func deleteCategory(at index: Int, completion: @escaping () -> Void) {
+    func deleteCategory(at index: Int, completion: @escaping (String?) -> Void) {
         guard index >= 0 && index < categories.count else {
             return }
         guard let categoryId = categories[index].id else {
@@ -88,21 +95,85 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                 print("Failed to delete category: \(error.localizedDescription)")
                 self.categories.insert(tempCategory, at: index)
                 self.categoryisUpdated?()
-                completion()
+                completion(nil)
             } else {
                 print("Successfully deleted category")
+                // 현재 선택된 카테고리가 삭제된 카테고리인 경우
+                if self.currentCategory?.id == categoryId {
+                    if self.categories.isEmpty {
+                        // 카테고리가 남아있지 않은 경우
+                        self.currentCategory = nil
+                        UserDefaults.standard.removeObject(forKey: "currentCategoryId")
+                        print("카테고리가 남아있지 않은 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
+                        print("current Category: \(self.currentCategory)")
+                        self.delegate?.categoryDidChange(to: "")
+                        completion("카테고리를 추가해 주세요")
+                    } else {
+                        // 카테고리가 남아있는 경우 첫 번째 카테고리를 선택
+                        self.currentCategory = self.categories.first
+                        UserDefaults.standard.set(self.categories.first?.id, forKey: "currentCategoryId")
+                        print("카테고리가 남아있는 경우 첫 번째 카테고리를 선택 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
+                        self.delegate?.categoryDidChange(to: self.currentCategory?.id ?? "")
+                        completion(self.currentCategory?.title)
+                    }
+                } else {
+                    // 현재 선택된 카테고리가 삭제된 카테고리가 아닌 경우
+                    if let firstCategory = self.categories.first {
+                        self.currentCategory = firstCategory
+                        UserDefaults.standard.set(firstCategory.id, forKey: "currentCategoryId")
+                        print("현재 선택된 카테고리가 삭제된 카테고리가 아닌 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
+                        self.delegate?.categoryDidChange(to: firstCategory.id ?? "")
+                        completion(firstCategory.title)
+                    } else {
+                        // categories 배열이 비어있는 경우
+                        self.currentCategory = nil
+                        UserDefaults.standard.removeObject(forKey: "currentCategoryId")
+                        print("categories 배열이 비어있는 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
+                        self.delegate?.categoryDidChange(to: "")
+                        completion("카테고리를 추가해 주세요")
+                    }
+                }
                 self.categoryisUpdated?()
-                completion()
             }
         }
     }
     
     func selectCategory(at index: Int) {
         guard index >= 0 && index < categories.count else { return }
-        // TODO: - 카테고리 삭제했을 경우 해당 인덱스 일경우일때
         UserDefaults.standard.set(categories[index].id, forKey: "currentCategoryId")
+        delegate?.categoryDidChange(to: String(categories[index].id ?? ""))
         self.currentCategory = categories[index]
+        print("selectCategory Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
     }
         
+    func handleCategoryId(completion: @escaping (String) -> Void) {
+        loadCategories { [weak self] in
+            guard let self = self else { return }
+            
+            var title: String
+            
+            if self.categories.isEmpty {
+                // 카테고리id가 없는 경우
+                title = "카테고리를 추가해 주세요"
+                UserDefaults.standard.removeObject(forKey: "currentCategoryId")
+            } else {
+                // 카테고리id가 있는 경우
+                if let savedCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId"),
+                   let savedCategory = self.categories.first(where: { $0.id == savedCategoryId }) {
+                    // 저장된 카테고리id가 있고, 해당 카테고리가 존재하는 경우
+                    self.currentCategory = savedCategory
+                    title = savedCategory.title
+                } else {
+                    // 저장된 카테고리id가 있고, 저장된id의 카테고리가 존재하지 않는 경우
+                    self.currentCategory = self.categories.first
+                    title = self.categories.first?.title ?? "No Categories"
+                    UserDefaults.standard.set(self.currentCategory?.id, forKey: "currentCategoryId")
+                }
+            }
+            
+            self.categoryisUpdated?()
+            completion(title)
+        }
+    }
+    
 }
-
