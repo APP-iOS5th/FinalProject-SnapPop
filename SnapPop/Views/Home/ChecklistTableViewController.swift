@@ -19,7 +19,7 @@ class ChecklistTableViewController: UITableViewController {
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(ChecklistTableViewController.self, action: #selector(didselfcareAddButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didselfcareAddButton), for: .touchUpInside)
         return button
     }()
     
@@ -55,8 +55,12 @@ class ChecklistTableViewController: UITableViewController {
     @objc private func didselfcareAddButton() {
         let addManagementViewModel = AddManagementViewModel(categoryId: "default")
         let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
-    
-        navigationController?.pushViewController(addManagementVC, animated: true)
+
+        if let parentVC = self.view.parentViewController(), !(parentVC.navigationController?.viewControllers.contains(addManagementVC) ?? false) {
+            parentVC.navigationController?.pushViewController(addManagementVC, animated: true)
+        } else {
+            print("Parent ViewController를 찾을 수 없거나, 이미 추가되었습니다.")
+        }
     }
     
     // MARK: - Table view data source

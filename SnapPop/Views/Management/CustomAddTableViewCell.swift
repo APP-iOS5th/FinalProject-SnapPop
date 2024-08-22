@@ -212,9 +212,7 @@ class RepeatCell: BaseTableViewCell {
 class TimeCell: BaseTableViewCell {
     let switchControl: UISwitch = {
         let switchControl = UISwitch()
-        if let toggleColor = UIColor(named: "toggleSwitchColor") {
-            switchControl.onTintColor = toggleColor
-        }
+        switchControl.onTintColor = UIColor.customToggleColor
         switchControl.translatesAutoresizingMaskIntoConstraints = false
         return switchControl
     }()
@@ -235,9 +233,7 @@ class TimeCell: BaseTableViewCell {
 class NotificationCell: BaseTableViewCell {
     let switchControl: UISwitch = {
         let switchControl = UISwitch()
-        if let toggleColor = UIColor(named: "toggleSwitchColor") {
-            switchControl.onTintColor = toggleColor
-        }
+        switchControl.onTintColor = UIColor.customToggleColor
         switchControl.translatesAutoresizingMaskIntoConstraints = false
         return switchControl
     }()
