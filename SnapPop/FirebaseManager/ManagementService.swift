@@ -184,6 +184,53 @@ final class ManagementService {
                 completion(.success(completions))
             }
     }
+    
+    func addManagementException(categoryId: String, managementId: String, exceptionDate: Date, completion: @escaping (Result<Void, Error>) -> Void) {
+        let dateString = ISO8601DateFormatter().string(from: exceptionDate)
+        
+        db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
+            .document(categoryId)
+            .collection("Managements")
+            .document(managementId)
+            .updateData([
+                "exceptionDates": FieldValue.arrayUnion([dateString])
+            ]) { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success(()))
+                }
+            }
+    }
+    
+    func getManagementExceptions(categoryId: String, managementId: String, completion: @escaping (Result<[Date], Error>) -> Void) {
+        db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
+            .document(categoryId)
+            .collection("Managements")
+            .document(managementId)
+            .getDocument { (document, error) in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                
+                guard let document = document, document.exists else {
+                    completion(.failure(NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Management document not found"])))
+                    return
+                }
+                
+                let dateFormatter = ISO8601DateFormatter()
+                let exceptionDates = document.data()?["exceptionDates"] as? [String] ?? []
+                let dates = exceptionDates.compactMap { dateFormatter.date(from: $0) }
+                
+                completion(.success(dates))
+            }
+    }
+    
 }
     
     
