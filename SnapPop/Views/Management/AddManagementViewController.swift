@@ -121,25 +121,25 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.text = title
             }
         }
-
+        
         bind(viewModel.$memo) { [weak self] memo in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? MemoCell {
                 cell.textField.text = memo
             }
         }
-
+        
         bind(viewModel.$color) { [weak self] color in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? ColorCell {
                 cell.colorPicker.selectedColor = color
             }
         }
-
+        
         bind(viewModel.$startDate) { [weak self] date in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? DateCell {
                 cell.configure(with: date)
             }
         }
-
+        
         bind(viewModel.$alertStatus) { [weak self] hasAlert in
             self?.timePicker.isHidden = !hasAlert
         }
@@ -164,7 +164,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         case 1:
             return 2 // 날짜, 반복
         case 2:
-            return 2 // 시간, 알림
+            return 1 // 알림
         default:
             return 0
         }
@@ -202,7 +202,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.configure(with: viewModel.startDate)
                 cell.datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
                 return cell
-
+                
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "RepeatCell", for: indexPath) as? RepeatCell else { return UITableViewCell() }
                 cell.textLabel?.text = "반복"
@@ -212,22 +212,11 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 return UITableViewCell()
             }
         case 2:
-            switch indexPath.row {
-            case 0:
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: "TimeCell", for: indexPath) as? TimeCell else { return UITableViewCell() }
-                cell.textLabel?.text = "시간"
-                cell.switchControl.isOn = viewModel.alertStatus
-                cell.switchControl.addTarget(self, action: #selector(timeSwitchChanged(_:)), for: .valueChanged)
-                return cell
-            case 1:
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell", for: indexPath) as? NotificationCell else { return UITableViewCell() }
-                cell.textLabel?.text = "알림"
-                cell.switchControl.isOn = viewModel.alertStatus
-                cell.switchControl.addTarget(self, action: #selector(notificationChanged(_:)), for: .valueChanged)
-                return cell
-            default:
-                return UITableViewCell()
-            }
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell", for: indexPath) as? NotificationCell else { return UITableViewCell() }
+            cell.textLabel?.text = "알림"
+            cell.switchControl.isOn = viewModel.alertStatus
+            cell.switchControl.addTarget(self, action: #selector(notificationChanged(_:)), for: .valueChanged)
+            return cell
         default:
             return UITableViewCell()
         }
@@ -262,7 +251,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             viewModel.alertTime = timePicker.date
             timePicker.isHidden = false
         } else {
-
+            
             viewModel.alertTime = Date()
             timePicker.isHidden = true
         }
@@ -270,6 +259,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     
     @objc private func notificationChanged(_ sender: UISwitch) {
         viewModel.alertStatus = sender.isOn
+        timePicker.isHidden = !sender.isOn
+        if sender.isOn {
+            viewModel.alertTime = timePicker.date
+        }
     }
     
     @objc private func addDetailButtonTapped() {
