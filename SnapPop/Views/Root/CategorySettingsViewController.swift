@@ -78,6 +78,12 @@ class CategorySettingsViewController: UIViewController {
         self.view.backgroundColor = .customBackground
         setupLayout()
         hideKeyboardWhenTappedAround()
+        viewModel.categoryisUpdated?()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        viewModel.categoryisUpdated?()
     }
     
     // MARK: - Methods
@@ -148,7 +154,7 @@ class CategorySettingsViewController: UIViewController {
     // MARK: - Actions
     @objc func addCategoryButtonTapped() {
         guard let categoryName = categoryTextField.text else { return }
-        if !(categoryName.isEmpty)  {
+        if !(categoryName.isEmpty) {
             let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
             viewModel.saveCategory(category: newCategory) {
                 DispatchQueue.main.async {
@@ -218,29 +224,27 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
         return cell
     }
     
-    // TODO: - ViewModel 사용하여 파이어베이스에 알림 추가/ 분기해야함
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let trash = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
-            self.viewModel.deleteCategory(at: indexPath.row) { _ in 
-                self.viewModel.loadCategories {
-                    DispatchQueue.main.async {
-                        self.categoryTable.reloadData()
-                    }
+            self.viewModel.deleteCategory(at: indexPath.row) { newTitle in
+                DispatchQueue.main.async {
+                    self.categoryTable.reloadData()
                 }
                 self.viewModel.categoryisUpdated?()
             }
-            DispatchQueue.main.async {
-                self.categoryTable.reloadData()
-            }
+            
             print("Current Categories: \(self.viewModel.categories)")
+            print("현재 선택된 카테고리: \(self.viewModel.currentCategory?.title)")
+
             success(true)
+            
         }
         trash.backgroundColor = .red
         trash.image = UIImage(systemName: "trash")
         
-        return UISwipeActionsConfiguration(actions:[trash])
+        return UISwipeActionsConfiguration(actions: [trash])
     }
 }
 

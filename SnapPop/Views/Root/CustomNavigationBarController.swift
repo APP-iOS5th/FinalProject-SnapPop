@@ -49,6 +49,7 @@ class CustomNavigationBarController: UINavigationController {
         viewModel.categoryisUpdated = { [weak self] in
             DispatchQueue.main.async {
                 self?.updateCategoryMenu()
+                self?.updateCategoryTitle()
             }
         }
         loadCategories()
@@ -59,8 +60,9 @@ class CustomNavigationBarController: UINavigationController {
         if topViewController?.navigationItem.leftBarButtonItem == nil {
             setupNavigationBarItems()
         }
-        updateCategoryTitle()
+        loadCategories()
         updateCategoryMenu()
+        updateCategoryTitle()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -127,15 +129,19 @@ class CustomNavigationBarController: UINavigationController {
         return UIMenu(title: "카테고리 목록", children: menuActions)
     }
     
-    private func updateCategoryMenu() {
-        DispatchQueue.main.async {
+    func updateCategoryMenu() {
+        DispatchQueue.main.async { 
             let menu = self.createCategoryMenu(categories: self.viewModel.categories)
             self.categoryButton.menu = menu
+            self.updateCategoryTitle()
+            self.categoryButton.showsMenuAsPrimaryAction = true
+            self.categoryButton.sizeToFit()
+            self.categoryButton.layoutIfNeeded()
         }
-        categoryButton.showsMenuAsPrimaryAction = true
+        
     }
     
-    private func loadCategories() {
+    func loadCategories() {
         viewModel.handleCategoryId { [weak self] title in
             self?.categoryButton.setTitle(title, for: .normal)
             self?.categoryButton.sizeToFit()
@@ -144,10 +150,12 @@ class CustomNavigationBarController: UINavigationController {
         }
     }
     
-    private func updateCategoryTitle() {
-        guard let currentCategory = self.viewModel.currentCategory else { return }
-        categoryButton.setTitle(currentCategory.title, for: .normal)
-        categoryButton.sizeToFit()
+    func updateCategoryTitle() {
+        guard let currentCategory = self.viewModel.currentCategory else { 
+            self.categoryButton.setTitle("카테고리를 추가해 주세요", for: .normal)
+            return }
+        self.categoryButton.setTitle(currentCategory.title, for: .normal)
+        self.categoryButton.layoutIfNeeded()
     }
     
     // MARK: - Actions
