@@ -12,7 +12,6 @@ class CostChart: UIViewController {
     // MARK: - Properties
     
     var circularView: CostDoughnut!
-    
     var formatter: DateFormatter = {
         let df = DateFormatter()
         df.dateFormat = "M"
@@ -28,6 +27,15 @@ class CostChart: UIViewController {
         return label
     }()
     
+    private let detailButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("자세히", for: .normal)
+        button.setTitleColor(UIColor.lightGray, for: .normal)
+        button.isSelected.toggle()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(detailButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
@@ -51,7 +59,7 @@ class CostChart: UIViewController {
         // Add Doughnut Chart view to the main view
         view.addSubview(circularView)
         view.addSubview(monthLabel)
-        
+        view.addSubview(detailButton)
         // Setup constraints for Doughnut Chart view
         NSLayoutConstraint.activate([
             
@@ -62,9 +70,13 @@ class CostChart: UIViewController {
             circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             circularView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             circularView.widthAnchor.constraint(equalToConstant: 250),
-            circularView.heightAnchor.constraint(equalToConstant: 250)
+            circularView.heightAnchor.constraint(equalToConstant: 250),
+            
+            detailButton.topAnchor.constraint(equalTo: circularView.bottomAnchor, constant: -30),
+            detailButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30)
         ])
     }
+    
     
     func setupMonthLabel() {
         let current = Date()
@@ -73,6 +85,22 @@ class CostChart: UIViewController {
     func updateMonthLabel(month: Int, year: Int) {
         monthLabel.text = "\(month)월"
     }
+    @objc func detailButtonTapped(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        detailButtonUpdate()
+        
+    }
+    
+    func detailButtonUpdate() {
+        if detailButton.isSelected {
+            detailButton.setTitle("자세히", for: .normal)
+            //컬렉션뷰감추기
+        } else {
+            detailButton.setTitle("숨기기", for: .normal)
+            //컬렉션뷰펼치기
+        }
+    }
+    
 }
 
 open class CostDoughnut: UIView {
