@@ -35,20 +35,24 @@
 		8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
 		8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215932C745B4300891F93 /* CostChartViewController.swift */; };
+		B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E002C76C7350021A57D /* AddManagementViewController.swift */; };
+		B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */; };
+		B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */; };
 		C2008C2A2C7461FE005FC906 /* DetailCostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */; };
+		C246CE5A2C74EF7D00A631BE /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */; };
+		C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */; };
+		C246CE5C2C74EF7D00A631BE /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE582C74EF7D00A631BE /* SettingTableViewCell.swift */; };
+		C246CE602C74EF8200A631BE /* LegalType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5D2C74EF8200A631BE /* LegalType.swift */; };
+		C246CE612C74EF8200A631BE /* LegalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5E2C74EF8200A631BE /* LegalViewController.swift */; };
+		C246CE622C74EF8200A631BE /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5F2C74EF8200A631BE /* SettingViewController.swift */; };
+		C246CE642C74F11300A631BE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C246CE632C74F11300A631BE /* GoogleService-Info.plist */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
 		C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA622C649CBA00A5B40A /* SignInViewController.swift */; };
 		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
 		C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA692C649E4300A5B40A /* GoogleSignIn */; };
 		C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */; };
 		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
-		C2599B3A2C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */; };
-		C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */; };
-		C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */; };
-		C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
-		C2D401542C72E806000E0343 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = C2D401532C72E806000E0343 /* Config.xcconfig */; };
-		C2D401562C72E811000E0343 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C2D401552C72E811000E0343 /* GoogleService-Info.plist */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
 		C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */; };
 		C2F416472C6B397800A2F544 /* SnapService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F416462C6B397800A2F544 /* SnapService.swift */; };
@@ -56,11 +60,13 @@
 		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
 		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
 		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
+		EA49D3722C74EAC70002F243 /* CropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA664E532C7455F80034B998 /* CropViewController.swift */; };
 		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
 		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
 		EA57EB482C72CAAC007F8987 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB472C72CAAC007F8987 /* Category.swift */; };
 		EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB492C72CAD2007F8987 /* Management.swift */; };
 		EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB4B2C72CAEC007F8987 /* Snap.swift */; };
+		EA664E4E2C73914B0034B998 /* CustomCropToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,19 +97,23 @@
 		8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isDonePercentageChartViewController.swift; sourceTree = "<group>"; };
 		8FA215902C731E0500891F93 /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
 		8FA215932C745B4300891F93 /* CostChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostChartViewController.swift; sourceTree = "<group>"; };
+		B8339E002C76C7350021A57D /* AddManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewController.swift; sourceTree = "<group>"; };
+		B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAddTableViewCell.swift; sourceTree = "<group>"; };
+		B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewmodel.swift; sourceTree = "<group>"; };
 		C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewModel.swift; sourceTree = "<group>"; };
+		C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
+		C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockSettingTableViewCell.swift; sourceTree = "<group>"; };
+		C246CE582C74EF7D00A631BE /* SettingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
+		C246CE5D2C74EF8200A631BE /* LegalType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegalType.swift; sourceTree = "<group>"; };
+		C246CE5E2C74EF8200A631BE /* LegalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegalViewController.swift; sourceTree = "<group>"; };
+		C246CE5F2C74EF8200A631BE /* SettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		C246CE632C74F11300A631BE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		C24BFA722C64B01400A5B40A /* SnapPop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnapPop.entitlements; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
-		C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockSettingTableViewCell.swift; sourceTree = "<group>"; };
-		C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
-		C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
-		C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
-		C2D401532C72E806000E0343 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		C2D401552C72E811000E0343 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
 		C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		C2F416462C6B397800A2F544 /* SnapService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapService.swift; sourceTree = "<group>"; };
@@ -116,6 +126,8 @@
 		EA57EB472C72CAAC007F8987 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		EA57EB492C72CAD2007F8987 /* Management.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Management.swift; sourceTree = "<group>"; };
 		EA57EB4B2C72CAEC007F8987 /* Snap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snap.swift; sourceTree = "<group>"; };
+		EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCropToolbar.swift; sourceTree = "<group>"; };
+		EA664E532C7455F80034B998 /* CropViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,7 +214,6 @@
 		8F1685232C6354590010F8D8 = {
 			isa = PBXGroup;
 			children = (
-				C2D401532C72E806000E0343 /* Config.xcconfig */,
 				C24BFA542C647BA600A5B40A /* .swiftlint.yml */,
 				8F16852E2C6354590010F8D8 /* SnapPop */,
 				8F16852D2C6354590010F8D8 /* Products */,
@@ -229,7 +240,7 @@
 				C24BFA5B2C64801100A5B40A /* ViewModels */,
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
-				C2D401552C72E811000E0343 /* GoogleService-Info.plist */,
+				C246CE632C74F11300A631BE /* GoogleService-Info.plist */,
 			);
 			path = SnapPop;
 			sourceTree = "<group>";
@@ -245,11 +256,39 @@
 			path = Calendar;
 			sourceTree = "<group>";
 		};
-		8FA215922C732C4500891F93 /* Calendar */ = {
+		B8339E032C76C7350021A57D /* Management */ = {
 			isa = PBXGroup;
 			children = (
+				B8339E002C76C7350021A57D /* AddManagementViewController.swift */,
+				B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */,
 			);
-			path = Calendar;
+			path = Management;
+			sourceTree = "<group>";
+		};
+		B8339E0A2C76C7E80021A57D /* Management */ = {
+			isa = PBXGroup;
+			children = (
+				B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */,
+			);
+			path = Management;
+			sourceTree = "<group>";
+		};
+		C2008C282C7461EB005FC906 /* DetailCost */ = {
+			isa = PBXGroup;
+			children = (
+				C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */,
+			);
+			path = DetailCost;
+			sourceTree = "<group>";
+		};
+		C246CE592C74EF7D00A631BE /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */,
+				C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */,
+				C246CE582C74EF7D00A631BE /* SettingTableViewCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		C2008C282C7461EB005FC906 /* DetailCost */ = {
@@ -292,6 +331,7 @@
 		C24BFA5A2C647EBA00A5B40A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B8339E032C76C7350021A57D /* Management */,
 				8F4C73C02C6AFA71000AACDA /* Calendar */,
 				C2D401592C73787B000E0343 /* DetailCost */,
 				4AC9A0372C72E93000EB5FFC /* Notification */,
@@ -307,7 +347,7 @@
 		C24BFA5B2C64801100A5B40A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				8FA215922C732C4500891F93 /* Calendar */,
+				B8339E0A2C76C7E80021A57D /* Management */,
 				C2008C282C7461EB005FC906 /* DetailCost */,
 				4AC9A03D2C731E1200EB5FFC /* Root */,
 				EA141FA42C6B31DE00DD4B29 /* Home */,
@@ -364,10 +404,10 @@
 		C25F38292C65B24F00EF9A2E /* Setting */ = {
 			isa = PBXGroup;
 			children = (
-				C25F382A2C65B25F00EF9A2E /* SettingViewController.swift */,
-				C25F382D2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift */,
-				C25F382F2C65D6F300EF9A2E /* SettingTableViewCell.swift */,
-				C2599B392C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift */,
+				C246CE5F2C74EF8200A631BE /* SettingViewController.swift */,
+				C246CE5E2C74EF8200A631BE /* LegalViewController.swift */,
+				C246CE5D2C74EF8200A631BE /* LegalType.swift */,
+				C246CE592C74EF7D00A631BE /* Cells */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -388,6 +428,8 @@
 				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
 				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
 				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
+				EA664E532C7455F80034B998 /* CropViewController.swift */,
+				EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -471,9 +513,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2D401542C72E806000E0343 /* Config.xcconfig in Resources */,
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
-				C2D401562C72E811000E0343 /* GoogleService-Info.plist in Resources */,
+				C246CE642C74F11300A631BE /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
 			);
@@ -507,16 +548,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA49D3722C74EAC70002F243 /* CropViewController.swift in Sources */,
 				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
 				4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */,
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,
 				C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */,
-				C25F38302C65D6F300EF9A2E /* SettingTableViewCell.swift in Sources */,
 				C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */,
 				4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */,
+				C246CE602C74EF8200A631BE /* LegalType.swift in Sources */,
+				4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */,
+				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
+				B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
 				4AC9A0392C72E96700EB5FFC /* NotificationViewController.swift in Sources */,
+				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
+				C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */,
+				B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */,
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
@@ -532,12 +580,10 @@
 				EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */,
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
 				8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */,
-				C25F382E2C65BA7900EF9A2E /* AccountInfoTableViewCell.swift in Sources */,
+				C246CE5C2C74EF7D00A631BE /* SettingTableViewCell.swift in Sources */,
 				8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */,
 				EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */,
-				C2599B3A2C69A17B004EF6E7 /* AppLockSettingTableViewCell.swift in Sources */,
 				C2008C2A2C7461FE005FC906 /* DetailCostViewModel.swift in Sources */,
-				C25F382B2C65B25F00EF9A2E /* SettingViewController.swift in Sources */,
 				4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */,
 				4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */,
 				4AF17D802C73298800C1E5A2 /* CategorySettingsViewController.swift in Sources */,
@@ -545,11 +591,16 @@
 				4AC9A03F2C731E2200EB5FFC /* CustomNavigationBarViewModel.swift in Sources */,
 				C2F416472C6B397800A2F544 /* SnapService.swift in Sources */,
 				C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */,
+				B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */,
+				C246CE612C74EF8200A631BE /* LegalViewController.swift in Sources */,
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
 				8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */,
 				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
+				EA664E4E2C73914B0034B998 /* CustomCropToolbar.swift in Sources */,
 				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
+				C246CE5A2C74EF7D00A631BE /* AccountInfoTableViewCell.swift in Sources */,
 				4AD29AD82C6B35BE00A9BEDD /* Color+Extensions.swift in Sources */,
+				C246CE622C74EF8200A631BE /* SettingViewController.swift in Sources */,
 				4AD29AAC2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -570,7 +621,6 @@
 /* Begin XCBuildConfiguration section */
 		8F16853E2C63545A0010F8D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2D401532C72E806000E0343 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -634,7 +684,6 @@
 		};
 		8F16853F2C63545A0010F8D8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2D401532C72E806000E0343 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

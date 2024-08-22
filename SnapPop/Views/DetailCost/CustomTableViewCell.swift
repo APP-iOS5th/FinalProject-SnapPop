@@ -4,10 +4,10 @@
 //
 //  Created by 이인호 on 8/19/24.
 //
-
+//
 import UIKit
 
-class BaseTableViewCell: UITableViewCell {
+class BaseTableViewCell2: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureUI()
@@ -21,7 +21,7 @@ class BaseTableViewCell: UITableViewCell {
 }
 
 // -MARK: 제목
-final class TitleCell: BaseTableViewCell {
+final class TitleCell2: BaseTableViewCell2 {
     static let identifier = "title"
     
     let textField: UITextField = {
@@ -47,7 +47,7 @@ final class TitleCell: BaseTableViewCell {
 }
 
 // -MARK: 설명
-final class DescriptionCell: BaseTableViewCell {
+final class DescriptionCell: BaseTableViewCell2 {
     static let identifier = "description"
     
     let textField: UITextField = {
@@ -73,7 +73,7 @@ final class DescriptionCell: BaseTableViewCell {
 }
 
 // -MARK: 비용 추가
-final class AddCostCell: BaseTableViewCell {
+final class AddCostCell: BaseTableViewCell2 {
     static let identifier = "addCost"
     
     var onToggleSwitchChanged: ((Bool) -> Void)?
@@ -116,7 +116,7 @@ final class AddCostCell: BaseTableViewCell {
 }
 
 // -MARK: 1회 비용
-final class OneTimeCostCell: BaseTableViewCell {
+final class OneTimeCostCell: BaseTableViewCell2 {
     static let identifier = "oneTimeCost"
     
     private let label: UILabel = {
@@ -157,7 +157,7 @@ final class OneTimeCostCell: BaseTableViewCell {
 }
 
 // -MARK: 계산
-final class CalculateCostCell: BaseTableViewCell {
+final class CalculateCostCell: BaseTableViewCell2 {
     static let identifier = "calculateCost"
     
     var onCalculate: ((Int) -> Void)?

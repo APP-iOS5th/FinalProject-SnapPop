@@ -9,15 +9,17 @@ import Foundation
 import FirebaseFirestore
 import FirebaseStorage
 
+// -MARK: 값 업데이트 용이를 위해 선언 변경
+
 struct Management: Identifiable, Hashable, Codable {
     @DocumentID var id: String?
-    let title: String
-    let memo: String
-    let color: String
-    let startDate: Date
-    let repeatCycle: Int
-    let alertTime: Date
-    let alertStatus: Bool
+    var title: String 
+    var memo: String
+    var color: String
+    var startDate: Date
+    var repeatCycle: Int
+    var alertTime: Date
+    var alertStatus: Bool
     
     init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, alertTime: Date, alertStatus: Bool) {
         self.title = title
@@ -29,6 +31,7 @@ struct Management: Identifiable, Hashable, Codable {
         self.alertStatus = alertStatus
     }
 }
+<<<<<<< HEAD
 
 struct IsCompletion: Hashable, Codable {
     let managementId: String
@@ -72,3 +75,5 @@ extension Management {
         ]
     }
 }
+=======
+>>>>>>> main

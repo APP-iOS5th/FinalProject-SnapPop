@@ -28,6 +28,7 @@ class AccountInfoTableViewCell: UITableViewCell {
         contentView.addSubview(snsLogin)
         contentView.addSubview(userEmail)
         contentView.addSubview(socialLogo)
+        selectionStyle = .none
         
         snsLogin.translatesAutoresizingMaskIntoConstraints = false
         userEmail.translatesAutoresizingMaskIntoConstraints = false

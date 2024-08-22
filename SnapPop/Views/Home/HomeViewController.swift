@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 import Photos
 import MobileCoreServices
+import Combine
 
 extension UIViewController {
     private struct Preview: UIViewControllerRepresentable {
@@ -33,9 +34,7 @@ class HomeViewController:
     UITableViewDataSource,
     UITableViewDelegate,
     UICollectionViewDataSource,
-    UICollectionViewDelegateFlowLayout,
-    UICollectionViewDragDelegate,
-    UICollectionViewDropDelegate {
+    UICollectionViewDelegateFlowLayout {
     
     // ViewModel
     private var viewModel = HomeViewModel()
@@ -44,7 +43,7 @@ class HomeViewController:
     private let datePickerContainer = UIView()
     private let datePicker = UIDatePicker()
     private let calendarImageView = UIImageView()
-    
+        
     // 스냅 타이틀
     private let snapTitle: UILabel = {
         let label = UILabel()
@@ -56,6 +55,7 @@ class HomeViewController:
     }()
     
     private var isEditingMode = false
+    
     // 편집 버튼
     private let editButton: UIButton = {
         let button = UIButton(type: .system)
@@ -76,6 +76,19 @@ class HomeViewController:
         return button
     }()
     
+    // 선택된 이미지를 저장할 속성
+    private var selectedImage: UIImage?
+    
+    // 관리 목록 타이틀
+    private let managementTitle: UILabel = {
+        let label = UILabel()
+        label.text = "관리 목록"
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     // 스냅 컬렉션
     private let snapCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -91,6 +104,9 @@ class HomeViewController:
     // 체크리스트 테이블
     private let checklistTableViewController = ChecklistTableViewController()
     
+    // Add a property to hold the cancellables
+    private var cancellables = Set<AnyCancellable>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
@@ -98,16 +114,23 @@ class HomeViewController:
         setupSnapCollectionView()
         setupChecklistView()
         
-        viewModel.checklistItems = Management.generateSampleManagementItems()
-        viewModel.tempSnapData = Snap.sampleData()
         snapCollectionView.dataSource = self
         snapCollectionView.delegate = self
-        snapCollectionView.dragDelegate = self
-        snapCollectionView.dropDelegate = self
         
         viewModel.selectedSource = { [weak self] sourceType in
             guard let self = self else { return }
             self.viewModel.handleImageSource(sourceType, from: self)
+        }
+        
+        // 스냅 데이터가 변경될 때 UI 업데이트
+        viewModel.$snapData.sink { [weak self] _ in
+            self?.snapCollectionView.reloadData() // UI 업데이트
+        }.store(in: &cancellables)
+    }
+    
+    @objc private func updateSnapCollectionView() {
+        DispatchQueue.main.async {
+            self.snapCollectionView.reloadData() // UI 업데이트
         }
     }
     
@@ -128,7 +151,7 @@ class HomeViewController:
         view.addSubview(datePickerContainer)
     }
     
-    // MARK: 날짜 캘린더 이미지 UI 컨트롤
+    // MARK: 날�� 캘린더 이미지 UI 컨트롤
     private func setupCalendarImageView() {
         calendarImageView.image = UIImage(named: "CalenderIcon")
         calendarImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -151,7 +174,6 @@ class HomeViewController:
         NSLayoutConstraint.activate([
             datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.02),
-            //datePickerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
             
             calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor, constant: view.bounds.width * 0.02),
@@ -172,6 +194,9 @@ class HomeViewController:
     
     // MARK: - 체크리스트 관련 요소 제약조건
     private func setupChecklistView() {
+        // Add managementTitle to the view
+        view.addSubview(managementTitle)
+        
         checklistTableViewController.viewModel = viewModel
         
         addChild(checklistTableViewController)
@@ -179,9 +204,16 @@ class HomeViewController:
         checklistTableViewController.didMove(toParent: self)
         
         checklistTableViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        managementTitle.translatesAutoresizingMaskIntoConstraints = false // Enable Auto Layout for managementTitle
         
         NSLayoutConstraint.activate([
-            checklistTableViewController.view.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: view.bounds.height * 0.02),
+            // 관리 목록 타이틀 제약 조건
+            managementTitle.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: view.bounds.height * 0.02),
+            managementTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            managementTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            
+            // 체크리스트 테이블 제약 조건
+            checklistTableViewController.view.topAnchor.constraint(equalTo: managementTitle.bottomAnchor, constant: view.bounds.height * 0.02),
             checklistTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             checklistTableViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -215,35 +247,36 @@ class HomeViewController:
         
         NSLayoutConstraint.activate([
             snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.02),
+            snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.01),
+            snapTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
-            snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.02),
+            snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.01),
             snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             snapCollectionView.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -view.bounds.width * 0.02),
-            snapCollectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3),
+            snapCollectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.20),
             
             addButton.centerYAnchor.constraint(equalTo: snapCollectionView.centerYAnchor),
             addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
-            addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.1),
+            addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.10),
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor)
         ])
         
-        snapCollectionView.dragInteractionEnabled = true
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
     }
     
     // MARK: UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.tempSnapData.count
+        return viewModel.snapData.count
     }
     
     // MARK: UICollectionViewDataSource - Cell Configuration
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
-        let snap = viewModel.tempSnapData[indexPath.item]
+        
+        let snap = viewModel.snapData[indexPath.item]
         let isFirst = indexPath.item == 0
         
         cell.configure(with: snap, isFirst: isFirst, isEditing: isEditingMode)
@@ -255,100 +288,63 @@ class HomeViewController:
     
     // MARK: UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = collectionView.bounds.width * 0.95 // 전체 너비의 95%만 사용
+        let availableWidth = collectionView.bounds.width * 0.95
         let width = availableWidth / 2
         return CGSize(width: width, height: width)
     }
     
-    // MARK: - UICollectionViewDragDelegate
-    func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let snap = viewModel.tempSnapData[indexPath.item]
-        let itemProvider = NSItemProvider(object: snap.id! as NSString)
-        let dragItem = UIDragItem(itemProvider: itemProvider)
-        dragItem.localObject = snap
-        return [dragItem]
-    }
-    
-    // MARK: - UICollectionViewDropDelegate
-    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-        let destinationIndexPath: IndexPath
-        
-        if let indexPath = coordinator.destinationIndexPath {
-            destinationIndexPath = indexPath
-        } else {
-            let row = collectionView.numberOfItems(inSection: 0)
-            destinationIndexPath = IndexPath(item: row, section: 0)
-        }
-        
-        if coordinator.proposal.operation == .move {
-            reloadItems(coordinator: coordinator, destinationIndexPath: destinationIndexPath, collectionView: collectionView)
-        }
-    }
-    
-    private func reloadItems(coordinator: UICollectionViewDropCoordinator, destinationIndexPath: IndexPath, collectionView: UICollectionView) {
-        guard let item = coordinator.items.first, let sourceIndexPath = item.sourceIndexPath else { return }
-        
-        viewModel.droptoSnapUpdate(from: sourceIndexPath.item, to: destinationIndexPath.item)
-        
-        collectionView.performBatchUpdates({
-            collectionView.deleteItems(at: [sourceIndexPath])
-            collectionView.insertItems(at: [destinationIndexPath])
-        }, completion: { _ in
-            coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
-        })
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
-        if collectionView.hasActiveDrag {
-            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-        }
-        
-        return UICollectionViewDropProposal(operation: .forbidden)
-    }
-    
-    // MARK: - 사진 추가버튼 이벤트 메소드
-    @objc private func addButtonTapped() {
-        viewModel.showImagePickerActionSheet(from: self)
-    }
-
     @objc private func editButtonTapped() {
-        
         isEditingMode.toggle()
-            
-            if isEditingMode {
-                // 편집 모드로 전환
-                editButton.setTitle("완료", for: .normal)
-            } else {
-                // 편집 모드 종료, 데이터 저장
-                viewModel.saveEditedData()
-                editButton.setTitle("편집", for: .normal)
-            }
-            
-            snapCollectionView.reloadData() // 데이터 변경 반영
-//        
-//        isEditingMode.toggle()
-//        editButton.setTitle(isEditingMode ? "완료" : "편집", for: .normal)
-//        snapCollectionView.reloadData()
+        
+        if isEditingMode {
+            // 편집 모드로 전환
+            editButton.setTitle("완료", for: .normal)
+        } else {
+            // 편집 모드 종료, 데이터 저장
+            //viewModel.saveSnapsToFirebase()
+            editButton.setTitle("편집", for: .normal)
+        }
+        
+        snapCollectionView.reloadData() // 데이터 변경 반영
+    }
+    
+    @objc private func addButtonTapped(_ sender: UIButton) {
+        viewModel.showImagePickerActionSheet(from: self)
     }
     
     @objc private func deleteButtonTapped(_ sender: UIButton) {
         let index = sender.tag
-        viewModel.deleteSnap(at: index)
-        snapCollectionView.deleteItems(at: [IndexPath(item: index, section: 0)])
+        //viewModel.deleteSnap(at: index)
+        //snapCollectionView.deleteItems(at: [IndexPath(item: index, section: 0)])
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         
-        if let imageURL = info[.imageURL] as? URL {
-            viewModel.fetchPhotoDetails(from: imageURL) { success in
-                if success {
-                    print("사진 로드 성공")
-                } else {
-                    print("사진 로드 실패")
-                }
-            }
+        if let image = info[.originalImage] as? UIImage {
+            self.selectedImage = image
+            self.presentImageCropper(with: info[.phAsset] as? PHAsset)
+            print("사진 로드 성공")
+        } else {
+            print("사진 로드 실패")
         }
+    }
+    
+    private func presentImageCropper(with asset: PHAsset?) {
+        guard let image = selectedImage, let asset = asset else { return }
+        
+        let cropViewController = CropViewController()
+        cropViewController.asset = asset
+        //cropViewController.image = image
+        cropViewController.modalPresentationStyle = .fullScreen
+        
+        cropViewController.didGetCroppedImage = { [weak self] (snap: Snap) in
+            self?.viewModel.snapData.append(snap) // Snap 객체를 viewModel에 추가
+            // SnapCollectionView를 업데이트
+            self?.snapCollectionView.reloadData()
+        }
+        
+        present(cropViewController, animated: true, completion: nil)
     }
 }
 

@@ -23,6 +23,7 @@ class SettingTableViewCell: UITableViewCell {
     
     private func configureUI() {
         contentView.addSubview(cellLabel)
+        selectionStyle = .none
         
         cellLabel.translatesAutoresizingMaskIntoConstraints = false
         
