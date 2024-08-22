@@ -31,16 +31,14 @@ final class SnapService {
                 
                 guard let downloadUrl = url?.absoluteString else { return }
                 
+                print(downloadUrl)
                 completion(.success(downloadUrl))
             }
         }
     }
       
-    func saveSnap(categoryId: String, imageUrls: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-        // 생성할 문서의 ID를 직접 지정
-        let documentID = UUID().uuidString // 또는 원하는 다른 ID를 지정할 수 있습니다.
-        
-        let snap = Snap(id: documentID, imageUrls: imageUrls, createdAt: nil)
+    func saveSnap(categoryId: String, imageUrls: [String], completion: @escaping (Result<Snap, Error>) -> Void) {
+        let snap = Snap(imageUrls: imageUrls, createdAt: Date())
         
         do {
             try db.collection("Users")
@@ -48,13 +46,12 @@ final class SnapService {
                 .collection("Categories")
                 .document(categoryId)
                 .collection("Snaps")
-                .document(documentID) // 지정한 documentID로 문서를 생성
-                .setData(from: snap) { error in
+                .addDocument(from: snap) { error in
                     if let error = error {
                         completion(.failure(error))
                         return
                     }
-                    completion(.success(()))
+                    completion(.success((snap)))
                 }
         } catch {
             completion(.failure(error))
