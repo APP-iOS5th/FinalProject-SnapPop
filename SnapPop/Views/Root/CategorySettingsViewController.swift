@@ -155,15 +155,34 @@ class CategorySettingsViewController: UIViewController {
     // MARK: - Actions
     @objc func addCategoryButtonTapped() {
         guard let categoryName = categoryTextField.text else { return }
+        // 텍스트 필드에 입력이 있는 경우
         if !(categoryName.isEmpty) {
-            let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
-            viewModel.saveCategory(category: newCategory) {
-                DispatchQueue.main.async {
-                    self.categoryTable.reloadData()
+            // 카테고리가 없는 경우
+            if viewModel.categories.isEmpty {
+                let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
+                viewModel.saveCategory(category: newCategory) {
+                    DispatchQueue.main.async {
+                        self.categoryTable.reloadData()
+                    }
+                    self.viewModel.selectCategory(at: 0)
+                    self.viewModel.categoryisUpdated?()
                 }
+                categoryTextField.text = ""
+               
+                
+            } else {
+                // 카테고리가 있는 경우
+                let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
+                viewModel.saveCategory(category: newCategory) {
+                    DispatchQueue.main.async {
+                        self.categoryTable.reloadData()
+                    }
+                }
+                categoryTextField.text = ""
             }
-            categoryTextField.text = ""
+            
         } else {
+            // 텍스트 필드에 입력이 없는 경우
             // TODO: - TextField에 입력을 하지 않았을때
         }
         
@@ -199,6 +218,10 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
                 self.viewModel.categories[indexPath.row] = updatedCategory
                 DispatchQueue.main.async {
                     self.categoryTable.reloadRows(at: [indexPath], with: .none)
+                }
+                if updatedCategory.id == self.viewModel.currentCategory?.id {
+                    self.viewModel.currentCategory?.title = newName
+                    self.viewModel.categoryisUpdated?()
                 }
             }
         }
