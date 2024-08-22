@@ -34,7 +34,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(AddManagementViewController.self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -154,7 +154,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // MARK: - UITableViewDataSource
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3 // 네 번째 섹션 제거
+        return 3
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -262,7 +262,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             viewModel.alertTime = timePicker.date
             timePicker.isHidden = false
         } else {
-            // Handle the case where the alert is turned off
+
             viewModel.alertTime = Date()
             timePicker.isHidden = true
         }
@@ -273,8 +273,17 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func addDetailButtonTapped() {
-        // 상세 비용 추가 화면으로 이동하는 로직을 여기서 구현
-        print("상세 비용 추가하기 버튼이 탭됨.")
+        // DetailCostViewModel의 인스턴스 생성
+        let detailCostViewModel = DetailCostViewModel()
+        
+        // 생성한 ViewModel을 사용하여 DetailCostViewController 초기화
+        let detailCostVC = DetailCostViewController(viewModel: detailCostViewModel)
+        
+        // 모달 프레젠테이션 스타일 설정 (필요한 스타일로 변경 가능)
+        detailCostVC.modalPresentationStyle = .formSheet
+        
+        // 모달로 DetailCostViewController 표시
+        present(detailCostVC, animated: true, completion: nil)
     }
     
     @objc private func saveButtonTapped() {

@@ -65,7 +65,7 @@ class BaseTableViewCell: UITableViewCell {
 class TitleCell: BaseTableViewCell {
     let textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "제목 입력"
+        textField.placeholder = "제목(ex:물 한 잔 마시기)"
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -87,7 +87,7 @@ class TitleCell: BaseTableViewCell {
 class MemoCell: BaseTableViewCell {
     let textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "메모 입력"
+        textField.placeholder = "메모(ex: 따뜻하게) "
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
