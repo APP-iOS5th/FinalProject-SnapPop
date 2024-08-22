@@ -4,7 +4,7 @@
 //
 //  Created by 이인호 on 8/19/24.
 //
-
+//
 import UIKit
 
 class DetailCostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -49,7 +49,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         view.addSubview(tableView)
         
         let cells: [(AnyClass, String)] = [
-            (TitleCell.self, TitleCell.identifier),
+            (TitleCell2.self, TitleCell2.identifier),
             (DescriptionCell.self, DescriptionCell.identifier),
             (AddCostCell.self, AddCostCell.identifier),
             (OneTimeCostCell.self, OneTimeCostCell.identifier),
@@ -103,7 +103,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         case 0:
             switch indexPath.row {
             case 0:
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleCell.identifier, for: indexPath) as? TitleCell else { return UITableViewCell() }
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleCell2.identifier, for: indexPath) as? TitleCell2 else { return UITableViewCell() }
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionCell.identifier, for: indexPath) as? DescriptionCell else { return UITableViewCell() }

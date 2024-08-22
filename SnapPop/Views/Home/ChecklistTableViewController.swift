@@ -19,7 +19,7 @@ class ChecklistTableViewController: UITableViewController {
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(ChecklistTableViewController.self, action: #selector(didselfcareAddButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didselfcareAddButton), for: .touchUpInside)
         return button
     }()
     
@@ -51,9 +51,16 @@ class ChecklistTableViewController: UITableViewController {
             selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8) // 너비 비율 조정
         ])
     }
-    
+    // AddmanagementViewController navigation 연결
     @objc private func didselfcareAddButton() {
-        print("새로운 관리 추가하기 탭")
+        let addManagementViewModel = AddManagementViewModel(categoryId: "default")
+        let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
+
+        if let parentVC = self.view.parentViewController(), !(parentVC.navigationController?.viewControllers.contains(addManagementVC) ?? false) {
+            parentVC.navigationController?.pushViewController(addManagementVC, animated: true)
+        } else {
+            print("Parent ViewController를 찾을 수 없거나, 이미 추가되었습니다.")
+        }
     }
     
     // MARK: - Table view data source
