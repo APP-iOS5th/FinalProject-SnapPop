@@ -50,7 +50,7 @@ class SnapComparisonSheetViewController: UIViewController {
     /// 페이지 컨트롤
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = viewModel.currentSnap.images.count
+        pageControl.numberOfPages = viewModel.currentSnap.imageUrls.count
         pageControl.currentPage = viewModel.currentPhotoIndex
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .systemGray5
@@ -156,8 +156,8 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     private func updateUI() {
-        snapDateLabel.text = viewModel.currentSnap.date
-        pageControl.numberOfPages = viewModel.currentSnap.images.count
+        snapDateLabel.text = "\(String(describing: viewModel.currentSnap.createdAt))"
+        pageControl.numberOfPages = viewModel.currentSnap.imageUrls.count
         pageControl.currentPage = viewModel.currentPhotoIndex
         
         // 화살표 버튼 숨김
