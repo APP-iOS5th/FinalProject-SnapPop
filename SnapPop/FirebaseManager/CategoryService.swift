@@ -81,6 +81,8 @@ final class CategoryService {
             .delete { error in
                 if let error = error {
                     completion(error) // firestore에서 없는 문서를 삭제하려고 해도 에러를 반환하지 않도록 설계되어있음
+                } else {
+                    completion(nil)
                 }
             }
     }

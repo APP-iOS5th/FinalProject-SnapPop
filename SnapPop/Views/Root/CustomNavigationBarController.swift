@@ -13,9 +13,9 @@ class CustomNavigationBarController: UINavigationController {
     var viewModel: CustomNavigationBarViewModelProtocol
     
     // MARK: - UI Components
-    private lazy var categoryButton: UIButton = {
+    lazy var categoryButton: UIButton = {
         var config = UIButton.Configuration.plain()
-        config.title = "카테고리"
+        config.title = !viewModel.categories.isEmpty ? "" : "카테고리를 추가해주세요"
         config.image = UIImage(systemName: "chevron.down")
         config.imagePlacement = .trailing
         config.imagePadding = 10
@@ -43,6 +43,7 @@ class CustomNavigationBarController: UINavigationController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("유저 디폴트에 저장된 id: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
         setupCustomNavigationBar()
         updateCategoryTitle()
         viewModel.categoryisUpdated = { [weak self] in
@@ -51,6 +52,8 @@ class CustomNavigationBarController: UINavigationController {
             }
         }
         loadCategories()
+        print("CustomNavigationBarController의 viewModel 주소: \(Unmanaged.passUnretained(self.viewModel as AnyObject).toOpaque())")
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -58,8 +61,14 @@ class CustomNavigationBarController: UINavigationController {
         if topViewController?.navigationItem.leftBarButtonItem == nil {
             setupNavigationBarItems()
         }
-        updateCategoryTitle()
+        loadCategories()
         updateCategoryMenu()
+        viewModel.categoryisUpdated = { [weak self] in
+            print("CustomNavigationBarController에서 categoryisUpdated 클로저 호출됨")
+            DispatchQueue.main.async {
+                self?.updateCategoryMenu()
+            }
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -126,25 +135,36 @@ class CustomNavigationBarController: UINavigationController {
         return UIMenu(title: "카테고리 목록", children: menuActions)
     }
     
-    private func updateCategoryMenu() {
-        DispatchQueue.main.async {
+    func updateCategoryMenu() {
+        DispatchQueue.main.async { 
             let menu = self.createCategoryMenu(categories: self.viewModel.categories)
+            print("새로운 메뉴가 설정되었습니다: \(menu)")
             self.categoryButton.menu = menu
+            self.updateCategoryTitle()
+            
+            
+            self.categoryButton.sizeToFit()
+            self.categoryButton.layoutIfNeeded()
+            print("Current category.id \(self.viewModel.currentCategory?.id)")
         }
-        categoryButton.showsMenuAsPrimaryAction = true
+        
     }
     
-    private func loadCategories() {
-        viewModel.loadCategories { [weak self] in
+    func loadCategories() {
+        viewModel.handleCategoryId { [weak self] title in
+            self?.categoryButton.setTitle(title, for: .normal)
+            self?.categoryButton.sizeToFit()
             self?.updateCategoryMenu()
-            self?.updateCategoryTitle()
         }
     }
     
-    private func updateCategoryTitle() {
-        guard let currentCategory = self.viewModel.currentCategory else { return }
-        categoryButton.setTitle(currentCategory.title, for: .normal)
-        categoryButton.sizeToFit()
+    func updateCategoryTitle() {
+        guard let currentCategory = self.viewModel.currentCategory else { 
+            self.categoryButton.setTitle("카테고리를 추가해 주세요", for: .normal)
+            return }
+        self.categoryButton.setTitle(currentCategory.title, for: .normal)
+        print("카테고리 타이틀 업데이트: \(currentCategory.title)")
+        self.categoryButton.layoutIfNeeded()
     }
     
     // MARK: - Actions
