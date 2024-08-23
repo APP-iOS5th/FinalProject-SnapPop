@@ -67,6 +67,21 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+        
+        // 네비게이션 바 버튼 추가
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveButtonTapped))
+    }
+    
+    // MARK: - Actions
+    @objc private func cancelButtonTapped() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func saveButtonTapped() {
+        viewModel.saveData { [weak self] in
+            self?.dismiss(animated: true, completion: nil)
+        }
     }
     
     // MARK: - UITableViewDataSource
@@ -118,8 +133,9 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
                 cell.toggleSwitch.isOn = self.isOpen
                 
                 cell.onToggleSwitchChanged = { [weak self] isOn in
-                    self?.isOpen = isOn
-                    tableView.reloadSections([1, 2], with: .automatic)
+                    guard let self = self else { return }
+                    self.isOpen = isOn
+                    self.tableView.reloadSections([1, 2], with: .automatic)
                 }
                 return cell
             case 1:
@@ -130,8 +146,9 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         case 2:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CalculateCostCell.identifier, for: indexPath) as? CalculateCostCell else { return UITableViewCell() }
-            cell.onCalculate = { result in
-                guard let oneTimeCostCell = tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as? OneTimeCostCell else { return }
+            cell.onCalculate = { [weak self] result in
+                guard let self = self else { return }
+                guard let oneTimeCostCell = self.tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as? OneTimeCostCell else { return }
                 oneTimeCostCell.updateCost(with: result)
             }
             return cell

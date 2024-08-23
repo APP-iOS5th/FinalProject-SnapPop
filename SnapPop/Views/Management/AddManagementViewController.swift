@@ -19,15 +19,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         return tableView
     }()
     
-    private let timePicker: UIDatePicker = {
-        let picker = UIDatePicker()
-        picker.datePickerMode = .time
-        picker.preferredDatePickerStyle = .wheels
-        picker.isHidden = true
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        return picker
-    }()
-    
     private let addDetailButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("상세 비용 추가하기", for: .normal)
@@ -58,7 +49,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         view.backgroundColor = .white
         
         view.addSubview(tableView)
-        view.addSubview(timePicker)
         view.addSubview(addDetailButton)
         
         tableView.delegate = self
@@ -104,15 +94,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         ])
     }
     
-    private func bind<T>(_ publisher: Published<T>.Publisher, to update: @escaping (T) -> Void) {
-        publisher
-            .sink { [weak self] value in
-                update(value)
-            }
-            .store(in: &cancellables)
-    }
-    
     private func bindViewModel() {
+        // 기존 바인딩 로직들
         bind(viewModel.$title) { [weak self] title in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TitleCell {
                 cell.textField.text = title
@@ -142,9 +125,85 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.switchControl.isOn = alertStatus
             }
         }
+
+        // saveButton 활성화 상태 바인딩
+        viewModel.isValid
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.isEnabled, on: navigationItem.rightBarButtonItem!)
+            .store(in: &cancellables)
     }
     
-    // MARK: - UITableViewDataSource
+    @objc private func cancelButtonTapped() {
+        // HomeViewController로 돌아가기
+        navigationController?.popViewController(animated: true)
+    }
+
+    @objc private func saveButtonTapped() {
+        viewModel.save { [weak self] result in
+            switch result {
+            case .success:
+                self?.navigationController?.popViewController(animated: true)
+            case .failure(let error):
+                let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default))
+                self?.present(alert, animated: true)
+            }
+        }
+    }
+    
+    @objc private func titleChanged(_ sender: UITextField) {
+        viewModel.title = sender.text ?? ""
+    }
+    
+    @objc private func memoChanged(_ sender: UITextField) {
+        viewModel.memo = sender.text ?? ""
+    }
+    
+    @objc private func colorChanged(_ sender: UIColorWell) {
+        viewModel.color = sender.selectedColor ?? .black
+    }
+    
+    @objc private func dateChanged(_ sender: UIDatePicker) {
+        viewModel.startDate = sender.date
+    }
+    
+    func notificationCellDidToggle(_ cell: NotificationCell, isOn: Bool) {
+        viewModel.alertStatus = isOn
+        isTimePickerVisible = isOn
+        
+        UIView.animate(withDuration: 0.3) {
+            self.tableView.beginUpdates()
+            if isOn {
+                self.tableView.insertRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
+            } else {
+                self.tableView.deleteRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
+            }
+            self.tableView.endUpdates()
+        }
+        
+        if isOn {
+            viewModel.alertTime = Date()
+        }
+    }
+
+     @objc private func timeChanged(_ sender: UIDatePicker) {
+         viewModel.alertTime = sender.date
+     }
+    
+    @objc private func addDetailButtonTapped() {
+        let detailCostViewModel = DetailCostViewModel()
+        let detailCostVC = DetailCostViewController(viewModel: detailCostViewModel)
+        detailCostVC.modalPresentationStyle = .formSheet
+        present(detailCostVC, animated: true, completion: nil)
+    }
+    
+    private func bind<T>(_ publisher: Published<T>.Publisher, to update: @escaping (T) -> Void) {
+        publisher
+            .sink { [weak self] value in
+                update(value)
+            }
+            .store(in: &cancellables)
+    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 3
@@ -219,81 +278,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             }
         default:
             return UITableViewCell()
-        }
-    }
-    
-    
-    // MARK: - Actions
-    
-    @objc private func cancelButtonTapped() {
-        // HomeViewController로 돌아가기
-        navigationController?.popViewController(animated: true)
-    }
-    
-    @objc private func titleChanged(_ sender: UITextField) {
-        viewModel.title = sender.text ?? ""
-    }
-    
-    @objc private func memoChanged(_ sender: UITextField) {
-        viewModel.memo = sender.text ?? ""
-    }
-    
-    @objc private func colorChanged(_ sender: UIColorWell) {
-        viewModel.color = sender.selectedColor ?? .black
-    }
-    
-    @objc private func dateChanged(_ sender: UIDatePicker) {
-        viewModel.startDate = sender.date
-    }
-    
-    @objc private func timeSwitchChanged(_ sender: UISwitch) {
-        if sender.isOn {
-            viewModel.alertTime = timePicker.date
-            timePicker.isHidden = false
-        } else {
-            
-            viewModel.alertTime = Date()
-            timePicker.isHidden = true
-        }
-    }
-    func notificationCellDidToggle(_ cell: NotificationCell, isOn: Bool) {
-        viewModel.alertStatus = isOn
-        isTimePickerVisible = isOn
-        
-        UIView.animate(withDuration: 0.3) {
-            self.tableView.beginUpdates()
-            if isOn {
-                self.tableView.insertRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
-            } else {
-                self.tableView.deleteRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
-            }
-            self.tableView.endUpdates()
-        }
-        
-        if isOn {
-            viewModel.alertTime = Date()
-        }
-    }
-
-     @objc private func timeChanged(_ sender: UIDatePicker) {
-         viewModel.alertTime = sender.date
-     }
-    
-    @objc private func addDetailButtonTapped() {
-        let detailCostViewModel = DetailCostViewModel()
-        let detailCostVC = DetailCostViewController(viewModel: detailCostViewModel)
-        detailCostVC.modalPresentationStyle = .formSheet
-        present(detailCostVC, animated: true, completion: nil)
-    }
-    
-    @objc private func saveButtonTapped() {
-        viewModel.save { [weak self] result in
-            switch result {
-            case .success:
-                self?.navigationController?.popViewController(animated: true)
-            case .failure(let error):
-                print("Error saving management: \(error)")
-            }
         }
     }
 }

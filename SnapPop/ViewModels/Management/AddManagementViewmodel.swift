@@ -87,7 +87,32 @@ class AddManagementViewModel {
         self.repeatCycle = cycleIndex
     }
 
+    // 유효성 검증 프로퍼티
+    var isValid: AnyPublisher<Bool, Never> {
+        return Publishers.CombineLatest3($title, $color, $startDate)
+            .map { title, color, startDate in
+                return title.count >= 2 && color != .clear && startDate != nil
+            }
+            .eraseToAnyPublisher()
+    }
+
     func save(completion: @escaping (Result<Void, Error>) -> Void) {
+        // 유효성 검증
+        guard title.count >= 2 else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "제목은 2자 이상이어야 합니다."])))
+            return
+        }
+        
+        guard color != .clear else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "색상을 선택해야 합니다."])))
+            return
+        }
+
+        guard startDate != nil else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "날짜를 선택해야 합니다."])))
+            return
+        }
+
         let db = Firestore.firestore()
         do {
             if let id = management.id {
@@ -135,3 +160,4 @@ extension UIColor {
         self.init(red: r, green: g, blue: b, alpha: a)
     }
 }
+
