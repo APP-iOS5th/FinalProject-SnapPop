@@ -10,16 +10,18 @@ import UIKit
 
 class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NotificationCellDelegate, UITextFieldDelegate {
 
+    // MARK: - Properties
     private let viewModel: AddManagementViewModel
     private var cancellables = Set<AnyCancellable>()
     private var isTimePickerVisible = false
     
+    // MARK: - UI Components
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-    
+
     private let addDetailButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("상세 비용 추가하기", for: .normal)
@@ -31,6 +33,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         return button
     }()
     
+    // MARK: - Initializers
     init(viewModel: AddManagementViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -40,15 +43,18 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Life Cycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        bindViewModel()
+        bindViewModel() // ViewModel 바인딩(combine)
     }
     
+    // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white
         
+        // 테이블뷰와 버튼들
         view.addSubview(tableView)
         view.addSubview(addDetailButton)
         
@@ -69,8 +75,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             tableView.register(cellClass, forCellReuseIdentifier: identifier)
         }
         
+        // 제약 조건 설정
         setupConstraints()
         
+        // 네비게이션 바 설정
         title = "새로운 자기 관리"
         let cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
         cancelButton.tintColor = .systemBlue
@@ -81,6 +89,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         navigationItem.rightBarButtonItem = saveButton
     }
     
+    // MARK: - Constraints Setup
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -95,19 +104,20 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         ])
     }
     
+    // MARK: - ViewModel Binding
     private func bindViewModel() {
-        // 기존 바인딩 로직들
+        // cell이랑 뷰모델 바인딩
         bind(viewModel.$title) { [weak self] title in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TitleCell {
                 cell.textField.text = title
-                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
+                cell.textField.delegate = self
             }
         }
         
         bind(viewModel.$memo) { [weak self] memo in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? MemoCell {
                 cell.textField.text = memo
-                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
+                cell.textField.delegate = self
             }
         }
         
@@ -129,19 +139,21 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             }
         }
 
-        // saveButton 활성화 상태 바인딩
+        // saveButton 활성화 상태 바인딩 (유효성)
         viewModel.isValid
             .receive(on: DispatchQueue.main)
             .assign(to: \.isEnabled, on: navigationItem.rightBarButtonItem!)
             .store(in: &cancellables)
     }
     
+    // MARK: - Actions
     @objc private func cancelButtonTapped() {
         // HomeViewController로 돌아가기
         navigationController?.popViewController(animated: true)
     }
 
     @objc private func saveButtonTapped() {
+        // ViewModel을 통해 데이터를 저장하고, 성공 시 이전 화면으로 이동
         viewModel.save { [weak self] result in
             switch result {
             case .success:
@@ -155,25 +167,31 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func titleChanged(_ sender: UITextField) {
+        // 타이틀 텍스트 필드 값 변경 시 ViewModel에 반영
         viewModel.title = sender.text ?? ""
     }
     
     @objc private func memoChanged(_ sender: UITextField) {
+        // 메모 텍스트 필드 값 변경 시 ViewModel에 반영
         viewModel.memo = sender.text ?? ""
     }
     
     @objc private func colorChanged(_ sender: UIColorWell) {
+        // 색상 선택기 값 변경 시 ViewModel에 반영
         viewModel.color = sender.selectedColor ?? .black
     }
     
     @objc private func dateChanged(_ sender: UIDatePicker) {
+        // 날짜 선택기 값 변경 시 ViewModel에 반영
         viewModel.startDate = sender.date
     }
     
+    // NotificationCellDelegate 메서드 - 알림 스위치 토글 시 호출
     func notificationCellDidToggle(_ cell: NotificationCell, isOn: Bool) {
         viewModel.alertStatus = isOn
         isTimePickerVisible = isOn
         
+        // 알림 스위치 상태에 따라 테이블뷰 업데이트
         UIView.animate(withDuration: 0.3) {
             self.tableView.beginUpdates()
             if isOn {
@@ -189,17 +207,22 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         }
     }
 
-     @objc private func timeChanged(_ sender: UIDatePicker) {
-         viewModel.alertTime = sender.date
-     }
-    
-    @objc private func addDetailButtonTapped() {
-        let detailCostViewModel = DetailCostViewModel()
-        let detailCostVC = DetailCostViewController(viewModel: detailCostViewModel)
-        detailCostVC.modalPresentationStyle = .formSheet
-        present(detailCostVC, animated: true, completion: nil)
+    @objc private func timeChanged(_ sender: UIDatePicker) {
+        // 시간 선택기 값 변경 시 ViewModel에 반영
+        viewModel.alertTime = sender.date
     }
     
+    @objc private func addDetailButtonTapped() {
+        // 상세 비용 추가 버튼 탭 시, DetailCostViewController를 모달로 표시
+        let detailCostViewModel = DetailCostViewModel()
+        let detailCostVC = DetailCostViewController(viewModel: detailCostViewModel)
+        let navController = UINavigationController(rootViewController: detailCostVC)
+        navController.modalPresentationStyle = .formSheet
+        present(navController, animated: true, completion: nil)
+    }
+    
+    // MARK: - Binding Helper
+    // ViewModel의 Publisher를 UI 업데이트와 바인딩
     private func bind<T>(_ publisher: Published<T>.Publisher, to update: @escaping (T) -> Void) {
         publisher
             .sink { [weak self] value in
@@ -208,6 +231,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             .store(in: &cancellables)
     }
     
+    // MARK: - UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }
@@ -233,7 +257,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell", for: indexPath) as? TitleCell else { return UITableViewCell() }
                 cell.textField.text = viewModel.title
                 cell.textField.addTarget(self, action: #selector(titleChanged(_:)), for: .editingChanged)
-                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
+                cell.textField.delegate = self
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "ColorCell", for: indexPath) as? ColorCell else { return UITableViewCell() }
@@ -245,7 +269,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "MemoCell", for: indexPath) as? MemoCell else { return UITableViewCell() }
                 cell.textField.text = viewModel.memo
                 cell.textField.addTarget(self, action: #selector(memoChanged(_:)), for: .editingChanged)
-                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
+                cell.textField.delegate = self
                 return cell
             default:
                 return UITableViewCell()

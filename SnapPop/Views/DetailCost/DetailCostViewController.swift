@@ -68,7 +68,8 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
-        // 네비게이션 바 버튼 추가
+        title = "상세내역"
+
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveButtonTapped))
     }
