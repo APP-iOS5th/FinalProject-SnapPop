@@ -51,6 +51,12 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         super.viewDidLoad()
         setupUI()
         bindViewModel()
+        if let navigationController = self.navigationController as? CustomNavigationBarController {
+                    navigationController.viewModel.delegate = viewModel
+                }
+        print(UserDefaults.standard.dictionaryRepresentation())
+        viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
+
     }
     
     private func setupUI() {
@@ -116,6 +122,18 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     private func bindViewModel() {
+        
+        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification)
+                .compactMap { $0.object as? UITextField }
+                .sink { [weak self] textField in
+                    if let cell = textField.superview?.superview as? TitleCell {
+                        self?.viewModel.title = textField.text ?? ""
+                    } else if let cell = textField.superview?.superview as? MemoCell {
+                        self?.viewModel.memo = textField.text ?? ""
+                    }
+                }
+                .store(in: &cancellables)
+        
         bind(viewModel.$title) { [weak self] title in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TitleCell {
                 cell.textField.text = title
@@ -139,7 +157,12 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.configure(with: date)
             }
         }
-
+        bind(viewModel.$repeatCycle) { [weak self] cycle in
+            guard let self = self else { return }
+            if let cell = self.tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as? RepeatCell {
+                cell.configure(with: self.viewModel)
+            }
+        }
         bind(viewModel.$alertStatus) { [weak self] hasAlert in
             self?.timePicker.isHidden = !hasAlert
         }
