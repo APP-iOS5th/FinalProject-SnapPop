@@ -73,11 +73,10 @@ class SnapCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        
-        // 셀의 UI를 초기 상태로 되돌립니다.
-//        snapImageView.image = UIImage()
-//        deleteButton.isHidden = true
-//        deleteButton.tag = 0
+        // 셀의 상태 초기화
+        snapImageView.image = nil
+        contentView.layer.borderWidth = 0
+        contentView.layer.borderColor = nil
     }
     
     func configure(with snap: Snap, index: Int, isFirst: Bool, isEditing: Bool) {

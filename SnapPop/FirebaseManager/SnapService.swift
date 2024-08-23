@@ -118,8 +118,10 @@ final class SnapService {
     
     func updateSnap(categoryId: String, snap: Snap, newImageUrls: [String], completion: @escaping (Result<Snap, Error>) -> Void) {
         if let snapId = snap.id {
-            var imageUrls = snap.imageUrls
-            imageUrls.append(contentsOf: newImageUrls)
+            var updatedSnap = snap
+            updatedSnap.imageUrls.append(contentsOf: newImageUrls)
+//            var imageUrls = snap.imageUrls
+//            imageUrls.append(contentsOf: newImageUrls)
             
             db.collection("Users")
                 .document(AuthViewModel.shared.currentUser?.uid ?? "")
@@ -127,12 +129,12 @@ final class SnapService {
                 .document(categoryId)
                 .collection("Snaps")
                 .document(snapId)
-                .updateData(["imageUrls": imageUrls]) { error in
+                .updateData(["imageUrls": updatedSnap.imageUrls]) { error in
                     if let error = error {
                         completion(.failure(error))
                         return
                     }
-                    completion(.success(snap))
+                    completion(.success(updatedSnap))
                 }
         }
     }
