@@ -151,9 +151,11 @@ class HomeViewController:
             self?.updateUIWithCategories()
         }
         
+        // 수정필요. 맨 처음에만 이거로 가져와야함!!!
         guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
             return // categoryId가 nil인 경우, cropImage 메서드를 종료
         }
+
         
         viewModel.loadSnap(categoryId: categoryId, snapDate: datePicker.date) { [weak self] in
             DispatchQueue.main.async {
@@ -382,7 +384,6 @@ class HomeViewController:
         config.selectionLimit = 0
         config.selection = .ordered
         config.preferredAssetRepresentationMode = .current
-        config.preselectedAssetIdentifiers = selectedAssetIdentifiers
         
         let picker = PHPickerViewController(configuration: config)
         picker.delegate = self
@@ -416,6 +417,7 @@ class HomeViewController:
             case .success:
                 self.viewModel.snap?.imageUrls.remove(at: index) // 뷰모델의 snap객체에서 삭제할 사진 제거
                 
+                // 사진 아예 다 지워버리면 디비에서 스냅 자체를 삭제하고 nil로 초기화
                 if self.viewModel.snap?.imageUrls.isEmpty == true {
                     self.viewModel.deleteSnap(categoryId: categoryId, snap: snap)
                     self.viewModel.snap = nil
@@ -443,6 +445,15 @@ class HomeViewController:
             let indexPath = IndexPath(item: item, section: 0)
             if let snapCell = snapCollectionView.cellForItem(at: indexPath) as? SnapCollectionViewCell {
                 snapCell.deleteButton.tag = item
+                
+                let isFirst = (item == 0)
+                if isFirst {
+                    snapCell.contentView.layer.borderWidth = 3
+                    snapCell.contentView.layer.borderColor = UIColor.customMainColor?.cgColor
+                } else {
+                    snapCell.contentView.layer.borderWidth = 0
+                    snapCell.contentView.layer.borderColor = nil
+                }
             }
         }
     }
@@ -499,16 +510,20 @@ class HomeViewController:
             if let snap = viewModel.snap {
                 self.viewModel.updateSnap(categoryId: categoryId, snap: snap, newImages: images) { result in
                     switch result {
-                    case .success(let snap):
+                    case .success(let updatedSnap):
                         print("Snap 업데이트 성공")
-                        self.viewModel.snap = snap
-                        
-                        // 업데이트 후 데이터 로드 (임시)
-                        self.viewModel.loadSnap(categoryId: categoryId, snapDate: snap.createdAt ?? Date()) { [weak self] in
-                            DispatchQueue.main.async {
-                                self?.snapCollectionView.reloadData()
-                            }
+                        let previousCount = self.viewModel.snap?.imageUrls.count ?? 0
+                        self.viewModel.snap = updatedSnap
+                        let newCount = updatedSnap.imageUrls.count
+
+                        let newIndexPaths = (previousCount..<newCount).map {
+                            IndexPath(item: $0, section: 0)
                         }
+                        
+                        self.snapCollectionView.performBatchUpdates({
+                            self.snapCollectionView.insertItems(at: newIndexPaths)
+                        }, completion: nil)
+                        
                     case .failure(let error):
                         print("Snap 업데이트 실패: \(error.localizedDescription)")
                     }
@@ -520,7 +535,6 @@ class HomeViewController:
                         print("Snap 저장 성공")
                         self.viewModel.snap = snap
                         
-                        // 저장 후 데이터 로드 (임시)
                         self.viewModel.loadSnap(categoryId: categoryId, snapDate: snap.createdAt ?? Date()) { [weak self] in
                             DispatchQueue.main.async {
                                 self?.snapCollectionView.reloadData()

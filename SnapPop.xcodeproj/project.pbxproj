@@ -46,12 +46,12 @@
 		C246CE602C74EF8200A631BE /* LegalType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5D2C74EF8200A631BE /* LegalType.swift */; };
 		C246CE612C74EF8200A631BE /* LegalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5E2C74EF8200A631BE /* LegalViewController.swift */; };
 		C246CE622C74EF8200A631BE /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE5F2C74EF8200A631BE /* SettingViewController.swift */; };
-		C246CE642C74F11300A631BE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C246CE632C74F11300A631BE /* GoogleService-Info.plist */; };
 		C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = C24BFA542C647BA600A5B40A /* .swiftlint.yml */; };
 		C24BFA632C649CBA00A5B40A /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA622C649CBA00A5B40A /* SignInViewController.swift */; };
 		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
 		C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA692C649E4300A5B40A /* GoogleSignIn */; };
 		C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */; };
+		C24E0AFC2C762ECF00CCC055 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */; };
 		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
@@ -108,11 +108,12 @@
 		C246CE5D2C74EF8200A631BE /* LegalType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegalType.swift; sourceTree = "<group>"; };
 		C246CE5E2C74EF8200A631BE /* LegalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegalViewController.swift; sourceTree = "<group>"; };
 		C246CE5F2C74EF8200A631BE /* SettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
-		C246CE632C74F11300A631BE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C24BFA542C647BA600A5B40A /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		C24BFA722C64B01400A5B40A /* SnapPop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnapPop.entitlements; sourceTree = "<group>"; };
+		C24E0AFA2C762EB800CCC055 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
@@ -216,6 +217,7 @@
 		8F1685232C6354590010F8D8 = {
 			isa = PBXGroup;
 			children = (
+				C24E0AFA2C762EB800CCC055 /* Config.xcconfig */,
 				C24BFA542C647BA600A5B40A /* .swiftlint.yml */,
 				8F16852E2C6354590010F8D8 /* SnapPop */,
 				8F16852D2C6354590010F8D8 /* Products */,
@@ -242,7 +244,7 @@
 				C24BFA5B2C64801100A5B40A /* ViewModels */,
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
-				C246CE632C74F11300A631BE /* GoogleService-Info.plist */,
+				C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */,
 			);
 			path = SnapPop;
 			sourceTree = "<group>";
@@ -510,7 +512,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
-				C246CE642C74F11300A631BE /* GoogleService-Info.plist in Resources */,
+				C24E0AFC2C762ECF00CCC055 /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
 			);
@@ -614,6 +616,7 @@
 /* Begin XCBuildConfiguration section */
 		8F16853E2C63545A0010F8D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C24E0AFA2C762EB800CCC055 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -677,6 +680,7 @@
 		};
 		8F16853F2C63545A0010F8D8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C24E0AFA2C762EB800CCC055 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
