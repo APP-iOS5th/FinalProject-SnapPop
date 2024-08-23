@@ -9,11 +9,11 @@ import Foundation
 import UIKit
 
 protocol SnapComparisonSheetViewModelProtocol {
-    var filteredSnapData: [MockSnap] { get set}
+    var filteredSnapData: [Snap] { get set}
     var selectedIndex: Int { get set}
     var currentDateIndex: Int { get set}
     var currentPhotoIndex: Int { get set}
-    var currentSnap: MockSnap { get }
+    var currentSnap: Snap { get }
     var isLeftArrowHidden: Bool { get }
     var isRightArrowHidden: Bool { get }
     
@@ -28,12 +28,12 @@ protocol SnapComparisonSheetViewModelProtocol {
 
 class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
     // MARK: - Properties
-    var filteredSnapData: [MockSnap] = []
+    var filteredSnapData: [Snap] = []
     var selectedIndex: Int = 0
     var currentDateIndex: Int = 0
     /// 페이지뷰 컨트롤러 인덱스
     var currentPhotoIndex: Int = 0
-    var currentSnap: MockSnap {
+    var currentSnap: Snap {
         guard currentDateIndex >= 0, currentDateIndex < filteredSnapData.count else {
             print("currentDateIndex: \(currentDateIndex), filteredSnapData.count: \(filteredSnapData.count)")
             fatalError("currentDateIndex가 잘못된 범위를 참조하고 있습니다.")
@@ -56,15 +56,21 @@ class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
     
     func updateSnapData() {
         updateUI?()
-        updatePageControl?(currentPhotoIndex, currentSnap.images.count)
+        updatePageControl?(currentPhotoIndex, currentSnap.imageUrls.count)
         updateArrowVisibility?(isLeftArrowHidden, isRightArrowHidden)
     }
     
     func getSnapPhoto(at index: Int) -> UIImage? {
-        guard index >= 0, index < currentSnap.images.count  else {
+        guard index >= 0, index < currentSnap.imageUrls.count  else {
             return nil
         }
-        return currentSnap.images[index]
+        
+        if let url = URL(string: currentSnap.imageUrls[index]) {
+            let image = UIImage.loadImage(from: url)
+            return image
+        }
+        
+        return UIImage(systemName: "person.fill")
     }
     
     func moveToPreviousSnap() {
