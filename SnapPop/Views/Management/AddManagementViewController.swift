@@ -258,6 +258,9 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.text = viewModel.title
                 cell.textField.addTarget(self, action: #selector(titleChanged(_:)), for: .editingChanged)
                 cell.textField.delegate = self
+                cell.textField.autocorrectionType = .no
+                cell.textField.autocapitalizationType = .none
+                cell.textField.spellCheckingType = .no
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "ColorCell", for: indexPath) as? ColorCell else { return UITableViewCell() }
@@ -270,6 +273,9 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.text = viewModel.memo
                 cell.textField.addTarget(self, action: #selector(memoChanged(_:)), for: .editingChanged)
                 cell.textField.delegate = self
+                cell.textField.autocorrectionType = .no
+                cell.textField.autocapitalizationType = .none
+                cell.textField.spellCheckingType = .no
                 return cell
             default:
                 return UITableViewCell()

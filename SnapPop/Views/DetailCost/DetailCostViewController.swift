@@ -120,11 +120,18 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             switch indexPath.row {
             case 0:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleCell2.identifier, for: indexPath) as? TitleCell2 else { return UITableViewCell() }
-                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
+                cell.textField.delegate = self
+                cell.textField.autocorrectionType = .no
+                cell.textField.autocapitalizationType = .none
+                cell.textField.spellCheckingType = .no
+
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionCell.identifier, for: indexPath) as? DescriptionCell else { return UITableViewCell() }
-                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
+                cell.textField.delegate = self
+                cell.textField.autocorrectionType = .no
+                cell.textField.autocapitalizationType = .none
+                cell.textField.spellCheckingType = .no
                 return cell
             default:
                 return UITableViewCell()
