@@ -30,23 +30,22 @@ extension UIViewController {
 
 class HomeViewController:
     UIViewController,
-    UIImagePickerControllerDelegate,
     UINavigationControllerDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
     UICollectionViewDataSource,
-    UICollectionViewDelegateFlowLayout, PHPickerViewControllerDelegate {
+    UICollectionViewDelegateFlowLayout {
     
     // ViewModel
     private var viewModel = HomeViewModel(snapService: SnapService())
     var navigationBarViewModel: CustomNavigationBarViewModelProtocol // 프로퍼티로 선언
     
+    // MARK: - Properties
+    // 선택한 사진의 순서에 맞게 Identifier들을 배열로 저장
     private var selections = [String : PHPickerResult]()
-    // 선택한 사진의 순서에 맞게 Identifier들을 배열로 저장해줄 겁니다.
-    // selections은 딕셔너리이기 때문에 순서가 없습니다. 그래서 따로 식별자를 담을 배열 생성
     private var selectedAssetIdentifiers = [String]()
     
-    // 초기화 메서드 추가
+    // MARK: - Initializers
     init(navigationBarViewModel: CustomNavigationBarViewModelProtocol) {
         self.navigationBarViewModel = navigationBarViewModel
         super.init(nibName: nil, bundle: nil) // 부모 클래스 초기화
@@ -140,28 +139,23 @@ class HomeViewController:
             self.viewModel.handleImageSource(sourceType, from: self)
         }
         
-        // 스냅 데이터가 변경될 때 UI 업데이트
-//        viewModel.$snap.sink { [weak self] _ in
-//            self?.snapCollectionView.reloadData() // UI 업데이트
-//        }.store(in: &cancellables)
-        
         // 카테고리 로드
         navigationBarViewModel.loadCategories { [weak self] in
             // 카테고리 로드 후 UI 업데이트
             self?.updateUIWithCategories()
         }
-        
-        // 수정필요. 맨 처음에만 이거로 가져와야함!!!
-        guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
-            return // categoryId가 nil인 경우, cropImage 메서드를 종료
-        }
 
-        
-        viewModel.loadSnap(categoryId: categoryId, snapDate: datePicker.date) { [weak self] in
-            DispatchQueue.main.async {
-                self?.snapCollectionView.reloadData()
-            }
+        if let navigationController = self.navigationController as? CustomNavigationBarController {
+            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
         }
+        
+        viewModel.$selectedCategoryId.sink { [weak self] selectedCategoryId in
+            guard let self = self, let categoryId = selectedCategoryId else { return }
+            
+            viewModel.loadSnap(categoryId: categoryId, snapDate: self.datePicker.date) { [weak self] in
+                self?.updateSnapCollectionView()
+            }
+        }.store(in: &cancellables)
     }
     
     @objc private func updateSnapCollectionView() {
@@ -225,14 +219,10 @@ class HomeViewController:
     
     // MARK: - 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
-        guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
-            return // categoryId가 nil인 경우, cropImage 메서드를 종료
-        }
+        guard let categoryId = viewModel.selectedCategoryId else { return }
         
         viewModel.loadSnap(categoryId: categoryId, snapDate: sender.date) { [weak self] in
-            DispatchQueue.main.async {
-                self?.snapCollectionView.reloadData()
-            }
+            self?.updateSnapCollectionView()
         }
     }
     
@@ -338,30 +328,7 @@ class HomeViewController:
         return CGSize(width: width, height: width)
     }
     
-    @objc private func editButtonTapped() {
-        isEditingMode.toggle()
-        
-        if isEditingMode {
-            // 편집 모드로 전환
-            editButton.setTitle("완료", for: .normal)
-        } else {
-            // 편집 모드 종료
-            editButton.setTitle("편집", for: .normal)
-        }
-        
-        updateVisibleCellsForEditingMode(isEditingMode) // 모드 전환 시 셀 업데이트
-    }
-    
-    private func updateVisibleCellsForEditingMode(_ isEditing: Bool) {
-        let totalItems = snapCollectionView.numberOfItems(inSection: 0)  // 섹션이 하나이므로 0으로 고정
-        for item in 0..<totalItems {
-            let indexPath = IndexPath(item: item, section: 0)
-            if let snapCell = snapCollectionView.cellForItem(at: indexPath) as? SnapCollectionViewCell {
-                snapCell.setEditingMode(isEditing)
-            }
-        }
-    }
-    
+    // 사진 추가
     @objc private func addButtonTapped(_ sender: UIButton) {
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)
         
@@ -378,41 +345,43 @@ class HomeViewController:
         present(actionSheet, animated: true, completion: nil)
     }
     
-    func showPHPicker() {
-        var config = PHPickerConfiguration(photoLibrary: .shared())
-        config.filter = .images
-        config.selectionLimit = 0
-        config.selection = .ordered
-        config.preferredAssetRepresentationMode = .current
+    // 사진 편집
+    @objc private func editButtonTapped() {
+        isEditingMode.toggle()
         
-        let picker = PHPickerViewController(configuration: config)
-        picker.delegate = self
-        
-        present(picker, animated: true, completion: nil)
-    }
-    
-    @objc func openCamera() {
-        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
-            print("Camera not available")
-            return
+        if isEditingMode {
+            // 편집 모드로 전환
+            editButton.setTitle("완료", for: .normal)
+        } else {
+            // 편집 모드 종료
+            editButton.setTitle("편집", for: .normal)
         }
         
-        let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .camera
-        imagePicker.delegate = self
-        present(imagePicker, animated: true, completion: nil)
+        updateVisibleCellsForEditingMode(isEditingMode)
     }
     
+    // 모드 전환 시 셀 업데이트
+    private func updateVisibleCellsForEditingMode(_ isEditing: Bool) {
+        let totalItems = snapCollectionView.numberOfItems(inSection: 0)  // 섹션이 하나이므로 0으로 고정
+        for item in 0..<totalItems {
+            let indexPath = IndexPath(item: item, section: 0)
+            if let snapCell = snapCollectionView.cellForItem(at: indexPath) as? SnapCollectionViewCell {
+                snapCell.setEditingMode(isEditing)
+            }
+        }
+    }
+    
+    // 사진 삭제
     @objc private func deleteButtonTapped(_ sender: UIButton) {
         let index = sender.tag
         
-        guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId"), let snap = viewModel.snap else {
+        guard let categoryId = viewModel.selectedCategoryId, let snap = viewModel.snap else {
             return // categoryId가 nil인 경우, cropImage 메서드를 종료
         }
         
         let imageUrl = snap.imageUrls[index]
         
-        viewModel.deletePhoto(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
+        viewModel.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
             switch result {
             case .success:
                 self.viewModel.snap?.imageUrls.remove(at: index) // 뷰모델의 snap객체에서 삭제할 사진 제거
@@ -458,26 +427,46 @@ class HomeViewController:
         }
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[.originalImage] as? UIImage {
-            PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAsset(from: image)
-            }, completionHandler: { (success, error) in
-                if success {
-                    print("Image saved successfully to Photos")
-                    DispatchQueue.main.async {
-                        self.showPHPicker()  // PHPickerViewController 다시 띄우기
-                    }
-                } else if let error = error {
-                    print("Error saving image: \(error)")
-                }
-            })
+    // 사용안함
+    private func presentImageCropper(with asset: PHAsset?) {
+        guard let image = selectedImage, let asset = asset else { return }
+        
+        let cropViewController = CropViewController(viewModel: viewModel, navigationBarViewModel: navigationBarViewModel as! CustomNavigationBarViewModel) // navigationBarViewModel 전달
+        cropViewController.asset = asset
+        cropViewController.modalPresentationStyle = .fullScreen
+        
+        cropViewController.didGetCroppedImage = { [weak self] (snap: Snap) in
+            self?.viewModel.snap = snap
+//            self?.viewModel.snapData.append(snap) // Snap 객체를 viewModel에 추가
+            self?.snapCollectionView.reloadData() // SnapCollectionView를 업데이트
         }
         
-        picker.dismiss(animated: true, completion: nil)
+        present(cropViewController, animated: true, completion: nil)
     }
     
-    private func displayImage() {
+    private func updateUIWithCategories() {
+        // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
+        print("Loaded categories: \(navigationBarViewModel.categories)")
+    }
+}
+
+extension HomeViewController: PHPickerViewControllerDelegate {
+    
+    // MARK: - PHPickerViewControllerDelegate
+    func showPHPicker() {
+        var config = PHPickerConfiguration(photoLibrary: .shared())
+        config.filter = .images
+        config.selectionLimit = 0
+        config.selection = .ordered
+        config.preferredAssetRepresentationMode = .current
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        
+        present(picker, animated: true, completion: nil)
+    }
+    
+    private func processSelectedImages() {
         let group = DispatchGroup()
         var imagesDict = [String: UIImage]()
         
@@ -529,16 +518,14 @@ class HomeViewController:
                     }
                 }
             } else {
-                self.viewModel.saveSnap(images: images, categoryId: categoryId) { result in
+                self.viewModel.saveSnap(categoryId: categoryId, images: images, createdAt: datePicker.date) { result in
                     switch result {
                     case .success(let snap):
                         print("Snap 저장 성공")
                         self.viewModel.snap = snap
                         
                         self.viewModel.loadSnap(categoryId: categoryId, snapDate: snap.createdAt ?? Date()) { [weak self] in
-                            DispatchQueue.main.async {
-                                self?.snapCollectionView.reloadData()
-                            }
+                            self?.updateSnapCollectionView()
                         }
                     case .failure(let error):
                         print("Snap 저장 실패: \(error.localizedDescription)")
@@ -547,8 +534,7 @@ class HomeViewController:
             }
         }
     }
-    
-    // PHPickerViewControllerDelegate method
+
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true, completion: nil)
         
@@ -568,31 +554,46 @@ class HomeViewController:
         selectedAssetIdentifiers = results.compactMap { $0.assetIdentifier }
         
         if !selections.isEmpty {
-            displayImage()
+            processSelectedImages()
         }
-    }
-    
-    private func presentImageCropper(with asset: PHAsset?) {
-        guard let image = selectedImage, let asset = asset else { return }
-        
-        let cropViewController = CropViewController(viewModel: viewModel, navigationBarViewModel: navigationBarViewModel as! CustomNavigationBarViewModel) // navigationBarViewModel 전달
-        cropViewController.asset = asset
-        cropViewController.modalPresentationStyle = .fullScreen
-        
-        cropViewController.didGetCroppedImage = { [weak self] (snap: Snap) in
-            self?.viewModel.snap = snap
-//            self?.viewModel.snapData.append(snap) // Snap 객체를 viewModel에 추가
-            self?.snapCollectionView.reloadData() // SnapCollectionView를 업데이트
-        }
-        
-        present(cropViewController, animated: true, completion: nil)
-    }
-    
-    private func updateUIWithCategories() {
-        // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
-        print("Loaded categories: \(navigationBarViewModel.categories)")
     }
 }
+
+extension HomeViewController: UIImagePickerControllerDelegate {
+    
+    // MARK: - UIImagePickerControllerDelegate
+    @objc func openCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
+            print("Camera not available")
+            return
+        }
+        
+        let imagePicker = UIImagePickerController()
+        imagePicker.sourceType = .camera
+        imagePicker.delegate = self
+        present(imagePicker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[.originalImage] as? UIImage {
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAsset(from: image)
+            }, completionHandler: { (success, error) in
+                if success {
+                    print("Image saved successfully to Photos")
+                    DispatchQueue.main.async {
+                        self.showPHPicker()  // PHPickerViewController 다시 띄우기
+                    }
+                } else if let error = error {
+                    print("Error saving image: \(error)")
+                }
+            })
+        }
+        
+        picker.dismiss(animated: true, completion: nil)
+    }
+}
+
 
 #if DEBUG
 struct HomeViewControllerPreview: PreviewProvider {

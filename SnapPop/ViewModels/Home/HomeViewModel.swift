@@ -11,21 +11,20 @@ import AVFoundation
 import Combine
 
 // MARK: - ViewModel
-class HomeViewModel: ObservableObject {
+class HomeViewModel: ObservableObject, CategoryChangeDelegate {
     
     private let snapService: SnapService
     private let managementService = ManagementService() // ManagementService 인스턴스
     // MARK: - Properties
     @Published var checklistItems: [Management] = []
     @Published var snap: Snap?
+    @Published var selectedCategoryId: String?
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
-    var selectedCategoryId: String?
     
     // MARK: - Initialization
     init(snapService: SnapService) {
         self.snapService = snapService
         self.selectedCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId")
-        //loadChecklistItems() // 초기 로드
     }
     /// Image Picker Methods
     func dateChanged(_ sender: UIDatePicker) -> String {
@@ -34,7 +33,8 @@ class HomeViewModel: ObservableObject {
         return dateFormatter.string(from: sender.date)
     }
     
-    func saveSnap(images: [UIImage], categoryId: String, completion: @escaping (Result<Snap, Error>) -> Void) {
+    // 스냅 저장
+    func saveSnap(categoryId: String, images: [UIImage], createdAt: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
         var imageUrls: [String?] = Array(repeating: nil, count: images.count)
         let group = DispatchGroup()
         
@@ -60,7 +60,7 @@ class HomeViewModel: ObservableObject {
             let finalImageUrls = imageUrls.compactMap { $0 }
 
             if finalImageUrls.count == images.count {
-                self.snapService.saveSnap(categoryId: categoryId, imageUrls: finalImageUrls) { result in
+                self.snapService.saveSnap(categoryId: categoryId, imageUrls: finalImageUrls, createdAt: createdAt) { result in
                     switch result {
                     case .success(let snap):
                         completion(.success(snap))
@@ -72,7 +72,7 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    // 스냅 로드 기능
+    // 스냅 로드
     func loadSnap(categoryId: String, snapDate: Date, completion: @escaping () -> Void) {
         snapService.loadSnap(categoryId: categoryId, snapDate: snapDate) { result in
             switch result {
@@ -87,6 +87,7 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    // 스냅 업데이트 (기존에 이미 사진이 있는데 사진을 더 추가)
     func updateSnap(categoryId: String, snap: Snap, newImages: [UIImage], completion: @escaping (Result<Snap, Error>) -> Void) {
         var imageUrls: [String?] = Array(repeating: nil, count: newImages.count)
         let group = DispatchGroup()
@@ -126,8 +127,8 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    // 스냅 사진 삭제 기능
-    func deletePhoto(categoryId: String, snap: Snap, imageUrlToDelete: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    // 스냅 사진 삭제
+    func deleteImage(categoryId: String, snap: Snap, imageUrlToDelete: String, completion: @escaping (Result<Void, Error>) -> Void) {
         snapService.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrlToDelete) { result in
             switch result {
             case .success:
@@ -138,6 +139,7 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    // 스냅 자체를 삭제
     func deleteSnap(categoryId: String, snap: Snap) {
         snapService.deleteSnap(categoryId: categoryId, snap: snap) { error in
             if let error = error {
@@ -146,104 +148,13 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    // 이미지와 assetIdentifier를 저장하는 메서드 예제
-//    func saveCroppedSnapData(image: UIImage, assetIdentifier: String, categoryId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-//        // assetIdentifier를 문자열 배열로 변환
-//        let imageUrls = [assetIdentifier]
-//        let imageData = image.jpegData(compressionQuality: 0.8)
-//        
-//        guard let imageData = imageData else { return }
-//              
-//        snapService.saveImage(data: imageData) { result in
-//            switch result {
-//            case .success(let url):
-//                self.snapService.saveSnap(categoryId: categoryId, imageUrls: [url]) { result in
-//                    switch result {
-//                    case .success():
-//                        print("Snap 저장 성공")
-//                        completion(.success(()))
-//                    case .failure(let error):
-//                        print("Snap 저장 실패: \(error.localizedDescription)")
-//                        completion(.failure(error))
-//                    }
-//                }
-//            case .failure(let error):
-//                completion(.failure(error))
-//            }
-//        }
-//        
-////        // `saveSnap` 함수를 호출하여 Firestore에 저장합니다.
-////        snapService.saveSnap(categoryId: categoryId, imageUrls: imageUrls) { result in
-////            switch result {
-////            case .success():
-////                print("Snap 저장 성공")
-////                completion(.success(()))
-////            case .failure(let error):
-////                print("Snap 저장 실패: \(error.localizedDescription)")
-////                completion(.failure(error))
-////            }
-////        }
-//    }
+    // MARK: - CategoryChangeDelegate
+    func categoryDidChange(to newCategoryId: String) {
+        self.selectedCategoryId = newCategoryId
+        
+    }
     
-    // 스냅 사진 드랍 후 배열 재정의
-//    func droptoSnapUpdate(from sourceIndex: Int, to destinationIndex: Int) {
-//        guard sourceIndex != destinationIndex, sourceIndex < snapData.count else { return }
-//        
-//        let itemToMove = snapData[sourceIndex]
-//        snapData.remove(at: sourceIndex)
-//        
-//        if destinationIndex >= snapData.count {
-//            snapData.append(itemToMove)
-//        } else {
-//            snapData.insert(itemToMove, at: destinationIndex)
-//        }
-//        
-//        print("Item moved from index \(sourceIndex) to \(destinationIndex)")
-//        print("Updated tempSnapData: \(snapData)")
-//        
-//        // Firebase에 업데이트된 스냅 사진 배열 저장
-//        saveSnapsToFirebase()
-//    }
-//    
-//    func saveSnapsToFirebase() {
-//        guard let categoryId = selectedCategoryId else { return }
-//        
-//        // Extract image URLs from tempSnapData
-//        let imageUrls = snapData.flatMap { $0.imageUrls }
-//        
-//        // Call the SnapService to save the Snap data
-//        snapService.saveSnap(categoryId: categoryId, imageUrls: imageUrls) { result in
-//            switch result {
-//            case .success:
-//                print("Snaps saved to Firebase successfully.")
-//            case .failure(let error):
-//                print("Error saving snaps to Firebase: \(error)")
-//            }
-//        }
-//    }
-//
-    
-    // 스냅 리스트 로드 기능
-//    func loadSnaps() {
-////        guard let categoryId = navigationViewModel.currentCategory?.id else {
-////            print("Category ID is missing.")
-////            return
-////        }
-//
-//        snapService.loadSnaps(categoryId: "kzbh5r58xqs95cl2sXEK") { [weak self] result in
-//            switch result {
-//            case .success(let snaps):
-//                DispatchQueue.main.async {
-//                    // PHAsset 관련 기능 제거
-//                    self?.snapData = snaps // Snap 객체를 그대로 사용
-//                    print("Snaps loaded successfully.")
-//                }
-//            case .failure(let error):
-//                print("Error loading snaps: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-    
+    // 아래부터는 이전에 사용하던 코드
     func loadSnaps() {
         let categoryId = "kzbh5r58xqs95cl2sXEK"
         let snapDate = Date() // 여기서는 현재 날짜를 사용, 필요에 따라 변경 가능
@@ -261,28 +172,6 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
-    
-
-//    // 체크리스트 아이템 로드
-//    func loadChecklistItems() {
-//        guard let categoryId = navigationViewModel.currentCategoryId else {
-//            print("Category ID is missing.")
-//            return
-//        }
-//        
-//        managementService.loadManagements(categoryId: categoryId) { [weak self] result in
-//            switch result {
-//            case .success(let items):
-//                DispatchQueue.main.async {
-//                    self?.checklistItems = items // Combine을 통해 UI에 자동으로 반영
-//                    print("Checklist items loaded successfully.")
-//                }
-//            case .failure(let error):
-//                print("Error loading checklist items: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-
         
     /// 액션시트에 선택된 옵션에 따른 처리 메소드
     func showImagePickerActionSheet(from viewController: UIViewController) {
@@ -382,56 +271,6 @@ class HomeViewModel: ObservableObject {
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         viewController.present(alert, animated: true)
     }
-    
-//    // 체크리스트 아이템 저장
-//    func saveChecklistItem(_ item: Management) {
-//        guard let categoryId = selectedCategoryId else {
-//            print("Category ID is missing.")
-//            return
-//        }
-//        
-//        managementService.saveManagement(categoryId: categoryId, management: item) { [weak self] result in
-//            switch result {
-//            case .success:
-//                print("Checklist item saved successfully.")
-//                self?.loadChecklistItems() // 저장 후 로드
-//            case .failure(let error):
-//                print("Error saving checklist item: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-//    
-//    // 체크리스트 아이템 삭제
-//    func deleteChecklistItem(at index: Int) {
-//        guard index < checklistItems.count else { return }
-//        
-//        let itemToDelete = checklistItems[index]
-//        
-//        managementService.deleteManagement(itemId: itemToDelete.id) { [weak self] result in
-//            switch result {
-//            case .success:
-//                print("Checklist item deleted successfully.")
-//                self?.checklistItems.remove(at: index) // 로컬에서 삭제
-//            case .failure(let error):
-//                print("Error deleting checklist item: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-//
-//    // 체크리스트 아이템 로드
-//    func loadChecklistItems() {
-//        managementService.loadManagements(categoryId: <#String#>) { [weak self] result in
-//            switch result {
-//            case .success(let items):
-//                DispatchQueue.main.async {
-//                    self?.checklistItems = items // Combine을 통해 UI에 자동으로 반영
-//                    print("Checklist items loaded successfully.")
-//                }
-//            case .failure(let error):
-//                print("Error loading checklist items: \(error.localizedDescription)")
-//            }
-//        }
-//    }
 }
 
 // PHAsset을 가져오는 메서드

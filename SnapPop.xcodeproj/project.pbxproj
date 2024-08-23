@@ -52,6 +52,7 @@
 		C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */; };
 		C24E0AFC2C762ECF00CCC055 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */; };
 		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
+		C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C8132C784610004F569A /* UIImageView+Extensions.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
 		C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */; };
@@ -114,6 +115,7 @@
 		C24E0AFA2C762EB800CCC055 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
+		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
 		C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
@@ -293,14 +295,6 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
-		C2008C282C7461EB005FC906 /* DetailCost */ = {
-			isa = PBXGroup;
-			children = (
-				C2008C292C7461FE005FC906 /* DetailCostViewModel.swift */,
-			);
-			path = DetailCost;
-			sourceTree = "<group>";
-		};
 		C24BFA572C647E7800A5B40A /* Application */ = {
 			isa = PBXGroup;
 			children = (
@@ -365,6 +359,7 @@
 			children = (
 				4AD29AD42C6AE1F200A9BEDD /* UIView+Extensions.swift */,
 				4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */,
+				C259C8132C784610004F569A /* UIImageView+Extensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -558,13 +553,10 @@
 				C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */,
 				4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */,
 				C246CE602C74EF8200A631BE /* LegalType.swift in Sources */,
-				4AC9A0362C72E23900EB5FFC /* TestCalendarViewController.swift in Sources */,
-				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
 				B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
 				4AC9A0392C72E96700EB5FFC /* NotificationViewController.swift in Sources */,
-				8F1685342C6354590010F8D8 /* ViewController.swift in Sources */,
 				C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */,
 				B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */,
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
@@ -579,6 +571,7 @@
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
 				8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */,
 				C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */,
+				C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */,
 				EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */,
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
 				8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */,
