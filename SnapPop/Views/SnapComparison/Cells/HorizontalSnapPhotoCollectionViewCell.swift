@@ -14,7 +14,7 @@ class HorizontalSnapPhotoCollectionViewCell: UICollectionViewCell {
 
     /// 스냅 사진
     lazy var snapPhoto: UIImageView = {
-        let image = UIImageView(image: UIImage(systemName: "person.fill"))
+        let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
@@ -27,6 +27,12 @@ class HorizontalSnapPhotoCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        // 셀의 상태 초기화
+        snapPhoto.image = nil
+        snapPhoto.layer.borderColor = nil
     }
     
     // MARK: - Methods
