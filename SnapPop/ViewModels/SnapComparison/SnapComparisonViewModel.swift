@@ -10,7 +10,7 @@ import UIKit
 
 //MARK: - Protocols
 protocol SnapComparisonViewModelProtocol {
-    var filteredSnapData: [MockSnap] { get }
+    var filteredSnapData: [Snap] { get }
     var snapPhotoSelectionType: String { get set }
     var snapPeriodType: String { get set }
     var numberOfSections: Int { get }
@@ -20,58 +20,27 @@ protocol SnapComparisonViewModelProtocol {
     var reloadCollectionView: (() -> Void)? { get set }
     var updateSnapPhotoButtonTitle: ((String) -> Void)? { get set }
     var updateSnapPeriodButtonTitle: ((String) -> Void)? { get set }
+    var categoryisEmpty: (() -> Void)? { get set }
+    var snapisEmpty: (() -> Void)? { get set }
+    var showSnapCollectionView: (() -> Void)? { get set }
     
     func filterSnaps()
-    func item(at indexPath: IndexPath) -> MockSnap
+    func item(at indexPath: IndexPath) -> Snap
     func changeSnapPhotoSelection(type: String, completion: @escaping () -> Void)
     func changeSnapPeriod(type: String, completion: @escaping () -> Void)
     func numberOfRows(in section: Int) -> Int
+    func loadSanpstoFireStore(to categoryId: String)
 }
 
-
-struct MockSnap {
-    let date: String
-    let images: [UIImage]
-}
-
-class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
+class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
+                               CategoryChangeDelegate {
     
     // MARK: - Properties
-    // TODO: - 이후 이미지는 이미지URL로 바꾸는 작업 필요
-    private var mockData: [MockSnap] = [
-        MockSnap(date: "2024년 3월 12일", images: [
-            UIImage(systemName: "square.and.arrow.up")!,
-            UIImage(systemName: "pencil")!,
-            UIImage(systemName: "trash")!,
-            UIImage(systemName: "folder.fill")!,
-            UIImage(systemName: "eraser.fill")!,
-            UIImage(systemName: "scribble.variable")!,
-            UIImage(systemName: "highlighter")!,
-            UIImage(systemName: "lasso")!,
-            UIImage(systemName: "arrow.up.trash.fill")!
-        ]),
-
-        MockSnap(date: "2024년 8월 1일", images: [
-            UIImage(systemName: "square.and.arrow.down.fill")!,
-            UIImage(systemName: "pencil.circle")!
-        ]),
-
-        MockSnap(date: "2024년 8월 2일", images: [
-            UIImage(systemName: "trash.slash")!,
-            UIImage(systemName: "folder.badge.plus")!
-        ]),
-
-        MockSnap(date: "2024년 8월 3일", images: [
-            UIImage(systemName: "pencil.tip.crop.circle.badge.plus")!,
-            UIImage(systemName: "folder.fill.badge.plus")!
-        ]),
-
-        MockSnap(date: "2024년 8월 4일", images: [
-            UIImage(systemName: "trash.circle.fill")!,
-            UIImage(systemName: "square.and.pencil.circle.fill")!
-        ])
-    ]
-    var filteredSnapData: [MockSnap] = []
+    private let snapService = SnapService()
+    private let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId")
+    
+    private var snapData: [Snap] = []
+    var filteredSnapData: [Snap] = []
     var snapPhotoSelectionType: String = "전체" {
         didSet {
             filterSnaps()
@@ -149,15 +118,28 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     var updateSnapPhotoButtonTitle: ((String) -> Void)?
     /// 버튼 타이틀 업데이트 클로저
     var updateSnapPeriodButtonTitle: ((String) -> Void)?
+    /// 카테고리가 비었을때 호출되는 클로저
+    var categoryisEmpty: (() -> Void)?
+    /// snap이 없을때 호출되는 클로저
+    var snapisEmpty: (() -> Void)?
+    /// CollectionView를 보여주는 클로저
+    var showSnapCollectionView: (() -> Void)?
     
+    // MARK: - Initializer
     init() {
+        guard let categoryId = categoryId else {
+            // Category Id가 없음
+            categoryisEmpty?()
+            return }
+        loadSanpstoFireStore(to: categoryId)
         filterSnaps()
     }
     
     // MARK: - Methods
     /// 스냅 데이터 필터링 메소드
     func filterSnaps() {
-        filteredSnapData = mockData
+//        filteredSnapData = mockData
+         filteredSnapData = snapData
         
         if snapPeriodType != "전체" {
             // ↓TODO: 기간에 따른 필터링
@@ -165,13 +147,21 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
         
         if snapPhotoSelectionType == "메인 사진" {
             filteredSnapData = filteredSnapData.map({ snap in
-                MockSnap(date: snap.date, images: Array(snap.images.prefix(1)))
+//                Snap(date: snap.date, images: Array(snap.images.prefix(1)))
+                let mainImage = snap.imageUrls.first.map { [$0] } ?? []
+                return Snap(id: snap.id, imageUrls: mainImage, createdAt: snap.createdAt)
             })
         }
+        print("필터링된 스냅 개수: \(filteredSnapData.count)")
         
+        if filteredSnapData.isEmpty {
+            snapisEmpty?()
+        } else {
+            showSnapCollectionView?()
+        }
     }
     
-    func item(at indexPath: IndexPath) -> MockSnap {
+    func item(at indexPath: IndexPath) -> Snap {
         return filteredSnapData[indexPath.section]
     }
     
@@ -189,5 +179,32 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     
     func numberOfRows(in section: Int) -> Int {
         1
+    }
+    
+    /// 카테고리 변경시 호출되는 메소드
+    func categoryDidChange(to newCategoryId: String) {
+        print("[Snap비교] 스냅 비교뷰 카테고리 변경됨 \(newCategoryId)")
+        loadSanpstoFireStore(to: newCategoryId)
+    }
+    
+    /// Firebase Snap Load Method
+    func loadSanpstoFireStore(to categoryId: String) {
+        snapService.loadSnaps(categoryId: categoryId) { result in
+            switch result {
+            case .success(let snaps):
+                print("[FB] [Snap비교] 파이어베이스 스냅 로드")
+                if snaps.isEmpty {
+                    // 스냅이 없는 경우
+                    print("[Snap비교] 카테고리는 존재, 스냅은 없음")
+                    self.snapisEmpty?()
+                } else {
+                    print("[Snap비교] 카테고리, 스냅 존재")
+                    self.snapData = snaps
+                    self.showSnapCollectionView?()
+                }
+            case.failure(let error):
+                print("[Snap비교] Failed to load snaps: \(error.localizedDescription)")
+            }
+        }
     }
 }
