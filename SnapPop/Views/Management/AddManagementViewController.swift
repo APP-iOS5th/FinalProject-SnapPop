@@ -95,11 +95,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: addDetailButton.topAnchor, constant: -10),
-            
-            timePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            timePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            timePicker.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            
+
             addDetailButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addDetailButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             addDetailButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
@@ -140,13 +136,9 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             }
         }
         
-        bind(viewModel.$alertStatus) { [weak self] hasAlert in
-            self?.timePicker.isHidden = !hasAlert
-        }
-        
-        bind(viewModel.$alertStatus) { [weak self] hasNotification in
+        bind(viewModel.$alertStatus) { [weak self] alertStatus in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 1, section: 2)) as? NotificationCell {
-                cell.switchControl.isOn = hasNotification
+                cell.switchControl.isOn = alertStatus
             }
         }
     }
