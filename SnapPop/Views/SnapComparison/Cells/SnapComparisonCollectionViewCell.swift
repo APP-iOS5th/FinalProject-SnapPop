@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
@@ -100,7 +101,7 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
         
         let imageUrlString = viewModel.snapPhotos[indexPath.row]
         if let imageUrl = URL(string: imageUrlString) {
-            cell.snapPhoto.load(from: imageUrl)
+            cell.snapPhoto.kf.setImage(with: imageUrl, placeholder: UIImage(systemName: "circle.dotted"))
         }
         
         if indexPath.row == 0 {
