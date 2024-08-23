@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Photos
 
 class SnapCollectionViewCell: UICollectionViewCell {
     
@@ -56,7 +57,15 @@ class SnapCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with snap: Snap, isFirst: Bool, isEditing: Bool) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        // 셀의 상태 초기화
+        snapImageView.image = nil
+        contentView.layer.borderWidth = 0
+        contentView.layer.borderColor = nil
+    }
+    
+    func configure(with snap: Snap, index: Int, isFirst: Bool, isEditing: Bool) {
         // 첫 번째 셀의 테두리 설정
         if isFirst {
             contentView.layer.borderWidth = 3
@@ -66,46 +75,32 @@ class SnapCollectionViewCell: UICollectionViewCell {
             contentView.layer.borderColor = nil
         }
         
-        // 편집 모드에 따라 삭제 버튼 표시
-        deleteButton.isHidden = !isEditing
+        let url = URL(string: snap.imageUrls[index])
+        snapImageView.load(url: url!)
         
-        // Load the image from the first URL in the imageUrls array
-        if let imageUrlString = snap.imageUrls.first {
-            // Load the image using the original URL
-            loadImage(from: imageUrlString)
-        } else {
-            snapImageView.image = nil
-        }
+        // 편집 모드에 따라 삭제 버튼 표시
+        setEditingMode(isEditing)
     }
     
-    private func loadImage(from urlString: String) {
-        guard let url = URL(string: urlString) else {
-            print("Invalid URL: \(urlString)") // URL 확인
-            snapImageView.image = nil
-            return
-        }
-        
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Error fetching image: \(error.localizedDescription)") // 에러 확인
-                DispatchQueue.main.async {
-                    self.snapImageView.image = nil
-                }
-                return
-            }
-            
-            guard let data = data, let image = UIImage(data: data) else {
-                print("Failed to load image data.") // 데이터 확인
-                DispatchQueue.main.async {
-                    self.snapImageView.image = nil
-                }
-                return
-            }
-            
+    func setEditingMode(_ isEditing: Bool) {
+        deleteButton.isHidden = !isEditing
+    }
+    
+    private func fetchPHAsset(for identifier: String) -> PHAsset? {
+        let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [identifier], options: nil)
+        return fetchResult.firstObject
+    }
+    
+    private func loadImage(from asset: PHAsset) {
+        let imageManager = PHImageManager.default()
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isSynchronous = true // 동기 요청
+        requestOptions.deliveryMode = .highQualityFormat
+
+        imageManager.requestImage(for: asset, targetSize: snapImageView.bounds.size, contentMode: .aspectFill, options: requestOptions) { [weak self] image, _ in
             DispatchQueue.main.async {
-                self.snapImageView.image = image
+                self?.snapImageView.image = image
             }
         }
-        task.resume()
     }
 }
