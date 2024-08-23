@@ -8,9 +8,10 @@
 import Combine
 import UIKit
 
-class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NotificationCellDelegate {
     private let viewModel: AddManagementViewModel
     private var cancellables = Set<AnyCancellable>()
+    private var isTimePickerVisible = false
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -156,7 +157,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         case 1:
             return 2 // 날짜, 반복
         case 2:
-            return 1 // 알림
+            return isTimePickerVisible ? 2 : 1 // 알림
         default:
             return 0
         }
@@ -204,11 +205,18 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 return UITableViewCell()
             }
         case 2:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell", for: indexPath) as? NotificationCell else { return UITableViewCell() }
-            cell.textLabel?.text = "알림"
-            cell.switchControl.isOn = viewModel.alertStatus
-            cell.switchControl.addTarget(self, action: #selector(notificationChanged(_:)), for: .valueChanged)
-            return cell
+            if indexPath.row == 0 {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell", for: indexPath) as? NotificationCell else { return UITableViewCell() }
+                cell.textLabel?.text = "알림"
+                cell.switchControl.isOn = viewModel.alertStatus
+                cell.delegate = self
+                return cell
+            } else {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "TimeCell", for: indexPath) as? TimeCell else { return UITableViewCell() }
+                cell.timePicker.date = viewModel.alertTime
+                cell.timePicker.addTarget(self, action: #selector(timeChanged(_:)), for: .valueChanged)
+                return cell
+            }
         default:
             return UITableViewCell()
         }
@@ -248,14 +256,28 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             timePicker.isHidden = true
         }
     }
-    
-    @objc private func notificationChanged(_ sender: UISwitch) {
-        viewModel.alertStatus = sender.isOn
-        timePicker.isHidden = !sender.isOn
-        if sender.isOn {
-            viewModel.alertTime = timePicker.date
+    func notificationCellDidToggle(_ cell: NotificationCell, isOn: Bool) {
+        viewModel.alertStatus = isOn
+        isTimePickerVisible = isOn
+        
+        UIView.animate(withDuration: 0.3) {
+            self.tableView.beginUpdates()
+            if isOn {
+                self.tableView.insertRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
+            } else {
+                self.tableView.deleteRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
+            }
+            self.tableView.endUpdates()
+        }
+        
+        if isOn {
+            viewModel.alertTime = Date()
         }
     }
+
+     @objc private func timeChanged(_ sender: UIDatePicker) {
+         viewModel.alertTime = sender.date
+     }
     
     @objc private func addDetailButtonTapped() {
         let detailCostViewModel = DetailCostViewModel()
