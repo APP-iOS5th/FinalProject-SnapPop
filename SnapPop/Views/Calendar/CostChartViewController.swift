@@ -12,7 +12,6 @@ class CostChart: UIViewController {
     // MARK: - Properties
     
     var circularView: CostDoughnut!
-    
     var formatter: DateFormatter = {
         let df = DateFormatter()
         df.dateFormat = "M"
@@ -24,11 +23,19 @@ class CostChart: UIViewController {
         label.text = ""
         label.font = UIFont.systemFont(ofSize: 16)
         label.textAlignment = .center
-        label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    private let detailButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("자세히", for: .normal)
+        button.setTitleColor(UIColor.lightGray, for: .normal)
+        button.isSelected.toggle()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(detailButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
@@ -48,24 +55,28 @@ class CostChart: UIViewController {
         // Initialize Doughnut Chart view
         circularView = CostDoughnut(percentages: percentages, colors: colors, totalCost: "20000000원")
         circularView.translatesAutoresizingMaskIntoConstraints = false
-        
+//        monthLabel.textColor = dynamicColor(light: .black, dark: .white)
         // Add Doughnut Chart view to the main view
         view.addSubview(circularView)
         view.addSubview(monthLabel)
-        
+        view.addSubview(detailButton)
         // Setup constraints for Doughnut Chart view
         NSLayoutConstraint.activate([
             
-            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
             monthLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             
             circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
             circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             circularView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             circularView.widthAnchor.constraint(equalToConstant: 250),
-            circularView.heightAnchor.constraint(equalToConstant: 250)
+            circularView.heightAnchor.constraint(equalToConstant: 250),
+            
+            detailButton.topAnchor.constraint(equalTo: circularView.bottomAnchor, constant: -30),
+            detailButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30)
         ])
     }
+    
     
     func setupMonthLabel() {
         let current = Date()
@@ -74,6 +85,22 @@ class CostChart: UIViewController {
     func updateMonthLabel(month: Int, year: Int) {
         monthLabel.text = "\(month)월"
     }
+    @objc func detailButtonTapped(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        detailButtonUpdate()
+        
+    }
+    
+    func detailButtonUpdate() {
+        if detailButton.isSelected {
+            detailButton.setTitle("자세히", for: .normal)
+            //컬렉션뷰감추기
+        } else {
+            detailButton.setTitle("숨기기", for: .normal)
+            //컬렉션뷰펼치기
+        }
+    }
+    
 }
 
 open class CostDoughnut: UIView {
@@ -160,25 +187,24 @@ open class CostDoughnut: UIView {
         return path
     }
 
-  
     private func drawCenterText(in rect: CGRect, innerRadius: CGFloat) {
         let maxWidth = innerRadius * 2 * 0.9  // 내부 원 지름의 90%를 최대 너비로 사용
         let maxHeight = innerRadius * 0.8  // 내부 원 반지름의 80%를 최대 높이로 사용
 
         let totalCostAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 18),
+            .font: UIFont.boldSystemFont(ofSize: 18),
             .foregroundColor: costColor
         ]
         let centerTextAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 20),
-            .foregroundColor: UIColor.black
+            .foregroundColor: dynamicColor(light: .black, dark: .white)
         ]
         
         // centerText 위치 계산
         let centerTextSize = centerText.size(withAttributes: centerTextAttributes)
         let centerTextRect = CGRect(
             x: rect.midX - min(centerTextSize.width, maxWidth) / 2,
-            y: rect.midY - maxHeight / 2 - 8,  // 약간 위로 조정
+            y: rect.midY - maxHeight / 2 - 2,
             width: min(centerTextSize.width, maxWidth),
             height: min(centerTextSize.height, maxHeight / 2)
         )
@@ -197,7 +223,6 @@ open class CostDoughnut: UIView {
         totalCost.draw(in: totalCostRect, withAttributes: totalCostAttributes)
     }
     
-
     class EachCostCell: UICollectionViewCell {
         private let colorIndicator = UIView()
         private let nameLabel = UILabel()
@@ -224,6 +249,10 @@ open class CostDoughnut: UIView {
             costLabel.text = cost
         }
     }
-    
-    
+    public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
+            return UIColor { traitCollection in
+                return traitCollection.userInterfaceStyle == .dark ? dark : light
+            }
+        }
+        
 }

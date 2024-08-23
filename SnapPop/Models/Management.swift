@@ -9,15 +9,17 @@ import Foundation
 import FirebaseFirestore
 import FirebaseStorage
 
+// -MARK: 값 업데이트 용이를 위해 선언 변경
+
 struct Management: Identifiable, Hashable, Codable {
     @DocumentID var id: String?
-    let title: String
-    let memo: String
-    let color: String
-    let startDate: Date
-    let repeatCycle: Int
-    let alertTime: Date
-    let alertStatus: Bool
+    var title: String 
+    var memo: String
+    var color: String
+    var startDate: Date
+    var repeatCycle: Int
+    var alertTime: Date
+    var alertStatus: Bool
     
     init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, alertTime: Date, alertStatus: Bool) {
         self.title = title
@@ -27,5 +29,48 @@ struct Management: Identifiable, Hashable, Codable {
         self.repeatCycle = repeatCycle
         self.alertTime = alertTime
         self.alertStatus = alertStatus
+    }
+}
+
+struct IsCompletion: Hashable, Codable {
+    let managementId: String
+    let date: Date
+    let isCompleted: Bool
+}
+
+struct ManagementException: Hashable, Codable {
+    let managementId: String
+    let date: Date
+}
+
+// MARK: - Management Extension
+extension Management {
+    static func generateSampleManagementItems() -> [Management] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let startDate = dateFormatter.date(from: "2024-01-01") ?? Date()
+        let alertTime = dateFormatter.date(from: "2024-12-31") ?? Date()
+        
+        return [
+            Management(
+                title: "오메가3 챙겨먹기",
+                memo: "임시데이터 입니다.",
+                color: "#FF0000",
+                startDate: startDate,
+                repeatCycle: 7,
+                alertTime: alertTime,
+                alertStatus: true
+            ),
+            Management(
+                title: "립밤 바르기",
+                memo: "임시데이터 입니다.",
+                color: "#FF9500",
+                startDate: startDate,
+                repeatCycle: 0,
+                alertTime: alertTime,
+                alertStatus: false
+            )
+        ]
     }
 }

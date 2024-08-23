@@ -78,6 +78,13 @@ class CategorySettingsViewController: UIViewController {
         self.view.backgroundColor = .customBackground
         setupLayout()
         hideKeyboardWhenTappedAround()
+        viewModel.categoryisUpdated?()
+        print("CategorySettingsViewController의 viewModel 주소: \(Unmanaged.passUnretained(self.viewModel as AnyObject).toOpaque())")
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        viewModel.categoryisUpdated?()
     }
     
     // MARK: - Methods
@@ -147,17 +154,35 @@ class CategorySettingsViewController: UIViewController {
     
     // MARK: - Actions
     @objc func addCategoryButtonTapped() {
-        // TODO: - uid 삭제해야함
         guard let categoryName = categoryTextField.text else { return }
-        if !(categoryName.isEmpty)  {
-            let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
-            viewModel.saveCategory(category: newCategory) {
-                DispatchQueue.main.async {
-                    self.categoryTable.reloadData()
+        // 텍스트 필드에 입력이 있는 경우
+        if !(categoryName.isEmpty) {
+            // 카테고리가 없는 경우
+            if viewModel.categories.isEmpty {
+                let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
+                viewModel.saveCategory(category: newCategory) {
+                    DispatchQueue.main.async {
+                        self.categoryTable.reloadData()
+                    }
+                    self.viewModel.selectCategory(at: 0)
+                    self.viewModel.categoryisUpdated?()
                 }
+                categoryTextField.text = ""
+               
+                
+            } else {
+                // 카테고리가 있는 경우
+                let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
+                viewModel.saveCategory(category: newCategory) {
+                    DispatchQueue.main.async {
+                        self.categoryTable.reloadData()
+                    }
+                }
+                categoryTextField.text = ""
             }
-            categoryTextField.text = ""
+            
         } else {
+            // 텍스트 필드에 입력이 없는 경우
             // TODO: - TextField에 입력을 하지 않았을때
         }
         
@@ -194,6 +219,10 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
                 DispatchQueue.main.async {
                     self.categoryTable.reloadRows(at: [indexPath], with: .none)
                 }
+                if updatedCategory.id == self.viewModel.currentCategory?.id {
+                    self.viewModel.currentCategory?.title = newName
+                    self.viewModel.categoryisUpdated?()
+                }
             }
         }
         
@@ -219,28 +248,28 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
         return cell
     }
     
-    // TODO: - ViewModel 사용하여 파이어베이스에 알림 추가/ 분기해야함
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let trash = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
-            self.viewModel.deleteCategory(at: indexPath.row) {
-                self.viewModel.loadCategories {
-                    DispatchQueue.main.async {
-                        self.categoryTable.reloadData()
-                    }
+            self.viewModel.deleteCategory(at: indexPath.row) { newTitle in
+                DispatchQueue.main.async {
+                    self.categoryTable.reloadData()
                 }
+                print("CategorySettingsViewController에서 categoryisUpdated 클로저 호출 직전")
+                self.viewModel.categoryisUpdated?()
             }
-            DispatchQueue.main.async {
-                self.categoryTable.reloadData()
-            }
+            
             print("Current Categories: \(self.viewModel.categories)")
+            print("현재 선택된 카테고리: \(self.viewModel.currentCategory?.title)")
+
             success(true)
+            
         }
         trash.backgroundColor = .red
         trash.image = UIImage(systemName: "trash")
         
-        return UISwipeActionsConfiguration(actions:[trash])
+        return UISwipeActionsConfiguration(actions: [trash])
     }
 }
 

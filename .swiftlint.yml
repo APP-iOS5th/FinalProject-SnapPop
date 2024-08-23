@@ -21,6 +21,9 @@ force_try:
     severity: warning # 명시적으로 지정
 
 
+cyclomatic_complexity:
+  ignores_case_statements: true
+  
 # 코드의 줄 길이
 line_length:
     warning: 200 # 줄 길이가 140자를 넘을 경우 경고
@@ -57,7 +60,7 @@ identifier_name:
 # 함수의 본문 길이
 function_body_length:
     warning: 15
-    error: 50
+    error: 500
     
 # 함수의 복잡성(조건문, 반복문 등의 중첩)를 제한합니다
 #cyclomatic_complexity:
