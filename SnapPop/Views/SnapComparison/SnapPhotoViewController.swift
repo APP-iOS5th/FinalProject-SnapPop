@@ -10,7 +10,11 @@ import UIKit
 class SnapPhotoViewController: UIViewController {
     
     // MARK: - Properties
-    var image: UIImage?
+    var image: UIImage? {
+        didSet {
+            updateImage()
+        }
+    }
     var index: Int = 0
     
     // MARK: - UIComponents
@@ -21,7 +25,7 @@ class SnapPhotoViewController: UIViewController {
         return imageView
     }()
     
-    // MARK: = LifeCycle
+    // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -34,6 +38,11 @@ class SnapPhotoViewController: UIViewController {
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
+        updateImage()
+    }
+    
+    //MARK: - Methods
+    private func updateImage() {
         if let image = image {
             DispatchQueue.main.async {
                 self.imageView.image = image
