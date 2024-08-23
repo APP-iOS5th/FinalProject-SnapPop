@@ -278,9 +278,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.text = viewModel.title
                 cell.textField.addTarget(self, action: #selector(titleChanged(_:)), for: .editingChanged)
                 cell.textField.delegate = self
-                cell.textField.autocorrectionType = .no
-                cell.textField.autocapitalizationType = .none
-                cell.textField.spellCheckingType = .no
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "ColorCell", for: indexPath) as? ColorCell else { return UITableViewCell() }
@@ -293,9 +290,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.text = viewModel.memo
                 cell.textField.addTarget(self, action: #selector(memoChanged(_:)), for: .editingChanged)
                 cell.textField.delegate = self
-                cell.textField.autocorrectionType = .no
-                cell.textField.autocapitalizationType = .none
-                cell.textField.spellCheckingType = .no
                 return cell
             default:
                 return UITableViewCell()
@@ -307,9 +301,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                     return UITableViewCell()
                 }
                 cell.configure(with: viewModel.startDate)
-                cell.datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
+                cell.dismissHandler = { [weak self] in
+                    self?.presentedViewController?.dismiss(animated: false, completion: nil)
+                }
                 return cell
-                
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "RepeatCell", for: indexPath) as? RepeatCell else { return UITableViewCell() }
                 cell.textLabel?.text = "반복"

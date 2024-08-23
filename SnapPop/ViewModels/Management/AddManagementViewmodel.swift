@@ -129,20 +129,6 @@ class AddManagementViewModel: CategoryChangeDelegate {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "날짜를 선택해야 합니다."])))
             return
         }
-        
-        let db = ManagementService()
-        self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
-        db.saveManagement(categoryId: categoryId, management: management) { result in
-            switch result {
-            case .success:
-                print("Management saved successfully")
-                completion(.success(()))
-            case .failure(let error):
-                print("Failed to save management: \(error.localizedDescription)")
-                completion(.failure(error))
-                
-            }
-        }
     }
     
     func generateSixMonthsCompletions(startDate: Date, repeatInterval: Int) -> [String: Int] {
