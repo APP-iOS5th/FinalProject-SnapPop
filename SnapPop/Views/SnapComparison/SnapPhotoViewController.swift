@@ -35,7 +35,13 @@ class SnapPhotoViewController: UIViewController {
         ])
         
         if let image = image {
-            imageView.image = image
+            DispatchQueue.main.async {
+                self.imageView.image = image
+                self.imageView.layer.borderColor = UIColor.lightGray.cgColor
+                self.imageView.layer.borderWidth = 1
+                self.imageView.layer.cornerRadius = 50
+                self.imageView.layer.masksToBounds = true
+            }
         } else {
             print("nil Image")
         }
