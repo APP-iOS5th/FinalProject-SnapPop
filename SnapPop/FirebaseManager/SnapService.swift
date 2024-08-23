@@ -37,8 +37,8 @@ final class SnapService {
         }
     }
       
-    func saveSnap(categoryId: String, imageUrls: [String], completion: @escaping (Result<Snap, Error>) -> Void) {
-        let snap = Snap(imageUrls: imageUrls, createdAt: Date())
+    func saveSnap(categoryId: String, imageUrls: [String], createdAt: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
+        let snap = Snap(imageUrls: imageUrls, createdAt: createdAt)
         
         do {
             try db.collection("Users")
