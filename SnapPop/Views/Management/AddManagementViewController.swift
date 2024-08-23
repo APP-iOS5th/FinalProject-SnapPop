@@ -47,6 +47,12 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        bindViewModel()
+        if let navigationController = self.navigationController as? CustomNavigationBarController {
+                    navigationController.viewModel.delegate = viewModel
+                }
+        print(UserDefaults.standard.dictionaryRepresentation())
+        viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
         bindViewModel() // ViewModel 바인딩(combine)
     }
     
@@ -103,49 +109,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             addDetailButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
-    
-    // MARK: - ViewModel Binding
-    private func bindViewModel() {
-        // cell이랑 뷰모델 바인딩
-        bind(viewModel.$title) { [weak self] title in
-            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TitleCell {
-                cell.textField.text = title
-                cell.textField.delegate = self
-            }
-        }
-        
-        bind(viewModel.$memo) { [weak self] memo in
-            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? MemoCell {
-                cell.textField.text = memo
-                cell.textField.delegate = self
-            }
-        }
-        
-        bind(viewModel.$color) { [weak self] color in
-            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? ColorCell {
-                cell.colorPicker.selectedColor = color
-            }
-        }
-        
-        bind(viewModel.$startDate) { [weak self] date in
-            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? DateCell {
-                cell.configure(with: date)
-            }
-        }
-        
-        bind(viewModel.$alertStatus) { [weak self] alertStatus in
-            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 1, section: 2)) as? NotificationCell {
-                cell.switchControl.isOn = alertStatus
-            }
-        }
 
-        // saveButton 활성화 상태 바인딩 (유효성)
-        viewModel.isValid
-            .receive(on: DispatchQueue.main)
-            .assign(to: \.isEnabled, on: navigationItem.rightBarButtonItem!)
-            .store(in: &cancellables)
-    }
-    
     // MARK: - Actions
     @objc private func cancelButtonTapped() {
         // HomeViewController로 돌아가기
@@ -229,6 +193,62 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 update(value)
             }
             .store(in: &cancellables)
+    }
+    
+    private func bindViewModel() {
+        
+        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification)
+                .compactMap { $0.object as? UITextField }
+                .sink { [weak self] textField in
+                    if let cell = textField.superview?.superview as? TitleCell {
+                        self?.viewModel.title = textField.text ?? ""
+                    } else if let cell = textField.superview?.superview as? MemoCell {
+                        self?.viewModel.memo = textField.text ?? ""
+                    }
+                }
+                .store(in: &cancellables)
+        
+        bind(viewModel.$title) { [weak self] title in
+            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TitleCell {
+                cell.textField.text = title
+            }
+        }
+
+        bind(viewModel.$memo) { [weak self] memo in
+            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? MemoCell {
+                cell.textField.text = memo
+            }
+        }
+
+        bind(viewModel.$color) { [weak self] color in
+            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? ColorCell {
+                cell.colorPicker.selectedColor = color
+            }
+        }
+
+        bind(viewModel.$startDate) { [weak self] date in
+            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? DateCell {
+                cell.configure(with: date)
+            }
+        }
+        bind(viewModel.$repeatCycle) { [weak self] cycle in
+            
+            guard let self = self else { return }
+            if let cell = self.tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as? RepeatCell {
+                cell.configure(with: self.viewModel)
+            }
+        }
+     
+        bind(viewModel.$alertStatus) { [weak self] hasNotification in
+            if let cell = self?.tableView.cellForRow(at: IndexPath(row: 1, section: 2)) as? NotificationCell {
+                cell.switchControl.isOn = hasNotification
+            }
+        }
+        viewModel.isValid
+                .receive(on: DispatchQueue.main)
+                .assign(to: \.isEnabled, on: navigationItem.rightBarButtonItem!)
+                .store(in: &cancellables)
+        
     }
     
     // MARK: - UITableViewDataSource

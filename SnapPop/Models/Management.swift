@@ -20,8 +20,9 @@ struct Management: Identifiable, Hashable, Codable {
     var repeatCycle: Int
     var alertTime: Date
     var alertStatus: Bool
+    var completions: [String: Int]
     
-    init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, alertTime: Date, alertStatus: Bool) {
+    init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, alertTime: Date, alertStatus: Bool, completions: [String: Int]) {
         self.title = title
         self.memo = memo
         self.color = color
@@ -29,13 +30,8 @@ struct Management: Identifiable, Hashable, Codable {
         self.repeatCycle = repeatCycle
         self.alertTime = alertTime
         self.alertStatus = alertStatus
+        self.completions = completions
     }
-}
-
-struct IsCompletion: Hashable, Codable {
-    let managementId: String
-    let date: Date
-    let isCompleted: Bool
 }
 
 struct ManagementException: Hashable, Codable {
@@ -60,7 +56,7 @@ extension Management {
                 startDate: startDate,
                 repeatCycle: 7,
                 alertTime: alertTime,
-                alertStatus: true
+                alertStatus: true, completions: ["2024-08-23" : 1]
             ),
             Management(
                 title: "립밤 바르기",
@@ -69,7 +65,7 @@ extension Management {
                 startDate: startDate,
                 repeatCycle: 0,
                 alertTime: alertTime,
-                alertStatus: false
+                alertStatus: false, completions: ["2024-08-23" : 0]
             )
         ]
     }
