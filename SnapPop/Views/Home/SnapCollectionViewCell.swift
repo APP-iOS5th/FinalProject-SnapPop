@@ -80,18 +80,6 @@ class SnapCollectionViewCell: UICollectionViewCell {
         
         // 편집 모드에 따라 삭제 버튼 표시
         setEditingMode(isEditing)
-//        // PHAssetIdentifier를 사용하여 PHAsset을 가져옵니다.
-//        if let firstImageUrl = snap.imageUrls.first {
-//            let url = URL(string: firstImageUrl)
-//            snapImageView.load(url: url!)
-////            if let asset = fetchPHAsset(for: firstImageUrl) {
-////                loadImage(from: asset)
-////            } else {
-////                snapImageView.image = nil // PHAsset을 찾을 수 없는 경우
-////            }
-//        } else {
-//            snapImageView.image = nil // 이미지 URL이 없는 경우
-//        }
     }
     
     func setEditingMode(_ isEditing: Bool) {
