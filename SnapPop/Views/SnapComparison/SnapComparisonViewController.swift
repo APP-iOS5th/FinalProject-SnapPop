@@ -6,6 +6,29 @@
 //
 
 import UIKit
+// TODO: - 익스텐션 파일로 분할
+extension UIImageView {
+    func load(from url: URL) {
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.image = image
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension UIImage {
+    static func loadImage(from url: URL) -> UIImage? {
+        if let data = try? Data(contentsOf: url) {
+            return UIImage(data: data)
+        }
+        return nil
+    }
+}
 
 class SnapComparisonViewController: UIViewController {
     
@@ -67,6 +90,14 @@ class SnapComparisonViewController: UIViewController {
         return collectionView
     }()
     
+    /// 스냅, 카테고리 유무 레이블
+    private lazy var snapAndCategoryCheckLabel: UILabel = {
+        let label = UILabel()
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     // MARK: - Initializers
     init(viewModel: SnapComparisonViewModelProtocol) {
         self.viewModel = viewModel
@@ -86,6 +117,22 @@ class SnapComparisonViewController: UIViewController {
         setupLayout()
         setupMenu()
         
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSanpstoFireStore(to: currentCategoryId)
+            viewModel.filterSnaps()
+        }
+        
+        if let navigationController = self.navigationController as? CustomNavigationBarController {
+            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSanpstoFireStore(to: currentCategoryId)
+        }
+        print("ViewWIllApear")
     }
     
     // MARK: - Methods
@@ -94,7 +141,8 @@ class SnapComparisonViewController: UIViewController {
         view.addSubviews([
             selectSnapPhotoButton,
             selectSnapPeriodButton,
-            collectionView
+            collectionView,
+            snapAndCategoryCheckLabel
         ])
         
         NSLayoutConstraint.activate([
@@ -107,7 +155,10 @@ class SnapComparisonViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: selectSnapPhotoButton.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            snapAndCategoryCheckLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            snapAndCategoryCheckLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
         ])
         
     }
@@ -135,6 +186,24 @@ class SnapComparisonViewController: UIViewController {
         }
         viewModel.updateSnapPeriodButtonTitle = { [weak self] title in
             self?.selectSnapPeriodButton.setTitle(title, for: .normal)
+        }
+        viewModel.categoryisEmpty = {
+            self.collectionView.isHidden = true
+            self.snapAndCategoryCheckLabel.isHidden = false
+            self.snapAndCategoryCheckLabel.text = "카테고리를 추가하여 사진을 비교해 보세요!"
+        }
+        viewModel.snapisEmpty = {
+            self.collectionView.isHidden = true
+            self.snapAndCategoryCheckLabel.isHidden = false
+            self.snapAndCategoryCheckLabel.text = "사진을 추가해 비교해 보세요!"
+        }
+        viewModel.showSnapCollectionView = {
+            self.collectionView.isHidden = false
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+            self.snapAndCategoryCheckLabel.isHidden = true
+            self.snapAndCategoryCheckLabel.text = ""
         }
     }
     
