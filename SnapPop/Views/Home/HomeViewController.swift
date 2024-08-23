@@ -56,9 +56,7 @@ class HomeViewController:
     }
     
     // DatePicker UI 요소
-    private let datePickerContainer = UIView()
-    private let datePicker = UIDatePicker()
-    private let calendarImageView = UIImageView()
+    private let customDatePickerViewController = CustomDatePickerViewController()
     
     // 스냅 타이틀
     private let snapTitle: UILabel = {
@@ -127,12 +125,25 @@ class HomeViewController:
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
-        setupDatePickerView()
+        setupdatepickerView()
         setupSnapCollectionView()
         setupChecklistView()
         
         snapCollectionView.dataSource = self
         snapCollectionView.delegate = self
+        
+        // Add a button to show the date picker
+//        let datePickerButton = UIButton(type: .system)
+//        datePickerButton.setTitle("날짜 선택", for: .normal)
+//        datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
+//        datePickerButton.translatesAutoresizingMaskIntoConstraints = false
+//        view.addSubview(datePickerButton)
+//        
+//        // Set constraints for the datePickerButton
+//        NSLayoutConstraint.activate([
+//            datePickerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            datePickerButton.topAnchor.constraint(equalTo: managementTitle.bottomAnchor, constant: 20) // Adjust as needed
+//        ])
         
         viewModel.selectedSource = { [weak self] sourceType in
             guard let self = self else { return }
@@ -152,7 +163,7 @@ class HomeViewController:
         viewModel.$selectedCategoryId.sink { [weak self] selectedCategoryId in
             guard let self = self, let categoryId = selectedCategoryId else { return }
             
-            viewModel.loadSnap(categoryId: categoryId, snapDate: self.datePicker.date) { [weak self] in
+            viewModel.loadSnap(categoryId: categoryId, snapDate: self.customDatePickerViewController.selectedDate) { [weak self] in
                 self?.updateSnapCollectionView()
             }
         }.store(in: &cancellables)
@@ -164,59 +175,7 @@ class HomeViewController:
         }
     }
     
-    // MARK: - 날짜 선택 DatePicker UI 설정
-    private func setupDatePickerView() {
-        setupDatePickerContainer()
-        setupCalendarImageView()
-        setupDatePicker()
-        setupDatePickerConstraints()
-    }
-    
-    // MARK: 날짜 선택 UI 컨트롤
-    private func setupDatePickerContainer() {
-        datePickerContainer.translatesAutoresizingMaskIntoConstraints = false
-        datePickerContainer.backgroundColor = UIColor.customButtonColor
-        datePickerContainer.layer.cornerRadius = 10
-        datePickerContainer.layer.masksToBounds = true
-        view.addSubview(datePickerContainer)
-    }
-    
-    // MARK: 날 캘린더 이미지 UI 컨트롤
-    private func setupCalendarImageView() {
-        calendarImageView.image = UIImage(named: "CalenderIcon")
-        calendarImageView.translatesAutoresizingMaskIntoConstraints = false
-        calendarImageView.tintColor = .black
-        datePickerContainer.addSubview(calendarImageView)
-    }
-    
-    // MARK: 날짜 선택기 UI 컨트롤
-    private func setupDatePicker() {
-        datePicker.translatesAutoresizingMaskIntoConstraints = false
-        datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ko_KR")
-        datePicker.backgroundColor = .clear
-        datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
-        datePickerContainer.addSubview(datePicker)
-    }
-    
-    // MARK: 날짜 선택기 제약 조건 설정
-    private func setupDatePickerConstraints() {
-        NSLayoutConstraint.activate([
-            datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.02),
-            datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
-            
-            calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor, constant: view.bounds.width * 0.02),
-            calendarImageView.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
-            calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
-            calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
-            
-            datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: view.bounds.width * 0.02),
-            datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor, constant: -view.bounds.width * 0.02),
-            datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor)
-        ])
-    }
-    
+
     // MARK: - 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
         guard let categoryId = viewModel.selectedCategoryId else { return }
@@ -269,6 +228,19 @@ class HomeViewController:
         return cell
     }
     
+    // MARK: 날짜 선택 요소 제약조건
+    private func setupdatepickerView() {
+        view.addSubview(customDatePickerViewController.view)
+        
+        customDatePickerViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            customDatePickerViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -20),
+            customDatePickerViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            customDatePickerViewController.view.heightAnchor.constraint(equalTo: customDatePickerViewController.view.widthAnchor)
+        ])
+        
+        customDatePickerViewController.view.layer.zPosition = 1
+    }
     // MARK: - 스냅뷰 컬렉션 관련 요소 제약조건
     private func setupSnapCollectionView() {
         view.addSubview(snapTitle)
@@ -281,7 +253,7 @@ class HomeViewController:
         
         NSLayoutConstraint.activate([
             snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.01),
+            snapTitle.topAnchor.constraint(equalTo: customDatePickerViewController.view.bottomAnchor, constant: view.bounds.height * 0.01),
             snapTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
@@ -299,6 +271,8 @@ class HomeViewController:
         ])
         
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
+        
+        //view.sendSubviewToBack(snapCollectionView)
     }
     
     // MARK: UICollectionViewDataSource
@@ -448,6 +422,12 @@ class HomeViewController:
         // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
         print("Loaded categories: \(navigationBarViewModel.categories)")
     }
+
+    @objc private func showDatePicker() {
+        customDatePickerViewController.modalPresentationStyle = .overFullScreen // Optional: to present over the current view
+        customDatePickerViewController.view.backgroundColor = UIColor.clear // 배경색 설정
+        present(customDatePickerViewController, animated: true, completion: nil)
+    }
 }
 
 extension HomeViewController: PHPickerViewControllerDelegate {
@@ -518,7 +498,7 @@ extension HomeViewController: PHPickerViewControllerDelegate {
                     }
                 }
             } else {
-                self.viewModel.saveSnap(categoryId: categoryId, images: images, createdAt: datePicker.date) { result in
+                self.viewModel.saveSnap(categoryId: categoryId, images: images, createdAt: customDatePickerViewController.selectedDate) { result in
                     switch result {
                     case .success(let snap):
                         print("Snap 저장 성공")

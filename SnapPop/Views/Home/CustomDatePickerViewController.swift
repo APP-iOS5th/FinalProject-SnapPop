@@ -8,22 +8,6 @@
 import UIKit
 import SwiftUI
 
-extension UIViewController {
-    private struct Preview: UIViewControllerRepresentable {
-        let viewController: UIViewController
-        
-        func makeUIViewController(context: Context) -> UIViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-    }
-    
-    func toPreview2() -> some View {
-        Preview(viewController: self)
-    }
-}
-
 class CustomDatePickerViewController: UIViewController {
     
     private let datePickerContainer = UIView()
@@ -31,11 +15,11 @@ class CustomDatePickerViewController: UIViewController {
     private let calendarImageView = UIImageView()
     private let dateButton = UIButton()
     private var datePickerHeightConstraint: NSLayoutConstraint!
-    private var selectedDate = Date() // Added selectedDate property
+    var selectedDate = Date() // Added selectedDate property
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.customBackgroundColor
+        view.backgroundColor = .clear
         setupDatePickerView()
     }
     
@@ -66,7 +50,7 @@ class CustomDatePickerViewController: UIViewController {
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.datePickerMode = .date
         datePicker.locale = Locale(identifier: "ko_KR")
-        //datePicker.backgroundColor = UIColor.customBackgroundColor
+        datePicker.backgroundColor = .white
         datePicker.preferredDatePickerStyle = .inline
         
         datePicker.layer.cornerRadius = 10
@@ -157,11 +141,3 @@ class CustomDatePickerViewController: UIViewController {
         }
     }
 }
-
-#if DEBUG
-struct CustomDatePickerViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        CustomDatePickerViewController().toPreview2()
-    }
-}
-#endif
