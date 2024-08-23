@@ -57,7 +57,15 @@ class SnapCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with snap: Snap, isFirst: Bool, isEditing: Bool) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        // 셀의 상태 초기화
+        snapImageView.image = nil
+        contentView.layer.borderWidth = 0
+        contentView.layer.borderColor = nil
+    }
+    
+    func configure(with snap: Snap, index: Int, isFirst: Bool, isEditing: Bool) {
         // 첫 번째 셀의 테두리 설정
         if isFirst {
             contentView.layer.borderWidth = 3
@@ -67,19 +75,15 @@ class SnapCollectionViewCell: UICollectionViewCell {
             contentView.layer.borderColor = nil
         }
         
-        // 편집 모드에 따라 삭제 버튼 표시
-        deleteButton.isHidden = !isEditing
+        let url = URL(string: snap.imageUrls[index])
+        snapImageView.load(url: url!)
         
-        // PHAssetIdentifier를 사용하여 PHAsset을 가져옵니다.
-        if let firstImageUrl = snap.imageUrls.first {
-            if let asset = fetchPHAsset(for: firstImageUrl) {
-                loadImage(from: asset)
-            } else {
-                snapImageView.image = nil // PHAsset을 찾을 수 없는 경우
-            }
-        } else {
-            snapImageView.image = nil // 이미지 URL이 없는 경우
-        }
+        // 편집 모드에 따라 삭제 버튼 표시
+        setEditingMode(isEditing)
+    }
+    
+    func setEditingMode(_ isEditing: Bool) {
+        deleteButton.isHidden = !isEditing
     }
     
     private func fetchPHAsset(for identifier: String) -> PHAsset? {

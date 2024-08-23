@@ -24,7 +24,6 @@ class IsDonePercentageChart: UIViewController {
         label.text = ""
         label.font = UIFont.systemFont(ofSize: 16)
         label.textAlignment = .center
-        label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -37,24 +36,22 @@ class IsDonePercentageChart: UIViewController {
         
         setupDoneChart(isDone: 50)
         setupMonthLabel()
+        
     }
     
     // MARK: - Setup Circular View
     
     private func setupDoneChart(isDone: Double) {
         let percentages: [Double] = [isDone, 100 - isDone]
-        // Initialize Doughnut Chart view
         circularView = IsDoneDoughnut(percentages: percentages)
         circularView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Add Doughnut Chart view to the main view
+        circularView.updateColor()
         view.addSubview(circularView)
         view.addSubview(monthLabel)
-        
-        // Setup constraints for Doughnut Chart view
+        monthLabel.textColor = dynamicColor(light: .black, dark: .white)
         NSLayoutConstraint.activate([
             
-            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
             monthLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             
             circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
@@ -72,7 +69,14 @@ class IsDonePercentageChart: UIViewController {
     public func updateMonthLabel(month: Int, year: Int) {
         monthLabel.text = "\(month)월"
     }
+    public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
+            return UIColor { traitCollection in
+                return traitCollection.userInterfaceStyle == .dark ? dark : light
+            }
+        }
 }
+
+
 
 
 open class IsDoneDoughnut: UIView {
@@ -88,12 +92,12 @@ open class IsDoneDoughnut: UIView {
         }
     }
     
-    public var percentageColor: UIColor = .black {
+    lazy var percentageColor: UIColor = .black {
         didSet {
             setNeedsDisplay()
         }
     }
-
+    
     // MARK: - Private Variables
     private var _percentages: [Double]
     private var _colors: [UIColor] = [.red, .lightGray]
@@ -114,6 +118,30 @@ open class IsDoneDoughnut: UIView {
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func updateColor() {
+
+        guard let firstPercentage = _percentages.first else {
+            percentageColor = dynamicColor(light: .black, dark: .white)
+            return
+        }
+        
+        switch firstPercentage {
+        case 0.00...30.00:
+            percentageColor = .red
+        case 30.01...50.00:
+            percentageColor = .orange
+        case 50.01...70.00:
+            percentageColor = dynamicColor(light: .black, dark: .white)
+        case 70.01...85.00:
+            percentageColor = .green
+        case 85.01...100.00:
+            percentageColor = .blue
+        default:
+            percentageColor = dynamicColor(light: .black, dark: .white)
+        }
+    }
+    
     
     // MARK: - Drawing
     override public func draw(_ rect: CGRect) {
@@ -141,7 +169,7 @@ open class IsDoneDoughnut: UIView {
             startAngle = endAngle
             
             let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 20),
+                .font: UIFont.boldSystemFont(ofSize: 20),
                 .foregroundColor: percentageColor
             ]
             let textSize = donePercentage.size(withAttributes: attributes)
@@ -155,4 +183,37 @@ open class IsDoneDoughnut: UIView {
                 
         }
     }
+    public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
+            return UIColor { traitCollection in
+                return traitCollection.userInterfaceStyle == .dark ? dark : light
+            }
+        }
 }
+
+//달성률 함수 예시
+//func calculateCompletionRate(schedule: Schedule, year: Int, month: Int) -> Double {
+//    let calendar = Calendar.current
+//    guard let startOfMonth = calendar.date(from: DateComponents(year: year, month: month)),
+//          let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth) else {
+//        return 0
+//    }
+//    
+//    var totalDays = 0
+//    var completedDays = 0
+//    
+//    calendar.enumerateDates(startingAfter: startOfMonth, matching: DateComponents(hour: 0, minute: 0, second: 0), matchingPolicy: .nextTime) { date, _, stop in
+//        guard let date = date, date <= endOfMonth else {
+//            stop = true
+//            return
+//        }
+//        
+//        if isScheduleOccurringOn(date: date, schedule: schedule) {
+//            totalDays += 1
+//            if let completion = getCompletion(scheduleId: schedule.id, date: date), completion.isCompleted {
+//                completedDays += 1
+//            }
+//        }
+//    }
+//    
+//    return totalDays > 0 ? Double(completedDays) / Double(totalDays) : 0
+//}
