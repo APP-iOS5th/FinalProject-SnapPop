@@ -6,29 +6,6 @@
 //
 
 import UIKit
-// TODO: - 익스텐션 파일로 분할
-extension UIImageView {
-    func load(from url: URL) {
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
-    }
-}
-
-extension UIImage {
-    static func loadImage(from url: URL) -> UIImage? {
-        if let data = try? Data(contentsOf: url) {
-            return UIImage(data: data)
-        }
-        return nil
-    }
-}
 
 class SnapComparisonViewController: UIViewController {
     

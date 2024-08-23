@@ -28,12 +28,6 @@ class HorizontalSnapPhotoCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        // 셀의 상태 초기화
-        snapPhoto.image = nil
-        snapPhoto.layer.borderColor = nil
-    }
     
     // MARK: - Methods
     private func setupLayout() {
