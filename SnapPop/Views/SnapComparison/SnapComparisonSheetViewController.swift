@@ -166,10 +166,13 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     /// 인덱스에 해당하는 SnapPhotoViewController 나타내는 메소드
     private func viewControllerAt(index: Int) -> UIViewController? {
-        guard let image = viewModel.getSnapPhoto(at: index) else { return nil }
         let photoViewController = SnapPhotoViewController()
-        photoViewController.image = image
         photoViewController.index = index
+        self.viewModel.getSnapPhoto(at: index) { image in
+            DispatchQueue.main.async {
+                photoViewController.image = image
+            }
+        }
         return photoViewController
     }
     

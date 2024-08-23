@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 protocol SnapComparisonSheetViewModelProtocol {
     var filteredSnapData: [Snap] { get set}
@@ -21,7 +22,7 @@ protocol SnapComparisonSheetViewModelProtocol {
     var updatePageControl: ((Int, Int) -> Void)? { get set }
     var updateArrowVisibility: ((Bool, Bool) -> Void)? { get set }
     func updateSnapData()
-    func getSnapPhoto(at index: Int) -> UIImage?
+    func getSnapPhoto(at index: Int, completion: @escaping (UIImage?) -> Void)
     func moveToPreviousSnap()
     func moveToNextSnap()
 }
@@ -60,17 +61,28 @@ class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
         updateArrowVisibility?(isLeftArrowHidden, isRightArrowHidden)
     }
     
-    func getSnapPhoto(at index: Int) -> UIImage? {
+    func getSnapPhoto(at index: Int, completion: @escaping (UIImage?) -> Void) {
         guard index >= 0, index < currentSnap.imageUrls.count  else {
-            return nil
+            completion(UIImage(systemName: "circle.dotted"))
+            return
         }
         
+//        if let url = URL(string: currentSnap.imageUrls[index]) {
+//            let image = UIImage.loadImage(from: url)
+//            return image
+//        }
         if let url = URL(string: currentSnap.imageUrls[index]) {
-            let image = UIImage.loadImage(from: url)
-            return image
+            KingfisherManager.shared.retrieveImage(with: url) { result in
+                switch result {
+                case .success(let value):
+                    completion(value.image)
+                case .failure:
+                    completion(UIImage(systemName: "circle.dotted"))
+                }
+            }
+        } else {
+            completion(UIImage(systemName: "circle.dotted"))
         }
-        
-        return UIImage(systemName: "person.fill")
     }
     
     func moveToPreviousSnap() {
