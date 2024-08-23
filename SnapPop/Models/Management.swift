@@ -34,12 +34,6 @@ struct Management: Identifiable, Hashable, Codable {
     }
 }
 
-//struct IsCompletion: Hashable, Codable {
-//    let managementId: String
-//    let date: Date
-//    let isCompleted: Bool
-//}
-
 struct ManagementException: Hashable, Codable {
     let managementId: String
     let date: Date

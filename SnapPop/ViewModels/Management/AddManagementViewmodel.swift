@@ -99,25 +99,11 @@ class AddManagementViewModel: CategoryChangeDelegate {
     func updateRepeatCycle(_ cycleIndex: Int) {
         self.repeatCycle = cycleIndex
     }
-<<<<<<< HEAD
     
     func categoryDidChange(to newCategoryId: String) {
         self.categoryId = newCategoryId
     }
     
-    func save(completion: @escaping (Result<Void, Error>) -> Void) {
-        let db = ManagementService()
-        self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: repeatCycle)
-        db.saveManagement(categoryId: categoryId, management: management) { result in
-            switch result {
-            case .success:
-                print("Management saved successfully")
-                completion(.success(()))
-            case .failure(let error):
-                print("Failed to save management: \(error.localizedDescription)")
-                completion(.failure(error))
-=======
-
     // 유효성 검증 프로퍼티
     var isValid: AnyPublisher<Bool, Never> {
         return Publishers.CombineLatest3($title, $color, $startDate)
@@ -138,23 +124,27 @@ class AddManagementViewModel: CategoryChangeDelegate {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "색상을 선택해야 합니다."])))
             return
         }
-
+        
         guard startDate != nil else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "날짜를 선택해야 합니다."])))
             return
         }
-
-        let db = Firestore.firestore()
-        do {
-            if let id = management.id {
-                try db.collection("management").document(id).setData(from: management)
-            } else {
-                let _ = try db.collection("management").addDocument(from: management)
->>>>>>> main
+        
+        let db = ManagementService()
+        self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
+        db.saveManagement(categoryId: categoryId, management: management) { result in
+            switch result {
+            case .success:
+                print("Management saved successfully")
+                completion(.success(()))
+            case .failure(let error):
+                print("Failed to save management: \(error.localizedDescription)")
+                completion(.failure(error))
+                
             }
         }
-        
     }
+    
     func generateSixMonthsCompletions(startDate: Date, repeatInterval: Int) -> [String: Int] {
         // 반복 주기가 0이면 (안함) 빈 딕셔너리 반환
         guard repeatInterval > 0 else {
@@ -171,7 +161,6 @@ class AddManagementViewModel: CategoryChangeDelegate {
             completions[dateString] = 0 // 초기값은 미완료(0)로 설정
             currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
         }
-        
         return completions
     }
 }
