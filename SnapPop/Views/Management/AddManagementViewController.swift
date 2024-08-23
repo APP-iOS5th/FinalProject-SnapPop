@@ -8,7 +8,8 @@
 import Combine
 import UIKit
 
-class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NotificationCellDelegate {
+class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NotificationCellDelegate, UITextFieldDelegate {
+
     private let viewModel: AddManagementViewModel
     private var cancellables = Set<AnyCancellable>()
     private var isTimePickerVisible = false
@@ -99,12 +100,14 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         bind(viewModel.$title) { [weak self] title in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TitleCell {
                 cell.textField.text = title
+                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
             }
         }
         
         bind(viewModel.$memo) { [weak self] memo in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? MemoCell {
                 cell.textField.text = memo
+                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
             }
         }
         
@@ -230,6 +233,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "TitleCell", for: indexPath) as? TitleCell else { return UITableViewCell() }
                 cell.textField.text = viewModel.title
                 cell.textField.addTarget(self, action: #selector(titleChanged(_:)), for: .editingChanged)
+                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "ColorCell", for: indexPath) as? ColorCell else { return UITableViewCell() }
@@ -241,6 +245,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "MemoCell", for: indexPath) as? MemoCell else { return UITableViewCell() }
                 cell.textField.text = viewModel.memo
                 cell.textField.addTarget(self, action: #selector(memoChanged(_:)), for: .editingChanged)
+                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
                 return cell
             default:
                 return UITableViewCell()
@@ -279,5 +284,18 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         default:
             return UITableViewCell()
         }
+    }
+    
+    // MARK: - Keyboard Handling
+
+    // 화면을 터치했을 때 키보드 내리기
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+
+    // Return 키를 눌렀을 때 키보드 내리기
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

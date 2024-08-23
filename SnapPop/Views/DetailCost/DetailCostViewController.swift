@@ -7,12 +7,12 @@
 //
 import UIKit
 
-class DetailCostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DetailCostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     
     // MARK: - Properties
     private let viewModel: DetailCostViewModel
     
-    // 금액 계산 셀 열기위한 변수
+    // 금액 계산 셀 열기 위한 변수
     private var isOpen = false
     
     // MARK: - UIComponents
@@ -119,9 +119,11 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             switch indexPath.row {
             case 0:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleCell2.identifier, for: indexPath) as? TitleCell2 else { return UITableViewCell() }
+                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionCell.identifier, for: indexPath) as? DescriptionCell else { return UITableViewCell() }
+                cell.textField.delegate = self // 텍스트 필드 델리게이트 설정
                 return cell
             default:
                 return UITableViewCell()
@@ -155,5 +157,18 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         default:
             return UITableViewCell()
         }
+    }
+    
+    // MARK: - Keyboard Handling
+
+    // 화면을 터치했을 때 키보드 내리기
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+
+    // Return 키를 눌렀을 때 키보드 내리기
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
