@@ -11,19 +11,45 @@ import Photos // Import Photos framework for saving images
 class CropViewController: UIViewController {
     
     var imageView: UIImageView!
-    var asset: PHAsset! // PHAsset을 저장할 변수
-    var viewModel = HomeViewModel()
-    var navigationBarViewModel: CustomNavigationBarViewModelProtocol?
-    
-    let categoryId: String = ""
+    var asset: PHAsset!
+    let categoryId = ""
+    var viewModel: HomeViewModel
+    var navigationBarViewModel: CustomNavigationBarViewModel
     
     private var cropToolbar: CustomCropToolbar!
     private var cropRectView: UIView!
     private var cropRect: CGRect = CGRect.zero
     private var rotationLabel: UILabel!
-
+    
+    
     var didGetCroppedImage: ((Snap) -> Void)?
-
+    
+    // 초기화 메서드 추가
+    init(viewModel: HomeViewModel, navigationBarViewModel: CustomNavigationBarViewModel) {
+        self.viewModel = viewModel
+        self.navigationBarViewModel = navigationBarViewModel
+        super.init(nibName: nil, bundle: nil)
+        
+        // 카테고리 업데이트 콜백 설정
+        self.navigationBarViewModel.categoryisUpdated = { [weak self] in
+            guard let self = self else { return }
+            // 업데이트된 카테고리를 사용한 작업 수행
+            self.handleCategoryUpdate()
+        }
+    }
+    private func handleCategoryUpdate() {
+        if let categoryId = navigationBarViewModel.currentCategory?.userId {
+            print("Updated category ID: \(categoryId)")
+            // 필요한 작업 수행
+        } else {
+            print("No category selected or category ID is nil.")
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCropRectView() // Ensure cropRectView is set up first
@@ -31,10 +57,18 @@ class CropViewController: UIViewController {
         setupRotationLabel()
         loadImageFromAsset() // PHAsset에서 이미지 로드
         
-        if let categoryId = navigationBarViewModel?.currentCategory {
-            print("Current Category ID in HomeViewController: \(categoryId)")
-            // categoryId를 사용하여 필요한 작업 수행
+        // UserDefaults에서 카테고리 ID 가져오기
+        guard asset != nil else {
+            print("PHAsset is nil")
+            return
         }
+        
+//        if let categoryId = currentCategoryId {
+//            print("Current Category ID in CropViewController: \(categoryId)")
+//            // 카테고리 ID를 사용하여 필요한 작업 수행
+//        } else {
+//            print("No current category ID found.")
+//        }
     }
 
     private func loadImageFromAsset() {
@@ -221,21 +255,20 @@ class CropViewController: UIViewController {
         guard let cgImage = image.cgImage?.cropping(to: scaledCropRect) else { return }
         let croppedImage = UIImage(cgImage: cgImage)
         
-        // HomeViewModel에 이미지 저장 요청
-        viewModel.saveCroppedSnapData(image: croppedImage, assetIdentifier: asset.localIdentifier, categoryId: categoryId) { [weak self] imageUrl in
-            guard let self = self else { return }
-            
-//            switch result {
-//            case .success(let imageUrl):
-                // 크롭된 이미지의 URL과 PHAsset의 식별자를 사용하여 Snap 객체 생성
-                //let newSnap = Snap(id: self.asset.localIdentifier, imageUrls: [imageUrl], createdAt: Date())
-                //self.didGetCroppedImage?(newSnap) // Snap 객체를 전달
-                
-//            case .failure(let error):
-//                // 에러 처리
-//                print("이미지 저장 실패: \(error.localizedDescription)")
-//            }
+        guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
+            print("No current category ID found.")
+            return // categoryId가 nil인 경우, cropImage 메서드를 종료
         }
+        
+        // HomeViewModel에 이미지 저장 요청
+//        viewModel.saveCroppedSnapData(image: croppedImage, assetIdentifier: asset.localIdentifier, categoryId: categoryId) { [weak self] (result: Result<Void, Error>) in
+//            switch result {
+//            case .success:
+//                print("Cropped image saved successfully.")
+//            case .failure(let error):
+//                print("Failed to save cropped image: \(error.localizedDescription)")
+//            }
+//        }
         
         let croppedImageView = UIImageView(image: croppedImage)
         croppedImageView.frame = self.view.bounds

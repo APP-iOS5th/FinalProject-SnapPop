@@ -10,11 +10,10 @@ import FirebaseStorage
 
 struct Snap: Identifiable, Hashable, Codable {
     @DocumentID var id: String?
-    let imageUrls: [String]
+    var imageUrls: [String]
     @ServerTimestamp var createdAt: Date?
     
-    init(id: String?, imageUrls: [String], createdAt: Date?) {
-        self.id = id
+    init(imageUrls: [String], createdAt: Date) {
         self.imageUrls = imageUrls
         self.createdAt = createdAt
     }

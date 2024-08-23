@@ -102,7 +102,6 @@ class AddManagementViewModel {
     }
 }
 
-
 extension UIColor {
     func toHexString() -> String {
         var r: CGFloat = 0
