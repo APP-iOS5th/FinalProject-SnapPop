@@ -11,13 +11,17 @@ import Foundation
 class CalendarViewController: UIViewController {
     
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
-    
     var selectedDate: DateComponents?
-    
+    var multiDateSelection: UICalendarSelectionMultiDate!
+    var categoryId = "0qihnS4CfWy45ooH7BSe"
+    var hasSnapDates: Set<DateComponents> = []
+    var managements: [Management] = []
     var sampledata = Management1.generateSampleManagementItems()
-   
+    private var snapService = SnapService()
+    private var managementService = ManagementService()
     private var segmentedControlTopConstraint: NSLayoutConstraint?
     private var tableViewHeightConstraint: NSLayoutConstraint?
+    private var dashBarTopConstraint: NSLayoutConstraint?
     private var isDoneChart: IsDonePercentageChart!
     private var costChart: CostChart!
     
@@ -47,9 +51,9 @@ class CalendarViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .center
         stackView.backgroundColor = .systemBackground
-        stackView.layer.borderWidth = 0.5
+        stackView.layer.borderWidth = 0.7
         stackView.layer.borderColor = UIColor.lightGray.cgColor
-        stackView.layer.cornerRadius = 20
+        stackView.layer.cornerRadius = 10
         stackView.clipsToBounds = true
         return stackView
     }()
@@ -95,14 +99,23 @@ class CalendarViewController: UIViewController {
         stackView.alignment = .fill
         stackView.distribution = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.layer.borderWidth = 0.7
+        stackView.layer.borderColor = UIColor.lightGray.cgColor
+        stackView.layer.cornerRadius = 10
+        stackView.clipsToBounds = true
         return stackView
     }()
     
     private let segmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["달성률", "비용"])
+        let font = UIFont.boldSystemFont(ofSize: 16)
+        UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .selected)
+        UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 0.6)
+        segmentedControl.layer.borderColor = UIColor.lightGray.cgColor
+        segmentedControl.layer.borderWidth = 0.5
         return segmentedControl
     }()
     
@@ -120,7 +133,7 @@ class CalendarViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.isScrollEnabled = false
-        calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
+        calendarView.selectionBehavior = UICalendarSelectionMultiDate(delegate: self)
         scrollView.isUserInteractionEnabled = true
         contentView.isUserInteractionEnabled = true
         firstStackViewView.isUserInteractionEnabled = true
@@ -129,7 +142,10 @@ class CalendarViewController: UIViewController {
         segmentedControl.isUserInteractionEnabled = true
         secondStackView.distribution = .equalCentering
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-            updateChartVisibility()
+        segmentChange()
+        updateSnapsForMonth()
+        updateManegementData()
+        
     }
     
     private func setupViews() {
@@ -140,7 +156,6 @@ class CalendarViewController: UIViewController {
         addChild(costChart)
         isDoneChart.view.frame = graphView.bounds
         costChart.view.frame = graphView.bounds
-        
         view.backgroundColor = .white
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -223,15 +238,22 @@ class CalendarViewController: UIViewController {
         tableView.layoutMargins = .zero
         tableView.separatorInset = .zero
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: calendarView.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -20),
             tableView.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor),
             tableViewHeightConstraint!
         ])
     }
     private func setupdashButtonConstraints() {
+        dashBarTopConstraint?.isActive = false
+        if tableView.isHidden {
+            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -30)
+        } else {
+            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor)
+        }
+        dashBarTopConstraint?.isActive = true
         NSLayoutConstraint.activate([
-            dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+            dashBarTopConstraint!,
             dashButton.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
             dashButton.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor),
             dashButton.heightAnchor.constraint(equalToConstant: 17)
@@ -242,8 +264,8 @@ class CalendarViewController: UIViewController {
         NSLayoutConstraint.activate([
             secondStackView.topAnchor.constraint(equalTo: firstStackViewView.bottomAnchor, constant: 30),
             secondStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            secondStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            secondStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            secondStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            secondStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             secondStackView.heightAnchor.constraint(equalToConstant: 400)
         ])
     }
@@ -252,8 +274,8 @@ class CalendarViewController: UIViewController {
         NSLayoutConstraint.activate([
             segmentedControl.topAnchor.constraint(equalTo: secondStackView.topAnchor),
             segmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            segmentedControl.widthAnchor.constraint(equalTo: secondStackView.widthAnchor, constant: -20),
-            segmentedControl.heightAnchor.constraint(equalToConstant: 30)
+            segmentedControl.widthAnchor.constraint(equalTo: secondStackView.widthAnchor),
+            segmentedControl.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
@@ -282,10 +304,10 @@ class CalendarViewController: UIViewController {
     }
     
     @objc func segmentedControlValueChanged() {
-        updateChartVisibility()
+        segmentChange()
     }
     
-    private func updateChartVisibility() {
+    private func segmentChange() {
         switch segmentedControl.selectedSegmentIndex {
         case 0: // 달성률
             isDoneChart.view.isHidden = false
@@ -300,19 +322,32 @@ class CalendarViewController: UIViewController {
     
 }
 
-extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
+extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMultiDateDelegate {
     
-    func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-        selection.setSelected(dateComponents, animated: true)
+    func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didSelectDate dateComponents: DateComponents) {
+        selection.setSelectedDates([dateComponents], animated: true)
         selectedDate = dateComponents
         tableView.isHidden = false
         tableView.reloadData()
         setupConstraints()
-        setupTableViewConstraints()
+    }
+    
+    func setupMultiSelection() {
+        
+    }
+    
+    func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didDeselectDate dateComponents: DateComponents) {
+        selection.setSelectedDates([], animated: true)
+        selectedDate = nil
+        tableView.isHidden = true
+        tableView.reloadData()
+        setupConstraints()
+        
     }
     
     func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-        if dailymodels.snap {
+        var date = dateComponents.date
+        if hasSnapDates.contains(dateComponents) {
             return .customView {
                 let imageView = UIImageView()
                 let originalImage = UIImage(named: "filledpop")
@@ -330,14 +365,49 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionSin
               let visibleYear = calendarView.visibleDateComponents.year else {
             return
         }
-    updatMonthlyInfo(month: visibleMonth, year: visibleYear)
-
+        updatMonthlyInfo(month: visibleMonth, year: visibleYear)
+        updateSnapsForMonth()
     }
     
     func updatMonthlyInfo(month: Int, year: Int) {
         isDoneChart.updateMonthLabel(month: month, year: year)
         costChart.updateMonthLabel(month: month, year: year)
+    }
+    func updateSnapsForMonth() {
+        
+        guard let currentDate = calendarView.visibleDateComponents.date else { return }
+            
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.year, .month], from: currentDate)
+            
+            guard let year = components.year, let month = components.month else { return }
+        
+        snapService.loadSnapsForMonth(categoryId: categoryId, year: year, month: month) { [weak self] result in
+            switch result {
+            case .success(let snaps):
+                self?.hasSnapDates = Set(snaps.compactMap { snap in
+                    guard let date = snap.createdAt else { return nil }
+                    return Calendar.current.dateComponents([.year, .month, .day], from: date)
+                })
+                DispatchQueue.main.async {
+                    self?.calendarView.reloadDecorations(forDateComponents: Array(self?.hasSnapDates ?? []), animated: true)
+                }
+            case .failure(let error):
+                print("Failed to load snaps: \(error)")
             }
+            
+        }
+    }
+    func updateManegementData() {
+        managementService.loadManagements(categoryId: categoryId) { [weak self] result in
+            switch result {
+            case .success(let managements):
+                self?.managements = managements
+            case .failure(let error):
+                print("Failed to load managements: \(error)")
+            }
+        }
+    }
 }
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
@@ -369,35 +439,6 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
             cell.updateCheckbocState(isChecked: sampledata[index].isDone)
         }
     }
-}
-
-extension UIViewController {
-    
-    func setupNavigationsItems() {
-        let titleLabel = UILabel()
-        titleLabel.text = ""
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        
-        let settingButton = UIButton(type: .system)
-        settingButton.setImage(UIImage(systemName: "gear"), for: .normal)
-        settingButton.addTarget(self, action: #selector(settingButtonTapped), for: .touchUpInside)
-        
-        let notificationButton = UIButton(type: .system)
-        notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
-        notificationButton.addTarget(self, action: #selector(notificationButtonTapped), for: .touchUpInside)
-        
-        view.addSubview(settingButton)
-        view.addSubview(titleLabel)
-    }
-    
-    @objc func settingButtonTapped() {
-        print("설정뷰로 이동")
-    }
-    
-    @objc func notificationButtonTapped() {
-        print("알림뷰로 이동")
-    }
-    
 }
 
 extension UIImage {
