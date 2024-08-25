@@ -226,6 +226,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     func categoryDidChange(to newCategoryId: String) {
         print("[Snap비교] 스냅 비교뷰 카테고리 변경됨 \(newCategoryId)")
         loadSanpstoFireStore(to: newCategoryId)
+        reloadCollectionView?()
     }
     
     /// Firebase Snap Load Method
