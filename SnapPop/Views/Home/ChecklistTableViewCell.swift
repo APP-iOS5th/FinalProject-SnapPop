@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 class ChecklistTableViewCell: UITableViewCell {
     
     // 체크박스 버튼
@@ -24,6 +23,15 @@ class ChecklistTableViewCell: UITableViewCell {
         return label
     }()
     
+    // 텍스트 필드 (편집 모드에서 사용)
+    let textField: UITextField = {
+        let textField = UITextField()
+        textField.isHidden = true
+        textField.borderStyle = .roundedRect
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -38,10 +46,15 @@ class ChecklistTableViewCell: UITableViewCell {
             
             checkLabel.leadingAnchor.constraint(equalTo: checkBox.trailingAnchor, constant: 15),
             checkLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
+            checkLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            
+            textField.leadingAnchor.constraint(equalTo: checkBox.trailingAnchor, constant: 15),
+            textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         ])
         
         checkBox.addTarget(self, action: #selector(didTapCheckBox), for: .touchUpInside)
+        textField.addTarget(self, action: #selector(textFieldEditingDidEnd), for: .editingDidEnd)
     }
     
     required init?(coder: NSCoder) {
@@ -51,6 +64,7 @@ class ChecklistTableViewCell: UITableViewCell {
     // MARK: - Configure Cell with Checklist Item
     func configure(with item: Management) {
         checkLabel.text = item.title
+        textField.text = item.title
         
         // 색상 설정
         if let color = UIColor(hex: item.color) {
@@ -75,6 +89,21 @@ class ChecklistTableViewCell: UITableViewCell {
     // 체크박스 클릭 시 상태 변화
     @objc private func didTapCheckBox() {
         checkBox.isSelected.toggle()
+    }
+    
+    
+    // 편집 모드로 전환
+    func enterEditMode() {
+        checkLabel.isHidden = true
+        textField.isHidden = false
+//        textField.becomeFirstResponder() // 자동으로 키보드가 나타남
+    }
+    
+    // 편집 종료시 호출
+    @objc private func textFieldEditingDidEnd() {
+        checkLabel.text = textField.text
+        checkLabel.isHidden = false
+        textField.isHidden = true
     }
 }
 
