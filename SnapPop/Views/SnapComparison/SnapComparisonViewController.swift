@@ -109,7 +109,7 @@ class SnapComparisonViewController: UIViewController {
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)
         }
-        print("ViewWIllApear")
+        reloadCollectionView()        
     }
     
     // MARK: - Methods

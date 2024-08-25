@@ -138,7 +138,6 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     // MARK: - Methods
     /// 스냅 데이터 필터링 메소드
     func filterSnaps() {
-//        filteredSnapData = mockData
          filteredSnapData = snapData
         
         if snapPeriodType != "전체" {
@@ -147,9 +146,9 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         
         if snapPhotoSelectionType == "메인 사진" {
             filteredSnapData = filteredSnapData.map({ snap in
-//                Snap(date: snap.date, images: Array(snap.images.prefix(1)))
                 let mainImage = snap.imageUrls.first.map { [$0] } ?? []
-                return Snap(id: snap.id, imageUrls: mainImage, createdAt: snap.createdAt)
+                guard let createdAt = snap.createdAt else { return Snap(imageUrls: [], createdAt: Date()) }
+                return Snap(imageUrls: mainImage, createdAt: createdAt)
             })
         }
         print("필터링된 스냅 개수: \(filteredSnapData.count)")
@@ -200,6 +199,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
                 } else {
                     print("[Snap비교] 카테고리, 스냅 존재")
                     self.snapData = snaps
+                    self.filterSnaps()
                     self.showSnapCollectionView?()
                 }
             case.failure(let error):
