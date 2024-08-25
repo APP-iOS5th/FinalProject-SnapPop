@@ -163,7 +163,6 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         }
     }
     
-    // https://minzombie.github.io/ios/calendar/
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap] {
         // 첫번째 스냅 데이터가 기준
         guard let firstSnapDate = snaps.first?.createdAt else { return snaps }
