@@ -30,6 +30,7 @@ protocol SnapComparisonViewModelProtocol {
     func changeSnapPeriod(type: String, completion: @escaping () -> Void)
     func numberOfRows(in section: Int) -> Int
     func loadSanpstoFireStore(to categoryId: String)
+    func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap]
 }
 
 class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
@@ -138,11 +139,13 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     // MARK: - Methods
     /// 스냅 데이터 필터링 메소드
     func filterSnaps() {
-         filteredSnapData = snapData
         
-        if snapPeriodType != "전체" {
-            // ↓TODO: 기간에 따른 필터링
+        guard !snapData.isEmpty else {
+            snapisEmpty?()
+            return
         }
+        // TODO: - 기준 날자를 설정하는 DatePicker 추가하기.
+        filteredSnapData = filterSnapsByPeriod(snapData, periodType: snapPeriodType)
         
         if snapPhotoSelectionType == "메인 사진" {
             filteredSnapData = filteredSnapData.map({ snap in
@@ -158,6 +161,46 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         } else {
             showSnapCollectionView?()
         }
+    }
+    
+    // https://minzombie.github.io/ios/calendar/
+    func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap] {
+        // 첫번째 스냅 데이터가 기준
+        guard let firstSnapDate = snaps.first?.createdAt else { return snaps }
+        
+        var filteredSnaps: [Snap] = []
+        var standardDate: Date = firstSnapDate
+        
+        for snap in snaps {
+            guard let date = snap.createdAt else { return snaps }
+            
+            let shouldInclude: Bool
+            switch periodType {
+            case "일주일":
+                // 첫 번째 스냅과 일주일 간격이라면
+                shouldInclude = Calendar.current.dateComponents([.day], from: standardDate, to: date).day ?? 1 >= 7
+            case "한달":
+                // 첫 번째 스냅과 한달 간격이라면
+                shouldInclude = Calendar.current.dateComponents([.month], from: standardDate, to: date).month ?? 0 >= 1
+            case "일년":
+                // 첫 번째 스냅과 일년 간격이라면
+                shouldInclude = Calendar.current.dateComponents([.year], from: standardDate, to: date).year ?? 0 >= 1
+            default:
+                shouldInclude = true
+            }
+            
+            if shouldInclude {
+                filteredSnaps.append(snap)
+                standardDate = date // 추가한 날자를 기준으로
+            }
+        }
+        
+        // 기준이 되는 첫번째 스냅을 포함
+        if !filteredSnaps.contains(where: { $0.createdAt == firstSnapDate }) {
+            filteredSnaps.insert(snaps.first!, at: 0)
+        }
+        
+        return filteredSnaps
     }
     
     func item(at indexPath: IndexPath) -> Snap {
