@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -30,11 +31,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                 // 잠금 인증 실패
                             }
                             self.window?.makeKeyAndVisible()
+                            self.requestNotificationAuthorization()
                         }
                     }
                 } else {
                     self.window?.rootViewController = CustomTabBarController()
                     self.window?.makeKeyAndVisible()
+                    self.requestNotificationAuthorization()
                 }
             } else {
                 self.window?.rootViewController = SignInViewController()
@@ -42,7 +45,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
     }
-    
+
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
@@ -70,5 +73,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
+}
 
+extension SceneDelegate: UNUserNotificationCenterDelegate {
+    func requestNotificationAuthorization() {
+        // UserNotification
+        UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                print("Notification authorization granted")
+            } else {
+                print("Notification authorization denied")
+            }
+        }
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // Handle foreground presentation options
+        completionHandler([.banner, .list, .badge, .sound])
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
 }
