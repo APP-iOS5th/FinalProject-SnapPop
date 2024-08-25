@@ -19,7 +19,7 @@ struct NotificationService {
                 let content = UNMutableNotificationContent()
                 content.title = "스냅 등록"
                 content.sound = .default
-
+                
                 var dateComponents = DateComponents()
                 dateComponents.hour = alertHour
                 dateComponents.minute = 0
@@ -44,5 +44,64 @@ struct NotificationService {
     
     func removeNotification(identifier: String) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+    }
+    
+    func initialNotification(managementId: String, startDate: Date, alertTime: Date, repeatCycle: Int, body: String) {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound]) { granted, error in
+            if granted {
+                let content = UNMutableNotificationContent()
+                content.title = "관리 알림"
+                content.body = body
+                content.sound = .default
+                
+                content.userInfo = ["managementId": managementId, "startDate": startDate, "alertTime": alertTime, "repeatCycle": repeatCycle, "body": body]
+                
+                var dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: startDate)
+                dateComponents.hour = Calendar.current.component(.hour, from: alertTime)
+                dateComponents.minute = Calendar.current.component(.minute, from: alertTime)
+                
+                let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+                let request = UNNotificationRequest(identifier: "initialNotification-\(managementId)", content: content, trigger: trigger)
+                
+                center.add(request) { error in
+                    if let error = error {
+                        print("Error scheduling notification: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    func repeatingNotification(managementId: String, startDate: Date, alertTime: Date, repeatCycle: Int, body: String) {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound]) { granted, error in
+            if granted {
+                let content = UNMutableNotificationContent()
+                content.title = "관리 알림"
+                content.body = body
+                content.sound = .default
+                
+                var dateComponents = DateComponents()
+                
+                if repeatCycle == 1 {
+                    dateComponents.hour = Calendar.current.component(.hour, from: alertTime)
+                    dateComponents.minute = Calendar.current.component(.minute, from: alertTime)
+                } else if repeatCycle == 7 {
+                    dateComponents.weekday = Calendar.current.component(.weekday, from: startDate)
+                    dateComponents.hour = Calendar.current.component(.hour, from: alertTime)
+                    dateComponents.minute = Calendar.current.component(.minute, from: alertTime)
+                }
+                
+                let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+                let request = UNNotificationRequest(identifier: "repeatingNotification-\(managementId)", content: content, trigger: trigger)
+                
+                center.add(request) { error in
+                    if let error = error {
+                        print("Error scheduling notification: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
     }
 }

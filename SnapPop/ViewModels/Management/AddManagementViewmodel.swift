@@ -134,8 +134,21 @@ class AddManagementViewModel: CategoryChangeDelegate {
         self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
         db.saveManagement(categoryId: categoryId, management: management) { result in
             switch result {
-            case .success:
+            case .success(let management):
                 print("Management saved successfully")
+                
+                if management.alertStatus {
+                    if self.isSpecificDateInPast(startDate: self.startDate, alertTime: self.alertTime) {
+                        print("과거")
+                        NotificationService.shared.repeatingNotification(managementId: management.id ?? "", startDate: management.startDate,
+                                                                         alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                    } else {
+                        print("미래")
+                        NotificationService.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
+                                                                       alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                    }
+                }
+
                 completion(.success(()))
             case .failure(let error):
                 print("Failed to save management: \(error.localizedDescription)")
@@ -162,6 +175,26 @@ class AddManagementViewModel: CategoryChangeDelegate {
             currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
         }
         return completions
+    }
+    
+    func isSpecificDateInPast(startDate: Date, alertTime: Date) -> Bool {
+        let calendar = Calendar.current
+        
+        // startDate에서 year, month, day를 추출
+        var dateComponents = calendar.dateComponents([.year, .month, .day], from: startDate)
+        
+        // alertTime에서 hour, minute를 추출
+        dateComponents.hour = calendar.component(.hour, from: alertTime)
+        dateComponents.minute = calendar.component(.minute, from: alertTime)
+        
+        // specificDate를 생성
+        if let specificDate = calendar.date(from: dateComponents) {
+            // specificDate가 현재 시간보다 이전인지 비교
+            return specificDate < Date()
+        } else {
+            // 날짜를 만들 수 없는 경우
+            return false
+        }
     }
 }
 

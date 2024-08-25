@@ -527,13 +527,6 @@ extension HomeViewController: PHPickerViewControllerDelegate {
                         self.viewModel.loadSnap(categoryId: categoryId, snapDate: snap.createdAt ?? Date()) { [weak self] in
                             self?.updateSnapCollectionView()
                         }
-                        
-                        let now = Date()  // 현재 날짜와 시간을 나타내는 Date 객체 생성
-                        let calendar = Calendar.current
-                        let hour = calendar.component(.hour, from: now)   // 현재 시간
-                        
-                        NotificationService.shared.removeNotification(identifier: "dailySnapNotification")
-                        NotificationService.shared.scheduleDailySnapNotification(hour: hour)
                     case .failure(let error):
                         print("Snap 저장 실패: \(error.localizedDescription)")
                     }

@@ -90,7 +90,19 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // Handle foreground presentation options
-        completionHandler([.banner, .list, .badge, .sound])
+        
+        if !notification.request.identifier.contains("initialNotification") {
+            completionHandler([.banner, .list, .badge, .sound])
+        } else {
+            let userInfo = notification.request.content.userInfo
+        
+            if let managementID = userInfo["managementId"] as? String, let startDate = userInfo["startDate"] as? Date, let alertTime = userInfo["alertTime"] as? Date,
+               let repeatCycle = userInfo["repeatCycle"] as? Int, let body = userInfo["body"] as? String {
+                NotificationService.shared.repeatingNotification(managementId: managementID, startDate: startDate,
+                                                                 alertTime: alertTime, repeatCycle: repeatCycle, body: body)
+            }
+            completionHandler([])
+        }
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
