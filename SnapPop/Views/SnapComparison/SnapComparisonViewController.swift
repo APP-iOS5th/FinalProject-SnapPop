@@ -96,7 +96,6 @@ class SnapComparisonViewController: UIViewController {
         
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)
-            viewModel.filterSnaps()
         }
         
         if let navigationController = self.navigationController as? CustomNavigationBarController {

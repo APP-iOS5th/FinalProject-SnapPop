@@ -77,12 +77,20 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with viewModel: SnapComparisonCellViewModelProtocol, data: Snap, filteredData: [Snap], sectionIndex: Int) {
+        guard let date = data.createdAt else { return }
         self.viewModel = viewModel
         self.viewModel?.snapPhotos = data.imageUrls
         self.viewModel?.currentSectionIndex = sectionIndex
         self.viewModel?.filteredSnapData = filteredData
-        snapCellDateLabel.text = "\(String(describing: data.createdAt))"
+        snapCellDateLabel.text = updateDate(to: date)
         horizontalSnapPhotoCollectionView.reloadData()
+    }
+    
+    func updateDate(to date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 d일"
+        let updatedDateString = formatter.string(from: date)
+        return updatedDateString
     }
 }
 

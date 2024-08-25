@@ -156,7 +156,7 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     private func updateUI() {
-        snapDateLabel.text = "\(String(describing: viewModel.currentSnap.createdAt))"
+        snapDateLabel.text = viewModel.getDateString()
         pageControl.numberOfPages = viewModel.currentSnap.imageUrls.count
         pageControl.currentPage = viewModel.currentPhotoIndex
         
@@ -169,12 +169,12 @@ class SnapComparisonSheetViewController: UIViewController {
         let photoViewController = SnapPhotoViewController()
         photoViewController.index = index
         self.viewModel.getSnapPhoto(at: index) { image in
-            DispatchQueue.main.async {
-                photoViewController.image = image
-            }
+            photoViewController.image = image
         }
         return photoViewController
     }
+    
+    // MARK: - Actions
     
     @objc private func didTapLeftArrow() {
         viewModel.moveToPreviousSnap()
@@ -200,13 +200,15 @@ extension SnapComparisonSheetViewController: UIPageViewControllerDelegate, UIPag
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? SnapPhotoViewController else { return nil }
-        let index = viewController.index
-        return viewControllerAt(index: index - 1)
+        let index = viewController.index - 1
+        guard index > 0 else { return nil }
+        return viewControllerAt(index: index )
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? SnapPhotoViewController else { return nil }
-        let index = viewController.index + 1
+        let index = viewController.index  + 1
+        guard index < viewModel.currentSnap.imageUrls.count else { return nil }
         return viewControllerAt(index: index)
     }
     

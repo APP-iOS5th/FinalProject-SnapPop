@@ -25,6 +25,7 @@ protocol SnapComparisonSheetViewModelProtocol {
     func getSnapPhoto(at index: Int, completion: @escaping (UIImage?) -> Void)
     func moveToPreviousSnap()
     func moveToNextSnap()
+    func getDateString() -> String
 }
 
 class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
@@ -67,10 +68,6 @@ class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
             return
         }
         
-//        if let url = URL(string: currentSnap.imageUrls[index]) {
-//            let image = UIImage.loadImage(from: url)
-//            return image
-//        }
         if let url = URL(string: currentSnap.imageUrls[index]) {
             KingfisherManager.shared.retrieveImage(with: url) { result in
                 switch result {
@@ -97,5 +94,20 @@ class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
         currentDateIndex += 1
         currentPhotoIndex = 0
         updateSnapData()
+    }
+    /// 날자 형식 변환 메소드
+    func updateDate(to date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 d일"
+        let updatedDateString = formatter.string(from: date)
+        return updatedDateString
+    }
+    
+    func getDateString() -> String {
+        guard let date = currentSnap.createdAt else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 d일"
+        let updatedDateString = formatter.string(from: date)
+        return updatedDateString
     }
 }
