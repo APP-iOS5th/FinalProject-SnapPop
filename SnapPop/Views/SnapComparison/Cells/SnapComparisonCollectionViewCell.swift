@@ -33,8 +33,9 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(HorizontalSnapPhotoCollectionViewCell.self, forCellWithReuseIdentifier: HorizontalSnapPhotoCollectionViewCell.identifier)
+        collectionView.backgroundColor = .customBackground
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .customBackground
         return collectionView
     }()
     
@@ -68,8 +69,8 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
             snapCellDateLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10),
             
             horizontalSnapPhotoCollectionView.topAnchor.constraint(equalTo: snapCellDateLabel.bottomAnchor, constant: 10),
-            horizontalSnapPhotoCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10),
-            horizontalSnapPhotoCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
+            horizontalSnapPhotoCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            horizontalSnapPhotoCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             horizontalSnapPhotoCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10),
             horizontalSnapPhotoCollectionView.heightAnchor.constraint(equalToConstant: 200)
         ])

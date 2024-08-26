@@ -41,7 +41,7 @@ class SnapPhotoViewController: UIViewController {
         updateImage()
     }
     
-    //MARK: - Methods
+    // MARK: - Methods
     private func updateImage() {
         if let image = image {
             DispatchQueue.main.async {

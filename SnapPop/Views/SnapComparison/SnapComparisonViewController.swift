@@ -29,7 +29,7 @@ class SnapComparisonViewController: UIViewController {
         var buttonConfig = UIButton.Configuration.filled()
         buttonConfig.title = "전체"
         buttonConfig.image = UIImage(systemName: "photo")
-        buttonConfig.imagePadding = 5
+        buttonConfig.imagePadding = 3
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
@@ -43,7 +43,7 @@ class SnapComparisonViewController: UIViewController {
         var buttonConfig = UIButton.Configuration.filled()
         buttonConfig.title = "전체"
         buttonConfig.image = UIImage(systemName: "slider.vertical.3")
-        buttonConfig.imagePadding = 5
+        buttonConfig.imagePadding = 3
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
@@ -57,13 +57,34 @@ class SnapComparisonViewController: UIViewController {
         var buttonConfig = UIButton.Configuration.filled()
         buttonConfig.title = "날짜 선택"
         buttonConfig.image = UIImage(systemName: "calendar")
-        buttonConfig.imagePadding = 5
+        buttonConfig.imagePadding = 3
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
+    }()
+    
+    /// 버튼들의 스택뷰
+    private lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [selectSnapDateButton, selectSnapPhotoButton, selectSnapPeriodButton])
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.alignment = .top
+        stackView.distribution = .fillProportionally
+        stackView.backgroundColor = .customBackground
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    /// 스택뷰를 넣을 스크롤뷰
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.backgroundColor = .customBackground
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
     }()
     
     /// 스냅 콜렉션 뷰
@@ -76,7 +97,7 @@ class SnapComparisonViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(SnapComparisonCollectionViewCell.self, forCellWithReuseIdentifier: SnapComparisonCollectionViewCell.identifier)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .customBackground
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -102,7 +123,7 @@ class SnapComparisonViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .customBackground
         
         setupBindings()
         setupLayout()
@@ -128,25 +149,26 @@ class SnapComparisonViewController: UIViewController {
     // MARK: - Methods
     func setupLayout() {
         
+        scrollView.addSubview(buttonStackView)
+        
         view.addSubviews([
-            selectSnapPhotoButton,
-            selectSnapPeriodButton,
-            selectSnapDateButton,
+            scrollView,
             collectionView,
             snapAndCategoryCheckLabel
         ])
         
         NSLayoutConstraint.activate([
-            selectSnapPeriodButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            selectSnapPeriodButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
+            scrollView.heightAnchor.constraint(equalToConstant: 44),
+
+            buttonStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            buttonStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 50),
+            buttonStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -10),
+            buttonStackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             
-            selectSnapPhotoButton.topAnchor.constraint(equalTo: selectSnapPeriodButton.topAnchor),
-            selectSnapPhotoButton.trailingAnchor.constraint(equalTo: selectSnapPeriodButton.leadingAnchor, constant: -5),
-            
-            selectSnapDateButton.topAnchor.constraint(equalTo: selectSnapPhotoButton.topAnchor),
-            selectSnapDateButton.trailingAnchor.constraint(equalTo: selectSnapPhotoButton.leadingAnchor, constant: -5),
-            
-            collectionView.topAnchor.constraint(equalTo: selectSnapPhotoButton.bottomAnchor, constant: 10),
+            collectionView.topAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),

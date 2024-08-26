@@ -66,7 +66,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         snapData.compactMap { snap in
             guard let date = snap.createdAt else { return nil }
             let formatter = DateFormatter()
-            formatter.dateStyle = .medium
+            formatter.dateFormat = "yyyy년 MM월 d일"
             return UIAction(
                 title: formatter.string(from: date),
                 handler: { [weak self] _ in
@@ -138,7 +138,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
             filterSnaps()
             if let date = selectedDate {
                 let formatter = DateFormatter()
-                formatter.dateStyle = .medium
+                formatter.dateFormat = "yyyy년 MM월 d일"
                 updateSnapDateButtonTitle?(formatter.string(from: date))
             } else {
                 updateSnapDateButtonTitle?("날짜 선택")
@@ -180,7 +180,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         }
         filteredSnapData = filterSnapsByPeriod(snapData, periodType: snapPeriodType)
         
-        if snapPhotoSelectionType == "메인 사진" {
+        if snapPhotoSelectionType == "메인" {
             filteredSnapData = filteredSnapData.map({ snap in
                 let mainImage = snap.imageUrls.first.map { [$0] } ?? []
                 guard let createdAt = snap.createdAt else { return Snap(imageUrls: [], createdAt: Date()) }

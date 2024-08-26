@@ -71,7 +71,7 @@ class SnapComparisonSheetViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .customBackground
         
         setupLayout()
         setupPageViewController()
@@ -201,7 +201,7 @@ extension SnapComparisonSheetViewController: UIPageViewControllerDelegate, UIPag
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? SnapPhotoViewController else { return nil }
         let index = viewController.index - 1
-        guard index > 0 else { return nil }
+        guard index >= 0 else { return nil }
         return viewControllerAt(index: index )
     }
     
