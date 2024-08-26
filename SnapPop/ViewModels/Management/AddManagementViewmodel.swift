@@ -209,16 +209,17 @@ class AddManagementViewModel: CategoryChangeDelegate {
         var completions: [String: Int] = [:]
         let calendar = Calendar.current
         let endDate = calendar.date(byAdding: .month, value: 6, to: startDate)!
-        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         if repeatInterval == 0 {
             // 반복 주기가 0일 때는 시작일만 저장
-            let dateString = ISO8601DateFormatter().string(from: startDate)
+            let dateString = dateFormatter.string(from: startDate)
             completions[dateString] = 0
         } else {
             // 반복 주기가 0보다 클 때는 기존 로직 유지
             var currentDate = startDate
             while currentDate < endDate {
-                let dateString = ISO8601DateFormatter().string(from: currentDate)
+                let dateString = dateFormatter.string(from: currentDate)
                 completions[dateString] = 0 // 초기값은 미완료(0)로 설정
                 currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
             }

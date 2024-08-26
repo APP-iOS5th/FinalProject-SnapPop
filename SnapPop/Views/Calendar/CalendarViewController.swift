@@ -26,6 +26,7 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
     private var dashBarTopConstraint: NSLayoutConstraint?
     private var isDoneChart: IsDonePercentageChart!
     private var costChart: CostChart!
+    private let dateFormatter = DateFormatter()
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -434,10 +435,11 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
     }
     
     private func filteringMatchingManagements() {
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         selectedDate = selectedDateComponents?.date ?? Date()
         matchingManagements = managements.filter { management in
             management.completions.keys.contains { key in
-                if let keyDate = ISO8601DateFormatter().date(from: key) {
+                if let keyDate = dateFormatter.date(from: key) {
                     return Calendar.current.isDate(keyDate, inSameDayAs: selectedDate)
                 }
                 return false
@@ -486,7 +488,7 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
             fatalError("Unable to dequeue CustomTableViewCell")
         }
         filteringMatchingManagements()
-        
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         if matchingManagements.isEmpty {
             cell.label.text = "등록된 자기관리가 없습니다."
             cell.label.textAlignment = .center
@@ -499,7 +501,7 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
             cell.checkboxButton.tag = indexPath.row
             cell.label.textAlignment = .left
             let isCompleted = management.completions.contains { (key, value) in
-                if let keyDate = ISO8601DateFormatter().date(from: key),
+                if let keyDate = dateFormatter.date(from: key),
                    Calendar.current.isDate(keyDate, inSameDayAs: selectedDate) {
                     return value == 1
                 }
@@ -514,11 +516,13 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
     @objc func checkboxTapped(_ sender: UIButton) {
         sender.isSelected.toggle()
         filteringMatchingManagements()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+
         let index = sender.tag
         let management = matchingManagements[index]
         var dateKey: String = ""
         let completionState = management.completions.compactMap { (key, value) -> Bool? in
-            if let keyDate = ISO8601DateFormatter().date(from: key), Calendar.current.isDate(keyDate, inSameDayAs: selectedDate) {
+            if let keyDate = dateFormatter.date(from: key), Calendar.current.isDate(keyDate, inSameDayAs: selectedDate) {
                 dateKey = key
                 return value == 1
             }
