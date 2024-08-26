@@ -25,9 +25,24 @@ class AddManagementViewModel: CategoryChangeDelegate {
 
     let repeatOptions = ["매일", "매주", "안함"]
     
-    init(categoryId: String) {
+    init(categoryId: String, management: Management) {
         self.categoryId = categoryId
-        self.management = Management(
+        self.management = management
+        
+        // 기존 management 값으로 초기화
+        self.title = management.title
+        self.memo = management.memo
+        self.color = UIColor(hexString: management.color) ?? .black
+        self.startDate = management.startDate
+        self.repeatCycle = management.repeatCycle
+        self.alertTime = management.alertTime
+        self.alertStatus = management.alertStatus
+        
+        bindManagementData()
+    }
+    
+    convenience init(categoryId: String) {
+        let defaultManagement = Management(
             title: "",
             memo: "",
             color: "#000000",
@@ -37,7 +52,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
             alertStatus: false,
             completions: [:]
         )
-        bindManagementData()
+        self.init(categoryId: categoryId, management: defaultManagement)
     }
     
     private func bindManagementData() {

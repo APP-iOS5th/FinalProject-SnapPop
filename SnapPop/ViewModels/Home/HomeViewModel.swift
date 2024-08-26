@@ -39,7 +39,7 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
     func addManagement(_ management: Management) {
         checklistItems.append(management)
     }
-    
+    // 관리 불러오기
     func fetchManagements(categoryId: String) {
         managementService.loadManagements(categoryId: categoryId) { [weak self] result in
             switch result {
@@ -50,6 +50,33 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
                 }
             case .failure(let error):
                 print("Error fetching managements: \(error)")
+            }
+        }
+    }
+    // 관리 삭제
+    func deleteManagement(categoryId: String, managementId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        managementService.deleteManagement(categoryId: categoryId, managementId: managementId) { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
+    }
+    // 관리 편집 후 업데이트
+    func updateManagement(categoryId: String, managementId: String, updatedManagement: Management, completion: @escaping (Result<Void, Error>) -> Void) {
+        let db = ManagementService()
+        db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: updatedManagement) { result in
+            switch result {
+            case .success():
+                DispatchQueue.main.async {
+                    if let index = self.checklistItems.firstIndex(where: { $0.id == managementId }) {
+                        self.checklistItems[index] = updatedManagement
+                    }
+                    completion(.success(()))
+                }
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }

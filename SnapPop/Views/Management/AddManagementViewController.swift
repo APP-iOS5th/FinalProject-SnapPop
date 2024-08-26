@@ -13,6 +13,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // MARK: - Properties
     private let viewModel: AddManagementViewModel
     var homeViewModel: HomeViewModel?
+    var onSave: ((Management) -> Void)? 
     
     private var cancellables = Set<AnyCancellable>()
     private var isTimePickerVisible = false
@@ -124,6 +125,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             case .success:
                 if let management = self?.viewModel.management {
                     self?.homeViewModel?.addManagement(management)
+                    self?.onSave?(management)  // 변경된 저장 항목을 저장 
                 }
                 self?.navigationController?.popViewController(animated: true)
             case .failure(let error):

@@ -92,12 +92,32 @@ class ChecklistTableViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let deleteAction = UIContextualAction(style: .destructive, title: nil) { (action, view, completionHandler) in
-            if let viewModel = self.viewModel {
-                viewModel.checklistItems.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .automatic)
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] (action, view, completionHandler) in
+            guard let self = self, let viewModel = self.viewModel else {
+                completionHandler(false)
+                return
             }
-            completionHandler(true)
+            
+            // Firebase에서 항목 삭제
+            let itemToDelete = viewModel.checklistItems[indexPath.row]
+            viewModel.deleteManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: itemToDelete.id ?? "") { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success():
+                        // 삭제가 성공한 경우 UI 업데이트
+                        viewModel.checklistItems.remove(at: indexPath.row)
+                        tableView.deleteRows(at: [indexPath], with: .automatic)
+                        completionHandler(true)
+                    case .failure(let error):
+                        // 삭제가 실패한 경우 사용자에게 알림
+                        print("Failed to delete management: \(error.localizedDescription)")
+                        let alert = UIAlertController(title: "삭제 실패", message: "관리 항목을 삭제할 수 없습니다. 다시 시도해 주세요.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .default))
+                        self.present(alert, animated: true)
+                        completionHandler(false)
+                    }
+                }
+            }
         }
         deleteAction.backgroundColor = .red
         deleteAction.image = UIImage(systemName: "trash")
@@ -108,17 +128,28 @@ class ChecklistTableViewController: UITableViewController {
                 return
             }
             
-            // 선택한 항목 가져오기
             let itemToEdit = viewModel.checklistItems[indexPath.row]
-            
-            // 기존 항목을 사용하여 AddManagementViewModel 초기화
-            let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default")
-            addManagementViewModel.management = itemToEdit
-            
-            // AddManagementViewController 초기화
+            let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
             let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
-            addManagementVC.homeViewModel = viewModel // HomeViewModel 전달
-            
+            addManagementVC.homeViewModel = viewModel
+
+            addManagementVC.onSave = { updatedManagement in
+                viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
+                    switch result {
+                    case .success():
+                        DispatchQueue.main.async {
+                            // 데이터가 수정되었으므로 기존 항목을 업데이트
+                            if let index = viewModel.checklistItems.firstIndex(where: { $0.id == updatedManagement.id }) {
+                                viewModel.checklistItems[index] = updatedManagement
+                                self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                            }
+                        }
+                    case .failure(let error):
+                        print("Failed to update management: \(error.localizedDescription)")
+                    }
+                }
+            }
+
             self.navigationController?.pushViewController(addManagementVC, animated: true)
             completionHandler(true)
         }
@@ -130,7 +161,7 @@ class ChecklistTableViewController: UITableViewController {
         
         return configuration
     }
-    
+
     // 왼쪽으로 스와이프할 때 핀 고정 액션 추가
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let pinAction = UIContextualAction(style: .normal, title: nil) { (action, view, completionHandler) in
