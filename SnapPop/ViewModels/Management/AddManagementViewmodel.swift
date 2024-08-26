@@ -147,17 +147,17 @@ class AddManagementViewModel: CategoryChangeDelegate {
         
         let db = ManagementService()
         self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
-        print("Attempting to save management with data:")
-        print("Category ID: \(categoryId)")
-        print("Management ID: \(management.id ?? "nil")")
-        print("Title: \(management.title)")
-        print("Memo: \(management.memo)")
-        print("Color: \(management.color)")
-        print("Start Date: \(management.startDate)")
-        print("Repeat Cycle: \(management.repeatCycle)")
-        print("Alert Time: \(management.alertTime)")
-        print("Alert Status: \(management.alertStatus)")
-        print("Completions: \(management.completions)")
+//        print("Attempting to save management with data:")
+//        print("Category ID: \(categoryId)")
+//        print("Management ID: \(management.id ?? "nil")")
+//        print("Title: \(management.title)")
+//        print("Memo: \(management.memo)")
+//        print("Color: \(management.color)")
+//        print("Start Date: \(management.startDate)")
+//        print("Repeat Cycle: \(management.repeatCycle)")
+//        print("Alert Time: \(management.alertTime)")
+//        print("Alert Status: \(management.alertStatus)")
+//        print("Completions: \(management.completions)")
 
         db.saveManagement(categoryId: categoryId, management: management) { result in
             switch result {

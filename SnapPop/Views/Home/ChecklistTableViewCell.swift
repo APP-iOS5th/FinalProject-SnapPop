@@ -8,7 +8,7 @@
 import UIKit
 
 class ChecklistTableViewCell: UITableViewCell {
-    
+
     // 체크박스 버튼
     let checkBox: UIButton = {
         let button = UIButton(type: .custom)
@@ -49,22 +49,25 @@ class ChecklistTableViewCell: UITableViewCell {
     
     // MARK: - Configure Cell with Checklist Item
     func configure(with item: Management) {
+        print("Configuring cell with item: \(item)")
+        
         checkLabel.text = item.title
         
-        // 색상 설정
+        // 체크박스 색상 설정
         if let color = UIColor(hex: item.color) {
-            checkLabel.textColor = color
             updateCheckBoxImages(with: color)
-            checkBox.layer.borderColor = color.cgColor // 체크박스 버튼의 테두리 색상을 설정
-            checkBox.tintColor = color // 체크박스 버튼의 틴트 색상 설정
+            checkBox.layer.borderColor = color.cgColor
+            checkBox.tintColor = color
         } else {
-            checkLabel.textColor = .black
+            // 색상이 유효하지 않을 경우 기본 색상으로 설정
+            checkBox.layer.borderColor = UIColor.lightGray.cgColor
+            checkBox.tintColor = UIColor.lightGray
         }
         
         // 체크박스 상태 설정
         checkBox.isSelected = item.alertStatus
     }
-    
+
     // MARK: - 체크박스 이미지 업데이트
     private func updateCheckBoxImages(with color: UIColor) {
         let noncheckmarkImage = UIImage(systemName: "circle")?.withTintColor(color, renderingMode: .alwaysOriginal)
@@ -82,14 +85,30 @@ class ChecklistTableViewCell: UITableViewCell {
 // UIColor 확장 - HEX 문자열을 UIColor로 변환
 extension UIColor {
     convenience init?(hex: String) {
-        var rgb: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&rgb)
+        var hexString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         
-        let red = CGFloat((rgb >> 16) & 0xFF) / 255.0
-        let green = CGFloat((rgb >> 8) & 0xFF) / 255.0
-        let blue = CGFloat(rgb & 0xFF) / 255.0
+        if hexString.hasPrefix("#") {
+            hexString.remove(at: hexString.startIndex)
+        }
+        
+        var rgb: UInt64 = 0
+        guard Scanner(string: hexString).scanHexInt64(&rgb) else { return nil }
+        
+        let red, green, blue: CGFloat
+        
+        switch hexString.count {
+        case 6:
+            red = CGFloat((rgb >> 16) & 0xFF) / 255.0
+            green = CGFloat((rgb >> 8) & 0xFF) / 255.0
+            blue = CGFloat(rgb & 0xFF) / 255.0
+        case 8: // ARGB format
+            red = CGFloat((rgb >> 16) & 0xFF) / 255.0
+            green = CGFloat((rgb >> 8) & 0xFF) / 255.0
+            blue = CGFloat(rgb & 0xFF) / 255.0
+        default:
+            return nil
+        }
         
         self.init(red: red, green: green, blue: blue, alpha: 1.0)
     }
 }
-
