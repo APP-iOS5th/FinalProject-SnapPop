@@ -125,7 +125,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             case .success:
                 if let management = self?.viewModel.management {
                     self?.homeViewModel?.addManagement(management)
-                    self?.onSave?(management)  // 변경된 저장 항목을 저장 
+                    self?.onSave?(management)  // 변경된 저장 항목을 저장
                 }
                 self?.navigationController?.popViewController(animated: true)
             case .failure(let error):
@@ -217,12 +217,16 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         bind(viewModel.$title) { [weak self] title in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TitleCell {
                 cell.textField.text = title
+                cell.textField.autocorrectionType = .no
+                cell.textField.spellCheckingType = .no
             }
         }
 
         bind(viewModel.$memo) { [weak self] memo in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? MemoCell {
                 cell.textField.text = memo
+                cell.textField.autocorrectionType = .no
+                cell.textField.spellCheckingType = .no
             }
         }
 
@@ -284,6 +288,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.text = viewModel.title
                 cell.textField.addTarget(self, action: #selector(titleChanged(_:)), for: .editingChanged)
                 cell.textField.delegate = self
+                cell.textField.autocorrectionType = .no
+                cell.textField.spellCheckingType = .no
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "ColorCell", for: indexPath) as? ColorCell else { return UITableViewCell() }
@@ -296,6 +302,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.text = viewModel.memo
                 cell.textField.addTarget(self, action: #selector(memoChanged(_:)), for: .editingChanged)
                 cell.textField.delegate = self
+                cell.textField.autocorrectionType = .no
+                cell.textField.spellCheckingType = .no
                 return cell
             default:
                 return UITableViewCell()
