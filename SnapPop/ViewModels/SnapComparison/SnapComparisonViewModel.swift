@@ -180,7 +180,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         }
         filteredSnapData = filterSnapsByPeriod(snapData, periodType: snapPeriodType)
         
-        if snapPhotoSelectionType == "메인 사진" {
+        if snapPhotoSelectionType == "메인" {
             filteredSnapData = filteredSnapData.map({ snap in
                 let mainImage = snap.imageUrls.first.map { [$0] } ?? []
                 guard let createdAt = snap.createdAt else { return Snap(imageUrls: [], createdAt: Date()) }
