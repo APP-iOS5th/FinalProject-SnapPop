@@ -54,6 +54,7 @@
 		C24E0AFC2C762ECF00CCC055 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */; };
 		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
 		C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C8132C784610004F569A /* UIImageView+Extensions.swift */; };
+		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
 		C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */; };
@@ -69,6 +70,7 @@
 		EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB492C72CAD2007F8987 /* Management.swift */; };
 		EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB4B2C72CAEC007F8987 /* Snap.swift */; };
 		EA664E4E2C73914B0034B998 /* CustomCropToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */; };
+		EAE34EB32C776E6700BEFF3A /* CustomDatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE34EB22C776E6700BEFF3A /* CustomDatePickerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -117,6 +119,7 @@
 		C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
+		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
 		C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
@@ -132,6 +135,7 @@
 		EA57EB4B2C72CAEC007F8987 /* Snap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snap.swift; sourceTree = "<group>"; };
 		EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCropToolbar.swift; sourceTree = "<group>"; };
 		EA664E532C7455F80034B998 /* CropViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropViewController.swift; sourceTree = "<group>"; };
+		EAE34EB22C776E6700BEFF3A /* CustomDatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDatePickerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -362,6 +366,7 @@
 				4AD29AD42C6AE1F200A9BEDD /* UIView+Extensions.swift */,
 				4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */,
 				C259C8132C784610004F569A /* UIImageView+Extensions.swift */,
+				C259C81A2C787B89004F569A /* NotificationManager.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -429,6 +434,7 @@
 				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
 				EA664E532C7455F80034B998 /* CropViewController.swift */,
 				EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */,
+				EAE34EB22C776E6700BEFF3A /* CustomDatePickerViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -566,6 +572,7 @@
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
+				C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */,
 				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
 				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
@@ -573,6 +580,7 @@
 				4AD29AA42C65051B00A9BEDD /* SnapComparisonViewModel.swift in Sources */,
 				4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
+				EAE34EB32C776E6700BEFF3A /* CustomDatePickerViewController.swift in Sources */,
 				8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */,
 				C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */,
 				C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */,

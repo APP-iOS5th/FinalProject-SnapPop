@@ -34,7 +34,9 @@ class HomeViewController:
     UITableViewDataSource,
     UITableViewDelegate,
     UICollectionViewDataSource,
-    UICollectionViewDelegateFlowLayout {
+    UICollectionViewDelegateFlowLayout,
+    UICollectionViewDragDelegate,
+    UICollectionViewDropDelegate {
     
     // ViewModel
     private var viewModel = HomeViewModel(snapService: SnapService())
@@ -156,6 +158,10 @@ class HomeViewController:
                 self?.updateSnapCollectionView()
             }
         }.store(in: &cancellables)
+
+        // Set the drag and drop delegates
+        snapCollectionView.dragDelegate = self
+        snapCollectionView.dropDelegate = self
     }
     
     @objc private func updateSnapCollectionView() {
@@ -175,7 +181,7 @@ class HomeViewController:
     // MARK: 날짜 선택 UI 컨트롤
     private func setupDatePickerContainer() {
         datePickerContainer.translatesAutoresizingMaskIntoConstraints = false
-        datePickerContainer.backgroundColor = UIColor.customButtonColor
+        //datePickerContainer.backgroundColor = UIColor.customButtonColor
         datePickerContainer.layer.cornerRadius = 10
         datePickerContainer.layer.masksToBounds = true
         view.addSubview(datePickerContainer)
@@ -224,6 +230,8 @@ class HomeViewController:
         viewModel.loadSnap(categoryId: categoryId, snapDate: sender.date) { [weak self] in
             self?.updateSnapCollectionView()
         }
+        
+        self.dismiss(animated: false, completion: nil)
     }
     
     // MARK: - 체크리스트 관련 요소 제약조건
@@ -447,6 +455,78 @@ class HomeViewController:
     private func updateUIWithCategories() {
         // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
         print("Loaded categories: \(navigationBarViewModel.categories)")
+    }
+    // MARK: - UICollectionViewDragDelegate
+    func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        guard isEditingMode else { return [] } // 편집 모드가 아닐 경우 빈 배열 반환
+
+        let item = viewModel.snap?.imageUrls[indexPath.item]
+        let itemProvider = NSItemProvider(object: item as! NSString)
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        dragItem.localObject = item
+        return [dragItem]
+    }
+
+    // MARK: - UICollectionViewDropDelegate
+    func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {
+        return isEditingMode && session.canLoadObjects(ofClass: NSString.self) // 편집 모드일 때만 드롭 가능
+    }
+
+    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+        if collectionView.hasActiveDrag {
+            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        }
+        
+        return UICollectionViewDropProposal(operation: .forbidden)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        guard isEditingMode else { return } // 편집 모드가 아닐 경우 아무 작업도 하지 않음
+        guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
+        guard let categoryId = viewModel.selectedCategoryId, let snap = viewModel.snap else { return }
+
+        for item in coordinator.items {
+            if let sourceIndexPath = item.sourceIndexPath {
+                let sourceIndex = sourceIndexPath.item
+                let destinationIndex = destinationIndexPath.item
+
+                // Snap 데이터 업데이트 및 UICollectionView의 아이템 이동
+                updateSnapAndMoveItem(collectionView: collectionView, from: sourceIndex, to: destinationIndex, sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
+            }
+        }
+    }
+
+    func updateSnapAndMoveItem(collectionView: UICollectionView, from sourceIndex: Int, to destinationIndex: Int, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
+        guard sourceIndex != destinationIndex, sourceIndex < viewModel.snap?.imageUrls.count ?? 0 else { return }
+
+        // Snap 데이터 업데이트
+        let itemToMove = viewModel.snap?.imageUrls[sourceIndex]
+        viewModel.snap?.imageUrls.remove(at: sourceIndex)
+        if destinationIndex >= (viewModel.snap?.imageUrls.count ?? 0) {
+            viewModel.snap?.imageUrls.append(itemToMove!)
+        } else {
+            viewModel.snap?.imageUrls.insert(itemToMove!, at: destinationIndex)
+        }
+        print("Item moved from index \(sourceIndex) to \(destinationIndex)")
+        print("Updated imageUrls: \(viewModel.snap?.imageUrls ?? [])")
+
+        // CollectionView에서 아이템 이동
+        collectionView.performBatchUpdates({
+            collectionView.moveItem(at: sourceIndexPath, to: destinationIndexPath)
+        }, completion: { _ in
+            // Update the snap instead of saving
+            self.viewModel.updateSnap(categoryId: self.viewModel.selectedCategoryId!, snap: self.viewModel.snap!, newImages: self.viewModel.snap?.imageUrls.compactMap { UIImage(named: $0) } ?? []) { result in
+                switch result {
+                case .success(let updatedSnap):
+                    self.viewModel.snap = updatedSnap
+                    print("Snap updated successfully.")
+                    // 즉시 UI 업데이트
+                    self.updateSnapCollectionView() // UI를 즉시 업데이트
+                case .failure(let error):
+                    print("Error updating snap: \(error.localizedDescription)")
+                }
+            }
+        })
     }
 }
 

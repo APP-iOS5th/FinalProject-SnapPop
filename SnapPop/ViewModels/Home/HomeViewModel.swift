@@ -63,6 +63,14 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
                 self.snapService.saveSnap(categoryId: categoryId, imageUrls: finalImageUrls, createdAt: createdAt) { result in
                     switch result {
                     case .success(let snap):
+                        let now = Date()  // 현재 날짜와 시간을 나타내는 Date 객체 생성
+                        let calendar = Calendar.current
+                        let hour = calendar.component(.hour, from: now)   // 현재 시간
+                        
+                        // 기존 알림은 지우고 새로운 스냅 알림 등록
+                        NotificationManager.shared.removeNotification(identifiers: ["dailySnapNotification"])
+                        NotificationManager.shared.scheduleDailySnapNotification(hour: hour)
+                        
                         completion(.success(snap))
                     case .failure(let error):
                         completion(.failure(error))
