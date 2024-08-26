@@ -129,6 +129,51 @@ class AddManagementViewModel: CategoryChangeDelegate {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "날짜를 선택해야 합니다."])))
             return
         }
+        
+        let db = ManagementService()
+        self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
+        print("Attempting to save management with data:")
+        print("Category ID: \(categoryId)")
+        print("Management ID: \(management.id ?? "nil")")
+        print("Title: \(management.title)")
+        print("Memo: \(management.memo)")
+        print("Color: \(management.color)")
+        print("Start Date: \(management.startDate)")
+        print("Repeat Cycle: \(management.repeatCycle)")
+        print("Alert Time: \(management.alertTime)")
+        print("Alert Status: \(management.alertStatus)")
+        print("Completions: \(management.completions)")
+
+        db.saveManagement(categoryId: categoryId, management: management) { result in
+            switch result {
+            case .success(let management):
+                print("Management saved successfully")
+                
+                if management.alertStatus {
+                    if management.repeatCycle == 0 {
+                        // 반복 안함으로 설정한 알림
+                        NotificationManager.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
+                                                                       alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                    }
+                    else {
+                        if self.isSpecificDateInPast(startDate: self.startDate, alertTime: self.alertTime) {
+                            // 만약 현재 시간보다 과거부터 시작하는 알림을 등록하면 초기 알림을 등록하여 반복 알림을 트리거 할 필요가 없으므로 바로 반복 알림을 등록해줌
+                            NotificationManager.shared.repeatingNotification(managementId: management.id ?? "", startDate: management.startDate,
+                                                                             alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                        } else {
+                            NotificationManager.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
+                                                                           alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                        }
+                    }
+                }
+                
+                completion(.success(()))
+            case .failure(let error):
+                print("Failed to save management: \(error.localizedDescription)")
+                completion(.failure(error))
+                
+            }
+        }
     }
     
     func generateSixMonthsCompletions(startDate: Date, repeatInterval: Int) -> [String: Int] {
@@ -202,4 +247,3 @@ extension UIColor {
         self.init(red: r, green: g, blue: b, alpha: a)
     }
 }
-
