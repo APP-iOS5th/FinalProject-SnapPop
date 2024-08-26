@@ -9,12 +9,15 @@ import UIKit
 import Photos
 import AVFoundation
 import Combine
+import FirebaseFirestore
 
 // MARK: - ViewModel
 class HomeViewModel: ObservableObject, CategoryChangeDelegate {
     
     private let snapService: SnapService
     private let managementService = ManagementService() // ManagementService 인스턴스
+    private var cancellables = Set<AnyCancellable>()
+
     // MARK: - Properties
     @Published var checklistItems: [Management] = []
     @Published var snap: Snap?
@@ -32,6 +35,24 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.string(from: sender.date)
     }
+    
+    func addManagement(_ management: Management) {
+        checklistItems.append(management)
+    }
+    
+    func fetchManagements(categoryId: String) {
+        managementService.loadManagements(categoryId: categoryId) { [weak self] result in
+            switch result {
+            case .success(let managements):
+                DispatchQueue.main.async {
+                    self?.checklistItems = managements
+                }
+            case .failure(let error):
+                print("Error fetching managements: \(error)")
+            }
+        }
+    }
+
     
     // 스냅 저장
     func saveSnap(categoryId: String, images: [UIImage], createdAt: Date, completion: @escaping (Result<Snap, Error>) -> Void) {

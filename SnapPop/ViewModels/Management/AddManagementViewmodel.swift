@@ -21,8 +21,8 @@ class AddManagementViewModel: CategoryChangeDelegate {
     @Published var alertStatus: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
-    private var management: Management
-    
+    var management: Management
+
     let repeatOptions = ["매일", "매주", "안함"]
     
     init(categoryId: String) {

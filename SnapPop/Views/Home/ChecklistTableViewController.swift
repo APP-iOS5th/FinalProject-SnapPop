@@ -11,15 +11,15 @@ class ChecklistTableViewController: UITableViewController {
     
     var viewModel: HomeViewModel?
     
-    // 관리 항목 추가버튼
+    // 관리 항목 추가 버튼
     private let selfcareAddButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("새로운 관리 추가하기 + ", for: .normal)
+        button.setTitle("새로운 관리 추가하기 +", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(didselfcareAddButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didSelfcareAddButton), for: .touchUpInside)
         return button
     }()
     
@@ -35,26 +35,34 @@ class ChecklistTableViewController: UITableViewController {
         tableView.dataSource = self
         tableView.delegate = self
         
-        // 임시 데이터 추가
+        // 테스트 데이터 설정
         setupTestData()
     }
     
     private func setupTestData() {
+        // 임시 데이터 로드
+        viewModel?.checklistItems = [
+            Management(title: "테스트 1", memo: "", color: "#FF0000", startDate: Date(), repeatCycle: 0, alertTime: Date(), alertStatus: false, completions: [:]),
+            Management(title: "테스트 2", memo: "", color: "#00FF00", startDate: Date(), repeatCycle: 1, alertTime: Date(), alertStatus: true, completions: [:]),
+            Management(title: "테스트 3", memo: "", color: "#0000FF", startDate: Date(), repeatCycle: 2, alertTime: Date(), alertStatus: false, completions: [:])
+        ]
         tableView.reloadData() // 데이터 변경 반영
     }
     
     private func setupButtonConstraints() {
         NSLayoutConstraint.activate([
-            selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor), // 수평 중앙 정렬
-            selfcareAddButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10), // 셀 하단에 위치
-            selfcareAddButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1), // 높이 비율 조정
-            selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8) // 너비 비율 조정
+            selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            selfcareAddButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            selfcareAddButton.heightAnchor.constraint(equalToConstant: 50),
+            selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
         ])
     }
-    // AddmanagementViewController navigation 연결
-    @objc private func didselfcareAddButton() {
+    
+    // 관리 항목 추가 버튼 클릭 시 동작
+    @objc private func didSelfcareAddButton() {
         let addManagementViewModel = AddManagementViewModel(categoryId: "default")
         let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
+        addManagementVC.homeViewModel = viewModel // HomeViewModel 전달
 
         if let parentVC = self.view.parentViewController(), !(parentVC.navigationController?.viewControllers.contains(addManagementVC) ?? false) {
             parentVC.navigationController?.pushViewController(addManagementVC, animated: true)
@@ -63,12 +71,15 @@ class ChecklistTableViewController: UITableViewController {
         }
     }
     
-    // MARK: - Table view data source
+    // MARK: - UITableViewDataSource
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.checklistItems.count ?? 0
     }
     
-    // MARK: Configure and Return Cell for Row
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
         if let item = viewModel?.checklistItems[indexPath.row] {
@@ -79,9 +90,7 @@ class ChecklistTableViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        // 삭제 액션
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { (action, view, completionHandler) in
-            // viewModel에서 항목 삭제
             if let viewModel = self.viewModel {
                 viewModel.checklistItems.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -89,9 +98,8 @@ class ChecklistTableViewController: UITableViewController {
             completionHandler(true)
         }
         deleteAction.backgroundColor = .red
-        deleteAction.image = UIImage(systemName: "trash") // 삭제 액션을 위한 SF Symbol
+        deleteAction.image = UIImage(systemName: "trash")
         
-        // 수정 액션
         let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
             guard let cell = tableView.cellForRow(at: indexPath) as? ChecklistTableViewCell else { return }
             cell.enterEditMode()
@@ -104,5 +112,10 @@ class ChecklistTableViewController: UITableViewController {
         configuration.performsFirstActionWithFullSwipe = false
         
         return configuration
+    }
+    
+    // 키보드 내리기
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
     }
 }

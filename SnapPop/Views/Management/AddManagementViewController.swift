@@ -9,9 +9,11 @@ import Combine
 import UIKit
 
 class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NotificationCellDelegate, UITextFieldDelegate {
-
+    
     // MARK: - Properties
     private let viewModel: AddManagementViewModel
+    var homeViewModel: HomeViewModel?
+    
     private var cancellables = Set<AnyCancellable>()
     private var isTimePickerVisible = false
     
@@ -21,7 +23,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-
+    
     private let addDetailButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("상세 비용 추가하기", for: .normal)
@@ -49,8 +51,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         setupUI()
         bindViewModel()
         if let navigationController = self.navigationController as? CustomNavigationBarController {
-                    navigationController.viewModel.delegate = viewModel
-                }
+            navigationController.viewModel.delegate = viewModel
+        }
         print(UserDefaults.standard.dictionaryRepresentation())
         viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
         bindViewModel() // ViewModel 바인딩(combine)
@@ -102,25 +104,27 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: addDetailButton.topAnchor, constant: -10),
-
+            
             addDetailButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addDetailButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             addDetailButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             addDetailButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
-
+    
     // MARK: - Actions
     @objc private func cancelButtonTapped() {
         // HomeViewController로 돌아가기
         navigationController?.popViewController(animated: true)
     }
-
+    
     @objc private func saveButtonTapped() {
-        // ViewModel을 통해 데이터를 저장하고, 성공 시 이전 화면으로 이동
         viewModel.save { [weak self] result in
             switch result {
             case .success:
+                if let management = self?.viewModel.management {
+                    self?.homeViewModel?.addManagement(management)
+                }
                 self?.navigationController?.popViewController(animated: true)
             case .failure(let error):
                 let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)

@@ -37,6 +37,7 @@ class ChecklistTableViewCell: UITableViewCell {
         
         contentView.addSubview(checkBox)
         contentView.addSubview(checkLabel)
+        contentView.addSubview(textField) // 텍스트 필드 추가
         
         NSLayoutConstraint.activate([
             checkBox.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
@@ -91,12 +92,11 @@ class ChecklistTableViewCell: UITableViewCell {
         checkBox.isSelected.toggle()
     }
     
-    
     // 편집 모드로 전환
     func enterEditMode() {
         checkLabel.isHidden = true
         textField.isHidden = false
-//        textField.becomeFirstResponder() // 자동으로 키보드가 나타남
+        textField.becomeFirstResponder() // 자동으로 키보드가 나타남
     }
     
     // 편집 종료시 호출
@@ -106,7 +106,6 @@ class ChecklistTableViewCell: UITableViewCell {
         textField.isHidden = true
     }
 }
-
 
 // UIColor 확장 - HEX 문자열을 UIColor로 변환
 extension UIColor {
