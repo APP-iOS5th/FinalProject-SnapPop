@@ -149,6 +149,24 @@ class AddManagementViewModel: CategoryChangeDelegate {
         }
         return completions
     }
+    
+    // 시작 날짜+시간이 현재보다 과거인지 아닌지를 확인하는 함수
+    func isSpecificDateInPast(startDate: Date, alertTime: Date) -> Bool {
+        let calendar = Calendar.current
+        
+        // startDate에서 year, month, day를 추출
+        var dateComponents = calendar.dateComponents([.year, .month, .day], from: startDate)
+        
+        // alertTime에서 hour, minute를 추출
+        dateComponents.hour = calendar.component(.hour, from: alertTime)
+        dateComponents.minute = calendar.component(.minute, from: alertTime)
+        
+        if let specificDate = calendar.date(from: dateComponents) {
+            return specificDate < Date()
+        } else {
+            return false
+        }
+    }
 }
 
 extension UIColor {
