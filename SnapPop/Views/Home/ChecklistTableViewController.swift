@@ -44,9 +44,9 @@ class ChecklistTableViewController: UITableViewController {
         
         // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
         viewModel?.$checklistItems
-            .receive(on: RunLoop.main) // UI 업데이트는 메인 스레드에서 이루어져야 합니다.
+            .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                self?.tableView.reloadData() // 데이터 변경 시 테이블 뷰를 리로드
+                self?.tableView.reloadData()
             }
             .store(in: &cancellables)
     }
@@ -93,68 +93,68 @@ class ChecklistTableViewController: UITableViewController {
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] (action, view, completionHandler) in
-            guard let self = self, let viewModel = self.viewModel else {
-                completionHandler(false)
-                return
-            }
-            
-            // Firebase에서 항목 삭제
-            let itemToDelete = viewModel.checklistItems[indexPath.row]
-            viewModel.deleteManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: itemToDelete.id ?? "") { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success():
-                        // 삭제가 성공한 경우 UI 업데이트
-                        viewModel.checklistItems.remove(at: indexPath.row)
-                        tableView.deleteRows(at: [indexPath], with: .automatic)
-                        completionHandler(true)
-                    case .failure(let error):
-                        // 삭제가 실패한 경우 사용자에게 알림
-                        print("Failed to delete management: \(error.localizedDescription)")
-                        let alert = UIAlertController(title: "삭제 실패", message: "관리 항목을 삭제할 수 없습니다. 다시 시도해 주세요.", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "확인", style: .default))
-                        self.present(alert, animated: true)
+                    guard let self = self, let viewModel = self.viewModel else {
                         completionHandler(false)
+                        return
                     }
-                }
-            }
-        }
-        deleteAction.backgroundColor = .red
-        deleteAction.image = UIImage(systemName: "trash")
-        
-        let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
-            guard let self = self, let viewModel = self.viewModel else {
-                completionHandler(false)
-                return
-            }
-            
-            let itemToEdit = viewModel.checklistItems[indexPath.row]
-            let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
-            let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
-            addManagementVC.homeViewModel = viewModel
-
-            addManagementVC.onSave = { updatedManagement in
-                viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
-                    switch result {
-                    case .success():
+                    
+                    let itemToDelete = viewModel.checklistItems[indexPath.row]
+                    viewModel.deleteManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: itemToDelete.id ?? "") { result in
                         DispatchQueue.main.async {
-                            // 데이터가 수정되었으므로 기존 항목을 업데이트
-                            if let index = viewModel.checklistItems.firstIndex(where: { $0.id == updatedManagement.id }) {
-                                viewModel.checklistItems[index] = updatedManagement
-                                self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                            switch result {
+                            case .success():
+                                viewModel.checklistItems.remove(at: indexPath.row)
+                                tableView.deleteRows(at: [indexPath], with: .automatic)
+                                completionHandler(true)
+                            case .failure(let error):
+                                print("Failed to delete management: \(error.localizedDescription)")
+                                let alert = UIAlertController(title: "삭제 실패", message: "관리 항목을 삭제할 수 없습니다. 다시 시도해 주세요.", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "확인", style: .default))
+                                self.present(alert, animated: true)
+                                completionHandler(false)
                             }
                         }
-                    case .failure(let error):
-                        print("Failed to update management: \(error.localizedDescription)")
                     }
                 }
-            }
+                deleteAction.backgroundColor = .red
+                deleteAction.image = UIImage(systemName: "trash")
+        
+        let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
+                    guard let self = self, let viewModel = self.viewModel else {
+                        completionHandler(false)
+                        return
+                    }
+                    
+                    let itemToEdit = viewModel.checklistItems[indexPath.row]
+                    let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
+                    let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
+                    addManagementVC.homeViewModel = viewModel
 
-            self.navigationController?.pushViewController(addManagementVC, animated: true)
-            completionHandler(true)
-        }
-        editAction.backgroundColor = .gray
-        editAction.image = UIImage(systemName: "pencil")
+                    addManagementVC.onSave = { [weak self] updatedManagement in
+                        guard let self = self else { return }
+                        viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
+                            DispatchQueue.main.async {
+                                switch result {
+                                case .success():
+                                    if let index = viewModel.checklistItems.firstIndex(where: { $0.id == updatedManagement.id }) {
+                                        viewModel.checklistItems[index] = updatedManagement
+                                        self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                                    }
+                                case .failure(let error):
+                                    print("Failed to update management: \(error.localizedDescription)")
+                                    let alert = UIAlertController(title: "업데이트 실패", message: "관리 항목을 업데이트할 수 없습니다. 다시 시도해 주세요.", preferredStyle: .alert)
+                                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                                    self.present(alert, animated: true)
+                                }
+                            }
+                        }
+                    }
+
+                    self.navigationController?.pushViewController(addManagementVC, animated: true)
+                    completionHandler(true)
+                }
+                editAction.backgroundColor = .gray
+                editAction.image = UIImage(systemName: "pencil")
         
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         configuration.performsFirstActionWithFullSwipe = false
