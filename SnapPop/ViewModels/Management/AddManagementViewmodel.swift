@@ -179,21 +179,24 @@ class AddManagementViewModel: CategoryChangeDelegate {
     }
     
     func generateSixMonthsCompletions(startDate: Date, repeatInterval: Int) -> [String: Int] {
-        // 반복 주기가 0이면 (안함) 빈 딕셔너리 반환
-        guard repeatInterval > 0 else {
-            return [:]
-        }
-        
         var completions: [String: Int] = [:]
         let calendar = Calendar.current
         let endDate = calendar.date(byAdding: .month, value: 6, to: startDate)!
-        var currentDate = startDate
         
-        while currentDate < endDate {
-            let dateString = ISO8601DateFormatter().string(from: currentDate)
-            completions[dateString] = 0 // 초기값은 미완료(0)로 설정
-            currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
+        if repeatInterval == 0 {
+            // 반복 주기가 0일 때는 시작일만 저장
+            let dateString = ISO8601DateFormatter().string(from: startDate)
+            completions[dateString] = 0
+        } else {
+            // 반복 주기가 0보다 클 때는 기존 로직 유지
+            var currentDate = startDate
+            while currentDate < endDate {
+                let dateString = ISO8601DateFormatter().string(from: currentDate)
+                completions[dateString] = 0 // 초기값은 미완료(0)로 설정
+                currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
+            }
         }
+        
         return completions
     }
     
