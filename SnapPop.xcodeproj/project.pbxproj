@@ -54,7 +54,7 @@
 		C24E0AFC2C762ECF00CCC055 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */; };
 		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
 		C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C8132C784610004F569A /* UIImageView+Extensions.swift */; };
-		C259C81B2C787B89004F569A /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationService.swift */; };
+		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
 		C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */; };
@@ -118,7 +118,7 @@
 		C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
-		C259C81A2C787B89004F569A /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
 		C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
@@ -364,7 +364,7 @@
 				4AD29AD42C6AE1F200A9BEDD /* UIView+Extensions.swift */,
 				4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */,
 				C259C8132C784610004F569A /* UIImageView+Extensions.swift */,
-				C259C81A2C787B89004F569A /* NotificationService.swift */,
+				C259C81A2C787B89004F569A /* NotificationManager.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -569,7 +569,7 @@
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
-				C259C81B2C787B89004F569A /* NotificationService.swift in Sources */,
+				C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */,
 				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
 				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,

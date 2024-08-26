@@ -67,8 +67,9 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
                         let calendar = Calendar.current
                         let hour = calendar.component(.hour, from: now)   // 현재 시간
                         
-                        NotificationService.shared.removeNotification(identifier: "dailySnapNotification")
-                        NotificationService.shared.scheduleDailySnapNotification(hour: hour)
+                        // 기존 알림은 지우고 새로운 스냅 알림 등록
+                        NotificationManager.shared.removeNotification(identifier: "dailySnapNotification")
+                        NotificationManager.shared.scheduleDailySnapNotification(hour: hour)
                         
                         completion(.success(snap))
                     case .failure(let error):

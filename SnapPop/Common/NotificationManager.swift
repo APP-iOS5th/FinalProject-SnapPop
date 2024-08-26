@@ -8,14 +8,15 @@
 import Foundation
 import UserNotifications
 
-struct NotificationService {
-    static let shared = NotificationService()
+struct NotificationManager {
+    static let shared = NotificationManager()
     
+    // 스냅 알림
     func scheduleDailySnapNotification(hour: Int) {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in
             if granted {
-                var alertHour: Int = hour <= 20 ? hour : 10
+                var alertHour: Int = hour <= 20 ? hour : 10 // 21시 이후부터는 밤이므로 해당 시간에 알림을 보내지 않고 10시로 시간을 고정해 알림을 보냄
                 let content = UNMutableNotificationContent()
                 content.title = "스냅 등록"
                 content.sound = .default
@@ -24,6 +25,7 @@ struct NotificationService {
                 dateComponents.hour = alertHour
                 dateComponents.minute = 0
                 
+                // 오전, 오후에 보내는 알림 메세지가 각각 다르게 처리
                 if 5 <= alertHour && alertHour < 12 {
                     content.body = "오늘의 스냅을 등록하고 하루를 시작해보세요!"
                 } else {
@@ -42,10 +44,7 @@ struct NotificationService {
         }
     }
     
-    func removeNotification(identifier: String) {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
-    }
-    
+    // 초기 알림 (반복되지 않는 알림이나, 반복되는 알림을 등록하기 위한 트리거로 사용함)
     func initialNotification(managementId: String, startDate: Date, alertTime: Date, repeatCycle: Int, body: String) {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in
@@ -55,6 +54,7 @@ struct NotificationService {
                 content.body = body
                 content.sound = .default
                 
+                // 반복 알림을 등록하는 시점에 사용하기 위해 초기 알림에 정보를 실어서 보내기 위한 userInfo
                 content.userInfo = ["managementId": managementId, "startDate": startDate, "alertTime": alertTime, "repeatCycle": repeatCycle, "body": body]
                 
                 var dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: startDate)
@@ -73,6 +73,7 @@ struct NotificationService {
         }
     }
     
+    // 반복 알림 (매일 반복, 매주 반복)
     func repeatingNotification(managementId: String, startDate: Date, alertTime: Date, repeatCycle: Int, body: String) {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in
@@ -88,7 +89,7 @@ struct NotificationService {
                     dateComponents.hour = Calendar.current.component(.hour, from: alertTime)
                     dateComponents.minute = Calendar.current.component(.minute, from: alertTime)
                 } else if repeatCycle == 7 {
-                    dateComponents.weekday = Calendar.current.component(.weekday, from: startDate)
+                    dateComponents.weekday = Calendar.current.component(.weekday, from: startDate) // 매주 반복 시 시작 날짜의 요일을 받아와 해당 요일마다 반복하도록 함
                     dateComponents.hour = Calendar.current.component(.hour, from: alertTime)
                     dateComponents.minute = Calendar.current.component(.minute, from: alertTime)
                 }
@@ -103,5 +104,10 @@ struct NotificationService {
                 }
             }
         }
+    }
+    
+    // 알림 삭제
+    func removeNotification(identifier: String) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
     }
 }

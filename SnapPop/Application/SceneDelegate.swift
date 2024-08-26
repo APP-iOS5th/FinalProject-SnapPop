@@ -77,7 +77,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 extension SceneDelegate: UNUserNotificationCenterDelegate {
     func requestNotificationAuthorization() {
-        // UserNotification
+        // MARK: - UNUserNotificationCenterDelegate
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
@@ -89,19 +89,32 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // Handle foreground presentation options
-        
         if !notification.request.identifier.contains("initialNotification") {
             completionHandler([.banner, .list, .badge, .sound])
         } else {
             let userInfo = notification.request.content.userInfo
-        
-            if let managementID = userInfo["managementId"] as? String, let startDate = userInfo["startDate"] as? Date, let alertTime = userInfo["alertTime"] as? Date,
-               let repeatCycle = userInfo["repeatCycle"] as? Int, let body = userInfo["body"] as? String {
-                NotificationService.shared.repeatingNotification(managementId: managementID, startDate: startDate,
-                                                                 alertTime: alertTime, repeatCycle: repeatCycle, body: body)
+            
+            guard let repeatCycle = userInfo["repeatCycle"] as? Int else {
+                completionHandler([])
+                return
             }
-            completionHandler([])
+            
+            if repeatCycle == 0 {
+                completionHandler([.banner, .list, .badge, .sound])
+            } else {
+                // 특정 날짜로부터 시작하여 반복되는 관리 알림을 등록하기 위해 특정 날짜에 알림이 트리거되면 반복 알림을 등록한다
+                guard let managementID = userInfo["managementId"] as? String,
+                      let startDate = userInfo["startDate"] as? Date,
+                      let alertTime = userInfo["alertTime"] as? Date,
+                      let body = userInfo["body"] as? String else {
+                    completionHandler([])
+                    return
+                }
+                
+                NotificationManager.shared.repeatingNotification(managementId: managementID, startDate: startDate,
+                                                                 alertTime: alertTime, repeatCycle: repeatCycle, body: body)
+                completionHandler([])
+            }
         }
     }
     

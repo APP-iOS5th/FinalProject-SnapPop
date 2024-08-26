@@ -19,10 +19,10 @@ final class ManagementService {
             .collection("Categories")
             .document(categoryId)
             .collection("Managements")
-            .document() // 새로운 문서 참조 생성
+            .document()
         
         var managementWithID = management
-        managementWithID.id = documentRef.documentID // 문서 ID를 Management 객체에 추가
+        managementWithID.id = documentRef.documentID
         
         do {
             try documentRef.setData(from: managementWithID) { error in
