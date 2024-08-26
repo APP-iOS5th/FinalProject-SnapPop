@@ -101,14 +101,41 @@ class ChecklistTableViewController: UITableViewController {
         deleteAction.image = UIImage(systemName: "trash")
         
         let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
-            guard let cell = tableView.cellForRow(at: indexPath) as? ChecklistTableViewCell else { return }
-            cell.enterEditMode()
+            guard let self = self, let viewModel = self.viewModel else {
+                completionHandler(false)
+                return
+            }
+            let addManagementViewModel = AddManagementViewModel(categoryId: "default")
+            let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
+            addManagementVC.homeViewModel = viewModel // HomeViewModel 전달
+            self.navigationController?.pushViewController(addManagementVC, animated: true)
             completionHandler(true)
         }
         editAction.backgroundColor = .gray
         editAction.image = UIImage(systemName: "pencil")
         
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        configuration.performsFirstActionWithFullSwipe = false
+        
+        return configuration
+    }
+    
+    // 추가: 왼쪽으로 스와이프할 때 핀 고정액션 추가
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let pinAction = UIContextualAction(style: .normal, title: nil) { (action, view, completionHandler) in
+
+            if let viewModel = self.viewModel {
+
+                let item = viewModel.checklistItems.remove(at: indexPath.row)
+                viewModel.checklistItems.insert(item, at: 0)
+                tableView.reloadData()
+            }
+            completionHandler(true)
+        }
+        pinAction.backgroundColor = .systemYellow
+        pinAction.image = UIImage(systemName: "pin")
+        
+        let configuration = UISwipeActionsConfiguration(actions: [pinAction])
         configuration.performsFirstActionWithFullSwipe = false
         
         return configuration
