@@ -52,6 +52,20 @@ class SnapComparisonViewController: UIViewController {
         return button
     }()
     
+    /// 기준 스냅 선택 버튼
+    private lazy var selectSnapDateButton: UIButton = {
+        var buttonConfig = UIButton.Configuration.filled()
+        buttonConfig.title = "날짜 선택"
+        buttonConfig.image = UIImage(systemName: "calendar")
+        buttonConfig.imagePadding = 5
+        buttonConfig.baseBackgroundColor = UIColor.customButtonColor
+        buttonConfig.baseForegroundColor = .black
+        buttonConfig.background.cornerRadius = 8
+        let button = UIButton(configuration: buttonConfig)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     /// 스냅 콜렉션 뷰
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -117,6 +131,7 @@ class SnapComparisonViewController: UIViewController {
         view.addSubviews([
             selectSnapPhotoButton,
             selectSnapPeriodButton,
+            selectSnapDateButton,
             collectionView,
             snapAndCategoryCheckLabel
         ])
@@ -126,7 +141,10 @@ class SnapComparisonViewController: UIViewController {
             selectSnapPeriodButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             
             selectSnapPhotoButton.topAnchor.constraint(equalTo: selectSnapPeriodButton.topAnchor),
-            selectSnapPhotoButton.trailingAnchor.constraint(equalTo: selectSnapPeriodButton.leadingAnchor, constant: -10),
+            selectSnapPhotoButton.trailingAnchor.constraint(equalTo: selectSnapPeriodButton.leadingAnchor, constant: -5),
+            
+            selectSnapDateButton.topAnchor.constraint(equalTo: selectSnapPhotoButton.topAnchor),
+            selectSnapDateButton.trailingAnchor.constraint(equalTo: selectSnapPhotoButton.leadingAnchor, constant: -5),
             
             collectionView.topAnchor.constraint(equalTo: selectSnapPhotoButton.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -151,6 +169,9 @@ class SnapComparisonViewController: UIViewController {
         selectSnapPeriodButton.menu = selectPeriodMenu
         selectSnapPeriodButton.showsMenuAsPrimaryAction = true
         
+        let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
+        selectSnapDateButton.menu = selectDateMenu
+        selectSnapDateButton.showsMenuAsPrimaryAction = true
     }
     
     func setupBindings() {
@@ -162,6 +183,9 @@ class SnapComparisonViewController: UIViewController {
         }
         viewModel.updateSnapPeriodButtonTitle = { [weak self] title in
             self?.selectSnapPeriodButton.setTitle(title, for: .normal)
+        }
+        viewModel.updateSnapDateButtonTitle = { [weak self] title in
+            self?.selectSnapDateButton.setTitle(title, for: .normal)
         }
         viewModel.categoryisEmpty = {
             self.collectionView.isHidden = true

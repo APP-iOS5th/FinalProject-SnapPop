@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-//MARK: - Protocols
+// MARK: - Protocols
 protocol SnapComparisonViewModelProtocol {
     var filteredSnapData: [Snap] { get }
     var snapPhotoSelectionType: String { get set }
@@ -16,10 +16,12 @@ protocol SnapComparisonViewModelProtocol {
     var numberOfSections: Int { get }
     var snapPhotoMenuItems: [UIAction] { get }
     var snapPeriodMenuItems: [UIAction] { get }
+    var snapDateMenuItems: [UIAction] { get }
     
     var reloadCollectionView: (() -> Void)? { get set }
     var updateSnapPhotoButtonTitle: ((String) -> Void)? { get set }
     var updateSnapPeriodButtonTitle: ((String) -> Void)? { get set }
+    var updateSnapDateButtonTitle: ((String) -> Void)? { get set }
     var categoryisEmpty: (() -> Void)? { get set }
     var snapisEmpty: (() -> Void)? { get set }
     var showSnapCollectionView: (() -> Void)? { get set }
@@ -28,6 +30,7 @@ protocol SnapComparisonViewModelProtocol {
     func item(at indexPath: IndexPath) -> Snap
     func changeSnapPhotoSelection(type: String, completion: @escaping () -> Void)
     func changeSnapPeriod(type: String, completion: @escaping () -> Void)
+    func changeSnapDate(date: Date, completion: @escaping () -> Void)
     func numberOfRows(in section: Int) -> Int
     func loadSanpstoFireStore(to categoryId: String)
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap]
@@ -57,8 +60,22 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     var numberOfSections: Int {
         filteredSnapData.count
     }
-    /// 컬렉션뷰 reload 클로저
-    var reloadCollectionView: (() -> Void)?
+   
+    /// 기준 스냅 선택 메뉴
+    var snapDateMenuItems: [UIAction] {
+        snapData.compactMap { snap in
+            guard let date = snap.createdAt else { return nil }
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            return UIAction(
+                title: formatter.string(from: date),
+                handler: { [weak self] _ in
+                    self?.changeSnapDate(date: date) {
+                        self?.reloadCollectionView?()
+                    }
+                })
+        }
+    }
     /// 스냅 사진 선택 메뉴
     var snapPhotoMenuItems: [UIAction] {
         let allSnapPhoto = UIAction(
@@ -70,9 +87,9 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
             })
         
         let mainSnapPhoto = UIAction(
-            title: "메인 사진",
+            title: "메인",
             handler: { [weak self] _ in
-                self?.changeSnapPhotoSelection(type: "메인 사진") {
+                self?.changeSnapPhotoSelection(type: "메인") {
                     self?.reloadCollectionView?()
                 }
             })
@@ -115,16 +132,33 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         
         return [perWeek, perMonth, perYear, allPeriod]
     }
+    // 스냅 기준 선택 메뉴
+    private var selectedDate: Date? {
+        didSet {
+            filterSnaps()
+            if let date = selectedDate {
+                let formatter = DateFormatter()
+                formatter.dateStyle = .medium
+                updateSnapDateButtonTitle?(formatter.string(from: date))
+            } else {
+                updateSnapDateButtonTitle?("날짜 선택")
+            }
+        }
+    }
     /// 버튼 타이틀 업데이트 클로저
     var updateSnapPhotoButtonTitle: ((String) -> Void)?
     /// 버튼 타이틀 업데이트 클로저
     var updateSnapPeriodButtonTitle: ((String) -> Void)?
+    /// 버튼 타이틀 업데이트 클로저
+    var updateSnapDateButtonTitle: ((String) -> Void)?
     /// 카테고리가 비었을때 호출되는 클로저
     var categoryisEmpty: (() -> Void)?
     /// snap이 없을때 호출되는 클로저
     var snapisEmpty: (() -> Void)?
     /// CollectionView를 보여주는 클로저
     var showSnapCollectionView: (() -> Void)?
+    /// 컬렉션뷰 reload 클로저
+    var reloadCollectionView: (() -> Void)?
     
     // MARK: - Initializer
     init() {
@@ -144,7 +178,6 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
             snapisEmpty?()
             return
         }
-        // TODO: - 기준 날자를 설정하는 DatePicker 추가하기.
         filteredSnapData = filterSnapsByPeriod(snapData, periodType: snapPeriodType)
         
         if snapPhotoSelectionType == "메인 사진" {
@@ -167,8 +200,8 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     }
     
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap] {
-        // 첫번째 스냅 데이터가 기준
-        guard let firstSnapDate = snaps.first?.createdAt else { return snaps }
+        // 기준이 되는 날짜를 설정
+        guard let firstSnapDate = selectedDate ?? snaps.first?.createdAt else { return snaps }
         
         var filteredSnaps: [Snap] = []
         var standardDate: Date = firstSnapDate
@@ -179,13 +212,13 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
             let shouldInclude: Bool
             switch periodType {
             case "일주일":
-                // 첫 번째 스냅과 일주일 간격이라면
+                // 기준 스냅과 일주일 간격이라면
                 shouldInclude = Calendar.current.dateComponents([.day], from: standardDate, to: date).day ?? 0 >= 7
             case "한달":
-                // 첫 번째 스냅과 한달 간격이라면
+                // 기준 스냅과 한달 간격이라면
                 shouldInclude = Calendar.current.dateComponents([.month], from: standardDate, to: date).month ?? 0 >= 1
             case "일년":
-                // 첫 번째 스냅과 일년 간격이라면
+                // 기준 스냅과 일년 간격이라면
                 shouldInclude = Calendar.current.dateComponents([.year], from: standardDate, to: date).year ?? 0 >= 1
             default:
                 shouldInclude = true
@@ -193,13 +226,15 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
             
             if shouldInclude {
                 filteredSnaps.append(snap)
-                standardDate = date // 추가한 날자를 기준으로
+                standardDate = date // 새로운 기준 날짜로 업데이트
             }
         }
         
-        // 기준이 되는 첫번째 스냅을 포함
-        if !filteredSnaps.contains(where: { $0.createdAt == firstSnapDate }) {
-            filteredSnaps.insert(snaps.first!, at: 0)
+        // 선택된 기준 날짜의 스냅 데이터도 포함
+        if let selectedDate = selectedDate, let snapForSelectedDate = snaps.first(where: { $0.createdAt == selectedDate }) {
+            if !filteredSnaps.contains(where: { $0.createdAt == selectedDate }) {
+                filteredSnaps.insert(snapForSelectedDate, at: 0)
+            }
         }
         
         return filteredSnaps
@@ -218,6 +253,12 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     /// snapPeriodType을 정해주는 메소드
     func changeSnapPeriod(type: String, completion: @escaping () -> Void) {
         self.snapPeriodType = type
+        completion()
+    }
+    
+    /// selectedDate를 정해주는 메소드
+    func changeSnapDate(date: Date, completion: @escaping () -> Void) {
+        self.selectedDate = date
         completion()
     }
     
