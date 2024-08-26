@@ -50,7 +50,7 @@ class SnapComparisonSheetViewController: UIViewController {
     /// 페이지 컨트롤
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = viewModel.currentSnap.images.count
+        pageControl.numberOfPages = viewModel.currentSnap.imageUrls.count
         pageControl.currentPage = viewModel.currentPhotoIndex
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .systemGray5
@@ -156,8 +156,8 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     
     private func updateUI() {
-        snapDateLabel.text = viewModel.currentSnap.date
-        pageControl.numberOfPages = viewModel.currentSnap.images.count
+        snapDateLabel.text = viewModel.getDateString()
+        pageControl.numberOfPages = viewModel.currentSnap.imageUrls.count
         pageControl.currentPage = viewModel.currentPhotoIndex
         
         // 화살표 버튼 숨김
@@ -166,12 +166,15 @@ class SnapComparisonSheetViewController: UIViewController {
     }
     /// 인덱스에 해당하는 SnapPhotoViewController 나타내는 메소드
     private func viewControllerAt(index: Int) -> UIViewController? {
-        guard let image = viewModel.getSnapPhoto(at: index) else { return nil }
         let photoViewController = SnapPhotoViewController()
-        photoViewController.image = image
         photoViewController.index = index
+        self.viewModel.getSnapPhoto(at: index) { image in
+            photoViewController.image = image
+        }
         return photoViewController
     }
+    
+    // MARK: - Actions
     
     @objc private func didTapLeftArrow() {
         viewModel.moveToPreviousSnap()
@@ -197,13 +200,15 @@ extension SnapComparisonSheetViewController: UIPageViewControllerDelegate, UIPag
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? SnapPhotoViewController else { return nil }
-        let index = viewController.index
-        return viewControllerAt(index: index - 1)
+        let index = viewController.index - 1
+        guard index > 0 else { return nil }
+        return viewControllerAt(index: index )
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? SnapPhotoViewController else { return nil }
-        let index = viewController.index + 1
+        let index = viewController.index  + 1
+        guard index < viewModel.currentSnap.imageUrls.count else { return nil }
         return viewControllerAt(index: index)
     }
     
