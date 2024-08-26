@@ -66,7 +66,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         snapData.compactMap { snap in
             guard let date = snap.createdAt else { return nil }
             let formatter = DateFormatter()
-            formatter.dateStyle = .medium
+            formatter.dateFormat = "yyyy년 MM월 d일"
             return UIAction(
                 title: formatter.string(from: date),
                 handler: { [weak self] _ in
@@ -138,7 +138,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
             filterSnaps()
             if let date = selectedDate {
                 let formatter = DateFormatter()
-                formatter.dateStyle = .medium
+                formatter.dateFormat = "yyyy년 MM월 d일"
                 updateSnapDateButtonTitle?(formatter.string(from: date))
             } else {
                 updateSnapDateButtonTitle?("날짜 선택")
