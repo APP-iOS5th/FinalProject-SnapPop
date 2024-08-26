@@ -14,7 +14,7 @@ class HorizontalSnapPhotoCollectionViewCell: UICollectionViewCell {
 
     /// 스냅 사진
     lazy var snapPhoto: UIImageView = {
-        let image = UIImageView(image: UIImage(systemName: "person.fill"))
+        let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
