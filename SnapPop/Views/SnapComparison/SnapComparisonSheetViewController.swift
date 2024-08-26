@@ -201,7 +201,7 @@ extension SnapComparisonSheetViewController: UIPageViewControllerDelegate, UIPag
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? SnapPhotoViewController else { return nil }
         let index = viewController.index - 1
-        guard index > 0 else { return nil }
+        guard index >= 0 else { return nil }
         return viewControllerAt(index: index )
     }
     
