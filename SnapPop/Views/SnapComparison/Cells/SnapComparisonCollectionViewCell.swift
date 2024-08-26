@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
@@ -26,8 +27,8 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
     lazy var horizontalSnapPhotoCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -75,13 +76,21 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
         
     }
     
-    func configure(with viewModel: SnapComparisonCellViewModelProtocol, data: MockSnap, filteredData: [MockSnap], sectionIndex: Int) {
+    func configure(with viewModel: SnapComparisonCellViewModelProtocol, data: Snap, filteredData: [Snap], sectionIndex: Int) {
+        guard let date = data.createdAt else { return }
         self.viewModel = viewModel
-        self.viewModel?.snapPhotos = data.images
+        self.viewModel?.snapPhotos = data.imageUrls
         self.viewModel?.currentSectionIndex = sectionIndex
         self.viewModel?.filteredSnapData = filteredData
-        snapCellDateLabel.text = data.date
+        snapCellDateLabel.text = updateDate(to: date)
         horizontalSnapPhotoCollectionView.reloadData()
+    }
+    
+    func updateDate(to date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 d일"
+        let updatedDateString = formatter.string(from: date)
+        return updatedDateString
     }
 }
 
@@ -98,17 +107,20 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
             return UICollectionViewCell()
         }
         
-        cell.snapPhoto.image = viewModel.snapPhotos[indexPath.row]
+        let imageUrlString = viewModel.snapPhotos[indexPath.row]
+        if let imageUrl = URL(string: imageUrlString) {
+            cell.snapPhoto.kf.setImage(with: imageUrl, placeholder: UIImage(systemName: "circle.dotted"))
+        }
         
         if indexPath.row == 0 {
-            // 절대값 수정 해야할듯
-            cell.snapPhoto.layer.borderColor = UIColor(red: 0.57, green: 0.87, blue: 0.91, alpha: 1.00).cgColor
+            cell.snapPhoto.layer.borderColor = UIColor.customMainColor?.cgColor
             cell.snapPhoto.layer.borderWidth = 3
             cell.snapPhoto.layer.cornerRadius = 30
             cell.snapPhoto.layer.masksToBounds = true
         } else {
             cell.snapPhoto.layer.borderWidth = 0.0
             cell.snapPhoto.layer.cornerRadius = 30
+            cell.snapPhoto.layer.masksToBounds = true
         }
         
         return cell

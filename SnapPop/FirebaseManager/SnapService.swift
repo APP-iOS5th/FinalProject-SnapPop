@@ -130,6 +130,7 @@ final class SnapService {
             .collection("Categories")
             .document(categoryId)
             .collection("Snaps")
+            .order(by: "createdAt", descending: false)
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error fetching documents: \(error.localizedDescription)")

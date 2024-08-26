@@ -10,6 +10,7 @@
 		4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */; };
 		4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */; };
 		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
+		4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4AC605B32C78769D00D3AF19 /* Kingfisher */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
 		4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */; };
 		4AC9A0392C72E96700EB5FFC /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0382C72E96700EB5FFC /* NotificationViewController.swift */; };
@@ -138,6 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */,
 				C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */,
 				8F1685492C6360180010F8D8 /* FirebaseAuth in Frameworks */,
 				C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */,
@@ -462,6 +464,7 @@
 				8F16854C2C6360180010F8D8 /* FirebaseStorage */,
 				C24BFA692C649E4300A5B40A /* GoogleSignIn */,
 				C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */,
+				4AC605B32C78769D00D3AF19 /* Kingfisher */,
 			);
 			productName = SnapPop;
 			productReference = 8F16852C2C6354590010F8D8 /* SnapPop.app */;
@@ -495,6 +498,7 @@
 				8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C24BFA522C647B6900A5B40A /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				C24BFA682C649E4300A5B40A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 8F16852D2C6354590010F8D8 /* Products */;
 			projectDirPath = "";
@@ -821,6 +825,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.12.0;
+			};
+		};
 		8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -848,6 +860,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4AC605B32C78769D00D3AF19 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		8F1685482C6360180010F8D8 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
