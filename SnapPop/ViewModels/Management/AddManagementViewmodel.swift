@@ -16,7 +16,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
     @Published var memo: String = ""
     @Published var color: UIColor = .black
     @Published var startDate: Date = Date()
-    @Published var repeatCycle: Int = 0
+    @Published var repeatCycle: Int = 2
     @Published var alertTime: Date = Date()
     @Published var alertStatus: Bool = false
     
@@ -32,7 +32,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
             memo: "",
             color: "#000000",
             startDate: Date(),
-            repeatCycle: 0,
+            repeatCycle: 2,
             alertTime: Date(),
             alertStatus: false,
             completions: [:]
@@ -98,11 +98,25 @@ class AddManagementViewModel: CategoryChangeDelegate {
     
     func updateRepeatCycle(_ cycleIndex: Int) {
         self.repeatCycle = cycleIndex
+        
+        let repeatValue: Int
+                switch cycleIndex {
+                case 0: // "매일"
+                    repeatValue = 1
+                case 1: // "매주"
+                    repeatValue = 7
+                case 2: // "안함"
+                    repeatValue = 0
+                default:
+                    repeatValue = 0
+                }
+                self.management.repeatCycle = repeatValue
     }
     
     func categoryDidChange(to newCategoryId: String) {
         self.categoryId = newCategoryId
     }
+    
     
     // 유효성 검증 프로퍼티
     var isValid: AnyPublisher<Bool, Never> {
