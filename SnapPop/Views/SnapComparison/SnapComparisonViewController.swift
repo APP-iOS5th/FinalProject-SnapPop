@@ -47,11 +47,6 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
-        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attr in
-            var new = attr
-            new.font = .systemFont(ofSize: 14)
-            return new
-        }
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
