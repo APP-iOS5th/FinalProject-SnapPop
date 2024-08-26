@@ -41,6 +41,9 @@ class ChecklistTableViewCell: UITableViewCell {
         ])
         
         checkBox.addTarget(self, action: #selector(didTapCheckBox), for: .touchUpInside)
+        
+        selectionStyle = .none
+
     }
     
     required init?(coder: NSCoder) {
