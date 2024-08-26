@@ -13,20 +13,25 @@ final class ManagementService {
     private let db = Firestore.firestore()
     private let storage = Storage.storage().reference()
     
-    func saveManagement(categoryId: String, management: Management, completion: @escaping (Result<Void, Error>) -> Void) {
+    func saveManagement(categoryId: String, management: Management, completion: @escaping (Result<Management, Error>) -> Void) {
+        let documentRef = db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
+            .document(categoryId)
+            .collection("Managements")
+            .document()
+        
+        var managementWithID = management
+        managementWithID.id = documentRef.documentID
+        
         do {
-            try db.collection("Users")
-                .document(AuthViewModel.shared.currentUser?.uid ?? "")
-                .collection("Categories")
-                .document(categoryId)
-                .collection("Managements")
-                .addDocument(from: management) { error in
-                    if let error = error {
-                        completion(.failure(error))
-                        return
-                    }
-                    completion(.success(()))
+            try documentRef.setData(from: managementWithID) { error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
                 }
+                completion(.success(managementWithID))
+            }
         } catch {
             completion(.failure(error))
         }
@@ -151,8 +156,8 @@ final class ManagementService {
             }
     }
 }
-    
-  
+
+
 
 //func markCompletion(categoryId: String, managementId: String, isCompletion: IsCompletion, completion: @escaping (Result<Void, Error>) -> Void) {
 //        let dateString = ISO8601DateFormatter().string(from: isCompletion.date)
@@ -252,4 +257,4 @@ final class ManagementService {
 //                completion(.success(completions))
 //            }
 //    }
-    
+

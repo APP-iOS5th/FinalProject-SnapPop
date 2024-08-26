@@ -52,6 +52,20 @@ class SnapComparisonViewController: UIViewController {
         return button
     }()
     
+    /// 기준 스냅 선택 버튼
+    private lazy var selectSnapDateButton: UIButton = {
+        var buttonConfig = UIButton.Configuration.filled()
+        buttonConfig.title = "날짜 선택"
+        buttonConfig.image = UIImage(systemName: "calendar")
+        buttonConfig.imagePadding = 5
+        buttonConfig.baseBackgroundColor = UIColor.customButtonColor
+        buttonConfig.baseForegroundColor = .black
+        buttonConfig.background.cornerRadius = 8
+        let button = UIButton(configuration: buttonConfig)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     /// 스냅 콜렉션 뷰
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -65,6 +79,14 @@ class SnapComparisonViewController: UIViewController {
         collectionView.backgroundColor = .white
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
+    }()
+    
+    /// 스냅, 카테고리 유무 레이블
+    private lazy var snapAndCategoryCheckLabel: UILabel = {
+        let label = UILabel()
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     // MARK: - Initializers
@@ -86,6 +108,21 @@ class SnapComparisonViewController: UIViewController {
         setupLayout()
         setupMenu()
         
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSanpstoFireStore(to: currentCategoryId)
+        }
+        
+        if let navigationController = self.navigationController as? CustomNavigationBarController {
+            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSanpstoFireStore(to: currentCategoryId)
+        }
+        reloadCollectionView()        
     }
     
     // MARK: - Methods
@@ -94,7 +131,9 @@ class SnapComparisonViewController: UIViewController {
         view.addSubviews([
             selectSnapPhotoButton,
             selectSnapPeriodButton,
-            collectionView
+            selectSnapDateButton,
+            collectionView,
+            snapAndCategoryCheckLabel
         ])
         
         NSLayoutConstraint.activate([
@@ -102,12 +141,18 @@ class SnapComparisonViewController: UIViewController {
             selectSnapPeriodButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             
             selectSnapPhotoButton.topAnchor.constraint(equalTo: selectSnapPeriodButton.topAnchor),
-            selectSnapPhotoButton.trailingAnchor.constraint(equalTo: selectSnapPeriodButton.leadingAnchor, constant: -10),
+            selectSnapPhotoButton.trailingAnchor.constraint(equalTo: selectSnapPeriodButton.leadingAnchor, constant: -5),
+            
+            selectSnapDateButton.topAnchor.constraint(equalTo: selectSnapPhotoButton.topAnchor),
+            selectSnapDateButton.trailingAnchor.constraint(equalTo: selectSnapPhotoButton.leadingAnchor, constant: -5),
             
             collectionView.topAnchor.constraint(equalTo: selectSnapPhotoButton.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            snapAndCategoryCheckLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            snapAndCategoryCheckLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
         ])
         
     }
@@ -124,6 +169,9 @@ class SnapComparisonViewController: UIViewController {
         selectSnapPeriodButton.menu = selectPeriodMenu
         selectSnapPeriodButton.showsMenuAsPrimaryAction = true
         
+        let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
+        selectSnapDateButton.menu = selectDateMenu
+        selectSnapDateButton.showsMenuAsPrimaryAction = true
     }
     
     func setupBindings() {
@@ -135,6 +183,27 @@ class SnapComparisonViewController: UIViewController {
         }
         viewModel.updateSnapPeriodButtonTitle = { [weak self] title in
             self?.selectSnapPeriodButton.setTitle(title, for: .normal)
+        }
+        viewModel.updateSnapDateButtonTitle = { [weak self] title in
+            self?.selectSnapDateButton.setTitle(title, for: .normal)
+        }
+        viewModel.categoryisEmpty = {
+            self.collectionView.isHidden = true
+            self.snapAndCategoryCheckLabel.isHidden = false
+            self.snapAndCategoryCheckLabel.text = "카테고리를 추가하여 사진을 비교해 보세요!"
+        }
+        viewModel.snapisEmpty = {
+            self.collectionView.isHidden = true
+            self.snapAndCategoryCheckLabel.isHidden = false
+            self.snapAndCategoryCheckLabel.text = "사진을 추가해 비교해 보세요!"
+        }
+        viewModel.showSnapCollectionView = {
+            self.collectionView.isHidden = false
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+            self.snapAndCategoryCheckLabel.isHidden = true
+            self.snapAndCategoryCheckLabel.text = ""
         }
     }
     

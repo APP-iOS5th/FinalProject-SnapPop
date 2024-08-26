@@ -148,8 +148,27 @@ class AddManagementViewModel: CategoryChangeDelegate {
         self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
         db.saveManagement(categoryId: categoryId, management: management) { result in
             switch result {
-            case .success:
+            case .success(let management):
                 print("Management saved successfully")
+                
+                if management.alertStatus {
+                    if management.repeatCycle == 0 {
+                        // 반복 안함으로 설정한 알림
+                        NotificationManager.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
+                                                                       alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                    }
+                    else {
+                        if self.isSpecificDateInPast(startDate: self.startDate, alertTime: self.alertTime) {
+                            // 만약 현재 시간보다 과거부터 시작하는 알림을 등록하면 초기 알림을 등록하여 반복 알림을 트리거 할 필요가 없으므로 바로 반복 알림을 등록해줌
+                            NotificationManager.shared.repeatingNotification(managementId: management.id ?? "", startDate: management.startDate,
+                                                                             alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                        } else {
+                            NotificationManager.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
+                                                                           alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                        }
+                    }
+                }
+                
                 completion(.success(()))
             case .failure(let error):
                 print("Failed to save management: \(error.localizedDescription)")
@@ -176,6 +195,24 @@ class AddManagementViewModel: CategoryChangeDelegate {
             currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
         }
         return completions
+    }
+    
+    // 시작 날짜+시간이 현재보다 과거인지 아닌지를 확인하는 함수
+    func isSpecificDateInPast(startDate: Date, alertTime: Date) -> Bool {
+        let calendar = Calendar.current
+        
+        // startDate에서 year, month, day를 추출
+        var dateComponents = calendar.dateComponents([.year, .month, .day], from: startDate)
+        
+        // alertTime에서 hour, minute를 추출
+        dateComponents.hour = calendar.component(.hour, from: alertTime)
+        dateComponents.minute = calendar.component(.minute, from: alertTime)
+        
+        if let specificDate = calendar.date(from: dateComponents) {
+            return specificDate < Date()
+        } else {
+            return false
+        }
     }
 }
 

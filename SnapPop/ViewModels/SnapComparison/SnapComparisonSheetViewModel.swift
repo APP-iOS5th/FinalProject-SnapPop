@@ -7,13 +7,14 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 protocol SnapComparisonSheetViewModelProtocol {
-    var filteredSnapData: [MockSnap] { get set}
+    var filteredSnapData: [Snap] { get set}
     var selectedIndex: Int { get set}
     var currentDateIndex: Int { get set}
     var currentPhotoIndex: Int { get set}
-    var currentSnap: MockSnap { get }
+    var currentSnap: Snap { get }
     var isLeftArrowHidden: Bool { get }
     var isRightArrowHidden: Bool { get }
     
@@ -21,19 +22,20 @@ protocol SnapComparisonSheetViewModelProtocol {
     var updatePageControl: ((Int, Int) -> Void)? { get set }
     var updateArrowVisibility: ((Bool, Bool) -> Void)? { get set }
     func updateSnapData()
-    func getSnapPhoto(at index: Int) -> UIImage?
+    func getSnapPhoto(at index: Int, completion: @escaping (UIImage?) -> Void)
     func moveToPreviousSnap()
     func moveToNextSnap()
+    func getDateString() -> String
 }
 
 class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
     // MARK: - Properties
-    var filteredSnapData: [MockSnap] = []
+    var filteredSnapData: [Snap] = []
     var selectedIndex: Int = 0
     var currentDateIndex: Int = 0
     /// 페이지뷰 컨트롤러 인덱스
     var currentPhotoIndex: Int = 0
-    var currentSnap: MockSnap {
+    var currentSnap: Snap {
         guard currentDateIndex >= 0, currentDateIndex < filteredSnapData.count else {
             print("currentDateIndex: \(currentDateIndex), filteredSnapData.count: \(filteredSnapData.count)")
             fatalError("currentDateIndex가 잘못된 범위를 참조하고 있습니다.")
@@ -56,15 +58,28 @@ class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
     
     func updateSnapData() {
         updateUI?()
-        updatePageControl?(currentPhotoIndex, currentSnap.images.count)
+        updatePageControl?(currentPhotoIndex, currentSnap.imageUrls.count)
         updateArrowVisibility?(isLeftArrowHidden, isRightArrowHidden)
     }
     
-    func getSnapPhoto(at index: Int) -> UIImage? {
-        guard index >= 0, index < currentSnap.images.count  else {
-            return nil
+    func getSnapPhoto(at index: Int, completion: @escaping (UIImage?) -> Void) {
+        guard index >= 0, index < currentSnap.imageUrls.count  else {
+            completion(UIImage(systemName: "circle.dotted"))
+            return
         }
-        return currentSnap.images[index]
+        
+        if let url = URL(string: currentSnap.imageUrls[index]) {
+            KingfisherManager.shared.retrieveImage(with: url) { result in
+                switch result {
+                case .success(let value):
+                    completion(value.image)
+                case .failure:
+                    completion(UIImage(systemName: "circle.dotted"))
+                }
+            }
+        } else {
+            completion(UIImage(systemName: "circle.dotted"))
+        }
     }
     
     func moveToPreviousSnap() {
@@ -79,5 +94,20 @@ class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
         currentDateIndex += 1
         currentPhotoIndex = 0
         updateSnapData()
+    }
+    /// 날자 형식 변환 메소드
+    func updateDate(to date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 d일"
+        let updatedDateString = formatter.string(from: date)
+        return updatedDateString
+    }
+    
+    func getDateString() -> String {
+        guard let date = currentSnap.createdAt else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 d일"
+        let updatedDateString = formatter.string(from: date)
+        return updatedDateString
     }
 }

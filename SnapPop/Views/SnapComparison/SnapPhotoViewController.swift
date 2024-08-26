@@ -10,7 +10,11 @@ import UIKit
 class SnapPhotoViewController: UIViewController {
     
     // MARK: - Properties
-    var image: UIImage?
+    var image: UIImage? {
+        didSet {
+            updateImage()
+        }
+    }
     var index: Int = 0
     
     // MARK: - UIComponents
@@ -21,7 +25,7 @@ class SnapPhotoViewController: UIViewController {
         return imageView
     }()
     
-    // MARK: = LifeCycle
+    // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -34,8 +38,19 @@ class SnapPhotoViewController: UIViewController {
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
+        updateImage()
+    }
+    
+    //MARK: - Methods
+    private func updateImage() {
         if let image = image {
-            imageView.image = image
+            DispatchQueue.main.async {
+                self.imageView.image = image
+                self.imageView.layer.borderColor = UIColor.lightGray.cgColor
+                self.imageView.layer.borderWidth = 1
+                self.imageView.layer.cornerRadius = 50
+                self.imageView.layer.masksToBounds = true
+            }
         } else {
             print("nil Image")
         }
