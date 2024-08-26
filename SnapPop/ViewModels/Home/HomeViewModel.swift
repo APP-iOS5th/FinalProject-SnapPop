@@ -40,16 +40,18 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
         checklistItems.append(management)
     }
     // 관리 불러오기
-    func fetchManagements(categoryId: String) {
+    func fetchManagements(categoryId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         managementService.loadManagements(categoryId: categoryId) { [weak self] result in
-            switch result {
-            case .success(let managements):
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let managements):
                     self?.checklistItems = managements
                     print("Fetched managements: \(managements)")
+                    completion(.success(()))
+                case .failure(let error):
+                    print("Error fetching managements: \(error)")
+                    completion(.failure(error))
                 }
-            case .failure(let error):
-                print("Error fetching managements: \(error)")
             }
         }
     }

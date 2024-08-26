@@ -55,6 +55,8 @@ class ChecklistTableViewCell: UITableViewCell {
         if let color = UIColor(hex: item.color) {
             checkLabel.textColor = color
             updateCheckBoxImages(with: color)
+            checkBox.layer.borderColor = color.cgColor // 체크박스 버튼의 테두리 색상을 설정
+            checkBox.tintColor = color // 체크박스 버튼의 틴트 색상 설정
         } else {
             checkLabel.textColor = .black
         }
@@ -90,3 +92,4 @@ extension UIColor {
         self.init(red: red, green: green, blue: blue, alpha: 1.0)
     }
 }
+

@@ -13,6 +13,8 @@ class ChecklistTableViewController: UITableViewController {
     var viewModel: HomeViewModel?
     private var cancellables = Set<AnyCancellable>() // Combine 구독을 저장할 Set
     
+//    private let refreshControl = UIRefreshControl()
+    
     // 관리 항목 추가 버튼
     private let selfcareAddButton: UIButton = {
         let button = UIButton(type: .system)
@@ -37,28 +39,70 @@ class ChecklistTableViewController: UITableViewController {
         tableView.dataSource = self
         tableView.delegate = self
         
+        setupRefreshControl()
+        
         // 데이터 가져오기
-        if let categoryId = viewModel?.selectedCategoryId {
-            viewModel?.fetchManagements(categoryId: categoryId)
-        }
+        fetchData()
         
         // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
         viewModel?.$checklistItems
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.tableView.reloadData()
+//                self?.refreshControl.endRefreshing()
             }
             .store(in: &cancellables)
     }
     
     private func setupButtonConstraints() {
-        // selfcareAddButton 버튼의 제약 조건 설정
         NSLayoutConstraint.activate([
             selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             selfcareAddButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             selfcareAddButton.heightAnchor.constraint(equalToConstant: 50),
             selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
         ])
+    }
+    
+    private func setupRefreshControl() {
+        refreshControl = UIRefreshControl()
+        refreshControl?.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
+        refreshControl?.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        tableView.refreshControl = refreshControl
+    }
+
+
+    @objc private func refreshData() {
+        fetchData { [weak self] in
+            DispatchQueue.main.async {
+                self?.refreshControl?.endRefreshing()
+            }
+        }
+    }
+
+    private func fetchData(completion: @escaping () -> Void = {}) {
+        guard let categoryId = viewModel?.selectedCategoryId else {
+            completion()
+            return
+        }
+        
+        viewModel?.fetchManagements(categoryId: categoryId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success():
+                    self?.tableView.reloadData()
+                case .failure(let error):
+                    print("Failed to fetch managements: \(error.localizedDescription)")
+                    self?.showAlert(title: "데이터 로드 실패", message: error.localizedDescription)
+                }
+                completion()
+            }
+        }
+    }
+
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
     
     // 관리 항목 추가 버튼 클릭 시 동작
@@ -70,7 +114,11 @@ class ChecklistTableViewController: UITableViewController {
         // 새로운 항목이 추가되면 뷰모델에 추가
         addManagementVC.onSave = { [weak self] newManagement in
             guard let self = self, let viewModel = self.viewModel else { return }
-            viewModel.addManagement(newManagement)
+            
+            // 중복 항목 확인 후 추가
+            if !viewModel.checklistItems.contains(where: { $0.id == newManagement.id }) {
+                viewModel.addManagement(newManagement)
+            }
         }
 
         if let parentVC = self.view.parentViewController(), !(parentVC.navigationController?.viewControllers.contains(addManagementVC) ?? false) {

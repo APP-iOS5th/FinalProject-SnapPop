@@ -124,7 +124,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             switch result {
             case .success:
                 if let management = self?.viewModel.management {
-                    self?.homeViewModel?.addManagement(management)
                     self?.onSave?(management)  // 변경된 저장 항목을 저장
                 }
                 self?.navigationController?.popViewController(animated: true)
