@@ -21,13 +21,28 @@ class AddManagementViewModel: CategoryChangeDelegate {
     @Published var alertStatus: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
-    private var management: Management
-    
+    var management: Management
+
     let repeatOptions = ["매일", "매주", "안함"]
     
-    init(categoryId: String) {
+    init(categoryId: String, management: Management) {
         self.categoryId = categoryId
-        self.management = Management(
+        self.management = management
+        
+        // 기존 management 값으로 초기화
+        self.title = management.title
+        self.memo = management.memo
+        self.color = UIColor(hexString: management.color) ?? .black
+        self.startDate = management.startDate
+        self.repeatCycle = management.repeatCycle
+        self.alertTime = management.alertTime
+        self.alertStatus = management.alertStatus
+        
+        bindManagementData()
+    }
+    
+    convenience init(categoryId: String) {
+        let defaultManagement = Management(
             title: "",
             memo: "",
             color: "#000000",
@@ -37,7 +52,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
             alertStatus: false,
             completions: [:]
         )
-        bindManagementData()
+        self.init(categoryId: categoryId, management: defaultManagement)
     }
     
     private func bindManagementData() {
@@ -132,6 +147,18 @@ class AddManagementViewModel: CategoryChangeDelegate {
         
         let db = ManagementService()
         self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
+//        print("Attempting to save management with data:")
+//        print("Category ID: \(categoryId)")
+//        print("Management ID: \(management.id ?? "nil")")
+//        print("Title: \(management.title)")
+//        print("Memo: \(management.memo)")
+//        print("Color: \(management.color)")
+//        print("Start Date: \(management.startDate)")
+//        print("Repeat Cycle: \(management.repeatCycle)")
+//        print("Alert Time: \(management.alertTime)")
+//        print("Alert Status: \(management.alertStatus)")
+//        print("Completions: \(management.completions)")
+
         db.saveManagement(categoryId: categoryId, management: management) { result in
             switch result {
             case .success(let management):
@@ -165,23 +192,26 @@ class AddManagementViewModel: CategoryChangeDelegate {
     }
     
     func generateSixMonthsCompletions(startDate: Date, repeatInterval: Int) -> [String: Int] {
-        // 반복 주기가 0이면 (안함) 빈 딕셔너리 반환
-        guard repeatInterval > 0 else {
-            return [:]
+            var completions: [String: Int] = [:]
+            let calendar = Calendar.current
+            let endDate = calendar.date(byAdding: .month, value: 6, to: startDate)!
+
+            if repeatInterval == 0 {
+                // 반복 주기가 0일 때는 시작일만 저장
+                let dateString = ISO8601DateFormatter().string(from: startDate)
+                completions[dateString] = 0
+            } else {
+                // 반복 주기가 0보다 클 때는 기존 로직 유지
+                var currentDate = startDate
+                while currentDate < endDate {
+                    let dateString = ISO8601DateFormatter().string(from: currentDate)
+                    completions[dateString] = 0 // 초기값은 미완료(0)로 설정
+                    currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
+                }
+            }
+
+            return completions
         }
-        
-        var completions: [String: Int] = [:]
-        let calendar = Calendar.current
-        let endDate = calendar.date(byAdding: .month, value: 6, to: startDate)!
-        var currentDate = startDate
-        
-        while currentDate < endDate {
-            let dateString = ISO8601DateFormatter().string(from: currentDate)
-            completions[dateString] = 0 // 초기값은 미완료(0)로 설정
-            currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
-        }
-        return completions
-    }
     
     // 시작 날짜+시간이 현재보다 과거인지 아닌지를 확인하는 함수
     func isSpecificDateInPast(startDate: Date, alertTime: Date) -> Bool {
@@ -235,4 +265,3 @@ extension UIColor {
         self.init(red: r, green: g, blue: b, alpha: a)
     }
 }
-
