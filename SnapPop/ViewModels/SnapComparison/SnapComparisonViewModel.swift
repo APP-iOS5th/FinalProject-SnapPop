@@ -161,6 +161,9 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         } else {
             showSnapCollectionView?()
         }
+        
+        // 최신 순으로 보여주기
+        filteredSnapData = filteredSnapData.reversed()
     }
     
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap] {
@@ -177,7 +180,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
             switch periodType {
             case "일주일":
                 // 첫 번째 스냅과 일주일 간격이라면
-                shouldInclude = Calendar.current.dateComponents([.day], from: standardDate, to: date).day ?? 1 >= 7
+                shouldInclude = Calendar.current.dateComponents([.day], from: standardDate, to: date).day ?? 0 >= 7
             case "한달":
                 // 첫 번째 스냅과 한달 간격이라면
                 shouldInclude = Calendar.current.dateComponents([.month], from: standardDate, to: date).month ?? 0 >= 1
