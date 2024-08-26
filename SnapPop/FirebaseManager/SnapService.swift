@@ -31,13 +31,15 @@ final class SnapService {
                 
                 guard let downloadUrl = url?.absoluteString else { return }
                 
+                print(downloadUrl)
                 completion(.success(downloadUrl))
             }
         }
     }
-    
-    func saveSnap(categoryId: String, imageUrls: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-        let snap = Snap(id: nil, imageUrls: imageUrls, createdAt: nil)
+      
+    func saveSnap(categoryId: String, imageUrls: [String], createdAt: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
+        let snap = Snap(imageUrls: imageUrls, createdAt: createdAt)
+        
         do {
             try db.collection("Users")
                 .document(AuthViewModel.shared.currentUser?.uid ?? "")
@@ -49,7 +51,7 @@ final class SnapService {
                         completion(.failure(error))
                         return
                     }
-                    completion(.success(()))
+                    completion(.success((snap)))
                 }
         } catch {
             completion(.failure(error))
@@ -78,8 +80,11 @@ final class SnapService {
                     completion(.failure(error))
                     return
                 }
-                guard let document = querySnapshot?.documents.first else { return }
-                
+                guard let document = querySnapshot?.documents.first else {
+                    completion(.failure(NSError(domain: "NoDocumentError", code: -1, userInfo: nil)))
+                    return
+                }
+                    
                 do {
                     let snap = try document.data(as: Snap.self)
                     completion(.success(snap))
@@ -125,8 +130,10 @@ final class SnapService {
             .collection("Categories")
             .document(categoryId)
             .collection("Snaps")
+            .order(by: "createdAt", descending: false)
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
+                    print("Error fetching documents: \(error.localizedDescription)")
                     completion(.failure(error))
                     return
                 }
@@ -140,10 +147,12 @@ final class SnapService {
             }
     }
     
-    func updateSnap(categoryId: String, snap: Snap, newImageUrls: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+    func updateSnap(categoryId: String, snap: Snap, newImageUrls: [String], completion: @escaping (Result<Snap, Error>) -> Void) {
         if let snapId = snap.id {
-            var imageUrls = snap.imageUrls
-            imageUrls.append(contentsOf: newImageUrls)
+            var updatedSnap = snap
+            updatedSnap.imageUrls.append(contentsOf: newImageUrls)
+//            var imageUrls = snap.imageUrls
+//            imageUrls.append(contentsOf: newImageUrls)
             
             db.collection("Users")
                 .document(AuthViewModel.shared.currentUser?.uid ?? "")
@@ -151,12 +160,12 @@ final class SnapService {
                 .document(categoryId)
                 .collection("Snaps")
                 .document(snapId)
-                .updateData(["imageUrls": imageUrls]) { error in
+                .updateData(["imageUrls": updatedSnap.imageUrls]) { error in
                     if let error = error {
                         completion(.failure(error))
                         return
                     }
-                    completion(.success(()))
+                    completion(.success(updatedSnap))
                 }
         }
     }
@@ -187,6 +196,22 @@ final class SnapService {
                             return
                         }
                         completion(.success(()))
+                    }
+                }
+        }
+    }
+    
+    func deleteSnap(categoryId: String, snap: Snap, completion: @escaping (Error?) -> Void) {
+        if let snapId = snap.id {
+            db.collection("Users")
+                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .collection("Categories")
+                .document(categoryId)
+                .collection("Snaps")
+                .document(snapId)
+                .delete { error in
+                    if let error = error {
+                        completion(error)
                     }
                 }
         }
