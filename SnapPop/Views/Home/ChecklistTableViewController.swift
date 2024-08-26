@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Combine
 
 class ChecklistTableViewController: UITableViewController {
-    
+
     var viewModel: HomeViewModel?
+    private var cancellables = Set<AnyCancellable>() // Combine 구독을 저장할 Set
     
     // 관리 항목 추가 버튼
     private let selfcareAddButton: UIButton = {
@@ -35,18 +37,18 @@ class ChecklistTableViewController: UITableViewController {
         tableView.dataSource = self
         tableView.delegate = self
         
-        // 테스트 데이터 설정
-        setupTestData()
-    }
-    
-    private func setupTestData() {
-        // 임시 데이터 로드
-        viewModel?.checklistItems = [
-            Management(title: "테스트 1", memo: "", color: "#FF0000", startDate: Date(), repeatCycle: 0, alertTime: Date(), alertStatus: false, completions: [:]),
-            Management(title: "테스트 2", memo: "", color: "#00FF00", startDate: Date(), repeatCycle: 1, alertTime: Date(), alertStatus: true, completions: [:]),
-            Management(title: "테스트 3", memo: "", color: "#0000FF", startDate: Date(), repeatCycle: 2, alertTime: Date(), alertStatus: false, completions: [:])
-        ]
-        tableView.reloadData() // 데이터 변경 반영
+        // 데이터 가져오기
+        if let categoryId = viewModel?.selectedCategoryId {
+            viewModel?.fetchManagements(categoryId: categoryId)
+        }
+        
+        // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
+        viewModel?.$checklistItems
+            .receive(on: RunLoop.main) // UI 업데이트는 메인 스레드에서 이루어져야 합니다.
+            .sink { [weak self] _ in
+                self?.tableView.reloadData() // 데이터 변경 시 테이블 뷰를 리로드
+            }
+            .store(in: &cancellables)
     }
     
     private func setupButtonConstraints() {
@@ -60,9 +62,9 @@ class ChecklistTableViewController: UITableViewController {
     
     // 관리 항목 추가 버튼 클릭 시 동작
     @objc private func didSelfcareAddButton() {
-        let addManagementViewModel = AddManagementViewModel(categoryId: "default")
+        let addManagementViewModel = AddManagementViewModel(categoryId: viewModel?.selectedCategoryId ?? "default")
         let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
-        addManagementVC.homeViewModel = viewModel // HomeViewModel 전달
+        addManagementVC.homeViewModel = viewModel
 
         if let parentVC = self.view.parentViewController(), !(parentVC.navigationController?.viewControllers.contains(addManagementVC) ?? false) {
             parentVC.navigationController?.pushViewController(addManagementVC, animated: true)
@@ -105,9 +107,18 @@ class ChecklistTableViewController: UITableViewController {
                 completionHandler(false)
                 return
             }
-            let addManagementViewModel = AddManagementViewModel(categoryId: "default")
+            
+            // 선택한 항목 가져오기
+            let itemToEdit = viewModel.checklistItems[indexPath.row]
+            
+            // 기존 항목을 사용하여 AddManagementViewModel 초기화
+            let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default")
+            addManagementViewModel.management = itemToEdit
+            
+            // AddManagementViewController 초기화
             let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
             addManagementVC.homeViewModel = viewModel // HomeViewModel 전달
+            
             self.navigationController?.pushViewController(addManagementVC, animated: true)
             completionHandler(true)
         }
@@ -120,12 +131,10 @@ class ChecklistTableViewController: UITableViewController {
         return configuration
     }
     
-    // 추가: 왼쪽으로 스와이프할 때 핀 고정액션 추가
+    // 왼쪽으로 스와이프할 때 핀 고정 액션 추가
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let pinAction = UIContextualAction(style: .normal, title: nil) { (action, view, completionHandler) in
-
             if let viewModel = self.viewModel {
-
                 let item = viewModel.checklistItems.remove(at: indexPath.row)
                 viewModel.checklistItems.insert(item, at: 0)
                 tableView.reloadData()

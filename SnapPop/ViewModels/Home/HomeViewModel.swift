@@ -46,6 +46,7 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
             case .success(let managements):
                 DispatchQueue.main.async {
                     self?.checklistItems = managements
+                    print("Fetched managements: \(managements)")
                 }
             case .failure(let error):
                 print("Error fetching managements: \(error)")
