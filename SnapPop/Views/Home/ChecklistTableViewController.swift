@@ -91,15 +91,16 @@ class ChecklistTableViewController: UITableViewController {
         deleteAction.backgroundColor = .red
         deleteAction.image = UIImage(systemName: "trash") // 삭제 액션을 위한 SF Symbol
         
-        // 알람 액션
-        let alarmAction = UIContextualAction(style: .normal, title: nil) { (action, view, completionHandler) in
-            print("인덱스 \(indexPath.row)의 항목에 대해 알람 탭")
+        // 수정 액션
+        let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
+            guard let cell = tableView.cellForRow(at: indexPath) as? ChecklistTableViewCell else { return }
+            cell.enterEditMode()
             completionHandler(true)
         }
-        alarmAction.backgroundColor = .gray
-        alarmAction.image = UIImage(systemName: "bell.slash") // 알람 액션을 위한 SF Symbol
+        editAction.backgroundColor = .gray
+        editAction.image = UIImage(systemName: "pencil")
         
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, alarmAction])
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         configuration.performsFirstActionWithFullSwipe = false
         
         return configuration

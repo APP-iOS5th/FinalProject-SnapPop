@@ -210,21 +210,24 @@ class RepeatCell: BaseTableViewCell {
 
 // -MARK: 시간
 class TimeCell: BaseTableViewCell {
-    let switchControl: UISwitch = {
-        let switchControl = UISwitch()
-        switchControl.onTintColor = UIColor.customToggleColor
-        switchControl.translatesAutoresizingMaskIntoConstraints = false
-        return switchControl
+    let timePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.datePickerMode = .time
+        picker.preferredDatePickerStyle = .wheels
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
     }()
     
     override func setupUI() {
         super.setupUI()
-        contentView.addSubview(switchControl)
+        contentView.addSubview(timePicker)
         selectionStyle = .none
 
         NSLayoutConstraint.activate([
-            switchControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-            switchControl.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            timePicker.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            timePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            timePicker.topAnchor.constraint(equalTo: contentView.topAnchor),
+            timePicker.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
 }
@@ -238,6 +241,8 @@ class NotificationCell: BaseTableViewCell {
         return switchControl
     }()
     
+    weak var delegate: NotificationCellDelegate?
+    
     override func setupUI() {
         super.setupUI()
         contentView.addSubview(switchControl)
@@ -247,5 +252,15 @@ class NotificationCell: BaseTableViewCell {
             switchControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
             switchControl.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
+        
+        switchControl.addTarget(self, action: #selector(switchValueChanged), for: .valueChanged)
     }
+    
+    @objc private func switchValueChanged() {
+        delegate?.notificationCellDidToggle(self, isOn: switchControl.isOn)
+    }
+}
+
+protocol NotificationCellDelegate: AnyObject {
+    func notificationCellDidToggle(_ cell: NotificationCell, isOn: Bool)
 }
