@@ -12,6 +12,7 @@ import FirebaseFirestore
 class AddManagementViewModel: CategoryChangeDelegate {
     
     var categoryId: String?
+
     @Published var title: String = ""
     @Published var memo: String = ""
     @Published var color: UIColor = .black

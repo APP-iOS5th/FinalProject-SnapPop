@@ -214,9 +214,8 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
     }
     
     // MARK: - CategoryChangeDelegate
-    func categoryDidChange(to newCategoryId: String) {
+    func categoryDidChange(to newCategoryId: String?) {
         self.selectedCategoryId = newCategoryId
-        
     }
     
     // 아래부터는 이전에 사용하던 코드

@@ -16,6 +16,8 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
    }
     
     
+    
+    
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
     var selectedDateComponents: DateComponents?
     lazy var selectedDate = selectedDateComponents?.date ?? Date()
@@ -136,13 +138,11 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
-        if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
-                multiSelection.setSelectedDates([], animated: true)
-            }
-        selectedDateComponents = nil
-        tableView.isHidden = true
-        tableView.reloadData()
+        if let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            self.categoryId = categoryId
+            updateManegementData()
+            updateSnapsForMonth()
+        }
     }
     
     override func viewDidLoad() {
@@ -151,7 +151,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
         setupConstraints()
         if let navigationController = self.navigationController as? CustomNavigationBarController {
             navigationController.viewModel.delegate = self }
-        categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
         calendarView.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
@@ -165,9 +164,9 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
         segmentedControl.isUserInteractionEnabled = true
         secondStackView.distribution = .equalCentering
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-        segmentChange()
-        updateManegementData()
         
+//        categoryDidChange(to: categoryId)
+
     }
     
     private func setupViews() {
@@ -225,7 +224,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
         ])
     }
-    
     private func setupFirstStackViewConstraints() {
         NSLayoutConstraint.activate([
             firstStackViewView.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 10),
@@ -233,7 +231,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             firstStackViewView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
         ])
     }
-    
     private func setupCalendarViewConstraints() {
         calendarView.locale = Locale(identifier: "ko_KR")
         NSLayoutConstraint.activate([
@@ -242,7 +239,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             calendarView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor)
         ])
     }
-    
     private func setupTableViewConstraints() {
         tableViewHeightConstraint?.isActive = false
         
@@ -281,7 +277,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             dashButton.heightAnchor.constraint(equalToConstant: 17)
         ])
     }
-    
     private func setupsecondStackViewConstraints() {
         NSLayoutConstraint.activate([
             secondStackView.topAnchor.constraint(equalTo: firstStackViewView.bottomAnchor, constant: 30),
@@ -291,7 +286,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             secondStackView.heightAnchor.constraint(equalToConstant: 400)
         ])
     }
-    
     private func setupSegmentedControlConstraints() {
         NSLayoutConstraint.activate([
             segmentedControl.topAnchor.constraint(equalTo: secondStackView.topAnchor),
@@ -300,7 +294,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             segmentedControl.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
-    
     private func setupgraphViewConstraints() {
         NSLayoutConstraint.activate([
             graphView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 30),
@@ -308,7 +301,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             graphView.trailingAnchor.constraint(equalTo: secondStackView.trailingAnchor, constant: -5)
         ])
     }
-    
     private func setupIsDoneChartViewConstraints() {
         NSLayoutConstraint.activate([
             isDoneChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
@@ -316,7 +308,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             isDoneChart.view.trailingAnchor.constraint(equalTo: graphView.trailingAnchor, constant: -30)
         ])
     }
-    
     private func setupCostChartViewConstraints() {
         NSLayoutConstraint.activate([
             costChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
@@ -341,6 +332,8 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             break
         }
     }
+    
+    
     
 }
 
@@ -398,6 +391,45 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
     func updatMonthlyInfo(month: Int, year: Int) {
         isDoneChart.updateMonthLabel(month: month, year: year)
         costChart.updateMonthLabel(month: month, year: year)
+        updateIsDoneChart(month: month, year: year)
+    }
+    private func updateIsDoneChart(month: Int, year: Int) {
+        guard !managements.isEmpty else {
+            isDoneChart.updateChart(withPercentage: 0)
+            return
+        }
+
+        var totalCompletions = 0
+        var totalTasks = 0
+
+        for management in managements {
+            for (key, value) in management.completions {
+                if compareYearMonth(year, month, with: key) {
+                    totalCompletions += value
+                    totalTasks += 1
+                }
+            }
+        }
+
+        let percentage: Double
+        if totalTasks > 0 {
+            percentage = Double(totalCompletions) / Double(totalTasks) * 100.0
+        } else {
+            percentage = 0
+        }
+
+        isDoneChart.updateChart(withPercentage: percentage)
+        isDoneChart.view
+    }
+    func compareYearMonth(_ year: Int, _ month: Int, with dateString: String) -> Bool {
+        // 1. 년과 월을 사용하여 비교할 문자열 생성
+        let compareString = String(format: "%04d-%02d", year, month)
+        
+        // 2. dateString에서 년과 월 부분만 추출
+        let yearMonthString = String(dateString.prefix(7))
+        
+        // 3. 두 문자열 비교
+        return compareString == yearMonthString
     }
     
     func updateSnapsForMonth() {
@@ -465,20 +497,18 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         }
     }
     
-    func categoryDidChange(to newCategoryId: String) {
-        categoryId = newCategoryId
-        updateSnapsForMonth()
-        updateManegementData()
-        filteringMatchingManagements()
+    func categoryDidChange(to newCategoryId: String?) {
+        categoryId = newCategoryId ?? "default"
         if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
                 multiSelection.setSelectedDates([], animated: true)
             }
+        updateManegementData()
+        updateSnapsForMonth()
         selectedDateComponents = nil
         tableView.isHidden = true
-        tableView.reloadData()
-        
-        setupConstraints()
     }
+    
+  
 }
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
@@ -538,7 +568,6 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         
         if let managementIndex = managements.firstIndex(where: { $0.id == managementId }) {
            managements[managementIndex].completions[dateKey] = completionState[0] ? 0 : 1
-            print("\(completionState)")
         }
         managementService.updateCompletion(categoryId: categoryId, managementId: managementId, date: selectedDate, isCompleted: !completionState[0]) { result in
             switch result {
