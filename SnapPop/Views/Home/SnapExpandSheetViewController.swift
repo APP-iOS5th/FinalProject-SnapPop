@@ -192,7 +192,17 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     }
     
     // MARK: - UIPageViewControllerDelegate Methods
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        // 제스처가 시작되기 전에 호출
+        if let visibleViewController = pageViewController.viewControllers?.first,
+           let index = viewControllersIndex(of: visibleViewController) {
+            // 현재 인덱스를 임시로 저장
+            currentIndex = index
+        }
+    }
+    
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        // 제스처가 완료된 후 호출
         if completed, let visibleViewController = pageViewController.viewControllers?.first,
            let index = viewControllersIndex(of: visibleViewController) {
             currentIndex = index
@@ -202,7 +212,6 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     
     private func viewControllersIndex(of viewController: UIViewController) -> Int? {
         // 현재 보여지고 있는 뷰 컨트롤러의 인덱스를 찾기 위해
-        // 먼저, 모든 이미지 뷰 컨트롤러를 비교하여 해당 인덱스를 찾습니다
         guard let imageView = viewController.view.subviews.compactMap({ $0 as? UIImageView }).first,
               let image = imageView.image else {
             return nil
