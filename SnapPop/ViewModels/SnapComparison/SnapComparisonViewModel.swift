@@ -267,7 +267,8 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     }
     
     /// 카테고리 변경시 호출되는 메소드
-    func categoryDidChange(to newCategoryId: String) {
+    func categoryDidChange(to newCategoryId: String?) {
+        guard let newCategoryId = newCategoryId else { return }
         print("[Snap비교] 스냅 비교뷰 카테고리 변경됨 \(newCategoryId)")
         loadSanpstoFireStore(to: newCategoryId)
         reloadCollectionView?()
