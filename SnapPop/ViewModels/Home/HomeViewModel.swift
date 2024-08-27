@@ -19,6 +19,7 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Properties
+    var filteredSnapData: [Snap] = []
     @Published var checklistItems: [Management] = []
     @Published var snap: Snap?
     @Published var selectedCategoryId: String?
@@ -137,6 +138,13 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
             switch result {
             case .success(let snap):
                 self.snap = snap
+                
+                self.filteredSnapData.removeAll()
+                
+                if !snap.imageUrls.isEmpty { 
+                    self.filteredSnapData.append(snap)
+                }
+                
                 completion()
             case .failure(let error):
                 print("스냅 로드 실패: \(error.localizedDescription)")
