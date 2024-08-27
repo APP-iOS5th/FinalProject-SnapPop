@@ -363,9 +363,11 @@ class HomeViewController:
         if isEditingMode {
             // 편집 모드로 전환
             editButton.setTitle("완료", for: .normal)
+            snapCollectionView.isScrollEnabled = false // 스크롤 비활성화
         } else {
             // 편집 모드 종료
             editButton.setTitle("편집", for: .normal)
+            snapCollectionView.isScrollEnabled = true // 스크롤 활성화
         }
         
         updateVisibleCellsForEditingMode(isEditingMode)
