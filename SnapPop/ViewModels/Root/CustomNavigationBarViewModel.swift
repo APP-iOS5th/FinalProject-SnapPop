@@ -108,7 +108,6 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                         if self.currentCategory?.id == categoryId {
                             if self.categories.isEmpty {
                                 // 카테고리가 남아있지 않은 경우
-                                // documentPath Error 발생위치
                                 self.currentCategory = nil
                                 UserDefaults.standard.removeObject(forKey: "currentCategoryId")
                                 print("카테고리가 남아있지 않은 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
@@ -143,11 +142,13 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                 completion("카테고리를 추가해 주세요")
                             }
                         }
-                        self.categoryisUpdated?()
                     }
                 }
             }
-        }
+            
+        } // deleteSnaps
+        
+        self.categoryisUpdated?()
     }
     
     func selectCategory(at index: Int) {
@@ -158,7 +159,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
         self.currentCategory = categories[index]
         print("selectCategory Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
     }
-        
+    
     func handleCategoryId(completion: @escaping (String) -> Void) {
         loadCategories { [weak self] in
             guard let self = self else { return }
