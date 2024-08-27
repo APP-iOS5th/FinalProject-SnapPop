@@ -222,6 +222,12 @@ final class SnapService {
         loadSnaps(categoryId: categoryId) { result in
             switch result {
             case .success(let snaps):
+                
+                guard !snaps.isEmpty else {
+                    completion(nil)// 스냅이 없는 경우 바로 카테고리 삭제
+                    return
+                }
+                
                 for snap in snaps {
                     for imageUrl in snap.imageUrls {
                         self.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
@@ -230,7 +236,6 @@ final class SnapService {
                                 print("[SnapService] Success to deleteImage")
                             case .failure(let error):
                                 print("[SnapService] Failed to deleteImage: \(error.localizedDescription)")
-                                completion(error)
                             }
                         }
                     }
@@ -243,7 +248,7 @@ final class SnapService {
                         .document(snapId)
                         .delete { error in
                             if let error = error {
-                                completion(error)
+                                print("[SnapService] Failed to deleteSnap: \(error.localizedDescription)")
                             } else {
                                 completion(nil)
                             }
@@ -252,7 +257,7 @@ final class SnapService {
                 }
             case .failure(let error):
                 print("[SnapService] Failed to load snaps: \(error.localizedDescription)")
-                completion(error)
+                completion(nil)
             }
         }
     }
