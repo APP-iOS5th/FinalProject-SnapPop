@@ -9,14 +9,7 @@ import UIKit
 import Foundation
 
 class CalendarViewController: UIViewController, CategoryChangeDelegate {
-    func categoryDidChange(to newCategoryId: String?) { // ? 추가
-       guard let newCategoryId = newCategoryId else { return } // guard문 추가
-//       self.selectedCategoryId = newCategoryId
-       
-   }
-    
-    
-    
+ 
     
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
     var selectedDateComponents: DateComponents?
@@ -497,8 +490,10 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         }
     }
     
-    func categoryDidChange(to newCategoryId: String?) {
-        categoryId = newCategoryId ?? "default"
+    func categoryDidChange(to newCategoryId: String?) { // ? 추가
+       guard let newCategoryId = newCategoryId else { return } // guard문 추가
+//       self.selectedCategoryId = newCategoryId
+        self.categoryId = newCategoryId
         if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
                 multiSelection.setSelectedDates([], animated: true)
             }
@@ -506,7 +501,8 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         updateSnapsForMonth()
         selectedDateComponents = nil
         tableView.isHidden = true
-    }
+       
+   }
     
   
 }
