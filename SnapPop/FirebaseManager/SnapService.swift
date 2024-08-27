@@ -130,6 +130,7 @@ final class SnapService {
             .collection("Categories")
             .document(categoryId)
             .collection("Snaps")
+            .order(by: "createdAt", descending: false)
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error fetching documents: \(error.localizedDescription)")
@@ -213,6 +214,46 @@ final class SnapService {
                         completion(error)
                     }
                 }
+        }
+    }
+    
+    func deleteSnaps(categoryId: String, completion: @escaping (Error?) -> Void) {
+        
+        loadSnaps(categoryId: categoryId) { result in
+            switch result {
+            case .success(let snaps):
+                for snap in snaps {
+                    for imageUrl in snap.imageUrls {
+                        self.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
+                            switch result {
+                            case .success():
+                                print("[SnapService] Success to deleteImage")
+                            case .failure(let error):
+                                print("[SnapService] Failed to deleteImage: \(error.localizedDescription)")
+                                completion(error)
+                            }
+                        }
+                    }
+                    guard let snapId = snap.id else { return }
+                    self.db.collection("Users")
+                        .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                        .collection("Categories")
+                        .document(categoryId)
+                        .collection("Snaps")
+                        .document(snapId)
+                        .delete { error in
+                            if let error = error {
+                                completion(error)
+                            } else {
+                                completion(nil)
+                            }
+                        }
+                    
+                }
+            case .failure(let error):
+                print("[SnapService] Failed to load snaps: \(error.localizedDescription)")
+                completion(error)
+            }
         }
     }
 }

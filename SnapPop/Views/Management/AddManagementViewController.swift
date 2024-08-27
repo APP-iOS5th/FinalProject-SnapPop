@@ -9,9 +9,12 @@ import Combine
 import UIKit
 
 class AddManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NotificationCellDelegate, UITextFieldDelegate {
-
+    
     // MARK: - Properties
     private let viewModel: AddManagementViewModel
+    var homeViewModel: HomeViewModel?
+    var onSave: ((Management) -> Void)? 
+    
     private var cancellables = Set<AnyCancellable>()
     private var isTimePickerVisible = false
     
@@ -21,7 +24,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-
+    
     private let addDetailButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("상세 비용 추가하기", for: .normal)
@@ -49,8 +52,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         setupUI()
         bindViewModel()
         if let navigationController = self.navigationController as? CustomNavigationBarController {
-                    navigationController.viewModel.delegate = viewModel
-                }
+            navigationController.viewModel.delegate = viewModel
+        }
         print(UserDefaults.standard.dictionaryRepresentation())
         viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
         bindViewModel() // ViewModel 바인딩(combine)
@@ -102,25 +105,27 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: addDetailButton.topAnchor, constant: -10),
-
+            
             addDetailButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addDetailButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             addDetailButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             addDetailButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
-
+    
     // MARK: - Actions
     @objc private func cancelButtonTapped() {
         // HomeViewController로 돌아가기
         navigationController?.popViewController(animated: true)
     }
-
+    
     @objc private func saveButtonTapped() {
-        // ViewModel을 통해 데이터를 저장하고, 성공 시 이전 화면으로 이동
         viewModel.save { [weak self] result in
             switch result {
             case .success:
+                if let management = self?.viewModel.management {
+                    self?.onSave?(management)  // 변경된 저장 항목을 저장
+                }
                 self?.navigationController?.popViewController(animated: true)
             case .failure(let error):
                 let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
@@ -211,12 +216,16 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         bind(viewModel.$title) { [weak self] title in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? TitleCell {
                 cell.textField.text = title
+                cell.textField.autocorrectionType = .no
+                cell.textField.spellCheckingType = .no
             }
         }
 
         bind(viewModel.$memo) { [weak self] memo in
             if let cell = self?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? MemoCell {
                 cell.textField.text = memo
+                cell.textField.autocorrectionType = .no
+                cell.textField.spellCheckingType = .no
             }
         }
 
@@ -232,7 +241,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             }
         }
         bind(viewModel.$repeatCycle) { [weak self] cycle in
-            
             guard let self = self else { return }
             if let cell = self.tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as? RepeatCell {
                 cell.configure(with: self.viewModel)
@@ -279,7 +287,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.addTarget(self, action: #selector(titleChanged(_:)), for: .editingChanged)
                 cell.textField.delegate = self
                 cell.textField.autocorrectionType = .no
-                cell.textField.autocapitalizationType = .none
                 cell.textField.spellCheckingType = .no
                 return cell
             case 1:
@@ -294,7 +301,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.textField.addTarget(self, action: #selector(memoChanged(_:)), for: .editingChanged)
                 cell.textField.delegate = self
                 cell.textField.autocorrectionType = .no
-                cell.textField.autocapitalizationType = .none
                 cell.textField.spellCheckingType = .no
                 return cell
             default:
@@ -307,9 +313,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                     return UITableViewCell()
                 }
                 cell.configure(with: viewModel.startDate)
-                cell.datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
+                cell.dismissHandler = { [weak self] in
+                    self?.presentedViewController?.dismiss(animated: false, completion: nil)
+                }
                 return cell
-                
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "RepeatCell", for: indexPath) as? RepeatCell else { return UITableViewCell() }
                 cell.textLabel?.text = "반복"

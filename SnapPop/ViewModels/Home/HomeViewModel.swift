@@ -9,12 +9,15 @@ import UIKit
 import Photos
 import AVFoundation
 import Combine
+import FirebaseFirestore
 
 // MARK: - ViewModel
-class HomeViewModel: ObservableObject, CategoryChangeDelegate {
+class HomeViewModel: ObservableObject, CategoryChangeDelegate {    
     
     private let snapService: SnapService
     private let managementService = ManagementService() // ManagementService 인스턴스
+    private var cancellables = Set<AnyCancellable>()
+
     // MARK: - Properties
     var filteredSnapData: [Snap] = []
     @Published var checklistItems: [Management] = []
@@ -33,6 +36,54 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.string(from: sender.date)
     }
+    
+    func addManagement(_ management: Management) {
+        checklistItems.append(management)
+    }
+    // 관리 불러오기
+    func fetchManagements(categoryId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        managementService.loadManagements(categoryId: categoryId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let managements):
+                    self?.checklistItems = managements
+                    print("Fetched managements: \(managements)")
+                    completion(.success(()))
+                case .failure(let error):
+                    print("Error fetching managements: \(error)")
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    // 관리 삭제
+    func deleteManagement(categoryId: String, managementId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        managementService.deleteManagement(categoryId: categoryId, managementId: managementId) { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }
+    }
+    // 관리 편집 후 업데이트
+    func updateManagement(categoryId: String, managementId: String, updatedManagement: Management, completion: @escaping (Result<Void, Error>) -> Void) {
+        let db = ManagementService()
+        db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: updatedManagement) { result in
+            switch result {
+            case .success():
+                DispatchQueue.main.async {
+                    if let index = self.checklistItems.firstIndex(where: { $0.id == managementId }) {
+                        self.checklistItems[index] = updatedManagement
+                    }
+                    completion(.success(()))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     
     // 스냅 저장
     func saveSnap(categoryId: String, images: [UIImage], createdAt: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
@@ -64,6 +115,14 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
                 self.snapService.saveSnap(categoryId: categoryId, imageUrls: finalImageUrls, createdAt: createdAt) { result in
                     switch result {
                     case .success(let snap):
+                        let now = Date()  // 현재 날짜와 시간을 나타내는 Date 객체 생성
+                        let calendar = Calendar.current
+                        let hour = calendar.component(.hour, from: now)   // 현재 시간
+                        
+                        // 기존 알림은 지우고 새로운 스냅 알림 등록
+                        NotificationManager.shared.removeNotification(identifiers: ["dailySnapNotification"])
+                        NotificationManager.shared.scheduleDailySnapNotification(hour: hour)
+                        
                         completion(.success(snap))
                     case .failure(let error):
                         completion(.failure(error))
@@ -157,9 +216,8 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
     }
     
     // MARK: - CategoryChangeDelegate
-    func categoryDidChange(to newCategoryId: String) {
+    func categoryDidChange(to newCategoryId: String?) {
         self.selectedCategoryId = newCategoryId
-        
     }
     
     // 아래부터는 이전에 사용하던 코드

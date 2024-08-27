@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CategoryChangeDelegate: AnyObject {
-    func categoryDidChange(to newCategoryId: String)
+    func categoryDidChange(to newCategoryId: String?)
 }
 
 protocol CustomNavigationBarViewModelProtocol {
@@ -33,6 +33,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
     weak var delegate: CategoryChangeDelegate?
     
     private let categoryService = CategoryService()
+    private let snapService = SnapService()
     
     // MARK: - Methods
     func loadCategories(completion: @escaping () -> Void) {
@@ -90,58 +91,70 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
         let tempCategory = categories[index]
         categories.remove(at: index)
         
-        categoryService.deleteCategory(categoryId: categoryId) { error in
+        snapService.deleteSnaps(categoryId: categoryId) { error in
             if let error = error {
-                print("Failed to delete category: \(error.localizedDescription)")
-                self.categories.insert(tempCategory, at: index)
-                self.categoryisUpdated?()
-                completion(nil)
+                print("[네비게이션바VM] Failed to deleteSnaps: \(error.localizedDescription)")
             } else {
-                print("Successfully deleted category")
-                // 현재 선택된 카테고리가 삭제된 카테고리인 경우
-                if self.currentCategory?.id == categoryId {
-                    if self.categories.isEmpty {
-                        // 카테고리가 남아있지 않은 경우
-                        self.currentCategory = nil
-                        UserDefaults.standard.removeObject(forKey: "currentCategoryId")
-                        print("카테고리가 남아있지 않은 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
-                        print("current Category: \(self.currentCategory)")
-                        self.delegate?.categoryDidChange(to: "")
-                        completion("카테고리를 추가해 주세요")
+                self.categoryService.deleteCategory(categoryId: categoryId) { error in
+                    if let error = error {
+                        // TODO: - 카테고리는 다시 생기지만 Snaps는 삭제됨..
+                        print("Failed to delete category: \(error.localizedDescription)")
+                        self.categories.insert(tempCategory, at: index)
+                        self.categoryisUpdated?()
+                        completion(nil)
                     } else {
-                        // 카테고리가 남아있는 경우 첫 번째 카테고리를 선택
-                        self.currentCategory = self.categories.first
-                        UserDefaults.standard.set(self.categories.first?.id, forKey: "currentCategoryId")
-                        print("카테고리가 남아있는 경우 첫 번째 카테고리를 선택 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
-                        self.delegate?.categoryDidChange(to: self.currentCategory?.id ?? "")
-                        completion(self.currentCategory?.title)
-                    }
-                } else {
-                    // 현재 선택된 카테고리가 삭제된 카테고리가 아닌 경우
-                    if let firstCategory = self.categories.first {
-                        self.currentCategory = firstCategory
-                        UserDefaults.standard.set(firstCategory.id, forKey: "currentCategoryId")
-                        print("현재 선택된 카테고리가 삭제된 카테고리가 아닌 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
-                        self.delegate?.categoryDidChange(to: firstCategory.id ?? "")
-                        completion(firstCategory.title)
-                    } else {
-                        // categories 배열이 비어있는 경우
-                        self.currentCategory = nil
-                        UserDefaults.standard.removeObject(forKey: "currentCategoryId")
-                        print("categories 배열이 비어있는 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
-                        self.delegate?.categoryDidChange(to: "")
-                        completion("카테고리를 추가해 주세요")
+                        print("Successfully deleted category")
+                        // 현재 선택된 카테고리가 삭제된 카테고리인 경우
+                        if self.currentCategory?.id == categoryId {
+                            if self.categories.isEmpty {
+                                // 카테고리가 남아있지 않은 경우
+                                // documentPath Error 발생위치
+                                self.currentCategory = nil
+                                UserDefaults.standard.removeObject(forKey: "currentCategoryId")
+                                print("카테고리가 남아있지 않은 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
+                                self.delegate?.categoryDidChange(to: nil)
+                                completion("카테고리를 추가해 주세요")
+                            } else {
+                                // 카테고리가 남아있는 경우 첫 번째 카테고리를 선택
+                                self.currentCategory = self.categories.first
+                                if let newCategoryId = self.currentCategory?.id {
+                                    UserDefaults.standard.set(newCategoryId, forKey: "currentCategoryId")
+                                    self.delegate?.categoryDidChange(to: newCategoryId)
+                                    print("카테고리가 남아있는 경우 첫 번째 카테고리를 선택 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
+                                }
+                                completion(self.currentCategory?.title)
+                            }
+                        } else {
+                            // 현재 선택된 카테고리가 삭제된 카테고리가 아닌 경우
+                            if let firstCategory = self.categories.first {
+                                self.currentCategory = firstCategory
+                                if let newCategoryId = firstCategory.id {
+                                    UserDefaults.standard.set(newCategoryId, forKey: "currentCategoryId")
+                                    self.delegate?.categoryDidChange(to: newCategoryId)
+                                    print("현재 선택된 카테고리가 삭제된 카테고리가 아닌 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
+                                }
+                                completion(firstCategory.title)
+                            } else {
+                                // categories 배열이 비어있는 경우
+                                self.currentCategory = nil
+                                UserDefaults.standard.removeObject(forKey: "currentCategoryId")
+                                print("categories 배열이 비어있는 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
+                                self.delegate?.categoryDidChange(to: nil)
+                                completion("카테고리를 추가해 주세요")
+                            }
+                        }
+                        self.categoryisUpdated?()
                     }
                 }
-                self.categoryisUpdated?()
             }
         }
     }
     
     func selectCategory(at index: Int) {
         guard index >= 0 && index < categories.count else { return }
+        guard let categoryId = categories[index].id else { return }
         UserDefaults.standard.set(categories[index].id, forKey: "currentCategoryId")
-        delegate?.categoryDidChange(to: String(categories[index].id ?? ""))
+        delegate?.categoryDidChange(to: String(categoryId))
         self.currentCategory = categories[index]
         print("selectCategory Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
     }

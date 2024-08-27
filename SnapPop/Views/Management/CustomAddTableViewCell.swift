@@ -126,14 +126,9 @@ class ColorCell: BaseTableViewCell {
 }
 // -MARK: 날짜
 class DateCell: BaseTableViewCell {
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy.MM.dd"
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter
-    }()
+    var dismissHandler: (() -> Void)?
     
-    let datePicker: UIDatePicker = {
+    private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.translatesAutoresizingMaskIntoConstraints = false
@@ -163,7 +158,7 @@ class DateCell: BaseTableViewCell {
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
-        // 추후 데이터담을 때를 위해..
+        dismissHandler?()
     }
 }
 // -MARK: 반복

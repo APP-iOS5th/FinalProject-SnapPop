@@ -10,6 +10,7 @@
 		4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */; };
 		4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */; };
 		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
+		4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4AC605B32C78769D00D3AF19 /* Kingfisher */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
 		4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */; };
 		4AC9A0392C72E96700EB5FFC /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A0382C72E96700EB5FFC /* NotificationViewController.swift */; };
@@ -53,6 +54,7 @@
 		C24E0AFC2C762ECF00CCC055 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */; };
 		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
 		C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C8132C784610004F569A /* UIImageView+Extensions.swift */; };
+		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
 		C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */; };
@@ -118,6 +120,7 @@
 		C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
+		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
 		C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
@@ -142,6 +145,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */,
 				C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */,
 				8F1685492C6360180010F8D8 /* FirebaseAuth in Frameworks */,
 				C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */,
@@ -364,6 +368,7 @@
 				4AD29AD42C6AE1F200A9BEDD /* UIView+Extensions.swift */,
 				4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */,
 				C259C8132C784610004F569A /* UIImageView+Extensions.swift */,
+				C259C81A2C787B89004F569A /* NotificationManager.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -468,6 +473,7 @@
 				8F16854C2C6360180010F8D8 /* FirebaseStorage */,
 				C24BFA692C649E4300A5B40A /* GoogleSignIn */,
 				C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */,
+				4AC605B32C78769D00D3AF19 /* Kingfisher */,
 			);
 			productName = SnapPop;
 			productReference = 8F16852C2C6354590010F8D8 /* SnapPop.app */;
@@ -501,6 +507,7 @@
 				8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C24BFA522C647B6900A5B40A /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				C24BFA682C649E4300A5B40A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 8F16852D2C6354590010F8D8 /* Products */;
 			projectDirPath = "";
@@ -569,6 +576,7 @@
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
+				C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */,
 				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
 				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
@@ -829,6 +837,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.12.0;
+			};
+		};
 		8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -856,6 +872,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4AC605B32C78769D00D3AF19 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		8F1685482C6360180010F8D8 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
