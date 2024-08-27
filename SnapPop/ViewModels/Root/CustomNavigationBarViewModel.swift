@@ -11,6 +11,10 @@ protocol CategoryChangeDelegate: AnyObject {
     func categoryDidChange(to newCategoryId: String?)
 }
 
+extension Notification.Name {
+    static let categoryDidChange = Notification.Name("categoryDidChange")
+}
+
 protocol CustomNavigationBarViewModelProtocol {
     var categories: [Category] { get set }
     var currentCategory: Category? { get set }
@@ -111,14 +115,20 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                 self.currentCategory = nil
                                 UserDefaults.standard.removeObject(forKey: "currentCategoryId")
                                 print("카테고리가 남아있지 않은 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
-                                self.delegate?.categoryDidChange(to: nil)
+//                                self.delegate?.categoryDidChange(to: nil)
+                                if let selectedCategory = self.currentCategory {
+                                    NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: nil)
+                                }
                                 completion("카테고리를 추가해 주세요")
                             } else {
                                 // 카테고리가 남아있는 경우 첫 번째 카테고리를 선택
                                 self.currentCategory = self.categories.first
                                 if let newCategoryId = self.currentCategory?.id {
                                     UserDefaults.standard.set(newCategoryId, forKey: "currentCategoryId")
-                                    self.delegate?.categoryDidChange(to: newCategoryId)
+//                                    self.delegate?.categoryDidChange(to: newCategoryId)
+                                    if let selectedCategory = self.currentCategory {
+                                        NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": newCategoryId])
+                                    }
                                     print("카테고리가 남아있는 경우 첫 번째 카테고리를 선택 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
                                 }
                                 completion(self.currentCategory?.title)
@@ -129,7 +139,10 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                 self.currentCategory = firstCategory
                                 if let newCategoryId = firstCategory.id {
                                     UserDefaults.standard.set(newCategoryId, forKey: "currentCategoryId")
-                                    self.delegate?.categoryDidChange(to: newCategoryId)
+//                                    self.delegate?.categoryDidChange(to: newCategoryId)
+                                    if let selectedCategory = self.currentCategory {
+                                        NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": newCategoryId])
+                                    }
                                     print("현재 선택된 카테고리가 삭제된 카테고리가 아닌 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
                                 }
                                 completion(firstCategory.title)
@@ -138,7 +151,10 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                 self.currentCategory = nil
                                 UserDefaults.standard.removeObject(forKey: "currentCategoryId")
                                 print("categories 배열이 비어있는 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
-                                self.delegate?.categoryDidChange(to: nil)
+//                                self.delegate?.categoryDidChange(to: nil)
+                                if let selectedCategory = self.currentCategory {
+                                    NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: nil)
+                                }
                                 completion("카테고리를 추가해 주세요")
                             }
                         }
@@ -154,9 +170,12 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
     func selectCategory(at index: Int) {
         guard index >= 0 && index < categories.count else { return }
         guard let categoryId = categories[index].id else { return }
-        UserDefaults.standard.set(categories[index].id, forKey: "currentCategoryId")
-        delegate?.categoryDidChange(to: String(categoryId))
+        UserDefaults.standard.set(categoryId, forKey: "currentCategoryId")
+//        delegate?.categoryDidChange(to: String(categoryId))
         self.currentCategory = categories[index]
+        
+        NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": categoryId])
+        
         print("selectCategory Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
     }
     
@@ -170,6 +189,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                 // 카테고리id가 없는 경우
                 title = "카테고리를 추가해 주세요"
                 UserDefaults.standard.removeObject(forKey: "currentCategoryId")
+                NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: nil)
             } else {
                 // 카테고리id가 있는 경우
                 if let savedCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId"),
@@ -177,11 +197,13 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                     // 저장된 카테고리id가 있고, 해당 카테고리가 존재하는 경우
                     self.currentCategory = savedCategory
                     title = savedCategory.title
+                    NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": savedCategoryId])
                 } else {
                     // 저장된 카테고리id가 있고, 저장된id의 카테고리가 존재하지 않는 경우
                     self.currentCategory = self.categories.first
                     title = self.categories.first?.title ?? "No Categories"
                     UserDefaults.standard.set(self.currentCategory?.id, forKey: "currentCategoryId")
+                    NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": self.currentCategory?.id])
                 }
             }
             
