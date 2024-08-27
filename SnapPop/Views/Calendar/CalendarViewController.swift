@@ -9,6 +9,12 @@ import UIKit
 import Foundation
 
 class CalendarViewController: UIViewController, CategoryChangeDelegate {
+    func categoryDidChange(to newCategoryId: String?) { // ? 추가
+       guard let newCategoryId = newCategoryId else { return } // guard문 추가
+//       self.selectedCategoryId = newCategoryId
+       
+   }
+    
     
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
     var selectedDateComponents: DateComponents?
