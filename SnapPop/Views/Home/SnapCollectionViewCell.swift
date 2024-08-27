@@ -7,6 +7,7 @@
 
 import UIKit
 import Photos
+import Kingfisher
 
 class SnapCollectionViewCell: UICollectionViewCell {
     
@@ -75,8 +76,18 @@ class SnapCollectionViewCell: UICollectionViewCell {
             contentView.layer.borderColor = nil
         }
         
-        let url = URL(string: snap.imageUrls[index])
-        snapImageView.load(url: url!)
+        if let url = URL(string: snap.imageUrls[index]) {
+            KingfisherManager.shared.retrieveImage(with: url) { result in
+                switch result {
+                case .success(let value):
+                    self.snapImageView.image = value.image
+                case .failure:
+                    self.snapImageView.image = UIImage(systemName: "circle.dotted")
+                }
+            }
+        } else {
+            snapImageView.image = UIImage(systemName: "circle.dotted")
+        }
         
         // 편집 모드에 따라 삭제 버튼 표시
         setEditingMode(isEditing)
