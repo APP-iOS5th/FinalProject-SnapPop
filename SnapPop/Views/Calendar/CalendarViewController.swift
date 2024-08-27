@@ -10,7 +10,6 @@ import Foundation
 
 class CalendarViewController: UIViewController, CategoryChangeDelegate {
  
-    
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
     var selectedDateComponents: DateComponents?
     lazy var selectedDate = selectedDateComponents?.date ?? Date()
