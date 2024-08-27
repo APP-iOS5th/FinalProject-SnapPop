@@ -26,26 +26,6 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
         return pageControl
     }()
     
-    /// 왼쪽 화살표 버튼
-    private lazy var leftArrowButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .black
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(didTapLeftArrow), for: .touchUpInside)
-        return button
-    }()
-    
-    /// 오른쪽 화살표 버튼
-    private lazy var rightArrowButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
-        button.tintColor = .black
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(didTapRightArrow), for: .touchUpInside)
-        return button
-    }()
-    
     // MARK: - Initializers
     init(imageUrls: [String], currentIndex: Int) {
         self.imageUrls = imageUrls
@@ -78,24 +58,10 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     // MARK: - Methods
     private func setupLayout() {
         view.addSubviews([
-            leftArrowButton,
-            rightArrowButton,
             pageControl
         ])
         
         NSLayoutConstraint.activate([
-            // 왼쪽 화살표 버튼
-            leftArrowButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 0),
-            leftArrowButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            leftArrowButton.widthAnchor.constraint(equalToConstant: 30),
-            leftArrowButton.heightAnchor.constraint(equalToConstant: 30),
-            
-            // 오른쪽 화살표 버튼
-            rightArrowButton.topAnchor.constraint(equalTo: view.centerYAnchor, constant: 0),
-            rightArrowButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            rightArrowButton.widthAnchor.constraint(equalToConstant: 30),
-            rightArrowButton.heightAnchor.constraint(equalToConstant: 30),
-            
             // 페이지 컨트롤
             pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
@@ -123,9 +89,6 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     }
     
     private func updateUI() {
-        // 화살표 버튼 상태 업데이트
-        leftArrowButton.isHidden = currentIndex == 0
-        rightArrowButton.isHidden = currentIndex == imageUrls.count - 1
         pageControl.currentPage = currentIndex // 페이지 컨트롤 업데이트
     }
     
@@ -133,6 +96,8 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
         guard index >= 0, index < imageUrls.count else { return nil }
         
         let viewController = UIViewController()
+        viewController.view.tag = index // tag 속성을 인덱스로 설정
+
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit // 비율 유지
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -160,26 +125,6 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
         return viewController
     }
     
-    @objc private func didTapLeftArrow() {
-        if currentIndex > 0 {
-            currentIndex -= 1
-            if let viewController = viewControllerAt(index: currentIndex) {
-                pageViewController.setViewControllers([viewController], direction: .reverse, animated: true, completion: nil)
-            }
-            updateUI()
-        }
-    }
-    
-    @objc private func didTapRightArrow() {
-        if currentIndex < imageUrls.count - 1 {
-            currentIndex += 1
-            if let viewController = viewControllerAt(index: currentIndex) {
-                pageViewController.setViewControllers([viewController], direction: .forward, animated: true, completion: nil)
-            }
-            updateUI()
-        }
-    }
-    
     // MARK: - UIPageViewControllerDataSource Methods
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         let previousIndex = currentIndex - 1
@@ -192,17 +137,7 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     }
     
     // MARK: - UIPageViewControllerDelegate Methods
-    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        // 제스처가 시작되기 전에 호출
-        if let visibleViewController = pageViewController.viewControllers?.first,
-           let index = viewControllersIndex(of: visibleViewController) {
-            // 현재 인덱스를 임시로 저장
-            currentIndex = index
-        }
-    }
-    
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        // 제스처가 완료된 후 호출
         if completed, let visibleViewController = pageViewController.viewControllers?.first,
            let index = viewControllersIndex(of: visibleViewController) {
             currentIndex = index
@@ -211,21 +146,6 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     }
     
     private func viewControllersIndex(of viewController: UIViewController) -> Int? {
-        // 현재 보여지고 있는 뷰 컨트롤러의 인덱스를 찾기 위해
-        guard let imageView = viewController.view.subviews.compactMap({ $0 as? UIImageView }).first,
-              let image = imageView.image else {
-            return nil
-        }
-        
-        // URL과 이미지 데이터를 비교하는 것은 비효율적일 수 있으므로
-        // index를 저장하고 관리하는 방법을 추천합니다.
-        return imageUrls.firstIndex(where: { url in
-            if let url = URL(string: url),
-               let imageData = try? Data(contentsOf: url),
-               let imageDataFromURL = image.pngData() ?? image.jpegData(compressionQuality: 1.0) {
-                return imageData == imageDataFromURL
-            }
-            return false
-        })
+        return viewController.view.tag
     }
 }
