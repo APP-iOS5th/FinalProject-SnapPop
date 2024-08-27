@@ -13,7 +13,7 @@ import FirebaseStorage
 
 struct Management: Identifiable, Hashable, Codable {
     @DocumentID var id: String?
-    var title: String 
+    var title: String
     var memo: String
     var color: String
     var startDate: Date
