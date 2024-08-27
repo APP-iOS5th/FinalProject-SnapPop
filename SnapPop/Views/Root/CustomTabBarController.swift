@@ -13,6 +13,7 @@ class CustomTabBarController: UITabBarController {
         
         setupTabbarLayout()
         setupTabbarItem()
+        selectedIndex = 1
     }
     
     private func setupTabbarLayout() {

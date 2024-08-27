@@ -74,6 +74,11 @@ class IsDonePercentageChart: UIViewController {
                 return traitCollection.userInterfaceStyle == .dark ? dark : light
             }
         }
+    
+    func updateChart(withPercentage percentage: Double) {
+        circularView.updatePercentages(isDone: percentage)
+        setupDoneChart(isDone: percentage)
+    }
 }
 
 
@@ -140,6 +145,7 @@ open class IsDoneDoughnut: UIView {
         default:
             percentageColor = dynamicColor(light: .black, dark: .white)
         }
+        
     }
     
     
@@ -188,6 +194,13 @@ open class IsDoneDoughnut: UIView {
                 return traitCollection.userInterfaceStyle == .dark ? dark : light
             }
         }
+    
+    public func updatePercentages(isDone: Double) {
+        self._percentages = [isDone, 100 - isDone]
+        self.donePercentage = String(format: "%.1f%%", isDone)
+        updateColor()
+        setNeedsDisplay()
+    }
 }
 
 //달성률 함수 예시
