@@ -13,6 +13,12 @@ import FirebaseFirestore
 
 // MARK: - ViewModel
 class HomeViewModel: ObservableObject, CategoryChangeDelegate {
+    func categoryDidChange(to newCategoryId: String?) { // ? 추가
+       guard let newCategoryId = newCategoryId else { return } // guard문 추가
+//       self.selectedCategoryId = newCategoryId
+       
+   }
+    
     
     private let snapService: SnapService
     private let managementService = ManagementService() // ManagementService 인스턴스

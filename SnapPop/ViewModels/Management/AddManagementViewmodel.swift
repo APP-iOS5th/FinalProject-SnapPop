@@ -11,8 +11,8 @@ import FirebaseFirestore
 
 class AddManagementViewModel: CategoryChangeDelegate {
     
-    
-    var categoryId: String
+    var categoryId: String?
+
     @Published var title: String = ""
     @Published var memo: String = ""
     @Published var color: UIColor = .black
@@ -26,7 +26,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
 
     let repeatOptions = ["매일", "매주", "안함"]
     
-    init(categoryId: String, management: Management) {
+    init(categoryId: String?, management: Management) {
         self.categoryId = categoryId
         self.management = management
         
@@ -42,7 +42,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
         bindManagementData()
     }
     
-    convenience init(categoryId: String) {
+    convenience init(categoryId: String?) {
         let defaultManagement = Management(
             title: "",
             memo: "",
@@ -129,7 +129,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
                 self.management.repeatCycle = repeatValue
     }
     
-    func categoryDidChange(to newCategoryId: String) {
+    func categoryDidChange(to newCategoryId: String?) {
         self.categoryId = newCategoryId
     }
     
@@ -162,19 +162,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
         
         let db = ManagementService()
         self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
-//        print("Attempting to save management with data:")
-//        print("Category ID: \(categoryId)")
-//        print("Management ID: \(management.id ?? "nil")")
-//        print("Title: \(management.title)")
-//        print("Memo: \(management.memo)")
-//        print("Color: \(management.color)")
-//        print("Start Date: \(management.startDate)")
-//        print("Repeat Cycle: \(management.repeatCycle)")
-//        print("Alert Time: \(management.alertTime)")
-//        print("Alert Status: \(management.alertStatus)")
-//        print("Completions: \(management.completions)")
-
-        db.saveManagement(categoryId: categoryId, management: management) { result in
+        db.saveManagement(categoryId: categoryId ?? "", management: management) { result in
             switch result {
             case .success(let management):
                 print("Management saved successfully")
