@@ -8,20 +8,11 @@
 import UIKit
 
 class IsDonePercentageChart: UIViewController {
-    
     // MARK: - Properties
-    
-    var circularView: IsDoneDoughnut!
-
-    var formatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "M"
-        return df
-    }()
+    private var circularView: IsDoneDoughnut!
     
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.text = ""
         label.font = UIFont.systemFont(ofSize: 16)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -29,58 +20,45 @@ class IsDonePercentageChart: UIViewController {
     }()
     
     // MARK: - View Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        setupDoneChart(isDone: 50)
-        setupMonthLabel()
-        
+        setupViews()
+        setupConstraints()
+        updateChart(withPercentage: 50)
     }
     
-    // MARK: - Setup Circular View
-    
-    private func setupDoneChart(isDone: Double) {
-        let percentages: [Double] = [isDone, 100 - isDone]
-        circularView = IsDoneDoughnut(percentages: percentages)
+    // MARK: - Setup
+    private func setupViews() {
+        circularView = IsDoneDoughnut(percentages: [50, 50])
         circularView.translatesAutoresizingMaskIntoConstraints = false
-        circularView.updateColor()
-        view.addSubview(circularView)
+        
         view.addSubview(monthLabel)
-        monthLabel.textColor = dynamicColor(light: .black, dark: .white)
+        view.addSubview(circularView)
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
-            
             monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
             monthLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             
             circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
             circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            circularView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             circularView.widthAnchor.constraint(equalToConstant: 250),
             circularView.heightAnchor.constraint(equalToConstant: 250)
         ])
     }
     
-    func setupMonthLabel() {
-        let current = Date()
-        monthLabel.text = "\(formatter.string(from: current))월"
-    }
-    public func updateMonthLabel(month: Int, year: Int) {
+    // MARK: - Public Methods
+    func updateMonthLabel(month: Int, year: Int) {
         monthLabel.text = "\(month)월"
     }
-    public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
-            return UIColor { traitCollection in
-                return traitCollection.userInterfaceStyle == .dark ? dark : light
-            }
-        }
     
     func updateChart(withPercentage percentage: Double) {
         circularView.updatePercentages(isDone: percentage)
-        setupDoneChart(isDone: percentage)
     }
 }
-
 
 
 
@@ -103,22 +81,31 @@ open class IsDoneDoughnut: UIView {
         }
     }
     
+    private let percentageLabel: UILabel = {
+            let label = UILabel()
+            label.font = UIFont.boldSystemFont(ofSize: 20)
+            label.textAlignment = .center
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
+    
     // MARK: - Private Variables
     private var _percentages: [Double]
     private var _colors: [UIColor] = [.red, .lightGray]
     private var _lineWidth = CGFloat(5.0)
-    lazy var donePercentage = "\(_percentages[0])%" {
+    lazy var donePercentage = "\(Float(_percentages[0]))%" {
         didSet {
             setNeedsDisplay()
         }
     }
     // MARK: - Initialization
     public init(percentages: [Double], lineWidth: CGFloat = 5.0) {
-        self._percentages = percentages
-        super.init(frame: CGRect.zero)
-        self.backgroundColor = .clear
-        self.clipsToBounds = false
-    }
+            self._percentages = percentages
+            super.init(frame: CGRect.zero)
+            self.backgroundColor = .clear
+            self.clipsToBounds = false
+            setupLabel()
+        }
     
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -145,9 +132,17 @@ open class IsDoneDoughnut: UIView {
         default:
             percentageColor = dynamicColor(light: .black, dark: .white)
         }
-        
+        updateLabel() // 색상이 변경될 때 레이블도 업데이트
+
     }
     
+    private func setupLabel() {
+            addSubview(percentageLabel)
+            NSLayoutConstraint.activate([
+                percentageLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+                percentageLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            ])
+        }
     
     // MARK: - Drawing
     override public func draw(_ rect: CGRect) {
@@ -174,18 +169,18 @@ open class IsDoneDoughnut: UIView {
             
             startAngle = endAngle
             
-            let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.boldSystemFont(ofSize: 20),
-                .foregroundColor: percentageColor
-            ]
-            let textSize = donePercentage.size(withAttributes: attributes)
-            let textRect = CGRect(
-                x: rect.midX - textSize.width / 2,
-                y: rect.midY - textSize.height / 2,
-                width: textSize.width,
-                height: textSize.height
-            )
-            donePercentage.draw(in: textRect, withAttributes: attributes)
+//            let attributes: [NSAttributedString.Key: Any] = [
+//                .font: UIFont.boldSystemFont(ofSize: 20),
+//                .foregroundColor: percentageColor
+//            ]
+//            let textSize = donePercentage.size(withAttributes: attributes)
+//            let textRect = CGRect(
+//                x: rect.midX - textSize.width / 2,
+//                y: rect.midY - textSize.height / 2,
+//                width: textSize.width,
+//                height: textSize.height
+//            )
+//            donePercentage.draw(in: textRect, withAttributes: attributes)
                 
         }
     }
@@ -194,13 +189,19 @@ open class IsDoneDoughnut: UIView {
                 return traitCollection.userInterfaceStyle == .dark ? dark : light
             }
         }
-    
     public func updatePercentages(isDone: Double) {
-        self._percentages = [isDone, 100 - isDone]
-        self.donePercentage = String(format: "%.1f%%", isDone)
-        updateColor()
-        setNeedsDisplay()
-    }
+            self._percentages = [isDone, 100 - isDone]
+            self.donePercentage = String(format: "%.1f%%", isDone)
+            updateColor()
+            updateLabel()
+            setNeedsDisplay()
+        }
+    
+    private func updateLabel() {
+            percentageLabel.text = donePercentage
+            percentageLabel.textColor = percentageColor
+        }
+
 }
 
 //달성률 함수 예시

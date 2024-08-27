@@ -132,8 +132,14 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
         super.viewWillAppear(animated)
         if let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             self.categoryId = categoryId
-            updateManegementData()
             updateSnapsForMonth()
+            loadManagements { [weak self] in
+                guard let self = self else { return }
+                if let visibleMonth = self.calendarView.visibleDateComponents.month,
+                   let visibleYear = self.calendarView.visibleDateComponents.year {
+                    self.updateIsDoneChart(month: visibleMonth, year: visibleYear)
+                }
+            }
         }
     }
     
@@ -156,15 +162,25 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
         segmentedControl.isUserInteractionEnabled = true
         secondStackView.distribution = .equalCentering
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
+        segmentChange()
+        guard let visibleMonth = calendarView.visibleDateComponents.month,
+              let visibleYear = calendarView.visibleDateComponents.year else {
+            return
+        }
+        updateIsDoneChart(month: visibleMonth, year: visibleYear)
         
+     
+       
+
 //        categoryDidChange(to: categoryId)
 
     }
     
     private func setupViews() {
         
-        isDoneChart = IsDonePercentageChart()
         costChart = CostChart()
+        isDoneChart = IsDonePercentageChart()
+
         addChild(isDoneChart)
         addChild(costChart)
         isDoneChart.view.frame = graphView.bounds
@@ -181,6 +197,8 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
         secondStackView.addArrangedSubview(graphView)
         graphView.addSubview(isDoneChart.view)
         graphView.addSubview(costChart.view)
+//        isDoneChart.circularView.isHidden = false
+//        costChart.circularView.isHidden = true
     }
     
     private func setupConstraints() {
@@ -293,13 +311,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             graphView.trailingAnchor.constraint(equalTo: secondStackView.trailingAnchor, constant: -5)
         ])
     }
-    private func setupIsDoneChartViewConstraints() {
-        NSLayoutConstraint.activate([
-            isDoneChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
-            isDoneChart.view.leadingAnchor.constraint(equalTo: graphView.leadingAnchor, constant: 30),
-            isDoneChart.view.trailingAnchor.constraint(equalTo: graphView.trailingAnchor, constant: -30)
-        ])
-    }
     private func setupCostChartViewConstraints() {
         NSLayoutConstraint.activate([
             costChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
@@ -307,6 +318,14 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             costChart.view.trailingAnchor.constraint(equalTo: graphView.trailingAnchor, constant: -30)
         ])
     }
+    private func setupIsDoneChartViewConstraints() {
+        NSLayoutConstraint.activate([
+            isDoneChart.view.topAnchor.constraint(equalTo: graphView.topAnchor),
+            isDoneChart.view.leadingAnchor.constraint(equalTo: graphView.leadingAnchor, constant: 30),
+            isDoneChart.view.trailingAnchor.constraint(equalTo: graphView.trailingAnchor, constant: -30)
+        ])
+    }
+
     
     @objc func segmentedControlValueChanged() {
         segmentChange()
@@ -383,7 +402,6 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
     func updatMonthlyInfo(month: Int, year: Int) {
         isDoneChart.updateMonthLabel(month: month, year: year)
         costChart.updateMonthLabel(month: month, year: year)
-        updateIsDoneChart(month: month, year: year)
     }
     private func updateIsDoneChart(month: Int, year: Int) {
         guard !managements.isEmpty else {
@@ -405,13 +423,13 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
 
         let percentage: Double
         if totalTasks > 0 {
-            percentage = Double(totalCompletions) / Double(totalTasks) * 100.0
+            percentage = (Double(totalCompletions) / Double(totalTasks)) * 100.0
         } else {
             percentage = 0
         }
 
         isDoneChart.updateChart(withPercentage: percentage)
-        isDoneChart.view
+        updatMonthlyInfo(month: month, year: year)
     }
     func compareYearMonth(_ year: Int, _ month: Int, with dateString: String) -> Bool {
         // 1. 년과 월을 사용하여 비교할 문자열 생성
@@ -453,13 +471,19 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
             }
         }
     }
-    func updateManegementData() {
+    func loadManagements(completion: @escaping () -> Void) {
         managementService.loadManagements(categoryId: categoryId) { [weak self] result in
             switch result {
             case .success(let managements):
                 self?.managements = managements
+                DispatchQueue.main.async {
+                    completion()
+                }
             case .failure(let error):
                 print("Failed to load managements: \(error)")
+                DispatchQueue.main.async {
+                    completion()
+                }
             }
         }
     }
@@ -491,19 +515,23 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
     
     func categoryDidChange(to newCategoryId: String?) { // ? 추가
        guard let newCategoryId = newCategoryId else { return } // guard문 추가
-//       self.selectedCategoryId = newCategoryId
         self.categoryId = newCategoryId
+       
         if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
                 multiSelection.setSelectedDates([], animated: true)
             }
-        updateManegementData()
+        loadManagements {
+            if let month = self.calendarView.visibleDateComponents.month, let year = self.calendarView.visibleDateComponents.year {
+                self.updateIsDoneChart(month: month, year: year)
+            }
+        }
+
         updateSnapsForMonth()
         selectedDateComponents = nil
         tableView.isHidden = true
        
    }
     
-  
 }
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
@@ -545,6 +573,9 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func checkboxTapped(_ sender: UIButton) {
+        
+       
+
         sender.isSelected.toggle()
         filteringMatchingManagements()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -576,7 +607,15 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? TodoTableViewCell {
             cell.updateCheckbocState(isChecked: !completionState[0])
         }
+        
+        if let month = calendarView.visibleDateComponents.month, let year = calendarView.visibleDateComponents.year {
+            updateIsDoneChart(month: month, year: year)
+        }
     }
+    
+    
+    
+    
 }
 
 extension UIImage {
