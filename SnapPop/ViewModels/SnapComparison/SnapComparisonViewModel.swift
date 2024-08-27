@@ -38,11 +38,6 @@ protocol SnapComparisonViewModelProtocol {
 
 class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
                                CategoryChangeDelegate {
-    func categoryDidChange(to newCategoryId: String?) { // ? 추가
-       guard let newCategoryId = newCategoryId else { return } // guard문 추가
-//       self.selectedCategoryId = newCategoryId
-       
-   }
     
     // MARK: - Properties
     private let snapService = SnapService()
