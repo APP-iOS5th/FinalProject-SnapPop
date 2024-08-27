@@ -124,11 +124,20 @@ class HomeViewController:
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Properties
+    private let dateAlertButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("", for: .normal) // 초기 텍스트는 비워둡니다.
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
         setupDatePickerView()
+        setupDateAlertButton() // 버튼 설정
         setupSnapCollectionView()
         setupChecklistView()
         
@@ -222,6 +231,18 @@ class HomeViewController:
         ])
     }
     
+    // MARK: - 날짜 알림 버튼 설정
+    private func setupDateAlertButton() {
+        dateAlertButton.addTarget(self, action: #selector(dateAlertButtonTapped), for: .touchUpInside)
+        view.addSubview(dateAlertButton)
+        
+        // 버튼 제약 조건 설정
+        NSLayoutConstraint.activate([
+            dateAlertButton.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
+            dateAlertButton.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
+        ])
+    }
+    
     // MARK: - 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
         guard let categoryId = viewModel.selectedCategoryId else { return }
@@ -230,7 +251,39 @@ class HomeViewController:
             self?.updateSnapCollectionView()
         }
         
-        self.dismiss(animated: false, completion: nil)
+        updateDateAlertButtonTitle() // 버튼 텍스트 업데이트
+    }
+    
+    // MARK: - 날짜 알림 버튼 텍스트 업데이트
+    private func updateDateAlertButtonTitle() {
+        let selectedDate = datePicker.date
+        let currentDate = Date()
+        
+        let calendar = Calendar.current
+        let selectedDay = calendar.startOfDay(for: selectedDate)
+        let today = calendar.startOfDay(for: currentDate)
+        
+        // 날짜 차이를 계산
+        let dayDifference = calendar.dateComponents([.day], from: today, to: selectedDay).day ?? 0
+        
+        switch dayDifference {
+        case 0:
+            dateAlertButton.setTitle("오늘", for: .normal)
+        case -1:
+            dateAlertButton.setTitle("어제", for: .normal)
+        case 1:
+            dateAlertButton.setTitle("내일", for: .normal)
+        case 2:
+            dateAlertButton.setTitle("모레", for: .normal)
+        default:
+            dateAlertButton.setTitle("", for: .normal) // 해당하지 않는 경우 비워둡니다.
+        }
+    }
+    
+    // MARK: - 날짜 알림 버튼 클릭 시 동작
+    @objc private func dateAlertButtonTapped() {
+        // 버튼 클릭 시의 동작을 정의합니다.
+        print("선택한 날짜: \(datePicker.date)")
     }
     
     // MARK: - 체크리스트 관련 요소 제약조건
