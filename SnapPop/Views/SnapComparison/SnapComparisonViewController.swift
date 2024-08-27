@@ -120,10 +120,16 @@ class SnapComparisonViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+    }
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
         self.view.backgroundColor = .customBackground
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
         
         setupBindings()
         setupLayout()
@@ -133,9 +139,9 @@ class SnapComparisonViewController: UIViewController {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)
         }
         
-        if let navigationController = self.navigationController as? CustomNavigationBarController {
-            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
-        }
+//        if let navigationController = self.navigationController as? CustomNavigationBarController {
+//            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -232,6 +238,16 @@ class SnapComparisonViewController: UIViewController {
     func reloadCollectionView() {
         DispatchQueue.main.async {
             self.collectionView.reloadData()
+        }
+    }
+    
+    @objc private func categoryDidChange(_ notification: Notification) {
+        if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
+            print("[스냅 비교뷰] 카테고리가 변경되었습니다: \(categoryId)")
+            viewModel.categoryDidChange(to: categoryId)
+        } else {
+            print("카테고리가 없습니다.")
+            viewModel.categoryDidChange(to: nil)
         }
     }
 }
