@@ -572,9 +572,7 @@ extension HomeViewController: PHPickerViewControllerDelegate {
                 images.append(image)
             }
             
-            guard let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") else {
-                return // categoryId가 nil인 경우, cropImage 메서드를 종료
-            }
+            guard let categoryId = viewModel.selectedCategoryId else { return }
             
             if let snap = viewModel.snap {
                 self.viewModel.updateSnap(categoryId: categoryId, snap: snap, newImages: images) { result in
