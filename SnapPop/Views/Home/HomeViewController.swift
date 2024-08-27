@@ -4,7 +4,6 @@
 //
 //  Created by Heeji Jung on 8/8/24.
 //
-
 import UIKit
 import SwiftUI
 import Photos
@@ -36,7 +35,7 @@ class HomeViewController:
     UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout,
     UICollectionViewDragDelegate,
-    UICollectionViewDropDelegate {
+    UICollectionViewDropDelegate{
     
     // ViewModel
     private var viewModel = HomeViewModel(snapService: SnapService())
@@ -326,6 +325,10 @@ class HomeViewController:
         cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
         cell.deleteButton.tag = indexPath.item
         cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
+        //cell.delegate = self
+        cell.currentIndex = indexPath.item
+        cell.imageUrls = snap.imageUrls
+        
         return cell
     }
     
@@ -435,22 +438,6 @@ class HomeViewController:
         }
     }
     
-    // 사용안함
-    private func presentImageCropper(with asset: PHAsset?) {
-        guard let image = selectedImage, let asset = asset else { return }
-        
-        let cropViewController = CropViewController(viewModel: viewModel, navigationBarViewModel: navigationBarViewModel as! CustomNavigationBarViewModel) // navigationBarViewModel 전달
-        cropViewController.asset = asset
-        cropViewController.modalPresentationStyle = .fullScreen
-        
-        cropViewController.didGetCroppedImage = { [weak self] (snap: Snap) in
-            self?.viewModel.snap = snap
-//            self?.viewModel.snapData.append(snap) // Snap 객체를 viewModel에 추가
-            self?.snapCollectionView.reloadData() // SnapCollectionView를 업데이트
-        }
-        
-        present(cropViewController, animated: true, completion: nil)
-    }
     
     private func updateUIWithCategories() {
         // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
@@ -527,6 +514,34 @@ class HomeViewController:
                 }
             }
         })
+    }
+    
+    func didTapSnapCell(with imageUrls: [String], currentIndex: Int) {
+        let expandVC = SnapExpandSheetViewController(imageUrls: imageUrls, currentIndex: currentIndex) // ViewController 초기화
+        expandVC.modalPresentationStyle = .pageSheet // 모달 시트로 표시
+        present(expandVC, animated: true, completion: nil) // ViewController 표시
+    }
+    
+    // MARK: - UICollectionViewDelegate
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // 선택된 스냅 데이터 가져오기
+        guard let snap = viewModel.snap, indexPath.item < snap.imageUrls.count else {
+            print("Invalid index or snap data.")
+            return
+        }
+        
+        // SnapExpandSheetViewController 초기화
+        let expandVC = SnapExpandSheetViewController(imageUrls: snap.imageUrls, currentIndex: indexPath.item) // ViewController 초기화
+        expandVC.modalPresentationStyle = .pageSheet // 모달 시트로 표시
+        
+        // sheetPresentationController 설정
+        if let sheet = expandVC.sheetPresentationController {
+            sheet.detents = [.medium()] // 모달 크기 설정
+            sheet.prefersGrabberVisible = true // 그랩바 표시
+        }
+        
+        // 모달 표시
+        present(expandVC, animated: true, completion: nil)
     }
 }
 

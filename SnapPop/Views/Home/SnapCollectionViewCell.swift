@@ -27,6 +27,9 @@ class SnapCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    var currentIndex: Int? // 현재 인덱스
+    var imageUrls: [String]? // 이미지 URL 배열
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -80,6 +83,9 @@ class SnapCollectionViewCell: UICollectionViewCell {
         
         // 편집 모드에 따라 삭제 버튼 표시
         setEditingMode(isEditing)
+        
+        self.currentIndex = index
+        self.imageUrls = snap.imageUrls // 이미지 URL 배열 설정
     }
     
     func setEditingMode(_ isEditing: Bool) {
