@@ -52,8 +52,6 @@ class CustomNavigationBarController: UINavigationController {
             }
         }
         loadCategories()
-        print("CustomNavigationBarController의 viewModel 주소: \(Unmanaged.passUnretained(self.viewModel as AnyObject).toOpaque())")
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -61,14 +59,8 @@ class CustomNavigationBarController: UINavigationController {
         if topViewController?.navigationItem.leftBarButtonItem == nil {
             setupNavigationBarItems()
         }
-        loadCategories()
+//        loadCategories()
         updateCategoryMenu()
-        viewModel.categoryisUpdated = { [weak self] in
-            print("CustomNavigationBarController에서 categoryisUpdated 클로저 호출됨")
-            DispatchQueue.main.async {
-                self?.updateCategoryMenu()
-            }
-        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -141,8 +133,6 @@ class CustomNavigationBarController: UINavigationController {
             print("새로운 메뉴가 설정되었습니다: \(menu)")
             self.categoryButton.menu = menu
             self.updateCategoryTitle()
-            
-            
             self.categoryButton.sizeToFit()
             self.categoryButton.layoutIfNeeded()
             print("Current category.id \(self.viewModel.currentCategory?.id)")
