@@ -54,7 +54,7 @@ class TodoTableViewCell: UITableViewCell {
     
     func updateCheckbocState(isChecked: Bool) {
         checkboxButton.isSelected = isChecked
-        let image = isChecked ? UIImage(systemName: "circle") : UIImage(systemName: "circle.fill")
+        let image = isChecked ? UIImage(systemName: "circle.fill") : UIImage(systemName: "circle")
         checkboxButton.setImage(image, for: .normal)
     }
 }

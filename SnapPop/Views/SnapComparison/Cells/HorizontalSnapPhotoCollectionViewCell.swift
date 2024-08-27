@@ -31,6 +31,9 @@ class HorizontalSnapPhotoCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Methods
     private func setupLayout() {
+        
+        contentView.backgroundColor = .customBackground
+        
         contentView.addSubviews([
             snapPhoto
         ])

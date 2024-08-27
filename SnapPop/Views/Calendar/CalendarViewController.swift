@@ -8,14 +8,16 @@
 import UIKit
 import Foundation
 
-class CalendarViewController: UIViewController {
+class CalendarViewController: UIViewController, CategoryChangeDelegate {
     
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
-    var selectedDate: DateComponents?
+    var selectedDateComponents: DateComponents?
+    lazy var selectedDate = selectedDateComponents?.date ?? Date()
     var multiDateSelection: UICalendarSelectionMultiDate!
-    var categoryId = "0qihnS4CfWy45ooH7BSe"
+    var categoryId = ""
     var hasSnapDates: Set<DateComponents> = []
     var managements: [Management] = []
+    private var matchingManagements: [Management] = []
     var sampledata = Management1.generateSampleManagementItems()
     private var snapService = SnapService()
     private var managementService = ManagementService()
@@ -24,6 +26,7 @@ class CalendarViewController: UIViewController {
     private var dashBarTopConstraint: NSLayoutConstraint?
     private var isDoneChart: IsDonePercentageChart!
     private var costChart: CostChart!
+    private let dateFormatter = DateFormatter()
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -125,10 +128,24 @@ class CalendarViewController: UIViewController {
         return view
     }()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
+        if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
+                multiSelection.setSelectedDates([], animated: true)
+            }
+        selectedDateComponents = nil
+        tableView.isHidden = true
+        tableView.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
+        if let navigationController = self.navigationController as? CustomNavigationBarController {
+            navigationController.viewModel.delegate = self }
+        categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
         calendarView.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
@@ -143,7 +160,6 @@ class CalendarViewController: UIViewController {
         secondStackView.distribution = .equalCentering
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         segmentChange()
-        updateSnapsForMonth()
         updateManegementData()
         
     }
@@ -217,7 +233,7 @@ class CalendarViewController: UIViewController {
         NSLayoutConstraint.activate([
             calendarView.topAnchor.constraint(equalTo: firstStackViewView.topAnchor, constant: -10),
             calendarView.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
-            calendarView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor)          
+            calendarView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor)
         ])
     }
     
@@ -247,7 +263,7 @@ class CalendarViewController: UIViewController {
     private func setupdashButtonConstraints() {
         dashBarTopConstraint?.isActive = false
         if tableView.isHidden {
-            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -30)
+            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -10)
         } else {
             dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor)
         }
@@ -326,7 +342,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
     
     func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didSelectDate dateComponents: DateComponents) {
         selection.setSelectedDates([dateComponents], animated: true)
-        selectedDate = dateComponents
+        selectedDateComponents = dateComponents
         tableView.isHidden = false
         tableView.reloadData()
         setupConstraints()
@@ -338,7 +354,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
     
     func multiDateSelection(_ selection: UICalendarSelectionMultiDate, didDeselectDate dateComponents: DateComponents) {
         selection.setSelectedDates([], animated: true)
-        selectedDate = nil
+        selectedDateComponents = nil
         tableView.isHidden = true
         tableView.reloadData()
         setupConstraints()
@@ -346,8 +362,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
     }
     
     func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-        var date = dateComponents.date
-        if hasSnapDates.contains(dateComponents) {
+        if hasSnapDates.contains(where: { $0.year == dateComponents.year && $0.month == dateComponents.month && $0.day == dateComponents.day }) {
             return .customView {
                 let imageView = UIImageView()
                 let originalImage = UIImage(named: "filledpop")
@@ -355,11 +370,10 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
                 imageView.image = resizedImage
                 return imageView
             }
+        } else {
+            return nil
         }
-        
-        else {return nil}
     }
-    
     func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
         guard let visibleMonth = calendarView.visibleDateComponents.month,
               let visibleYear = calendarView.visibleDateComponents.year else {
@@ -367,35 +381,46 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         }
         updatMonthlyInfo(month: visibleMonth, year: visibleYear)
         updateSnapsForMonth()
+        if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
+                multiSelection.setSelectedDates([], animated: true)
+            }
+        selectedDateComponents = nil
+        tableView.isHidden = true
+        tableView.reloadData()
     }
     
     func updatMonthlyInfo(month: Int, year: Int) {
         isDoneChart.updateMonthLabel(month: month, year: year)
         costChart.updateMonthLabel(month: month, year: year)
     }
+    
     func updateSnapsForMonth() {
-        
         guard let currentDate = calendarView.visibleDateComponents.date else { return }
-            
-            let calendar = Calendar.current
-            let components = calendar.dateComponents([.year, .month], from: currentDate)
-            
-            guard let year = components.year, let month = components.month else { return }
+        
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: currentDate)
+        
+        guard let year = components.year, let month = components.month else { return }
         
         snapService.loadSnapsForMonth(categoryId: categoryId, year: year, month: month) { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
             case .success(let snaps):
-                self?.hasSnapDates = Set(snaps.compactMap { snap in
+                self.hasSnapDates = Set(snaps.compactMap { snap in
                     guard let date = snap.createdAt else { return nil }
                     return Calendar.current.dateComponents([.year, .month, .day], from: date)
                 })
+                
                 DispatchQueue.main.async {
-                    self?.calendarView.reloadDecorations(forDateComponents: Array(self?.hasSnapDates ?? []), animated: true)
+                    // 모든 날짜에 대해 데코레이션을 다시 로드합니다.
+                    let allDates = self.getAllDatesForMonth(year: year, month: month)
+                    self.calendarView.reloadDecorations(forDateComponents: allDates, animated: true)
                 }
+                
             case .failure(let error):
                 print("Failed to load snaps: \(error)")
             }
-            
         }
     }
     func updateManegementData() {
@@ -408,35 +433,118 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
             }
         }
     }
+    
+    private func filteringMatchingManagements() {
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        selectedDate = selectedDateComponents?.date ?? Date()
+        matchingManagements = managements.filter { management in
+            management.completions.keys.contains { key in
+                if let keyDate = dateFormatter.date(from: key) {
+                    return Calendar.current.isDate(keyDate, inSameDayAs: selectedDate)
+                }
+                return false
+            }
+        }
+    }
+    
+    private func getAllDatesForMonth(year: Int, month: Int) -> [DateComponents] {
+        let calendar = Calendar.current
+        guard let startDate = calendar.date(from: DateComponents(year: year, month: month, day: 1)),
+              let range = calendar.range(of: .day, in: .month, for: startDate) else {
+            return []
+        }
+        
+        return (1...range.count).map { day in
+            DateComponents(year: year, month: month, day: day)
+        }
+    }
+    
+    func categoryDidChange(to newCategoryId: String) {
+        categoryId = newCategoryId
+        updateSnapsForMonth()
+        updateManegementData()
+        filteringMatchingManagements()
+        if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
+                multiSelection.setSelectedDates([], animated: true)
+            }
+        selectedDateComponents = nil
+        tableView.isHidden = true
+        tableView.reloadData()
+        
+        setupConstraints()
+    }
 }
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return max(1, sampledata.count)
+     
+        filteringMatchingManagements()
+        
+        return matchingManagements.isEmpty ? 1 : matchingManagements.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell", for: indexPath) as? TodoTableViewCell else {
             fatalError("Unable to dequeue CustomTableViewCell")
         }
-        if sampledata.isEmpty {
+        filteringMatchingManagements()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        if matchingManagements.isEmpty {
             cell.label.text = "등록된 자기관리가 없습니다."
+            cell.label.textAlignment = .center
+            cell.checkboxButton.isHidden = true
+            
         } else {
-            cell.label.text = sampledata[indexPath.row].title
+            let management = matchingManagements[indexPath.row]
+            cell.label.text = management.title
+            cell.checkboxButton.isHidden = false
+            cell.checkboxButton.tag = indexPath.row
+            cell.label.textAlignment = .left
+            let isCompleted = management.completions.contains { (key, value) in
+                if let keyDate = dateFormatter.date(from: key),
+                   Calendar.current.isDate(keyDate, inSameDayAs: selectedDate) {
+                    return value == 1
+                }
+                return false
+            }
+            cell.updateCheckbocState(isChecked: isCompleted)
+            cell.checkboxButton.addTarget(self, action: #selector(checkboxTapped(_:)), for: .touchUpInside)
         }
-        cell.updateCheckbocState(isChecked: sampledata[indexPath.row].isDone)
-        cell.checkboxButton.addTarget(self, action: #selector(checkboxTapped(_:)), for: .touchUpInside)
-        cell.checkboxButton.tag = indexPath.row
-        cell.checkboxButton.isSelected = sampledata[indexPath.row].isDone
-        
         return cell
     }
     
     @objc func checkboxTapped(_ sender: UIButton) {
-        let index = sender.tag
         sender.isSelected.toggle()
+        filteringMatchingManagements()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+
+        let index = sender.tag
+        let management = matchingManagements[index]
+        var dateKey: String = ""
+        let completionState = management.completions.compactMap { (key, value) -> Bool? in
+            if let keyDate = dateFormatter.date(from: key), Calendar.current.isDate(keyDate, inSameDayAs: selectedDate) {
+                dateKey = key
+                return value == 1
+            }
+            return nil
+        }
+        guard let managementId = management.id else  { return }
+        
+        if let managementIndex = managements.firstIndex(where: { $0.id == managementId }) {
+           managements[managementIndex].completions[dateKey] = completionState[0] ? 0 : 1
+            print("\(completionState)")
+        }
+        managementService.updateCompletion(categoryId: categoryId, managementId: managementId, date: selectedDate, isCompleted: !completionState[0]) { result in
+            switch result {
+            case .success(()):
+                print("Completion updated successfully")
+            case .failure(let error):
+                print("Fail \(error)")
+            }
+        }
+
         if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? TodoTableViewCell {
-            cell.updateCheckbocState(isChecked: sampledata[index].isDone)
+            cell.updateCheckbocState(isChecked: !completionState[0])
         }
     }
 }

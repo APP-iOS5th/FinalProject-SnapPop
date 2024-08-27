@@ -8,7 +8,7 @@
 import UIKit
 
 class ChecklistTableViewCell: UITableViewCell {
-    
+
     // 체크박스 버튼
     let checkBox: UIButton = {
         let button = UIButton(type: .custom)
@@ -21,15 +21,6 @@ class ChecklistTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }()
-    
-    // 텍스트 필드 (편집 모드에서 사용)
-    let textField: UITextField = {
-        let textField = UITextField()
-        textField.isHidden = true
-        textField.borderStyle = .roundedRect
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -46,15 +37,13 @@ class ChecklistTableViewCell: UITableViewCell {
             
             checkLabel.leadingAnchor.constraint(equalTo: checkBox.trailingAnchor, constant: 15),
             checkLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-            
-            textField.leadingAnchor.constraint(equalTo: checkBox.trailingAnchor, constant: 15),
-            textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
+            checkLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         ])
         
         checkBox.addTarget(self, action: #selector(didTapCheckBox), for: .touchUpInside)
-        textField.addTarget(self, action: #selector(textFieldEditingDidEnd), for: .editingDidEnd)
+        
+        selectionStyle = .none
+
     }
     
     required init?(coder: NSCoder) {
@@ -63,21 +52,25 @@ class ChecklistTableViewCell: UITableViewCell {
     
     // MARK: - Configure Cell with Checklist Item
     func configure(with item: Management) {
-        checkLabel.text = item.title
-        textField.text = item.title
+        print("Configuring cell with item: \(item)")
         
-        // 색상 설정
+        checkLabel.text = item.title
+        
+        // 체크박스 색상 설정
         if let color = UIColor(hex: item.color) {
-            checkLabel.textColor = color
             updateCheckBoxImages(with: color)
+            checkBox.layer.borderColor = color.cgColor
+            checkBox.tintColor = color
         } else {
-            checkLabel.textColor = .black
+            // 색상이 유효하지 않을 경우 기본 색상으로 설정
+            checkBox.layer.borderColor = UIColor.lightGray.cgColor
+            checkBox.tintColor = UIColor.lightGray
         }
         
         // 체크박스 상태 설정
         checkBox.isSelected = item.alertStatus
     }
-    
+
     // MARK: - 체크박스 이미지 업데이트
     private func updateCheckBoxImages(with color: UIColor) {
         let noncheckmarkImage = UIImage(systemName: "circle")?.withTintColor(color, renderingMode: .alwaysOriginal)
@@ -90,33 +83,34 @@ class ChecklistTableViewCell: UITableViewCell {
     @objc private func didTapCheckBox() {
         checkBox.isSelected.toggle()
     }
-    
-    
-    // 편집 모드로 전환
-    func enterEditMode() {
-        checkLabel.isHidden = true
-        textField.isHidden = false
-//        textField.becomeFirstResponder() // 자동으로 키보드가 나타남
-    }
-    
-    // 편집 종료시 호출
-    @objc private func textFieldEditingDidEnd() {
-        checkLabel.text = textField.text
-        checkLabel.isHidden = false
-        textField.isHidden = true
-    }
 }
-
 
 // UIColor 확장 - HEX 문자열을 UIColor로 변환
 extension UIColor {
     convenience init?(hex: String) {
-        var rgb: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&rgb)
+        var hexString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         
-        let red = CGFloat((rgb >> 16) & 0xFF) / 255.0
-        let green = CGFloat((rgb >> 8) & 0xFF) / 255.0
-        let blue = CGFloat(rgb & 0xFF) / 255.0
+        if hexString.hasPrefix("#") {
+            hexString.remove(at: hexString.startIndex)
+        }
+        
+        var rgb: UInt64 = 0
+        guard Scanner(string: hexString).scanHexInt64(&rgb) else { return nil }
+        
+        let red, green, blue: CGFloat
+        
+        switch hexString.count {
+        case 6:
+            red = CGFloat((rgb >> 16) & 0xFF) / 255.0
+            green = CGFloat((rgb >> 8) & 0xFF) / 255.0
+            blue = CGFloat(rgb & 0xFF) / 255.0
+        case 8: // ARGB format
+            red = CGFloat((rgb >> 16) & 0xFF) / 255.0
+            green = CGFloat((rgb >> 8) & 0xFF) / 255.0
+            blue = CGFloat(rgb & 0xFF) / 255.0
+        default:
+            return nil
+        }
         
         self.init(red: red, green: green, blue: blue, alpha: 1.0)
     }
