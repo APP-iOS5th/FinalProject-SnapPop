@@ -10,6 +10,8 @@ import Foundation
 
 class CalendarViewController: UIViewController, CategoryChangeDelegate {
     
+    
+    
     var dailymodels = DailyModel(todoList: ["밥먹기", "커피마시기"])
     var selectedDateComponents: DateComponents?
     lazy var selectedDate = selectedDateComponents?.date ?? Date()
@@ -489,8 +491,8 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         }
     }
     
-    func categoryDidChange(to newCategoryId: String) {
-        categoryId = newCategoryId
+    func categoryDidChange(to newCategoryId: String?) {
+        categoryId = newCategoryId ?? "default"
         if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
                 multiSelection.setSelectedDates([], animated: true)
             }
@@ -498,8 +500,9 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         updateSnapsForMonth()
         selectedDateComponents = nil
         tableView.isHidden = true
-        
     }
+    
+  
 }
 
 extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
