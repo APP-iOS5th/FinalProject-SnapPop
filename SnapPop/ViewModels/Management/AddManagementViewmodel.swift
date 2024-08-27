@@ -16,7 +16,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
     @Published var memo: String = ""
     @Published var color: UIColor = .black
     @Published var startDate: Date = Date()
-    @Published var repeatCycle: Int = 0
+    @Published var repeatCycle: Int = 2
     @Published var alertTime: Date = Date()
     @Published var alertStatus: Bool = false
     
@@ -47,7 +47,7 @@ class AddManagementViewModel: CategoryChangeDelegate {
             memo: "",
             color: "#000000",
             startDate: Date(),
-            repeatCycle: 0,
+            repeatCycle: 2,
             alertTime: Date(),
             alertStatus: false,
             completions: [:]
@@ -113,11 +113,25 @@ class AddManagementViewModel: CategoryChangeDelegate {
     
     func updateRepeatCycle(_ cycleIndex: Int) {
         self.repeatCycle = cycleIndex
+        
+        let repeatValue: Int
+                switch cycleIndex {
+                case 0: // "매일"
+                    repeatValue = 1
+                case 1: // "매주"
+                    repeatValue = 7
+                case 2: // "안함"
+                    repeatValue = 0
+                default:
+                    repeatValue = 0
+                }
+                self.management.repeatCycle = repeatValue
     }
     
     func categoryDidChange(to newCategoryId: String) {
         self.categoryId = newCategoryId
     }
+    
     
     // 유효성 검증 프로퍼티
     var isValid: AnyPublisher<Bool, Never> {
@@ -192,26 +206,27 @@ class AddManagementViewModel: CategoryChangeDelegate {
     }
     
     func generateSixMonthsCompletions(startDate: Date, repeatInterval: Int) -> [String: Int] {
-            var completions: [String: Int] = [:]
-            let calendar = Calendar.current
-            let endDate = calendar.date(byAdding: .month, value: 6, to: startDate)!
-
-            if repeatInterval == 0 {
-                // 반복 주기가 0일 때는 시작일만 저장
-                let dateString = ISO8601DateFormatter().string(from: startDate)
-                completions[dateString] = 0
-            } else {
-                // 반복 주기가 0보다 클 때는 기존 로직 유지
-                var currentDate = startDate
-                while currentDate < endDate {
-                    let dateString = ISO8601DateFormatter().string(from: currentDate)
-                    completions[dateString] = 0 // 초기값은 미완료(0)로 설정
-                    currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
-                }
+        var completions: [String: Int] = [:]
+        let calendar = Calendar.current
+        let endDate = calendar.date(byAdding: .month, value: 6, to: startDate)!
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        if repeatInterval == 0 {
+            // 반복 주기가 0일 때는 시작일만 저장
+            let dateString = dateFormatter.string(from: startDate)
+            completions[dateString] = 0
+        } else {
+            // 반복 주기가 0보다 클 때는 기존 로직 유지
+            var currentDate = startDate
+            while currentDate < endDate {
+                let dateString = dateFormatter.string(from: currentDate)
+                completions[dateString] = 0 // 초기값은 미완료(0)로 설정
+                currentDate = calendar.date(byAdding: .day, value: repeatInterval, to: currentDate)!
             }
-
-            return completions
         }
+        
+        return completions
+    }
     
     // 시작 날짜+시간이 현재보다 과거인지 아닌지를 확인하는 함수
     func isSpecificDateInPast(startDate: Date, alertTime: Date) -> Bool {

@@ -241,7 +241,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             }
         }
         bind(viewModel.$repeatCycle) { [weak self] cycle in
-            
             guard let self = self else { return }
             if let cell = self.tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as? RepeatCell {
                 cell.configure(with: self.viewModel)
