@@ -46,10 +46,8 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
                 switch result {
                 case .success(let managements):
                     self?.checklistItems = managements
-                    print("Fetched managements: \(managements)")
                     completion(.success(()))
                 case .failure(let error):
-                    print("Error fetching managements: \(error)")
                     completion(.failure(error))
                 }
             }
@@ -67,8 +65,7 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
     }
     // 관리 편집 후 업데이트
     func updateManagement(categoryId: String, managementId: String, updatedManagement: Management, completion: @escaping (Result<Void, Error>) -> Void) {
-        let db = ManagementService()
-        db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: updatedManagement) { result in
+        managementService.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: updatedManagement) { result in
             switch result {
             case .success():
                 DispatchQueue.main.async {
@@ -82,8 +79,7 @@ class HomeViewModel: ObservableObject, CategoryChangeDelegate {
             }
         }
     }
-
-    
+        
     // 스냅 저장
     func saveSnap(categoryId: String, images: [UIImage], createdAt: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
         var imageUrls: [String?] = Array(repeating: nil, count: images.count)

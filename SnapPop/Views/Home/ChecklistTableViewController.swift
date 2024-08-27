@@ -42,17 +42,16 @@ class ChecklistTableViewController: UITableViewController {
         setupRefreshControl()
         
         // 데이터 가져오기
-        fetchData()
-        
+        loadData()
+
         // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
         viewModel?.$checklistItems
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                self?.tableView.reloadData()
-//                self?.refreshControl.endRefreshing()
-            }
-            .store(in: &cancellables)
-    }
+             .receive(on: RunLoop.main)
+             .sink { [weak self] _ in
+                 self?.tableView.reloadData()
+             }
+             .store(in: &cancellables)
+     }
     
     private func setupButtonConstraints() {
         NSLayoutConstraint.activate([
@@ -72,29 +71,23 @@ class ChecklistTableViewController: UITableViewController {
 
 
     @objc private func refreshData() {
-        fetchData { [weak self] in
-            DispatchQueue.main.async {
-                self?.refreshControl?.endRefreshing()
-            }
+        loadData()
+        DispatchQueue.main.async {
+            self.refreshControl?.endRefreshing()
         }
     }
 
-    private func fetchData(completion: @escaping () -> Void = {}) {
-        guard let categoryId = viewModel?.selectedCategoryId else {
-            completion()
-            return
-        }
-        
-        viewModel?.fetchManagements(categoryId: categoryId) { [weak self] result in
+
+    private func loadData() {
+        guard let viewModel = viewModel else { return }
+        viewModel.fetchManagements(categoryId: viewModel.selectedCategoryId ?? "default") { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success():
                     self?.tableView.reloadData()
                 case .failure(let error):
-                    print("Failed to fetch managements: \(error.localizedDescription)")
                     self?.showAlert(title: "데이터 로드 실패", message: error.localizedDescription)
                 }
-                completion()
             }
         }
     }
@@ -181,45 +174,38 @@ class ChecklistTableViewController: UITableViewController {
         
         // 편집 액션 정의
         let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
-            guard let self = self, let viewModel = self.viewModel else {
-                completionHandler(false)
-                return
-            }
-            
-            let itemToEdit = viewModel.checklistItems[indexPath.row]
-            let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
-            let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
-            addManagementVC.homeViewModel = viewModel
+                    guard let self = self, let viewModel = self.viewModel else {
+                        completionHandler(false)
+                        return
+                    }
+                    
+                    let itemToEdit = viewModel.checklistItems[indexPath.row]
+                    let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
+                    let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
+                    addManagementVC.homeViewModel = viewModel
 
-            // 편집이 끝난 후 업데이트하기 위한 클로저
-            addManagementVC.onSave = { [weak self] updatedManagement in
-                guard let self = self else { return }
-                
-                // Firebase에서 관리 항목 업데이트
-                viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success():
-                            // 기존 항목을 업데이트하고 새로운 항목을 추가하지 않음
-                            if let index = viewModel.checklistItems.firstIndex(where: { $0.id == updatedManagement.id }) {
-                                viewModel.checklistItems[index] = updatedManagement
-                                self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                    addManagementVC.onSave = { [weak self] updatedManagement in
+                        guard let self = self else { return }
+                        
+                        // 기존 updateManagement 메서드를 통해 관리 항목 업데이트
+                        viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
+                            DispatchQueue.main.async {
+                                switch result {
+                                case .success():
+                                    self.tableView.reloadData()
+                                case .failure(let error):
+                                    self.showAlert(title: "업데이트 실패", message: "관리 항목을 업데이트할 수 없습니다. 다시 시도해 주세요.")
+                                    print("Failed to update management: \(error.localizedDescription)")
+                                }
                             }
-                        case .failure(let error):
-                            print("Failed to update management: \(error.localizedDescription)")
-                            let alert = UIAlertController(title: "업데이트 실패", message: "관리 항목을 업데이트할 수 없습니다. 다시 시도해 주세요.", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "확인", style: .default))
-                            self.present(alert, animated: true)
                         }
                     }
-                }
-            }
 
-            self.navigationController?.pushViewController(addManagementVC, animated: true)
-            completionHandler(true)
-        }
-        editAction.backgroundColor = .gray
-        editAction.image = UIImage(systemName: "pencil")
+                    self.navigationController?.pushViewController(addManagementVC, animated: true)
+                    completionHandler(true)
+                }
+                editAction.backgroundColor = .gray
+                editAction.image = UIImage(systemName: "pencil")
         
         // 삭제 및 편집 액션을 구성에 추가
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
