@@ -7,7 +7,7 @@
 
 import UIKit
 import Photos
-import Kingfisher
+import Kingfisher 
 
 class SnapCollectionViewCell: UICollectionViewCell {
     
@@ -79,15 +79,9 @@ class SnapCollectionViewCell: UICollectionViewCell {
             contentView.layer.borderColor = nil
         }
         
+        // Kingfisher를 사용하여 이미지 로드
         if let url = URL(string: snap.imageUrls[index]) {
-            KingfisherManager.shared.retrieveImage(with: url) { result in
-                switch result {
-                case .success(let value):
-                    self.snapImageView.image = value.image
-                case .failure:
-                    self.snapImageView.image = UIImage(systemName: "circle.dotted")
-                }
-            }
+            snapImageView.kf.setImage(with: url, placeholder: UIImage(systemName: "circle.dotted")) // Kingfisher로 이미지 로드
         } else {
             snapImageView.image = UIImage(systemName: "circle.dotted")
         }

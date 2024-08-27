@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     // MARK: - Properties
@@ -99,7 +100,7 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
         viewController.view.tag = index // tag 속성을 인덱스로 설정
 
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit // 비율 유지
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         viewController.view.addSubview(imageView)
         
@@ -111,15 +112,9 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
             imageView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor)
         ])
         
-        // 이미지 로드
+        // Kingfisher를 사용하여 이미지 로드
         if let url = URL(string: imageUrls[index]) {
-            DispatchQueue.global().async {
-                if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        imageView.image = image
-                    }
-                }
-            }
+            imageView.kf.setImage(with: url)
         }
         
         return viewController
@@ -141,7 +136,7 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
         if completed, let visibleViewController = pageViewController.viewControllers?.first,
            let index = viewControllersIndex(of: visibleViewController) {
             currentIndex = index
-            updateUI() // UI 업데이트 호출
+            updateUI()
         }
     }
     
