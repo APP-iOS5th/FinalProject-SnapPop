@@ -148,6 +148,10 @@ class HomeViewController:
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
+    deinit {
+         NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
@@ -158,6 +162,7 @@ class HomeViewController:
         setupSnapCollectionView()
         setupChecklistView()
         updateDateAlertLabel()
+        
         
         snapCollectionView.dataSource = self
         snapCollectionView.delegate = self
@@ -180,7 +185,7 @@ class HomeViewController:
                 self?.updateSnapCollectionView()
             }
         }.store(in: &cancellables)
-
+        
         // Set the drag and drop delegates
         snapCollectionView.dragDelegate = self
         snapCollectionView.dropDelegate = self
@@ -191,8 +196,6 @@ class HomeViewController:
             self.snapCollectionView.reloadData() // UI 업데이트
         }
     }
-    
-    /// 날짜 선택 DatePicker UI 설정
     @objc private func categoryDidChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
             viewModel.categoryDidChange(to: categoryId)
@@ -200,8 +203,11 @@ class HomeViewController:
             viewModel.categoryDidChange(to: nil)
         }
     }
-    
-    // MARK: - 날짜 선택 DatePicker UI 설정
+    private func updateUIWithCategories() {
+           // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
+           print("Loaded categories: \(navigationBarViewModel.categories)")
+       }
+    /// 날짜 선택 DatePicker UI 설정
     private func setupDatePickerView() {
         view.addSubview(datePickerContainer)
         datePickerContainer.addSubview(calendarImageView)
@@ -465,10 +471,6 @@ class HomeViewController:
         }
     }
     
-    private func updateUIWithCategories() {
-        // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
-        print("Loaded categories: \(navigationBarViewModel.categories)")
-    }
     // MARK: - UICollectionViewDragDelegate
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         guard isEditingMode else { return [] } // 편집 모드가 아닐 경우 빈 배열 반환
