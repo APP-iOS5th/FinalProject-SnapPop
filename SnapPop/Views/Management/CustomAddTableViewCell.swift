@@ -172,7 +172,6 @@ class RepeatCell: BaseTableViewCell {
         button.setImage(arrowImage, for: .normal)
         
         button.semanticContentAttribute = .forceRightToLeft
-        // 심볼 간격
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8)
         button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -191,9 +190,26 @@ class RepeatCell: BaseTableViewCell {
     }
     
     func configure(with viewModel: AddManagementViewModel) {
-        let actions = viewModel.repeatOptions.enumerated().map { index, option in
+
+        let index = viewModel.repeatOptions.firstIndex { option in
+            switch option {
+            case "매일":
+                return viewModel.repeatCycle == 1
+            case "매주":
+                return viewModel.repeatCycle == 7
+            case "안함":
+                return viewModel.repeatCycle == 0
+            default:
+                return false
+            }
+        } ?? 2 // 기본값으로 "안함"을 선택
+        
+
+        repeatButton.setTitle(viewModel.repeatOptions[index], for: .normal)
+        
+        let actions = viewModel.repeatOptions.enumerated().map { idx, option in
             UIAction(title: option) { _ in
-                viewModel.updateRepeatCycle(index)
+                viewModel.updateRepeatCycle(idx)
                 self.repeatButton.setTitle(option, for: .normal)
             }
         }
@@ -202,6 +218,7 @@ class RepeatCell: BaseTableViewCell {
         repeatButton.showsMenuAsPrimaryAction = true
     }
 }
+
 
 // -MARK: 시간
 class TimeCell: BaseTableViewCell {
