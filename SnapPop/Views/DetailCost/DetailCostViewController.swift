@@ -33,11 +33,16 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         return tableView
     }()
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureUI()
+        setupKeyboardEvent()
     }
     
     // MARK: - Methods
@@ -66,10 +71,22 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         ])
         
         title = "상세내역"
-
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = .white
+        appearance.backgroundEffect = nil
+        appearance.shadowColor = nil
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "추가", style: .done, target: self, action: #selector(saveButtonTapped))
         navigationItem.rightBarButtonItem?.isEnabled = false
+    }
+    
+    func setupKeyboardEvent() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     // MARK: - Actions
@@ -165,7 +182,6 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             return UITableViewCell()
         }
     }
-    
     // MARK: - Keyboard Handling
 
     // 화면을 터치했을 때 키보드 내리기
@@ -196,5 +212,33 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         
         return true
+    }
+    
+    // 키보드 올라왔을때
+    @objc func keyboardWillShow(_ sender: Notification) {
+        guard let keyboardFrame = sender.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue,
+              let currentTextField = UIResponder.currentResponder as? UITextField else { return }
+        
+        // Y축으로 키보드의 상단 위치
+        let keyboardTopY = keyboardFrame.cgRectValue.origin.y
+        // 현재 선택한 텍스트 필드의 Frame 값
+        let convertedTextFieldFrame = view.convert(currentTextField.frame,
+                                                   from: currentTextField.superview)
+        // Y축으로 현재 텍스트 필드의 하단 위치
+        let textFieldBottomY = convertedTextFieldFrame.origin.y + convertedTextFieldFrame.size.height
+        
+        // Y축으로 텍스트필드 하단 위치가 키보드 상단 위치보다 클 때 (텍스트필드가 키보드에 가려질 때)
+        if textFieldBottomY > keyboardTopY {
+            let textFieldTopY = convertedTextFieldFrame.origin.y
+            let newFrame = (textFieldTopY - keyboardTopY / 1.6) * -1
+            view.frame.origin.y = newFrame
+        }
+    }
+    
+    // 키보드 내려갔을때
+    @objc func keyboardWillHide(_ sender: Notification) {
+        if view.frame.origin.y != 0 {
+            view.frame.origin.y = 0
+        }
     }
 }

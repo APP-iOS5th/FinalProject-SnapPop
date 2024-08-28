@@ -41,6 +41,7 @@ final class TitleCell2: BaseTableViewCell2 {
         
         NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
@@ -67,6 +68,7 @@ final class DescriptionCell: BaseTableViewCell2 {
         
         NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
@@ -177,6 +179,7 @@ final class CalculateCostCell: BaseTableViewCell2 {
         textField.borderStyle = .roundedRect
         textField.keyboardType = .numberPad
         textField.delegate = self
+        textField.addDoneCancelToolbar(onDone: (target: self, action: #selector(doneButtonTappedForPurchasePrice)))
         
         return textField
     }()
@@ -196,6 +199,7 @@ final class CalculateCostCell: BaseTableViewCell2 {
         textField.borderStyle = .roundedRect
         textField.keyboardType = .numberPad
         textField.delegate = self
+        textField.addDoneCancelToolbar(onDone: (target: self, action: #selector(doneButtonTappedForUsageCount)))
         
         return textField
     }()
@@ -264,6 +268,14 @@ final class CalculateCostCell: BaseTableViewCell2 {
         }
         
         onCalculate?(purchasePrice / usageCount)
+    }
+    
+    @objc func doneButtonTappedForPurchasePrice() {
+        purchasePriceTextField.resignFirstResponder()
+    }
+    
+    @objc func doneButtonTappedForUsageCount() {
+        usageCountTextField.resignFirstResponder()
     }
 }
 
