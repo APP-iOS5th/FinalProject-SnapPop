@@ -70,7 +70,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // NotificationCenter에서 사용할 메서드
     @objc private func categoryDidChangeNotification(_ notification: Notification) {
         if let newCategoryId = notification.userInfo?["newCategoryId"] as? String {
-            print("카테고리 변경됨: \(newCategoryId)")
+            // 카테고리 ID를 ViewModel에 전달
+            viewModel.categoryId = newCategoryId
         }
     }
     
