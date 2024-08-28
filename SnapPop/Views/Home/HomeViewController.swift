@@ -125,11 +125,12 @@ class HomeViewController:
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Properties
-    private let dateAlertButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("", for: .normal) // 초기 텍스트는 비워둡니다.
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+    private let dateAlertLabel: UILabel = {
+        let label = UILabel()
+        label.text = " "
+        label.textColor = .blue
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     
@@ -137,9 +138,10 @@ class HomeViewController:
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
         setupDatePickerView()
-        setupDateAlertButton() // 버튼 설정
+        setupDateAlertButton()
         setupSnapCollectionView()
         setupChecklistView()
+        updateDateAlertLabel()
         
         snapCollectionView.dataSource = self
         snapCollectionView.delegate = self
@@ -233,13 +235,12 @@ class HomeViewController:
     
     // MARK: - 날짜 알림 버튼 설정
     private func setupDateAlertButton() {
-        dateAlertButton.addTarget(self, action: #selector(dateAlertButtonTapped), for: .touchUpInside)
-        view.addSubview(dateAlertButton)
+        view.addSubview(dateAlertLabel)
         
         // 버튼 제약 조건 설정
         NSLayoutConstraint.activate([
-            dateAlertButton.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
-            dateAlertButton.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
+            dateAlertLabel.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
+            dateAlertLabel.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
         ])
     }
     
@@ -251,11 +252,11 @@ class HomeViewController:
             self?.updateSnapCollectionView()
         }
         
-        updateDateAlertButtonTitle() // 버튼 텍스트 업데이트
+        updateDateAlertLabel() // 버튼 텍스트 업데이트
     }
     
     // MARK: - 날짜 알림 버튼 텍스트 업데이트
-    private func updateDateAlertButtonTitle() {
+    private func updateDateAlertLabel() {
         let selectedDate = datePicker.date
         let currentDate = Date()
         
@@ -263,20 +264,20 @@ class HomeViewController:
         let selectedDay = calendar.startOfDay(for: selectedDate)
         let today = calendar.startOfDay(for: currentDate)
         
-        // 날짜 차이를 계산
+        // Calculate day difference
         let dayDifference = calendar.dateComponents([.day], from: today, to: selectedDay).day ?? 0
         
         switch dayDifference {
         case 0:
-            dateAlertButton.setTitle("오늘", for: .normal)
+            dateAlertLabel.text = "오늘"
         case -1:
-            dateAlertButton.setTitle("어제", for: .normal)
+            dateAlertLabel.text = "어제"
         case 1:
-            dateAlertButton.setTitle("내일", for: .normal)
+            dateAlertLabel.text = "내일"
         case 2:
-            dateAlertButton.setTitle("모레", for: .normal)
+            dateAlertLabel.text = "모레"
         default:
-            dateAlertButton.setTitle("", for: .normal) // 해당하지 않는 경우 비워둡니다.
+            dateAlertLabel.text = "" // Clear text for non-matching cases
         }
     }
     
