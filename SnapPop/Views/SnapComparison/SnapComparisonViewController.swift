@@ -129,27 +129,33 @@ class SnapComparisonViewController: UIViewController {
         
         self.view.backgroundColor = .customBackground
         
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSanpstoFireStore(to: currentCategoryId)
+        } else {
+            viewModel.snapDateMenuItems = []
+            viewModel.categoryisEmpty?()
+        }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
         
         setupBindings()
         setupLayout()
         setupMenu()
         
-        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
-            viewModel.loadSanpstoFireStore(to: currentCategoryId)
-        }
-        
-//        if let navigationController = self.navigationController as? CustomNavigationBarController {
-//            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
-//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)
+            DispatchQueue.main.async {
+                self.setupMenu()
+            }
+        } else {
+            viewModel.snapDateMenuItems = [] // 메뉴 아이템 초기화
+            viewModel.categoryisEmpty?()
         }
-        reloadCollectionView()        
+        reloadCollectionView()
     }
     
     // MARK: - Methods
@@ -186,7 +192,7 @@ class SnapComparisonViewController: UIViewController {
     }
     
     func setupMenu() {
-        
+        print("[스냅 비교] setupMenu 호출")
         let selectSnapMenu = UIMenu(title: "스냅 비교 사진 선택",
                                     children: snapPhotoMenuItems)
         selectSnapPhotoButton.menu = selectSnapMenu
@@ -197,9 +203,15 @@ class SnapComparisonViewController: UIViewController {
         selectSnapPeriodButton.menu = selectPeriodMenu
         selectSnapPeriodButton.showsMenuAsPrimaryAction = true
         
-        let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
-        selectSnapDateButton.menu = selectDateMenu
-        selectSnapDateButton.showsMenuAsPrimaryAction = true
+        if viewModel.snapDateMenuItems.isEmpty {
+            selectSnapDateButton.isEnabled = false
+            selectSnapDateButton.setTitle("날짜 없음", for: .normal)
+        } else {
+            let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
+            selectSnapDateButton.menu = selectDateMenu
+            selectSnapDateButton.showsMenuAsPrimaryAction = true
+            selectSnapDateButton.isEnabled = true
+        }
     }
     
     func setupBindings() {
