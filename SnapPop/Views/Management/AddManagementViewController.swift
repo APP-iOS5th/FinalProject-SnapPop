@@ -77,7 +77,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             (DateCell.self, "DateCell"),
             (NotificationCell.self, "NotificationCell"),
             (RepeatCell.self, "RepeatCell"),
-            (TimeCell.self, "TimeCell")
+            (TimeCell.self, "TimeCell"),
+            (DetailCostCell.self, "DetailCostCell")
         ]
         
         for (cellClass, identifier) in cells {
@@ -183,8 +184,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     
     @objc private func addDetailButtonTapped() {
         // 상세 비용 추가 버튼 탭 시, DetailCostViewController를 모달로 표시
-        let detailCostViewModel = DetailCostViewModel()
-        let detailCostVC = DetailCostViewController(viewModel: detailCostViewModel)
+        let detailCostVC = DetailCostViewController()
+        detailCostVC.delegate = self
         let navController = UINavigationController(rootViewController: detailCostVC)
         navController.modalPresentationStyle = .formSheet
         present(navController, animated: true, completion: nil)
@@ -261,7 +262,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     
     // MARK: - UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -272,6 +273,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             return 2 // 날짜, 반복
         case 2:
             return isTimePickerVisible ? 2 : 1 // 알림
+        case 3:
+            return viewModel.detailCostArray.count
         default:
             return 0
         }
@@ -338,6 +341,11 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.timePicker.addTarget(self, action: #selector(timeChanged(_:)), for: .valueChanged)
                 return cell
             }
+        case 3:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "DetailCostCell", for: indexPath) as? DetailCostCell else { return UITableViewCell() }
+            cell.configure(with: viewModel.detailCostArray[indexPath.row])
+            
+            return cell
         default:
             return UITableViewCell()
         }
@@ -354,5 +362,12 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+}
+
+extension AddManagementViewController: DetailCostViewControllerDelegate {
+    func addDetailCost(data detailCost: DetailCost) {
+        viewModel.detailCostArray.append(detailCost)
+        tableView.reloadSections(IndexSet(integer: 3), with: .automatic)
     }
 }

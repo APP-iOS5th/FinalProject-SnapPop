@@ -151,6 +151,9 @@ class HomeViewController:
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
+        
         setupDatePickerView()
         setupSnapCollectionView()
         setupChecklistView()
@@ -168,10 +171,6 @@ class HomeViewController:
         navigationBarViewModel.loadCategories { [weak self] in
             // 카테고리 로드 후 UI 업데이트
             self?.updateUIWithCategories()
-        }
-
-        if let navigationController = self.navigationController as? CustomNavigationBarController {
-            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
         }
         
         viewModel.$selectedCategoryId.sink { [weak self] selectedCategoryId in
@@ -194,6 +193,15 @@ class HomeViewController:
     }
     
     /// 날짜 선택 DatePicker UI 설정
+    @objc private func categoryDidChange(_ notification: Notification) {
+        if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
+            viewModel.categoryDidChange(to: categoryId)
+        } else {
+            viewModel.categoryDidChange(to: nil)
+        }
+    }
+    
+    // MARK: - 날짜 선택 DatePicker UI 설정
     private func setupDatePickerView() {
         view.addSubview(datePickerContainer)
         datePickerContainer.addSubview(calendarImageView)

@@ -7,13 +7,20 @@
 //
 import UIKit
 
+protocol DetailCostViewControllerDelegate: AnyObject {
+    func addDetailCost(data detailCost: DetailCost)
+}
+
 class DetailCostViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     
     // MARK: - Properties
-    private let viewModel: DetailCostViewModel
+    private var isOpen = false // 금액 계산 셀 열기 위한 변수
+    private var titleText: String = ""
+    private var descriptionText: String?
+    private var oneTimeCost: Int?
     
-    // 금액 계산 셀 열기 위한 변수
-    private var isOpen = false
+    // 상세 비용 정보를 관리 등록 뷰로 전달하기 위한 Delegate
+    var delegate: DetailCostViewControllerDelegate?
     
     // MARK: - UIComponents
     private lazy var tableView: UITableView = {
@@ -25,16 +32,6 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         
         return tableView
     }()
-    
-    // MARK: - Initializers
-    init(viewModel: DetailCostViewModel) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -71,7 +68,8 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         title = "상세내역"
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .done, target: self, action: #selector(saveButtonTapped))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "추가", style: .done, target: self, action: #selector(saveButtonTapped))
+        navigationItem.rightBarButtonItem?.isEnabled = false
     }
     
     // MARK: - Actions
@@ -80,9 +78,8 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     @objc private func saveButtonTapped() {
-        viewModel.saveData { [weak self] in
-            self?.dismiss(animated: true, completion: nil)
-        }
+        delegate?.addDetailCost(data: DetailCost(title: titleText, description: descriptionText, oneTimeCost: oneTimeCost))
+        dismiss(animated: true, completion: nil)
     }
     
     // MARK: - UITableViewDataSource
@@ -124,7 +121,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
                 cell.textField.autocorrectionType = .no
                 cell.textField.autocapitalizationType = .none
                 cell.textField.spellCheckingType = .no
-
+                cell.textField.text = titleText
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionCell.identifier, for: indexPath) as? DescriptionCell else { return UITableViewCell() }
@@ -132,6 +129,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
                 cell.textField.autocorrectionType = .no
                 cell.textField.autocapitalizationType = .none
                 cell.textField.spellCheckingType = .no
+                cell.textField.text = descriptionText
                 return cell
             default:
                 return UITableViewCell()
@@ -158,6 +156,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CalculateCostCell.identifier, for: indexPath) as? CalculateCostCell else { return UITableViewCell() }
             cell.onCalculate = { [weak self] result in
                 guard let self = self else { return }
+                self.oneTimeCost = result
                 guard let oneTimeCostCell = self.tableView.cellForRow(at: IndexPath(row: 1, section: 1)) as? OneTimeCostCell else { return }
                 oneTimeCostCell.updateCost(with: result)
             }
@@ -177,6 +176,25 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
     // Return 키를 눌렀을 때 키보드 내리기
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        return true
+    }
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? string
+        let indexPath = tableView.indexPath(for: textField.superview?.superview as! UITableViewCell)!
+        
+        switch indexPath.section {
+        case 0:
+            if indexPath.row == 0 {
+                titleText = currentText
+                navigationItem.rightBarButtonItem?.isEnabled = !currentText.isEmpty
+            } else if indexPath.row == 1 {
+                descriptionText = currentText
+            }
+        default:
+            break
+        }
+        
         return true
     }
 }
