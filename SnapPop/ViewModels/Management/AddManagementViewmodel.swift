@@ -131,6 +131,7 @@ class AddManagementViewModel {
     
     func categoryDidChange(to newCategoryId: String?) {
         self.categoryId = newCategoryId
+        print("Notification을 포스트합니다: categoryDidChangeNotification")
         NotificationCenter.default.post(name: .categoryDidChangeNotification, object: nil, userInfo: ["newCategoryId": newCategoryId ?? "default"])
     }
     

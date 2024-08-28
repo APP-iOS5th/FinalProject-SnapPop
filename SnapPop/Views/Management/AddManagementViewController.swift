@@ -57,9 +57,11 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChangeNotification(_:)), name: .categoryDidChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(managementSavedNotification(_:)), name: .managementSavedNotification, object: nil)
 
-        if let navigationController = self.navigationController as? CustomNavigationBarController {
-            navigationController.viewModel.delegate = viewModel as! any CategoryChangeDelegate
+        if let navigationController = self.navigationController as? CustomNavigationBarController,
+           let delegate = viewModel as? CategoryChangeDelegate {
+            navigationController.viewModel.delegate = delegate
         }
+
         print(UserDefaults.standard.dictionaryRepresentation())
         viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
         bindViewModel() // ViewModel 바인딩(combine)
