@@ -106,10 +106,10 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
         
         // 이미지 뷰 레이아웃 설정
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor),
-            imageView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor)
+            imageView.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: 20), // 상단 패딩
+            imageView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor, constant: -20), // 하단 패딩
+            imageView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor, constant: 20), // 왼쪽 패딩
+            imageView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor, constant: -20) // 오른쪽 패딩
         ])
         
         // Kingfisher를 사용하여 이미지 로드
