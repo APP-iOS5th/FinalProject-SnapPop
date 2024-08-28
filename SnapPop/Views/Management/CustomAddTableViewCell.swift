@@ -295,7 +295,7 @@ class DetailCostCell: BaseTableViewCell {
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            oneTimeLabel.trailingAnchor.constraint(equalTo: oneTimeCostLabel.leadingAnchor, constant: -8),
+            oneTimeLabel.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 80),
             oneTimeLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
             oneTimeCostLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
