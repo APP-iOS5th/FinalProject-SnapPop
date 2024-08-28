@@ -15,7 +15,13 @@ class CustomDatePickerViewController: UIViewController {
     private let calendarImageView = UIImageView()
     private let dateButton = UIButton()
     private var datePickerHeightConstraint: NSLayoutConstraint!
-    var selectedDate = Date() // Added selectedDate property
+    var selectedDate = Date() {
+        didSet {
+            viewModel.selectedDate = selectedDate // 날짜가 변경될 때마다 뷰모델 업데이트
+        }
+    }
+    
+    var viewModel: HomeViewModel! // HomeViewModel 주입가즈아
     
     override func viewDidLoad() {
         super.viewDidLoad()

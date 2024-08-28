@@ -65,7 +65,7 @@ class ChecklistTableViewController: UITableViewController {
     
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl?.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
+//        refreshControl?.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
         refreshControl?.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         tableView.refreshControl = refreshControl
     }
