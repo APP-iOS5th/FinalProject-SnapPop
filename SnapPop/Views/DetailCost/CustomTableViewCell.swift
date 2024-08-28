@@ -41,6 +41,7 @@ final class TitleCell2: BaseTableViewCell2 {
         
         NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
@@ -67,6 +68,7 @@ final class DescriptionCell: BaseTableViewCell2 {
         
         NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
