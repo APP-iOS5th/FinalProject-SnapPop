@@ -12,7 +12,7 @@ import Combine
 import FirebaseFirestore
 
 // MARK: - ViewModel
-class HomeViewModel: ObservableObject, CategoryChangeDelegate {    
+class HomeViewModel: ObservableObject {    
     
     private let snapService: SnapService
     private let managementService = ManagementService() // ManagementService 인스턴스

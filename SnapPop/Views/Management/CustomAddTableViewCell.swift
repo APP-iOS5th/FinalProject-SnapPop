@@ -259,3 +259,57 @@ class NotificationCell: BaseTableViewCell {
 protocol NotificationCellDelegate: AnyObject {
     func notificationCellDidToggle(_ cell: NotificationCell, isOn: Bool)
 }
+
+class DetailCostCell: BaseTableViewCell {
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        
+        return label
+    }()
+    
+    private let oneTimeLabel: UILabel = {
+        let label = UILabel()
+        
+        return label
+    }()
+    
+    private let oneTimeCostLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .gray
+        
+        return label
+    }()
+    
+    override func setupUI() {
+        super.setupUI()
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(oneTimeLabel)
+        contentView.addSubview(oneTimeCostLabel)
+        selectionStyle = .none
+        
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        oneTimeLabel.translatesAutoresizingMaskIntoConstraints = false
+        oneTimeCostLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            oneTimeLabel.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 80),
+            oneTimeLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            oneTimeCostLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            oneTimeCostLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
+    }
+    
+    func configure(with detailCost: DetailCost) {
+        titleLabel.text = detailCost.title
+        if let oneTimeCost = detailCost.oneTimeCost {
+            oneTimeLabel.text = "1회"
+            oneTimeCostLabel.text = "\(String(oneTimeCost))원"
+        } else {
+            oneTimeCostLabel.text = nil
+        }
+    }
+}
