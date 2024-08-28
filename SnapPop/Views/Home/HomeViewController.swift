@@ -56,10 +56,40 @@ class HomeViewController:
         fatalError("init(coder:) has not been implemented") // 스토리보드 사용 시 필요
     }
     
-    // DatePicker UI 요소
-    private let datePickerContainer = UIView()
-    private let datePicker = UIDatePicker()
-    private let calendarImageView = UIImageView()
+    /// DatePicker UI 요소
+    private let datePickerContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
+        return view
+    }()
+    
+    /// 날짜 선택 UI 컨트롤
+    private let datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        picker.datePickerMode = .date
+        picker.locale = Locale(identifier: "ko_KR")
+        picker.backgroundColor = .clear
+        return picker
+    }()
+    /// 날짜  캘린더 이미지 UI 컨트롤
+    private let calendarImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "CalenderIcon")
+        imageView.tintColor = .black
+        return imageView
+    }()
+    /// 날짜 알림 레이블
+    private let dateAlertLabel: UILabel = {
+        let label = UILabel()
+        label.text = " "
+        label.textColor = .blue
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     // 스냅 타이틀
     private let snapTitle: UILabel = {
@@ -71,6 +101,7 @@ class HomeViewController:
         return label
     }()
     
+    // 편집 버튼 bool
     private var isEditingMode = false
     
     // 편집 버튼
@@ -124,21 +155,10 @@ class HomeViewController:
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Properties
-    private let dateAlertLabel: UILabel = {
-        let label = UILabel()
-        label.text = " "
-        label.textColor = .blue
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
         setupDatePickerView()
-        setupDateAlertButton()
         setupSnapCollectionView()
         setupChecklistView()
         updateDateAlertLabel()
@@ -180,71 +200,39 @@ class HomeViewController:
         }
     }
     
-    // MARK: - 날짜 선택 DatePicker UI 설정
+    /// 날짜 선택 DatePicker UI 설정
     private func setupDatePickerView() {
-        setupDatePickerContainer()
-        setupCalendarImageView()
-        setupDatePicker()
-        setupDatePickerConstraints()
-    }
-    
-    // MARK: 날짜 선택 UI 컨트롤
-    private func setupDatePickerContainer() {
-        datePickerContainer.translatesAutoresizingMaskIntoConstraints = false
-        //datePickerContainer.backgroundColor = UIColor.customButtonColor
-        datePickerContainer.layer.cornerRadius = 10
-        datePickerContainer.layer.masksToBounds = true
         view.addSubview(datePickerContainer)
-    }
-    
-    // MARK: 날 캘린더 이미지 UI 컨트롤
-    private func setupCalendarImageView() {
-        calendarImageView.image = UIImage(named: "CalenderIcon")
-        calendarImageView.translatesAutoresizingMaskIntoConstraints = false
-        calendarImageView.tintColor = .black
         datePickerContainer.addSubview(calendarImageView)
-    }
-    
-    // MARK: 날짜 선택기 UI 컨트롤
-    private func setupDatePicker() {
-        datePicker.translatesAutoresizingMaskIntoConstraints = false
-        datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ko_KR")
-        datePicker.backgroundColor = .clear
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         datePickerContainer.addSubview(datePicker)
-    }
-    
-    // MARK: 날짜 선택기 제약 조건 설정
-    private func setupDatePickerConstraints() {
+        view.addSubview(dateAlertLabel)
+        
+        // Set up constraints
         NSLayoutConstraint.activate([
+            // datePickerContainer constraints
             datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.02),
             datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
             
+            // calendarImageView constraints
             calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor, constant: view.bounds.width * 0.02),
             calendarImageView.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
             calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
             calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
             
+            // datePicker constraints
             datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: view.bounds.width * 0.02),
             datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor, constant: -view.bounds.width * 0.02),
-            datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor)
-        ])
-    }
-    
-    // MARK: - 날짜 알림 버튼 설정
-    private func setupDateAlertButton() {
-        view.addSubview(dateAlertLabel)
-        
-        // 버튼 제약 조건 설정
-        NSLayoutConstraint.activate([
+            datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
+            
+            // dateAlertLabel constraints
             dateAlertLabel.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
             dateAlertLabel.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
         ])
     }
     
-    // MARK: - 날짜 변경 시 호출
+    /// 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
         guard let categoryId = viewModel.selectedCategoryId else { return }
         
@@ -255,7 +243,7 @@ class HomeViewController:
         updateDateAlertLabel() // 버튼 텍스트 업데이트
     }
     
-    // MARK: - 날짜 알림 버튼 텍스트 업데이트
+    /// 날짜 알림 버튼 텍스트 업데이트
     private func updateDateAlertLabel() {
         let selectedDate = datePicker.date
         let currentDate = Date()
@@ -279,12 +267,6 @@ class HomeViewController:
         default:
             dateAlertLabel.text = "" // Clear text for non-matching cases
         }
-    }
-    
-    // MARK: - 날짜 알림 버튼 클릭 시 동작
-    @objc private func dateAlertButtonTapped() {
-        // 버튼 클릭 시의 동작을 정의합니다.
-        print("선택한 날짜: \(datePicker.date)")
     }
     
     // MARK: - 체크리스트 관련 요소 제약조건
