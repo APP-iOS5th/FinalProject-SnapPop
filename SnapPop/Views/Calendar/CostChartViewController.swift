@@ -65,7 +65,7 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
             
             
             totalButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            totalButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30),
+            totalButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -70),
 
             pieChartView.topAnchor.constraint(equalTo: monthLabel.topAnchor),
             pieChartView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),

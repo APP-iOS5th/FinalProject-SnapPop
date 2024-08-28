@@ -645,7 +645,6 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         self.calendarView.reloadDecorations(forDateComponents: [dateComponents], animated: true)
         }
 
-    
     func updateChartWithNewData() {
            // 새로운 데이터 준비
            let chartItems = [
