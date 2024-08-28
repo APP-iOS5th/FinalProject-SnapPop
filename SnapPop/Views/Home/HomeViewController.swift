@@ -64,8 +64,7 @@ class HomeViewController:
         view.layer.masksToBounds = true
         return view
     }()
-    
-    /// 날짜 선택 UI 컨트롤
+    /// DatePicker UI 컨트롤
     private let datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +73,7 @@ class HomeViewController:
         picker.backgroundColor = .clear
         return picker
     }()
-    /// 날짜  캘린더 이미지 UI 컨트롤
+    /// DatePicker  캘린더 이미지 UI 컨트롤
     private let calendarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -82,7 +81,7 @@ class HomeViewController:
         imageView.tintColor = .black
         return imageView
     }()
-    /// 날짜 알림 레이블
+    /// DatePicker 알림 레이블
     private let dateAlertLabel: UILabel = {
         let label = UILabel()
         label.text = " "
@@ -100,10 +99,8 @@ class HomeViewController:
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
     // 편집 버튼 bool
     private var isEditingMode = false
-    
     // 편집 버튼
     private let editButton: UIButton = {
         let button = UIButton(type: .system)
@@ -112,7 +109,6 @@ class HomeViewController:
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
     // 이미지 추가 버튼
     private let addButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -123,10 +119,8 @@ class HomeViewController:
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
     // 선택된 이미지를 저장할 속성
     private var selectedImage: UIImage?
-    
     // 관리 목록 타이틀
     private let managementTitle: UILabel = {
         let label = UILabel()
@@ -136,7 +130,6 @@ class HomeViewController:
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
     // 스냅 컬렉션
     private let snapCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -231,7 +224,6 @@ class HomeViewController:
             dateAlertLabel.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
         ])
     }
-    
     /// 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
         guard let categoryId = viewModel.selectedCategoryId else { return }
@@ -242,7 +234,6 @@ class HomeViewController:
         
         updateDateAlertLabel() // 버튼 텍스트 업데이트
     }
-    
     /// 날짜 알림 버튼 텍스트 업데이트
     private func updateDateAlertLabel() {
         let selectedDate = datePicker.date
@@ -268,8 +259,7 @@ class HomeViewController:
             dateAlertLabel.text = "" // Clear text for non-matching cases
         }
     }
-    
-    // MARK: - 체크리스트 관련 요소 제약조건
+    /// 체크리스트 관련 요소 제약조건
     private func setupChecklistView() {
         // Add managementTitle to the view
         view.addSubview(managementTitle)
@@ -298,13 +288,11 @@ class HomeViewController:
         
         checklistTableViewController.tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
     }
-    
-    // MARK: UITableViewDataSource - Number of Rows
+    /// 체크리스트( UITableViewDataSource - Number of Rows)
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.checklistItems.count
     }
-    
-    // MARK: UITableViewDataSource - Cell Configuration
+    /// 체크리스트(UITableViewDataSource - Cell Configuration)
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
         let item = viewModel.checklistItems[indexPath.row]
@@ -312,7 +300,7 @@ class HomeViewController:
         return cell
     }
     
-    // MARK: - 스냅뷰 컬렉션 관련 요소 제약조건
+    /// 스냅뷰 컬렉션 관련 요소 제약조건
     private func setupSnapCollectionView() {
         view.addSubview(snapTitle)
         view.addSubview(editButton)
@@ -343,13 +331,11 @@ class HomeViewController:
         
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
     }
-    
-    // MARK: UICollectionViewDataSource
+    /// 스냅뷰 (UICollectionViewDataSource)
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.snap?.imageUrls.count ?? 0
     }
-    
-    // MARK: UICollectionViewDataSource - Cell Configuration
+    ///스냅뷰 ( UICollectionViewDataSource - Cell Configuration)
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
         
@@ -367,15 +353,14 @@ class HomeViewController:
         
         return cell
     }
-    
-    // MARK: UICollectionViewDelegateFlowLayout
+    ///스냅뷰 (UICollectionViewDelegateFlowLayout)
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.bounds.width * 0.95
         let width = availableWidth / 2
         return CGSize(width: width, height: width)
     }
     
-    // 사진 추가
+    /// 스냅 사진 추가
     @objc private func addButtonTapped(_ sender: UIButton) {
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)
         
@@ -391,8 +376,7 @@ class HomeViewController:
         
         present(actionSheet, animated: true, completion: nil)
     }
-    
-    // 사진 편집
+    /// 스냅 사진 편집
     @objc private func editButtonTapped() {
         isEditingMode.toggle()
         
@@ -408,8 +392,7 @@ class HomeViewController:
         
         updateVisibleCellsForEditingMode(isEditingMode)
     }
-    
-    // 모드 전환 시 셀 업데이트
+    /// 스냅 편집  모드 전환 시 셀 업데이트
     private func updateVisibleCellsForEditingMode(_ isEditing: Bool) {
         let totalItems = snapCollectionView.numberOfItems(inSection: 0)  // 섹션이 하나이므로 0으로 고정
         for item in 0..<totalItems {
@@ -419,8 +402,7 @@ class HomeViewController:
             }
         }
     }
-    
-    // 사진 삭제
+    /// 스냅 사진 삭제
     @objc private func deleteButtonTapped(_ sender: UIButton) {
         let index = sender.tag
         
@@ -455,8 +437,7 @@ class HomeViewController:
             }
         }
     }
-    
-    // 사진 삭제 후 바뀐 셀들의 인덱스에 맞게 태그를 다시 설정하는 함수
+    /// 스냅 사진 삭제 후 바뀐 셀들의 인덱스에 맞게 태그를 다시 설정하는 함수
     private func updateCellTags() {
         let totalItems = snapCollectionView.numberOfItems(inSection: 0)  // 섹션이 하나이므로 0번째 섹션 사용
         for item in 0..<totalItems {
@@ -476,7 +457,6 @@ class HomeViewController:
         }
     }
     
-    
     private func updateUIWithCategories() {
         // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
         print("Loaded categories: \(navigationBarViewModel.categories)")
@@ -491,7 +471,6 @@ class HomeViewController:
         dragItem.localObject = item
         return [dragItem]
     }
-
     // MARK: - UICollectionViewDropDelegate
     func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {
         return isEditingMode && session.canLoadObjects(ofClass: NSString.self) // 편집 모드일 때만 드롭 가능
