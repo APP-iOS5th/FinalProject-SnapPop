@@ -51,13 +51,36 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         super.viewDidLoad()
         setupUI()
         bindViewModel()
+        
+        
+        // NotificationCenter를 사용하게 변경
+        NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChangeNotification(_:)), name: .categoryDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(managementSavedNotification(_:)), name: .managementSavedNotification, object: nil)
+
         if let navigationController = self.navigationController as? CustomNavigationBarController {
-            navigationController.viewModel.delegate = viewModel
+            navigationController.viewModel.delegate = viewModel as! any CategoryChangeDelegate
         }
         print(UserDefaults.standard.dictionaryRepresentation())
         viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
         bindViewModel() // ViewModel 바인딩(combine)
     }
+    
+    // NotificationCenter에서 사용할 메서드
+    @objc private func categoryDidChangeNotification(_ notification: Notification) {
+        if let newCategoryId = notification.userInfo?["newCategoryId"] as? String {
+            print("카테고리 변경됨: \(newCategoryId)")
+        }
+    }
+    
+    @objc private func managementSavedNotification(_ notification: Notification) {
+        print("Management가 저장되었습니다.")
+    }
+    
+    deinit {
+        // deinit에서 observer 제거
+        NotificationCenter.default.removeObserver(self)
+    }
+
     
     // MARK: - UI Setup
     private func setupUI() {
