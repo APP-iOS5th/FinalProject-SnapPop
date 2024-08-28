@@ -116,7 +116,6 @@
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		C24BFA722C64B01400A5B40A /* SnapPop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnapPop.entitlements; sourceTree = "<group>"; };
-		C24E0AFA2C762EB800CCC055 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
@@ -225,7 +224,6 @@
 		8F1685232C6354590010F8D8 = {
 			isa = PBXGroup;
 			children = (
-				C24E0AFA2C762EB800CCC055 /* Config.xcconfig */,
 				C24BFA542C647BA600A5B40A /* .swiftlint.yml */,
 				8F16852E2C6354590010F8D8 /* SnapPop */,
 				8F16852D2C6354590010F8D8 /* Products */,
@@ -432,12 +430,12 @@
 			children = (
 				EA50475A2C64A1390033D807 /* HomeViewController.swift */,
 				EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */,
+				EA8FEA502C7C554400796AE4 /* SnapExpandSheetViewController.swift */,
 				EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */,
 				EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */,
 				EA664E532C7455F80034B998 /* CropViewController.swift */,
 				EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */,
 				EAE34EB22C776E6700BEFF3A /* CustomDatePickerViewController.swift */,
-				EA8FEA502C7C554400796AE4 /* SnapExpandSheetViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -632,7 +630,6 @@
 /* Begin XCBuildConfiguration section */
 		8F16853E2C63545A0010F8D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C24E0AFA2C762EB800CCC055 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -696,7 +693,6 @@
 		};
 		8F16853F2C63545A0010F8D8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C24E0AFA2C762EB800CCC055 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
