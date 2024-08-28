@@ -23,7 +23,9 @@ class AddManagementViewModel: CategoryChangeDelegate {
     
     private var cancellables = Set<AnyCancellable>()
     var management: Management
-
+    var detailCostArray: [DetailCost] = [] // 추가한 상세 비용들을 담을 배열
+    private let db = ManagementService()
+    
     let repeatOptions = ["매일", "매주", "안함"]
     
     init(categoryId: String?, management: Management) {
@@ -160,12 +162,17 @@ class AddManagementViewModel: CategoryChangeDelegate {
             return
         }
         
-        let db = ManagementService()
         self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
         db.saveManagement(categoryId: categoryId ?? "", management: management) { result in
             switch result {
             case .success(let management):
                 print("Management saved successfully")
+                
+                guard let categoryId = self.categoryId else { return }
+                
+                for detailCost in self.detailCostArray {
+                    self.saveDetailCost(categoryId: categoryId, managementId: management.id ?? "", detailCost: detailCost)
+                }
                 
                 if management.alertStatus {
                     if management.repeatCycle == 0 {
@@ -232,6 +239,17 @@ class AddManagementViewModel: CategoryChangeDelegate {
             return specificDate < Date()
         } else {
             return false
+        }
+    }
+    
+    func saveDetailCost(categoryId: String, managementId: String, detailCost: DetailCost) {
+        db.saveDetailCost(categoryId: categoryId, managementId: managementId, detailCost: detailCost) { result in
+            switch result {
+            case .success:
+                print("상세 비용 저장 성공")
+            case .failure(let error):
+                print("상세 비용 저장 실패: \(error.localizedDescription)")
+            }
         }
     }
 }
