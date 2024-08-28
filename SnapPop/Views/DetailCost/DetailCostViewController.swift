@@ -33,6 +33,10 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         return tableView
     }()
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,7 +71,14 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         ])
         
         title = "상세내역"
-
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = .white
+        appearance.backgroundEffect = nil
+        appearance.shadowColor = nil
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "추가", style: .done, target: self, action: #selector(saveButtonTapped))
         navigationItem.rightBarButtonItem?.isEnabled = false
@@ -219,8 +230,8 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         // Y축으로 텍스트필드 하단 위치가 키보드 상단 위치보다 클 때 (텍스트필드가 키보드에 가려질 때)
         if textFieldBottomY > keyboardTopY {
             let textFieldTopY = convertedTextFieldFrame.origin.y
-            let newFrame = textFieldTopY - keyboardTopY/1.6
-            view.frame.origin.y -= newFrame
+            let newFrame = (textFieldTopY - keyboardTopY / 1.6) * -1
+            view.frame.origin.y = newFrame
         }
     }
     
