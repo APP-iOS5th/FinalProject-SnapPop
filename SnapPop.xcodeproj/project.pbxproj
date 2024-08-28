@@ -55,6 +55,8 @@
 		C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C8132C784610004F569A /* UIImageView+Extensions.swift */; };
 		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
+		C2A6CAAB2C7EDB1100F7670A /* UITextField+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */; };
+		C2A6CAAD2C7EE2F800F7670A /* UIResponder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
 		C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */; };
 		C2F081002C7D6DD600BE8B0D /* DetailCost.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F080FF2C7D6DD600BE8B0D /* DetailCost.swift */; };
@@ -120,6 +122,8 @@
 		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
+		C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extensions.swift"; sourceTree = "<group>"; };
+		C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Extensions.swift"; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
 		C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		C2F080FF2C7D6DD600BE8B0D /* DetailCost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCost.swift; sourceTree = "<group>"; };
@@ -360,6 +364,8 @@
 				4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */,
 				C259C8132C784610004F569A /* UIImageView+Extensions.swift */,
 				C259C81A2C787B89004F569A /* NotificationManager.swift */,
+				C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */,
+				C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -570,6 +576,7 @@
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
 				C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */,
+				C2A6CAAD2C7EE2F800F7670A /* UIResponder+Extensions.swift in Sources */,
 				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
 				C2F081002C7D6DD600BE8B0D /* DetailCost.swift in Sources */,
 				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
@@ -599,6 +606,7 @@
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
 				8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */,
 				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
+				C2A6CAAB2C7EDB1100F7670A /* UITextField+Extensions.swift in Sources */,
 				EA664E4E2C73914B0034B998 /* CustomCropToolbar.swift in Sources */,
 				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
 				C246CE5A2C74EF7D00A631BE /* AccountInfoTableViewCell.swift in Sources */,
