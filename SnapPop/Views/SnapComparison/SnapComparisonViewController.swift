@@ -152,6 +152,7 @@ class SnapComparisonViewController: UIViewController {
                 self.setupMenu()
             }
         } else {
+            viewModel.snapData = [] // 원본 스냅 초기화
             viewModel.snapDateMenuItems = [] // 메뉴 아이템 초기화
             viewModel.categoryisEmpty?()
         }
@@ -204,7 +205,7 @@ class SnapComparisonViewController: UIViewController {
         selectSnapPeriodButton.showsMenuAsPrimaryAction = true
         
         if viewModel.snapDateMenuItems.isEmpty {
-            selectSnapDateButton.isEnabled = false
+            selectSnapDateButton.isEnabled = true
             selectSnapDateButton.setTitle("날짜 없음", for: .normal)
         } else {
             let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
@@ -231,19 +232,23 @@ class SnapComparisonViewController: UIViewController {
             self.collectionView.isHidden = true
             self.snapAndCategoryCheckLabel.isHidden = false
             self.snapAndCategoryCheckLabel.text = "카테고리를 추가하여 사진을 비교해 보세요!"
+            self.selectSnapDateButton.isEnabled = true
         }
         viewModel.snapisEmpty = {
             self.collectionView.isHidden = true
             self.snapAndCategoryCheckLabel.isHidden = false
             self.snapAndCategoryCheckLabel.text = "사진을 추가해 비교해 보세요!"
+            self.selectSnapDateButton.isEnabled = true
         }
         viewModel.showSnapCollectionView = {
             self.collectionView.isHidden = false
             DispatchQueue.main.async {
+                self.setupMenu()
                 self.collectionView.reloadData()
             }
             self.snapAndCategoryCheckLabel.isHidden = true
             self.snapAndCategoryCheckLabel.text = ""
+            self.selectSnapDateButton.isEnabled = true
         }
     }
     

@@ -10,6 +10,7 @@ import UIKit
 
 // MARK: - Protocols
 protocol SnapComparisonViewModelProtocol {
+    var snapData: [Snap] { get set }
     var filteredSnapData: [Snap] { get }
     var snapPhotoSelectionType: String { get set }
     var snapPeriodType: String { get set }
@@ -43,7 +44,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     private let snapService = SnapService()
     private let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId")
     
-    private var snapData: [Snap] = []
+    var snapData: [Snap] = []
     var filteredSnapData: [Snap] = []
     var snapPhotoSelectionType: String = "전체" {
         didSet {
@@ -259,7 +260,14 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     
     /// 카테고리 변경시 호출되는 메소드
     func categoryDidChange(to newCategoryId: String?) {
-        guard let newCategoryId = newCategoryId else { return }
+        guard let newCategoryId = newCategoryId else { 
+            // newCategoryId가 nil일 경우
+            snapData = []
+            filteredSnapData = []
+            snapDateMenuItems = []
+            updateSnapDateButtonTitle?("날짜 선택")
+            categoryisEmpty?()
+            return }
         print("[Snap비교] 스냅 비교뷰 카테고리 변경됨 \(newCategoryId)")
         loadSanpstoFireStore(to: newCategoryId)
         reloadCollectionView?()
@@ -275,6 +283,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
                     // 스냅이 없는 경우
                     print("[Snap비교] 카테고리는 존재, 스냅은 없음")
                     self.snapData = []
+                    self.filteredSnapData = []
                     
                     // SnapDateButton의 메뉴 초기화
                     self.snapDateMenuItems = []
