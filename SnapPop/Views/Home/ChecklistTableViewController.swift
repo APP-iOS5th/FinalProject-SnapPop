@@ -12,7 +12,8 @@ class ChecklistTableViewController: UITableViewController {
 
     var viewModel: HomeViewModel?
     private var cancellables = Set<AnyCancellable>() // Combine 구독을 저장할 Set
-    
+    private let managementService = ManagementService() // ManagementService 인스턴스 추가
+
 //    private let refreshControl = UIRefreshControl()
     
     // 관리 항목 추가 버튼
@@ -133,9 +134,29 @@ class ChecklistTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
         if let item = viewModel?.checklistItems[indexPath.row] {
-            cell.configure(with: item) // 셀을 item 데이터로 구성
+            cell.configure(with: item)
+            
+            // 체크박스 상태가 변경될 때 호출할 클로저 설정
+            cell.onCheckBoxToggle = { [weak self] managementId, isCompleted in
+                self?.handleCheckBoxToggle(managementId: managementId, isCompleted: isCompleted)
+            }
         }
         return cell
+    }
+    
+    private func handleCheckBoxToggle(managementId: String, isCompleted: Bool) {
+        guard let viewModel = viewModel else { return }
+        let currentDate = Date()
+        
+        managementService.updateCompletion(categoryId: viewModel.selectedCategoryId ?? "default", managementId: managementId, date: currentDate, isCompleted: isCompleted) { result in
+            switch result {
+            case .success():
+                print("Completion status updated successfully")
+            case .failure(let error):
+                print("Failed to update completion status: \(error.localizedDescription)")
+                self.showAlert(title: "업데이트 실패", message: "완료 상태를 업데이트할 수 없습니다. 다시 시도해 주세요.")
+            }
+        }
     }
     
     // MARK: - UITableViewDelegate

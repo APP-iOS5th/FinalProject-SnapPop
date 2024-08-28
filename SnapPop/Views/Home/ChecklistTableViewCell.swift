@@ -8,7 +8,9 @@
 import UIKit
 
 class ChecklistTableViewCell: UITableViewCell {
-
+    
+    var managementId: String? // 관리 항목 ID를 저장할 변수 추가
+    var onCheckBoxToggle: ((String, Bool) -> Void)? // 체크박스 상태 변경 시 호출할 클로저 추가
     // 체크박스 버튼
     let checkBox: UIButton = {
         let button = UIButton(type: .custom)
@@ -53,7 +55,8 @@ class ChecklistTableViewCell: UITableViewCell {
     // MARK: - Configure Cell with Checklist Item
     func configure(with item: Management) {
         print("Configuring cell with item: \(item)")
-        
+        managementId = item.id // 관리 항목 ID 설정
+
         checkLabel.text = item.title
         
         // 체크박스 색상 설정
@@ -68,7 +71,7 @@ class ChecklistTableViewCell: UITableViewCell {
         }
         
         // 체크박스 상태 설정
-        checkBox.isSelected = item.alertStatus
+        checkBox.isSelected = item.completions[currentDateString()] == 1 // 현재 날짜에 대한 완료 상태 설정
     }
 
     // MARK: - 체크박스 이미지 업데이트
@@ -79,9 +82,17 @@ class ChecklistTableViewCell: UITableViewCell {
         checkBox.setImage(checkmarkImage, for: .selected)
     }
     
-    // 체크박스 클릭 시 상태 변화
     @objc private func didTapCheckBox() {
         checkBox.isSelected.toggle()
+        if let managementId = managementId {
+            onCheckBoxToggle?(managementId, checkBox.isSelected)
+        }
+    }
+    
+    private func currentDateString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter.string(from: Date())
     }
 }
 
