@@ -7,7 +7,7 @@
 
 import UIKit
 import Photos
-import Kingfisher
+import Kingfisher 
 
 class SnapCollectionViewCell: UICollectionViewCell {
     
@@ -28,6 +28,9 @@ class SnapCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    var currentIndex: Int? // 현재 인덱스
+    var imageUrls: [String]? // 이미지 URL 배열
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -76,21 +79,18 @@ class SnapCollectionViewCell: UICollectionViewCell {
             contentView.layer.borderColor = nil
         }
         
+        // Kingfisher를 사용하여 이미지 로드
         if let url = URL(string: snap.imageUrls[index]) {
-            KingfisherManager.shared.retrieveImage(with: url) { result in
-                switch result {
-                case .success(let value):
-                    self.snapImageView.image = value.image
-                case .failure:
-                    self.snapImageView.image = UIImage(systemName: "circle.dotted")
-                }
-            }
+            snapImageView.kf.setImage(with: url, placeholder: UIImage(systemName: "circle.dotted")) // Kingfisher로 이미지 로드
         } else {
             snapImageView.image = UIImage(systemName: "circle.dotted")
         }
         
         // 편집 모드에 따라 삭제 버튼 표시
         setEditingMode(isEditing)
+        
+        self.currentIndex = index
+        self.imageUrls = snap.imageUrls // 이미지 URL 배열 설정
     }
     
     func setEditingMode(_ isEditing: Bool) {

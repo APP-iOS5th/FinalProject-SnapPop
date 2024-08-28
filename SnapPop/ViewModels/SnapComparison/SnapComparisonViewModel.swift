@@ -34,10 +34,10 @@ protocol SnapComparisonViewModelProtocol {
     func numberOfRows(in section: Int) -> Int
     func loadSanpstoFireStore(to categoryId: String)
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap]
+    func categoryDidChange(to newCategoryId: String?)
 }
 
-class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
-                               CategoryChangeDelegate {
+class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     
     // MARK: - Properties
     private let snapService = SnapService()
