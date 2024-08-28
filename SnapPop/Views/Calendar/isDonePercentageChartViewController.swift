@@ -40,13 +40,13 @@ class IsDonePercentageChart: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
-            monthLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
+            monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 70),
             
             circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
             circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            circularView.widthAnchor.constraint(equalToConstant: 250),
-            circularView.heightAnchor.constraint(equalToConstant: 250)
+            circularView.widthAnchor.constraint(equalToConstant: 300),
+            circularView.heightAnchor.constraint(equalToConstant: 300)
         ])
     }
     
@@ -92,14 +92,14 @@ open class IsDoneDoughnut: UIView {
     // MARK: - Private Variables
     private var _percentages: [Double]
     private var _colors: [UIColor] = [.red, .lightGray]
-    private var _lineWidth = CGFloat(5.0)
+    private var _lineWidth = CGFloat(3.0)
     lazy var donePercentage = "\(Float(_percentages[0]))%" {
         didSet {
             setNeedsDisplay()
         }
     }
     // MARK: - Initialization
-    public init(percentages: [Double], lineWidth: CGFloat = 5.0) {
+    public init(percentages: [Double], lineWidth: CGFloat = 3.0) {
             self._percentages = percentages
             super.init(frame: CGRect.zero)
             self.backgroundColor = .clear
@@ -148,7 +148,7 @@ open class IsDoneDoughnut: UIView {
     override public func draw(_ rect: CGRect) {
         let center = CGPoint(x: rect.midX, y: rect.midY)
         let outerRadius = min(rect.width, rect.height) / 2 - _lineWidth / 2
-        let innerRadius = outerRadius * 0.70 // Adjust the multiplier as needed for the size of the hole
+        let innerRadius = outerRadius * 0.50 // Adjust the multiplier as needed for the size of the hole
         
         var startAngle: CGFloat = -CGFloat.pi / 2
         
@@ -168,20 +168,7 @@ open class IsDoneDoughnut: UIView {
             layer.addSublayer(shapeLayer)
             
             startAngle = endAngle
-            
-//            let attributes: [NSAttributedString.Key: Any] = [
-//                .font: UIFont.boldSystemFont(ofSize: 20),
-//                .foregroundColor: percentageColor
-//            ]
-//            let textSize = donePercentage.size(withAttributes: attributes)
-//            let textRect = CGRect(
-//                x: rect.midX - textSize.width / 2,
-//                y: rect.midY - textSize.height / 2,
-//                width: textSize.width,
-//                height: textSize.height
-//            )
-//            donePercentage.draw(in: textRect, withAttributes: attributes)
-                
+    
         }
     }
     public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
@@ -203,31 +190,3 @@ open class IsDoneDoughnut: UIView {
         }
 
 }
-
-//달성률 함수 예시
-//func calculateCompletionRate(schedule: Schedule, year: Int, month: Int) -> Double {
-//    let calendar = Calendar.current
-//    guard let startOfMonth = calendar.date(from: DateComponents(year: year, month: month)),
-//          let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth) else {
-//        return 0
-//    }
-//    
-//    var totalDays = 0
-//    var completedDays = 0
-//    
-//    calendar.enumerateDates(startingAfter: startOfMonth, matching: DateComponents(hour: 0, minute: 0, second: 0), matchingPolicy: .nextTime) { date, _, stop in
-//        guard let date = date, date <= endOfMonth else {
-//            stop = true
-//            return
-//        }
-//        
-//        if isScheduleOccurringOn(date: date, schedule: schedule) {
-//            totalDays += 1
-//            if let completion = getCompletion(scheduleId: schedule.id, date: date), completion.isCompleted {
-//                completedDays += 1
-//            }
-//        }
-//    }
-//    
-//    return totalDays > 0 ? Double(completedDays) / Double(totalDays) : 0
-//}
