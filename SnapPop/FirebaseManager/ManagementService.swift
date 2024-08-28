@@ -158,4 +158,25 @@ final class ManagementService {
                 completion(.success(dates))
             }
     }
+    
+    func saveDetailCost(categoryId: String, managementId: String, detailCost: DetailCost, completion: @escaping (Result<Void, Error>) -> Void) {
+        do {
+            try db.collection("Users")
+                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .collection("Categories")
+                .document(categoryId)
+                .collection("Managements")
+                .document(managementId)
+                .collection("DetailCosts")
+                .addDocument(from: detailCost) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                        return
+                    }
+                    completion(.success(()))
+                }
+        } catch {
+            completion(.failure(error))
+        }
+    }
 }

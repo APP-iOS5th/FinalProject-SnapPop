@@ -10,13 +10,14 @@ import UIKit
 
 // MARK: - Protocols
 protocol SnapComparisonViewModelProtocol {
+    var snapData: [Snap] { get set }
     var filteredSnapData: [Snap] { get }
     var snapPhotoSelectionType: String { get set }
     var snapPeriodType: String { get set }
     var numberOfSections: Int { get }
     var snapPhotoMenuItems: [UIAction] { get }
     var snapPeriodMenuItems: [UIAction] { get }
-    var snapDateMenuItems: [UIAction] { get }
+    var snapDateMenuItems: [UIAction] { get set }
     
     var reloadCollectionView: (() -> Void)? { get set }
     var updateSnapPhotoButtonTitle: ((String) -> Void)? { get set }
@@ -34,16 +35,16 @@ protocol SnapComparisonViewModelProtocol {
     func numberOfRows(in section: Int) -> Int
     func loadSanpstoFireStore(to categoryId: String)
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap]
+    func categoryDidChange(to newCategoryId: String?)
 }
 
-class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
-                               CategoryChangeDelegate {
+class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     
     // MARK: - Properties
     private let snapService = SnapService()
     private let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId")
     
-    private var snapData: [Snap] = []
+    var snapData: [Snap] = []
     var filteredSnapData: [Snap] = []
     var snapPhotoSelectionType: String = "전체" {
         didSet {
@@ -60,22 +61,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     var numberOfSections: Int {
         filteredSnapData.count
     }
-   
-    /// 기준 스냅 선택 메뉴
-    var snapDateMenuItems: [UIAction] {
-        snapData.compactMap { snap in
-            guard let date = snap.createdAt else { return nil }
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy년 MM월 d일"
-            return UIAction(
-                title: formatter.string(from: date),
-                handler: { [weak self] _ in
-                    self?.changeSnapDate(date: date) {
-                        self?.reloadCollectionView?()
-                    }
-                })
-        }
-    }
+    
     /// 스냅 사진 선택 메뉴
     var snapPhotoMenuItems: [UIAction] {
         let allSnapPhoto = UIAction(
@@ -132,7 +118,11 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
         
         return [perWeek, perMonth, perYear, allPeriod]
     }
-    // 스냅 기준 선택 메뉴
+    
+    /// 스냅 기준 선택 메뉴
+    var snapDateMenuItems: [UIAction] = []
+    
+    /// 기준 스냅 선택 메뉴
     private var selectedDate: Date? {
         didSet {
             filterSnaps()
@@ -145,6 +135,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
             }
         }
     }
+    
     /// 버튼 타이틀 업데이트 클로저
     var updateSnapPhotoButtonTitle: ((String) -> Void)?
     /// 버튼 타이틀 업데이트 클로저
@@ -162,12 +153,12 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     
     // MARK: - Initializer
     init() {
-        guard let categoryId = categoryId else {
-            // Category Id가 없음
+        if let categoryId = categoryId {
+            loadSanpstoFireStore(to: categoryId)
+            self.filterSnaps()
+        } else {
             categoryisEmpty?()
-            return }
-        loadSanpstoFireStore(to: categoryId)
-        filterSnaps()
+        }
     }
     
     // MARK: - Methods
@@ -175,6 +166,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     func filterSnaps() {
         
         guard !snapData.isEmpty else {
+            filteredSnapData = []
             snapisEmpty?()
             return
         }
@@ -268,7 +260,14 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
     
     /// 카테고리 변경시 호출되는 메소드
     func categoryDidChange(to newCategoryId: String?) {
-        guard let newCategoryId = newCategoryId else { return }
+        guard let newCategoryId = newCategoryId else { 
+            // newCategoryId가 nil일 경우
+            snapData = []
+            filteredSnapData = []
+            snapDateMenuItems = []
+            updateSnapDateButtonTitle?("날짜 선택")
+            categoryisEmpty?()
+            return }
         print("[Snap비교] 스냅 비교뷰 카테고리 변경됨 \(newCategoryId)")
         loadSanpstoFireStore(to: newCategoryId)
         reloadCollectionView?()
@@ -283,16 +282,48 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol,
                 if snaps.isEmpty {
                     // 스냅이 없는 경우
                     print("[Snap비교] 카테고리는 존재, 스냅은 없음")
+                    self.snapData = []
+                    self.filteredSnapData = []
+                    
+                    // SnapDateButton의 메뉴 초기화
+                    self.snapDateMenuItems = []
+                    self.updateSnapDateButtonTitle?("날짜 선택")
+                    
                     self.snapisEmpty?()
                 } else {
                     print("[Snap비교] 카테고리, 스냅 존재")
                     self.snapData = snaps
                     self.filterSnaps()
+                    // SnapDateButton의 메뉴를 다시 설정
+                    self.snapDateMenuItems = self.createSnapDateMenuItems(from: snaps)
+                    self.updateSnapDateButtonTitle?("날짜 선택")
                     self.showSnapCollectionView?()
                 }
             case.failure(let error):
                 print("[Snap비교] Failed to load snaps: \(error.localizedDescription)")
+                self.snapData = []
+                self.snapDateMenuItems = []
+                self.updateSnapDateButtonTitle?("날짜 선택")
+                self.snapisEmpty?()
             }
+        }
+    }
+    
+    private func createSnapDateMenuItems(from snaps: [Snap]) -> [UIAction] {
+        return snaps.compactMap { snap in
+            guard let date = snap.createdAt else { return nil }
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy년 MM월 d일"
+            return UIAction(
+                title: formatter.string(from: date),
+                handler: { [weak self] _ in
+                    DispatchQueue.main.async {
+                        self?.changeSnapDate(date: date) {
+                            self?.updateSnapDateButtonTitle?(formatter.string(from: date))
+                            self?.reloadCollectionView?()
+                        }
+                    }
+                })
         }
     }
 }

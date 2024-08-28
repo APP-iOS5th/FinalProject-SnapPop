@@ -4,7 +4,6 @@
 //
 //  Created by Heeji Jung on 8/8/24.
 //
-
 import UIKit
 import SwiftUI
 import Photos
@@ -36,7 +35,7 @@ class HomeViewController:
     UICollectionViewDataSource,
     UICollectionViewDelegateFlowLayout,
     UICollectionViewDragDelegate,
-    UICollectionViewDropDelegate {
+    UICollectionViewDropDelegate{
     
     // ViewModel
     private var viewModel = HomeViewModel(snapService: SnapService())
@@ -125,11 +124,26 @@ class HomeViewController:
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Properties
+    private let dateAlertButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("", for: .normal) // 초기 텍스트는 비워둡니다.
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
+        
         setupDatePickerView()
+        setupDateAlertButton() // 버튼 설정
         setupSnapCollectionView()
         setupChecklistView()
         
@@ -145,10 +159,6 @@ class HomeViewController:
         navigationBarViewModel.loadCategories { [weak self] in
             // 카테고리 로드 후 UI 업데이트
             self?.updateUIWithCategories()
-        }
-
-        if let navigationController = self.navigationController as? CustomNavigationBarController {
-            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
         }
         
         viewModel.$selectedCategoryId.sink { [weak self] selectedCategoryId in
@@ -167,6 +177,14 @@ class HomeViewController:
     @objc private func updateSnapCollectionView() {
         DispatchQueue.main.async {
             self.snapCollectionView.reloadData() // UI 업데이트
+        }
+    }
+    
+    @objc private func categoryDidChange(_ notification: Notification) {
+        if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
+            viewModel.categoryDidChange(to: categoryId)
+        } else {
+            viewModel.categoryDidChange(to: nil)
         }
     }
     
@@ -223,6 +241,18 @@ class HomeViewController:
         ])
     }
     
+    // MARK: - 날짜 알림 버튼 설정
+    private func setupDateAlertButton() {
+        dateAlertButton.addTarget(self, action: #selector(dateAlertButtonTapped), for: .touchUpInside)
+        view.addSubview(dateAlertButton)
+        
+        // 버튼 제약 조건 설정
+        NSLayoutConstraint.activate([
+            dateAlertButton.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
+            dateAlertButton.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
+        ])
+    }
+    
     // MARK: - 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
         guard let categoryId = viewModel.selectedCategoryId else { return }
@@ -231,7 +261,39 @@ class HomeViewController:
             self?.updateSnapCollectionView()
         }
         
-        self.dismiss(animated: false, completion: nil)
+        updateDateAlertButtonTitle() // 버튼 텍스트 업데이트
+    }
+    
+    // MARK: - 날짜 알림 버튼 텍스트 업데이트
+    private func updateDateAlertButtonTitle() {
+        let selectedDate = datePicker.date
+        let currentDate = Date()
+        
+        let calendar = Calendar.current
+        let selectedDay = calendar.startOfDay(for: selectedDate)
+        let today = calendar.startOfDay(for: currentDate)
+        
+        // 날짜 차이를 계산
+        let dayDifference = calendar.dateComponents([.day], from: today, to: selectedDay).day ?? 0
+        
+        switch dayDifference {
+        case 0:
+            dateAlertButton.setTitle("오늘", for: .normal)
+        case -1:
+            dateAlertButton.setTitle("어제", for: .normal)
+        case 1:
+            dateAlertButton.setTitle("내일", for: .normal)
+        case 2:
+            dateAlertButton.setTitle("모레", for: .normal)
+        default:
+            dateAlertButton.setTitle("", for: .normal) // 해당하지 않는 경우 비워둡니다.
+        }
+    }
+    
+    // MARK: - 날짜 알림 버튼 클릭 시 동작
+    @objc private func dateAlertButtonTapped() {
+        // 버튼 클릭 시의 동작을 정의합니다.
+        print("선택한 날짜: \(datePicker.date)")
     }
     
     // MARK: - 체크리스트 관련 요소 제약조건
@@ -326,6 +388,10 @@ class HomeViewController:
         cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
         cell.deleteButton.tag = indexPath.item
         cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
+        //cell.delegate = self
+        cell.currentIndex = indexPath.item
+        cell.imageUrls = snap.imageUrls
+        
         return cell
     }
     
@@ -360,9 +426,11 @@ class HomeViewController:
         if isEditingMode {
             // 편집 모드로 전환
             editButton.setTitle("완료", for: .normal)
+            snapCollectionView.isScrollEnabled = false // 스크롤 비활성화
         } else {
             // 편집 모드 종료
             editButton.setTitle("편집", for: .normal)
+            snapCollectionView.isScrollEnabled = true // 스크롤 활성화
         }
         
         updateVisibleCellsForEditingMode(isEditingMode)
@@ -435,22 +503,6 @@ class HomeViewController:
         }
     }
     
-    // 사용안함
-    private func presentImageCropper(with asset: PHAsset?) {
-        guard let image = selectedImage, let asset = asset else { return }
-        
-        let cropViewController = CropViewController(viewModel: viewModel, navigationBarViewModel: navigationBarViewModel as! CustomNavigationBarViewModel) // navigationBarViewModel 전달
-        cropViewController.asset = asset
-        cropViewController.modalPresentationStyle = .fullScreen
-        
-        cropViewController.didGetCroppedImage = { [weak self] (snap: Snap) in
-            self?.viewModel.snap = snap
-//            self?.viewModel.snapData.append(snap) // Snap 객체를 viewModel에 추가
-            self?.snapCollectionView.reloadData() // SnapCollectionView를 업데이트
-        }
-        
-        present(cropViewController, animated: true, completion: nil)
-    }
     
     private func updateUIWithCategories() {
         // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
@@ -527,6 +579,34 @@ class HomeViewController:
                 }
             }
         })
+    }
+    
+    func didTapSnapCell(with imageUrls: [String], currentIndex: Int) {
+        let expandVC = SnapExpandSheetViewController(imageUrls: imageUrls, currentIndex: currentIndex) // ViewController 초기화
+        expandVC.modalPresentationStyle = .pageSheet // 모달 시트로 표시
+        present(expandVC, animated: true, completion: nil) // ViewController 표시
+    }
+    
+    // MARK: - UICollectionViewDelegate
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // 선택된 스냅 데이터 가져오기
+        guard let snap = viewModel.snap, indexPath.item < snap.imageUrls.count else {
+            print("Invalid index or snap data.")
+            return
+        }
+        
+        // SnapExpandSheetViewController 초기화
+        let expandVC = SnapExpandSheetViewController(imageUrls: snap.imageUrls, currentIndex: indexPath.item) // ViewController 초기화
+        expandVC.modalPresentationStyle = .pageSheet // 모달 시트로 표시
+        
+        // sheetPresentationController 설정
+        if let sheet = expandVC.sheetPresentationController {
+            sheet.detents = [.medium()] // 모달 크기 설정
+            sheet.prefersGrabberVisible = true // 그랩바 표시
+        }
+        
+        // 모달 표시
+        present(expandVC, animated: true, completion: nil)
     }
 }
 

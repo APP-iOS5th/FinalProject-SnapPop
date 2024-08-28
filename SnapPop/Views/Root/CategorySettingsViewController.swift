@@ -168,8 +168,6 @@ class CategorySettingsViewController: UIViewController {
                     self.viewModel.categoryisUpdated?()
                 }
                 categoryTextField.text = ""
-               
-                
             } else {
                 // 카테고리가 있는 경우
                 let newCategory = Category(userId: "\(AuthViewModel.shared.currentUser?.uid ?? "")", title: "\(categoryName)", alertStatus: true)
@@ -253,6 +251,7 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
         
         let trash = UIContextualAction(style: .normal, title: "") { (_, _, success: @escaping (Bool) -> Void) in
             self.viewModel.deleteCategory(at: indexPath.row) { newTitle in
+                guard let newTitle = newTitle else { return }
                 DispatchQueue.main.async {
                     self.categoryTable.reloadData()
                 }
@@ -262,7 +261,7 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
             
             print("Current Categories: \(self.viewModel.categories)")
             print("현재 선택된 카테고리: \(self.viewModel.currentCategory?.title)")
-
+            
             success(true)
             
         }

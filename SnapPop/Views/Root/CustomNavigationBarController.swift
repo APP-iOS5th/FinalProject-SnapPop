@@ -59,13 +59,16 @@ class CustomNavigationBarController: UINavigationController {
         if topViewController?.navigationItem.leftBarButtonItem == nil {
             setupNavigationBarItems()
         }
-//        loadCategories()
+        loadCategories()
         updateCategoryMenu()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        updateCategoryMenu()
+        
+        // TODO: - categoryisUpdated를 왜 다시 정의해줘야 동작이 잘되는거지..?
+        viewModel.categoryisUpdated = { [weak self] in
+            print("CustomNavigationBarController에서 categoryisUpdated 클로저 호출됨")
+            DispatchQueue.main.async {
+                self?.updateCategoryMenu()
+            }
+        }
     }
     
     // MARK: - Methods

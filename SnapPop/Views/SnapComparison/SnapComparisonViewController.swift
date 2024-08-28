@@ -120,30 +120,43 @@ class SnapComparisonViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+    }
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
         self.view.backgroundColor = .customBackground
         
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSanpstoFireStore(to: currentCategoryId)
+        } else {
+            viewModel.snapDateMenuItems = []
+            viewModel.categoryisEmpty?()
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
+        
         setupBindings()
         setupLayout()
         setupMenu()
         
-        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
-            viewModel.loadSanpstoFireStore(to: currentCategoryId)
-        }
-        
-        if let navigationController = self.navigationController as? CustomNavigationBarController {
-            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)
+        } else {
+            viewModel.snapData = [] // 원본 스냅 초기화
+            viewModel.snapDateMenuItems = [] // 메뉴 아이템 초기화
+            viewModel.categoryisEmpty?()
         }
-        reloadCollectionView()        
+        DispatchQueue.main.async {
+            self.setupMenu()
+        }
+        reloadCollectionView()
     }
     
     // MARK: - Methods
@@ -180,7 +193,7 @@ class SnapComparisonViewController: UIViewController {
     }
     
     func setupMenu() {
-        
+        print("[스냅 비교] setupMenu 호출")
         let selectSnapMenu = UIMenu(title: "스냅 비교 사진 선택",
                                     children: snapPhotoMenuItems)
         selectSnapPhotoButton.menu = selectSnapMenu
@@ -191,9 +204,15 @@ class SnapComparisonViewController: UIViewController {
         selectSnapPeriodButton.menu = selectPeriodMenu
         selectSnapPeriodButton.showsMenuAsPrimaryAction = true
         
-        let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
-        selectSnapDateButton.menu = selectDateMenu
-        selectSnapDateButton.showsMenuAsPrimaryAction = true
+        if viewModel.snapDateMenuItems.isEmpty {
+            selectSnapDateButton.isEnabled = false
+            selectSnapDateButton.setTitle("날짜 없음", for: .normal)
+        } else {
+            let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
+            selectSnapDateButton.menu = selectDateMenu
+            selectSnapDateButton.showsMenuAsPrimaryAction = true
+            selectSnapDateButton.isEnabled = true
+        }
     }
     
     func setupBindings() {
@@ -213,25 +232,39 @@ class SnapComparisonViewController: UIViewController {
             self.collectionView.isHidden = true
             self.snapAndCategoryCheckLabel.isHidden = false
             self.snapAndCategoryCheckLabel.text = "카테고리를 추가하여 사진을 비교해 보세요!"
+            self.selectSnapDateButton.isEnabled = true
         }
         viewModel.snapisEmpty = {
             self.collectionView.isHidden = true
             self.snapAndCategoryCheckLabel.isHidden = false
             self.snapAndCategoryCheckLabel.text = "사진을 추가해 비교해 보세요!"
+            self.selectSnapDateButton.isEnabled = true
         }
         viewModel.showSnapCollectionView = {
             self.collectionView.isHidden = false
             DispatchQueue.main.async {
+                self.setupMenu()
                 self.collectionView.reloadData()
             }
             self.snapAndCategoryCheckLabel.isHidden = true
             self.snapAndCategoryCheckLabel.text = ""
+            self.selectSnapDateButton.isEnabled = true
         }
     }
     
     func reloadCollectionView() {
         DispatchQueue.main.async {
             self.collectionView.reloadData()
+        }
+    }
+    
+    @objc private func categoryDidChange(_ notification: Notification) {
+        if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
+            print("[스냅 비교뷰] 카테고리가 변경되었습니다: \(categoryId)")
+            viewModel.categoryDidChange(to: categoryId)
+        } else {
+            print("카테고리가 없습니다.")
+            viewModel.categoryDidChange(to: nil)
         }
     }
 }
