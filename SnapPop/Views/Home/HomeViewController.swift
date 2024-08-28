@@ -132,10 +132,16 @@ class HomeViewController:
         return button
     }()
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
+        
         setupDatePickerView()
         setupDateAlertButton() // 버튼 설정
         setupSnapCollectionView()
@@ -154,10 +160,6 @@ class HomeViewController:
             // 카테고리 로드 후 UI 업데이트
             self?.updateUIWithCategories()
         }
-
-        if let navigationController = self.navigationController as? CustomNavigationBarController {
-            navigationController.viewModel.delegate = viewModel as? CategoryChangeDelegate
-        }
         
         viewModel.$selectedCategoryId.sink { [weak self] selectedCategoryId in
             guard let self = self, let categoryId = selectedCategoryId else { return }
@@ -175,6 +177,14 @@ class HomeViewController:
     @objc private func updateSnapCollectionView() {
         DispatchQueue.main.async {
             self.snapCollectionView.reloadData() // UI 업데이트
+        }
+    }
+    
+    @objc private func categoryDidChange(_ notification: Notification) {
+        if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
+            viewModel.categoryDidChange(to: categoryId)
+        } else {
+            viewModel.categoryDidChange(to: nil)
         }
     }
     

@@ -39,7 +39,6 @@
 		B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E002C76C7350021A57D /* AddManagementViewController.swift */; };
 		B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */; };
 		B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */; };
-		B8DFF4C92C785BEA0045CC43 /* DetailCostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DFF4C82C785BEA0045CC43 /* DetailCostViewModel.swift */; };
 		C246CE5A2C74EF7D00A631BE /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */; };
 		C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */; };
 		C246CE5C2C74EF7D00A631BE /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE582C74EF7D00A631BE /* SettingTableViewCell.swift */; };
@@ -58,6 +57,7 @@
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
 		C2D401602C73853B000E0343 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */; };
+		C2F081002C7D6DD600BE8B0D /* DetailCost.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F080FF2C7D6DD600BE8B0D /* DetailCost.swift */; };
 		C2F416472C6B397800A2F544 /* SnapService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F416462C6B397800A2F544 /* SnapService.swift */; };
 		C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2F8B19E2C6A4FD900D73071 /* ManagementService.swift */; };
 		EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */; };
@@ -105,7 +105,6 @@
 		B8339E002C76C7350021A57D /* AddManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewController.swift; sourceTree = "<group>"; };
 		B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAddTableViewCell.swift; sourceTree = "<group>"; };
 		B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewmodel.swift; sourceTree = "<group>"; };
-		B8DFF4C82C785BEA0045CC43 /* DetailCostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewModel.swift; sourceTree = "<group>"; };
 		C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
 		C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockSettingTableViewCell.swift; sourceTree = "<group>"; };
 		C246CE582C74EF7D00A631BE /* SettingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -124,6 +123,7 @@
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
 		C2D4015F2C73853B000E0343 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
+		C2F080FF2C7D6DD600BE8B0D /* DetailCost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCost.swift; sourceTree = "<group>"; };
 		C2F416462C6B397800A2F544 /* SnapService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapService.swift; sourceTree = "<group>"; };
 		C2F8B19E2C6A4FD900D73071 /* ManagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementService.swift; sourceTree = "<group>"; };
 		EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -285,14 +285,6 @@
 			path = Management;
 			sourceTree = "<group>";
 		};
-		C2008C282C7461EB005FC906 /* DetailCost */ = {
-			isa = PBXGroup;
-			children = (
-				B8DFF4C82C785BEA0045CC43 /* DetailCostViewModel.swift */,
-			);
-			path = DetailCost;
-			sourceTree = "<group>";
-		};
 		C246CE592C74EF7D00A631BE /* Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -328,6 +320,7 @@
 				EA57EB472C72CAAC007F8987 /* Category.swift */,
 				EA57EB492C72CAD2007F8987 /* Management.swift */,
 				EA57EB4B2C72CAEC007F8987 /* Snap.swift */,
+				C2F080FF2C7D6DD600BE8B0D /* DetailCost.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -352,7 +345,6 @@
 			isa = PBXGroup;
 			children = (
 				B8339E0A2C76C7E80021A57D /* Management */,
-				C2008C282C7461EB005FC906 /* DetailCost */,
 				4AC9A03D2C731E1200EB5FFC /* Root */,
 				EA141FA42C6B31DE00DD4B29 /* Home */,
 				C2599B362C699AC5004EF6E7 /* Setting */,
@@ -578,6 +570,7 @@
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
 				C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */,
 				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
+				C2F081002C7D6DD600BE8B0D /* DetailCost.swift in Sources */,
 				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
 				4AD29AD32C699DF200A9BEDD /* SnapPhotoViewController.swift in Sources */,
@@ -595,7 +588,6 @@
 				8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */,
 				EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */,
 				4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */,
-				B8DFF4C92C785BEA0045CC43 /* DetailCostViewModel.swift in Sources */,
 				4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */,
 				4AF17D802C73298800C1E5A2 /* CategorySettingsViewController.swift in Sources */,
 				8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */,
