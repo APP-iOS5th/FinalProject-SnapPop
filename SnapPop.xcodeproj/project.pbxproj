@@ -34,6 +34,7 @@
 		8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685522C6599A20010F8D8 /* CalendarViewController.swift */; };
 		8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C73C12C6B1E71000AACDA /* svenmodels.swift */; };
 		8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */; };
+		8F83A4B12C7DC73F0095133A /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 8F83A4B02C7DC73F0095133A /* DGCharts */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
 		8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215932C745B4300891F93 /* CostChartViewController.swift */; };
 		B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E002C76C7350021A57D /* AddManagementViewController.swift */; };
@@ -148,6 +149,7 @@
 				8F1685492C6360180010F8D8 /* FirebaseAuth in Frameworks */,
 				C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */,
 				8F16854B2C6360180010F8D8 /* FirebaseFirestore in Frameworks */,
+				8F83A4B12C7DC73F0095133A /* DGCharts in Frameworks */,
 				8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -471,6 +473,7 @@
 				C24BFA692C649E4300A5B40A /* GoogleSignIn */,
 				C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */,
 				4AC605B32C78769D00D3AF19 /* Kingfisher */,
+				8F83A4B02C7DC73F0095133A /* DGCharts */,
 			);
 			productName = SnapPop;
 			productReference = 8F16852C2C6354590010F8D8 /* SnapPop.app */;
@@ -505,6 +508,7 @@
 				C24BFA522C647B6900A5B40A /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				C24BFA682C649E4300A5B40A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				8F83A4AF2C7DC73F0095133A /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			productRefGroup = 8F16852D2C6354590010F8D8 /* Products */;
 			projectDirPath = "";
@@ -849,6 +853,14 @@
 				minimumVersion = 11.0.0;
 			};
 		};
+		8F83A4AF2C7DC73F0095133A /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
 		C24BFA522C647B6900A5B40A /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
@@ -887,6 +899,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8F1685472C6360180010F8D8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		8F83A4B02C7DC73F0095133A /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F83A4AF2C7DC73F0095133A /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
 		};
 		C24BFA692C649E4300A5B40A /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;

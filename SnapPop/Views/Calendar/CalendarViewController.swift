@@ -168,6 +168,7 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             return
         }
         updateIsDoneChart(month: visibleMonth, year: visibleYear)
+        updateChartWithNewData()
         
      
        
@@ -397,6 +398,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         selectedDateComponents = nil
         tableView.isHidden = true
         tableView.reloadData()
+        updateIsDoneChart(month: visibleMonth, year: visibleYear)
     }
     
     func updatMonthlyInfo(month: Int, year: Int) {
@@ -612,7 +614,23 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
             updateIsDoneChart(month: month, year: year)
         }
     }
+
     
+    func updateChartWithNewData() {
+            // 새로운 데이터 준비
+            let newData: [(value: Double, label: String, color: UIColor)] = [
+                (value: 30.0, label: "식비", color: .red),
+                (value: 25.0, label: "주거비", color: .blue),
+                (value: 20.0, label: "교통비", color: .green),
+                (value: 15.0, label: "여가비", color: .orange),
+                (value: 10.0, label: "기타", color: .purple)
+            ]
+            
+            let totalCost = "1,000,000원"
+            
+            // CostChart 업데이트
+        costChart.updateChartData(newData, totalCost: totalCost)
+        }
     
     
     
