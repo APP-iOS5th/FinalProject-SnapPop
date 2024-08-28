@@ -148,13 +148,13 @@ class SnapComparisonViewController: UIViewController {
         super.viewWillAppear(true)
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)
-            DispatchQueue.main.async {
-                self.setupMenu()
-            }
         } else {
             viewModel.snapData = [] // 원본 스냅 초기화
             viewModel.snapDateMenuItems = [] // 메뉴 아이템 초기화
             viewModel.categoryisEmpty?()
+        }
+        DispatchQueue.main.async {
+            self.setupMenu()
         }
         reloadCollectionView()
     }
@@ -205,7 +205,7 @@ class SnapComparisonViewController: UIViewController {
         selectSnapPeriodButton.showsMenuAsPrimaryAction = true
         
         if viewModel.snapDateMenuItems.isEmpty {
-            selectSnapDateButton.isEnabled = true
+            selectSnapDateButton.isEnabled = false
             selectSnapDateButton.setTitle("날짜 없음", for: .normal)
         } else {
             let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
