@@ -147,20 +147,26 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func saveButtonTapped() {
-        viewModel.save { [weak self] result in
-            switch result {
-            case .success:
-                if let management = self?.viewModel.management {
-                    self?.onSave?(management)  // 변경된 저장 항목을 저장
+            if !viewModel.edit {
+                viewModel.save { [weak self] result in
+                    switch result {
+                    case .success:
+                        if let management = self?.viewModel.management {
+                            self?.onSave?(management)  // 변경된 저장 항목을 저장
+                        }
+                        self?.navigationController?.popViewController(animated: true)
+                    case .failure(let error):
+                        let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .default))
+                        self?.present(alert, animated: true)
+                    }
                 }
-                self?.navigationController?.popViewController(animated: true)
-            case .failure(let error):
-                let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default))
-                self?.present(alert, animated: true)
+            } else {
+                self.onSave?(self.viewModel.management)
+                self.navigationController?.popViewController(animated: true)
             }
         }
-    }
+
     
     @objc private func titleChanged(_ sender: UITextField) {
         // 타이틀 텍스트 필드 값 변경 시 ViewModel에 반영
