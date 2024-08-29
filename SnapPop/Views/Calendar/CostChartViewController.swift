@@ -1,258 +1,212 @@
-//
-//  CostChart.swift
-//  SnapPop
-//
-//  Created by 김형준 on 8/20/24.
-//
-
+////
+////  CostChart.swift
+////  SnapPop
+////
+////  Created by 김형준 on 8/20/24.
+////
 import UIKit
+import DGCharts
 
-class CostChart: UIViewController {
-    
+// 차트 항목을 위한 구조체
+struct ChartItem {
+    let name: String
+    let value: Int
+    let color: UIColor
+}
+
+class CostChartViewController: UIViewController, ChartViewDelegate {
+
     // MARK: - Properties
-    
-    var circularView: CostDoughnut!
-    var formatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "M"
-        return df
-    }()
-    
+    private var pieChartView: PieChartView!
+    private var chartData: [ChartItem] = []
+    private var totalCost: Int = 0
+
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.text = ""
         label.font = UIFont.systemFont(ofSize: 16)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+
+    private let formatter: DateFormatter = {
+        let df = DateFormatter()
+        df.dateFormat = "M"
+        return df
+    }()
     
-    private let detailButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("자세히", for: .normal)
-        button.setTitleColor(UIColor.lightGray, for: .normal)
-        button.isSelected.toggle()
+    private let totalButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("총액", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(detailButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
-    // MARK: - View Lifecycle
-    
+
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        
-        setupCircularView()
-        setupMonthLabel()
+        setupUI()
+        updateMonthLabel()
+        setupInitialChartData()
     }
-    
-    // MARK: - Setup Circular View
-    
-    private func setupCircularView() {
-        let percentages: [Double] = [25, 25, 25, 15, 10] // Example data percentages
-        let colors: [UIColor] = [.red, .green, .blue, .orange, .systemYellow] // Example colors
-        
-        // Initialize Doughnut Chart view
-        circularView = CostDoughnut(percentages: percentages, colors: colors, totalCost: "20000000원")
-        circularView.translatesAutoresizingMaskIntoConstraints = false
-//        monthLabel.textColor = dynamicColor(light: .black, dark: .white)
-        // Add Doughnut Chart view to the main view
-        view.addSubview(circularView)
-        view.addSubview(monthLabel)
-        view.addSubview(detailButton)
-        // Setup constraints for Doughnut Chart view
+
+    // MARK: - UI Setup
+    private func setupUI() {
+        view.backgroundColor = .systemBackground
+
+        setupPieChartView()
+        setupMonthLabel()
+        setupTotalButton()
+
         NSLayoutConstraint.activate([
+            monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 70),
             
-            monthLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
-            monthLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             
-            circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
-            circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            circularView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            circularView.widthAnchor.constraint(equalToConstant: 250),
-            circularView.heightAnchor.constraint(equalToConstant: 250),
-            
-            detailButton.topAnchor.constraint(equalTo: circularView.bottomAnchor, constant: -30),
-            detailButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30)
+            totalButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            totalButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -70),
+
+            pieChartView.topAnchor.constraint(equalTo: monthLabel.topAnchor),
+            pieChartView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            pieChartView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            pieChartView.heightAnchor.constraint(equalTo: pieChartView.widthAnchor)
         ])
     }
+
+    private func setupPieChartView() {
+        pieChartView = PieChartView()
+        pieChartView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(pieChartView)
+
+        pieChartView.delegate = self
+        pieChartView.chartDescription.enabled = false
+        pieChartView.drawHoleEnabled = true
+        pieChartView.holeColor = .clear
+        pieChartView.holeRadiusPercent = 0.5
+        pieChartView.drawCenterTextEnabled = true
+        pieChartView.rotationAngle = 0
+        pieChartView.rotationEnabled = false
+        pieChartView.highlightPerTapEnabled = true
+        pieChartView.legend.enabled = false
+        pieChartView.drawEntryLabelsEnabled = true
+        pieChartView.entryLabelColor = .black
+        pieChartView.entryLabelFont = .systemFont(ofSize: 12)
+    }
+
+    private func setupMonthLabel() {
+        view.addSubview(monthLabel)
+    }
     
-    
-    func setupMonthLabel() {
+    private func setupTotalButton() {
+           view.addSubview(totalButton)
+           totalButton.addTarget(self, action: #selector(totalButtonTapped), for: .touchUpInside)
+       }
+
+    // MARK: - Data Update
+    func updateChartData(_ newData: [ChartItem]) {
+        chartData = newData
+        totalCost = newData.reduce(0) { $0 + $1.value }
+
+        let entries = newData.enumerated().map { (index, item) in
+            let entry = PieChartDataEntry(value: Double(item.value), label: item.name)
+            entry.data = index
+            return entry
+        }
+
+        let dataSet = PieChartDataSet(entries: entries, label: "")
+        dataSet.colors = newData.map { $0.color }
+        dataSet.sliceSpace = 2
+        dataSet.selectionShift = 5
+        dataSet.valueLinePart1OffsetPercentage = 0.8
+        dataSet.valueLinePart1Length = 0.2
+        dataSet.valueLinePart2Length = 0.4
+        dataSet.valueTextColor = .clear // Hide value labels
+
+        let data = PieChartData(dataSet: dataSet)
+        pieChartView.data = data
+
+        updateCenterText()
+        pieChartView.notifyDataSetChanged()
+    }
+
+    private func updateCenterText() {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        let centerText = NSMutableAttributedString(string: "총액\n", attributes: [
+            .font: UIFont.boldSystemFont(ofSize: 16),
+            .paragraphStyle: paragraphStyle
+        ])
+        centerText.append(NSAttributedString(string: formatCurrency(totalCost), attributes: [
+            .font: UIFont.boldSystemFont(ofSize: 20),
+            .foregroundColor: UIColor.black,
+            .paragraphStyle: paragraphStyle
+        ]))
+
+        pieChartView.centerAttributedText = centerText
+    }
+
+    // MARK: - Helper Methods
+    private func formatCurrency(_ value: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = ","
+        return (formatter.string(from: NSNumber(value: value)) ?? "\(value)") + "원"
+    }
+
+    func updateMonthLabel() {
         let current = Date()
         monthLabel.text = "\(formatter.string(from: current))월"
     }
+
     func updateMonthLabel(month: Int, year: Int) {
         monthLabel.text = "\(month)월"
     }
-    @objc func detailButtonTapped(_ sender: UIButton) {
-        sender.isSelected.toggle()
-        detailButtonUpdate()
-        
-    }
     
-    func detailButtonUpdate() {
-        if detailButton.isSelected {
-            detailButton.setTitle("자세히", for: .normal)
-            //컬렉션뷰감추기
-        } else {
-            detailButton.setTitle("숨기기", for: .normal)
-            //컬렉션뷰펼치기
-        }
+
+    private func setupInitialChartData() {
+        // 예시 데이터로 차트 초기화
+        let initialData: [ChartItem] = [
+            ChartItem(name: "식비", value: 300000, color: .systemRed),
+            ChartItem(name: "교통", value: 100000, color: .systemBlue),
+            ChartItem(name: "쇼핑", value: 200000, color: .systemGreen),
+            ChartItem(name: "기타", value: 150000, color: .systemGray)
+        ]
+        updateChartData(initialData)
     }
-    
 }
 
-open class CostDoughnut: UIView {
-    
-    // MARK: - Public Properties
-    public var lineWidth: CGFloat {
-        get {
-            return _lineWidth
-        }
-        set(newValue) {
-            _lineWidth = newValue
-            setNeedsDisplay()
-        }
-    }
-    
-    public var costColor: UIColor = .lightGray {
-        didSet {
-            setNeedsDisplay()
-        }
+// MARK: - ChartViewDelegate
+extension CostChartViewController {
+    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        guard let pieChartView = chartView as? PieChartView,
+              let dataSet = pieChartView.data?.dataSets[highlight.dataSetIndex] as? PieChartDataSet,
+              let index = entry.data as? Int,
+              index < chartData.count else { return }
+
+        let selectedItem = chartData[index]
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        let centerText = NSMutableAttributedString(string: "\(selectedItem.name)\n", attributes: [
+            .font: UIFont.boldSystemFont(ofSize: 16),
+            .paragraphStyle: paragraphStyle
+        ])
+        centerText.append(NSAttributedString(string: formatCurrency(selectedItem.value), attributes: [
+            .font: UIFont.boldSystemFont(ofSize: 20),
+            .foregroundColor: selectedItem.color,
+            .paragraphStyle: paragraphStyle
+        ]))
+
+        pieChartView.centerAttributedText = centerText
     }
 
-    // MARK: - Private Variables
-    private var _percentages: [Double]
-    private var _colors: [UIColor]
-    private var _lineWidth = CGFloat(5.0)
-    private var centerText: String = "Total"
-    private var totalCost: String
-    
-    // MARK: - Initialization
-    public init(percentages: [Double], colors: [UIColor], totalCost: String) {
-        self._percentages = percentages
-        self._colors = colors
-        self.totalCost = totalCost
-        super.init(frame: CGRect.zero)
-        self.backgroundColor = .clear
-        self.clipsToBounds = false
+    func chartValueNothingSelected(_ chartView: ChartViewBase) {
+        updateCenterText()
     }
-    
-    required public init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func updateProperties(percentages: [Double], colors: [UIColor], totalCost: String) {
-        self._percentages = percentages
-        self._colors = colors
-        self.totalCost = totalCost
-        setNeedsDisplay()
+    @objc private func totalButtonTapped() {
+            updateCenterText()
         }
-    
-    // MARK: - Drawing
-    override public func draw(_ rect: CGRect) {
-        let center = CGPoint(x: rect.midX, y: rect.midY)
-        let outerRadius = min(rect.width, rect.height) / 2 - _lineWidth / 2
-        let innerRadius = outerRadius * 0.70
-        
-        drawPieChart(center: center, outerRadius: outerRadius, innerRadius: innerRadius)
-        drawCenterText(in: rect, innerRadius: innerRadius)
-    }
-
-    private func drawPieChart(center: CGPoint, outerRadius: CGFloat, innerRadius: CGFloat) {
-        var startAngle: CGFloat = -CGFloat.pi / 2
-        
-        for i in 0..<_percentages.count {
-            let endAngle = startAngle + CGFloat(_percentages[i] / 100.0) * 2 * CGFloat.pi
-            
-            let path = createPiePath(center: center, outerRadius: outerRadius, innerRadius: innerRadius, startAngle: startAngle, endAngle: endAngle)
-            
-            let shapeLayer = CAShapeLayer()
-            shapeLayer.fillColor = _colors[i].cgColor
-            shapeLayer.path = path.cgPath
-            layer.addSublayer(shapeLayer)
-            
-            startAngle = endAngle
-        }
-    }
-
-    private func createPiePath(center: CGPoint, outerRadius: CGFloat, innerRadius: CGFloat, startAngle: CGFloat, endAngle: CGFloat) -> UIBezierPath {
-        let path = UIBezierPath()
-        path.move(to: CGPoint(x: center.x + outerRadius * cos(startAngle), y: center.y + outerRadius * sin(startAngle)))
-        path.addArc(withCenter: center, radius: outerRadius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
-        path.addLine(to: CGPoint(x: center.x + innerRadius * cos(endAngle), y: center.y + innerRadius * sin(endAngle)))
-        path.addArc(withCenter: center, radius: innerRadius, startAngle: endAngle, endAngle: startAngle, clockwise: false)
-        path.close()
-        return path
-    }
-
-    private func drawCenterText(in rect: CGRect, innerRadius: CGFloat) {
-        let maxWidth = innerRadius * 2 * 0.9  // 내부 원 지름의 90%를 최대 너비로 사용
-        let maxHeight = innerRadius * 0.8  // 내부 원 반지름의 80%를 최대 높이로 사용
-
-        let totalCostAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.boldSystemFont(ofSize: 18),
-            .foregroundColor: costColor
-        ]
-        let centerTextAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 20),
-            .foregroundColor: dynamicColor(light: .black, dark: .white)
-        ]
-        
-        // centerText 위치 계산
-        let centerTextSize = centerText.size(withAttributes: centerTextAttributes)
-        let centerTextRect = CGRect(
-            x: rect.midX - min(centerTextSize.width, maxWidth) / 2,
-            y: rect.midY - maxHeight / 2 - 2,
-            width: min(centerTextSize.width, maxWidth),
-            height: min(centerTextSize.height, maxHeight / 2)
-        )
-        
-        // totalCost 위치 계산
-        let totalCostSize = totalCost.size(withAttributes: totalCostAttributes)
-        let totalCostRect = CGRect(
-            x: rect.midX - min(totalCostSize.width, maxWidth) / 2,
-            y: rect.midY + 4,  // 약간 아래로 조정
-            width: min(totalCostSize.width, maxWidth),
-            height: min(totalCostSize.height, maxHeight / 2)
-        )
-        
-        // 텍스트 그리기
-        centerText.draw(in: centerTextRect, withAttributes: centerTextAttributes)
-        totalCost.draw(in: totalCostRect, withAttributes: totalCostAttributes)
-    }
-    
-    class EachCostCell: UICollectionViewCell {
-        private let colorIndicator = UIView()
-        private let nameLabel = UILabel()
-        private let costLabel = UILabel()
-        
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            setupViews()
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        private func setupViews() {
-            // 기존의 setupViews 코드를 여기에 구현
-            // contentView에 subview들을 추가합니다.
-        }
-        
-        func configure(color: UIColor, name: String, cost: String) {
-            colorIndicator.backgroundColor = color
-            colorIndicator.layer.cornerRadius = 6
-            nameLabel.text = name
-            costLabel.text = cost
-        }
-    }
-    public func dynamicColor(light: UIColor, dark: UIColor) -> UIColor {
-            return UIColor { traitCollection in
-                return traitCollection.userInterfaceStyle == .dark ? dark : light
-            }
-        }
-        
 }
