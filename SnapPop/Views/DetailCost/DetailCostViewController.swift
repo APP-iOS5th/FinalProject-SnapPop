@@ -210,7 +210,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         textField.resignFirstResponder()
         return true
     }
-    // 유효성 검사 및 텍스트 누락 방지 
+    // 유효성 검사 및 텍스트 누락 방지
     @objc private func textFieldDidChange(_ textField: UITextField) {
         if textField.tag == 1 {
             titleText = textField.text ?? ""

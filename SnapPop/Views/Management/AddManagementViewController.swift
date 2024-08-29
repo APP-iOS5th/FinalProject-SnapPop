@@ -322,12 +322,12 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         case 2:
             return "알림"
         case 3:
-            return "상세내역 및 비용"
+            return viewModel.detailCostArray.isEmpty ? nil : "상세내역 및 비용"
         default:
             return nil
         }
     }
-    // UITableViewDelegate 메서드 구현 중 추가
+    // 상세내역 아무것도 없을떄
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if section == 3 && viewModel.detailCostArray.isEmpty {
             let footerView = UIView()
@@ -339,8 +339,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             label.translatesAutoresizingMaskIntoConstraints = false
 
             footerView.addSubview(label)
-            
-            // Label의 제약 조건 설정
+
             NSLayoutConstraint.activate([
                 label.centerXAnchor.constraint(equalTo: footerView.centerXAnchor),
                 label.centerYAnchor.constraint(equalTo: footerView.centerYAnchor),
@@ -353,7 +352,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         return nil
     }
 
-    // UITableViewDelegate 메서드 구현 중 추가
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if section == 3 && viewModel.detailCostArray.isEmpty {
             return 50 // Footer 높이 설정
