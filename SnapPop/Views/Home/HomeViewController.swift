@@ -194,18 +194,24 @@ class HomeViewController:
         snapCollectionView.dropDelegate = self
     }
     
-    @objc private func updateSnapCollectionView() {
-        DispatchQueue.main.async {
-            self.snapCollectionView.reloadData() // UI 업데이트
-        }
-    }
+    // MARK: - Notification Handling
     @objc private func categoryDidChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
             viewModel.categoryDidChange(to: categoryId)
         } else {
             viewModel.categoryDidChange(to: nil)
         }
+        
+        // 카테고리 변경 시 snapCollectionView 리로드
+        updateSnapCollectionView()
     }
+    // 스냅 업데이트 및 UI 리로드
+    @objc private func updateSnapCollectionView() {
+        DispatchQueue.main.async {
+            self.snapCollectionView.reloadData() // UI 업데이트
+        }
+    }
+    
     private func updateUIWithCategories() {
            // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
            print("Loaded categories: \(navigationBarViewModel.categories)")
@@ -344,15 +350,14 @@ class HomeViewController:
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
-            noImageIcon.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            noImageIcon.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -10),
-            noImageIcon.widthAnchor.constraint(equalToConstant: 40),
-            noImageIcon.heightAnchor.constraint(equalToConstant: 40),
+            noImageIcon.centerYAnchor.constraint(equalTo: addButton.centerYAnchor), // addButton과 같은 수평 레벨에 위치
+            noImageIcon.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            noImageIcon.widthAnchor.constraint(equalToConstant: 30), // 크기 줄이기
+            noImageIcon.heightAnchor.constraint(equalToConstant: 30), // 크기 줄이기
             
-            noImageLabel.topAnchor.constraint(equalTo: noImageIcon.bottomAnchor, constant: 8),
-            noImageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            noImageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            noImageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            noImageLabel.centerYAnchor.constraint(equalTo: addButton.centerYAnchor), // addButton과 같은 수평 레벨에 위치
+            noImageLabel.leadingAnchor.constraint(equalTo: noImageIcon.trailingAnchor, constant: 8), // 아이콘 오른쪽에 위치
+            noImageLabel.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -view.bounds.width * 0.02),
             
             snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.01),
             snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
@@ -364,10 +369,12 @@ class HomeViewController:
             addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.10),
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor)
         ])
-        
+           
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
-        
+        snapCollectionView.bringSubviewToFront(noImageLabel)
+        snapCollectionView.bringSubviewToFront(noImageIcon)
         // 초기 상태 설정
+        snapCollectionView.isHidden = true
         noImageLabel.isHidden = false
         noImageIcon.isHidden = false
     }
@@ -382,36 +389,33 @@ class HomeViewController:
         // viewModel의 snap 객체 가져오기
         let snap = viewModel.snap
 
-        // snap이 nil인지 여부를 확인합니다.
-        if let snap = snap {
-            // snap이 비어있지 않은 경우 배열을 포함하는지 확인
-            let isArrayEmpty = snap.imageUrls.isEmpty // 예를 들어, snap이 imageUrls라는 배열 속성을 가진 경우
-
-            if isArrayEmpty {
-                // 이미지 URL이 비어 있을 경우 문구 및 아이콘 표시
-                print("이미지 URL이 비어 있습니다.")
-                cell.prepareForReuse()
-                noImageLabel.isHidden = false
-                noImageIcon.isHidden = false
-            } else {
-                // 이미지 URL이 있는 경우 셀 구성
-                let isFirst = indexPath.item == 0
-
-                cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
-                cell.deleteButton.tag = indexPath.item
-                cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
-                cell.currentIndex = indexPath.item
-                cell.imageUrls = snap.imageUrls
-
-                noImageLabel.isHidden = true
-                noImageIcon.isHidden = true
-            }
-        } else {
-            // snap이 nil일 경우 셀 초기화 및 문구, 아이콘 표시
-            print("snap이 nil입니다.")
-            cell.prepareForReuse()
+        // snap이 nil이거나 이미지 URL이 비어 있는 경우 문구와 아이콘 표시
+        if snap == nil || snap!.imageUrls.isEmpty {
+            print("snap이 nil이거나 이미지 URL이 비어 있습니다.")
+            
+            // `snapCollectionView` 숨기기
+            snapCollectionView.isHidden = true
             noImageLabel.isHidden = false
             noImageIcon.isHidden = false
+            
+            // 셀 초기화
+            cell.prepareForReuse()
+            
+        } else {
+            // `snap` 객체가 존재하고 이미지 URL이 있는 경우 셀 구성
+            let snap = snap!
+            let isFirst = indexPath.item == 0
+
+            cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
+            cell.deleteButton.tag = indexPath.item
+            cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
+            cell.currentIndex = indexPath.item
+            cell.imageUrls = snap.imageUrls
+
+            // `snapCollectionView` 보이기
+            snapCollectionView.isHidden = false
+            noImageLabel.isHidden = true
+            noImageIcon.isHidden = true
         }
 
         return cell
