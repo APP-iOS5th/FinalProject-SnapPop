@@ -26,6 +26,8 @@ protocol CustomNavigationBarViewModelProtocol {
     func deleteCategory(at index: Int, completion: @escaping (String?) -> Void)
     func selectCategory(at index: Int)
     func handleCategoryId(completion: @escaping (String) -> Void)
+    func registerAllNotifications(for categoryId: String)
+    func removeAllNotifications(for categoryId: String)
 }
 
 class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
@@ -38,6 +40,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
     
     private let categoryService = CategoryService()
     private let snapService = SnapService()
+    private let managementService = ManagementService()
     
     // MARK: - Methods
     func loadCategories(completion: @escaping () -> Void) {
@@ -115,7 +118,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                 self.currentCategory = nil
                                 UserDefaults.standard.removeObject(forKey: "currentCategoryId")
                                 print("카테고리가 남아있지 않은 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
-//                                self.delegate?.categoryDidChange(to: nil)
+                                //                                self.delegate?.categoryDidChange(to: nil)
                                 NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: nil)
                                 completion("카테고리를 추가해 주세요")
                             } else {
@@ -123,7 +126,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                 self.currentCategory = self.categories.first
                                 if let newCategoryId = self.currentCategory?.id {
                                     UserDefaults.standard.set(newCategoryId, forKey: "currentCategoryId")
-//                                    self.delegate?.categoryDidChange(to: newCategoryId)
+                                    //                                    self.delegate?.categoryDidChange(to: newCategoryId)
                                     if let selectedCategory = self.currentCategory {
                                         NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": newCategoryId])
                                     }
@@ -137,7 +140,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                 self.currentCategory = firstCategory
                                 if let newCategoryId = firstCategory.id {
                                     UserDefaults.standard.set(newCategoryId, forKey: "currentCategoryId")
-//                                    self.delegate?.categoryDidChange(to: newCategoryId)
+                                    //                                    self.delegate?.categoryDidChange(to: newCategoryId)
                                     if let selectedCategory = self.currentCategory {
                                         NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": newCategoryId])
                                     }
@@ -149,7 +152,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                 self.currentCategory = nil
                                 UserDefaults.standard.removeObject(forKey: "currentCategoryId")
                                 print("categories 배열이 비어있는 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
-//                                self.delegate?.categoryDidChange(to: nil)
+                                //                                self.delegate?.categoryDidChange(to: nil)
                                 NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: nil)
                                 completion("카테고리를 추가해 주세요")
                             }
@@ -167,7 +170,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
         guard index >= 0 && index < categories.count else { return }
         guard let categoryId = categories[index].id else { return }
         UserDefaults.standard.set(categoryId, forKey: "currentCategoryId")
-//        delegate?.categoryDidChange(to: String(categoryId))
+        //        delegate?.categoryDidChange(to: String(categoryId))
         self.currentCategory = categories[index]
         
         NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": categoryId])
@@ -205,6 +208,51 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
             
             self.categoryisUpdated?()
             completion(title)
+        }
+    }
+    
+    /// 모든 알림 제거
+    func removeAllNotifications(for categoryId: String) {
+        managementService.loadManagements(categoryId: categoryId) { result in
+            switch result {
+            case .success(let managements):
+                let identifiers = managements.filter { $0.alertStatus }.map { "initialNotification-\(categoryId)-\($0.id ?? "")" }
+                NotificationManager.shared.removeNotification(identifiers: identifiers)
+            case .failure(let error):
+                print("Failed to load managements: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    /// 모든 알림 등록
+    func registerAllNotifications(for categoryId: String) {
+        managementService.loadManagements(categoryId: categoryId) { result in
+            switch result {
+            case .success(let managements):
+                managements.forEach { management in
+                    if management.alertStatus {
+                        if management.repeatCycle != 0 {
+                            // 반복이 없는 알림 추가
+                            NotificationManager.shared.initialNotification(categoryId: categoryId,
+                                                                           managementId: management.id ?? "",
+                                                                           startDate: management.startDate,
+                                                                           alertTime: management.alertTime,
+                                                                           repeatCycle: management.repeatCycle,
+                                                                           body: management.title)
+                        } else {
+                            // 반복이 있는 알림 추가
+                            NotificationManager.shared.repeatingNotification(categoryId: categoryId,
+                                                                             managementId: management.id ?? "",
+                                                                             startDate: management.startDate,
+                                                                             alertTime: management.alertTime,
+                                                                             repeatCycle: management.repeatCycle,
+                                                                             body: management.title)
+                        }
+                    }
+                }
+            case .failure(let error):
+                print("Failed to load managements: \(error.localizedDescription)")
+            }
         }
     }
     

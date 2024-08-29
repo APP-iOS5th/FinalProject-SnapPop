@@ -117,8 +117,6 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
                     // 1. Managements의 alertStateTrue의 알림 삭제
                     self.viewModel.registerAllNotifications(for: updatedCategoryId)
                 }
-                // TODO: - 앱 시작시 categoris의 alertState true확인 -> Managements의 true인 관리 알림에 추가.
-                // TODO: - 관리에서 카테고리 알림 상태 체크하여 알림 추가
                 
                 // Firebase에 업데이트 후, 테이블뷰 셀 리로드
                 self.viewModel.updateCategory(categoryId: updatedCategoryId, category: updatedCategory) {
