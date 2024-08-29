@@ -231,6 +231,7 @@ class HomeViewController:
         }
         
         updateDateAlertLabel() // 버튼 텍스트 업데이트
+        self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기
     }
     /// 날짜 알림 버튼 텍스트 업데이트
     private func updateDateAlertLabel() {
