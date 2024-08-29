@@ -251,6 +251,8 @@ class HomeViewController:
         // Calculate day difference
         let dayDifference = calendar.dateComponents([.day], from: today, to: selectedDay).day ?? 0
         
+        dateAlertLabel.isHidden = false
+        
         switch dayDifference {
         case 0:
             dateAlertLabel.text = "오늘"
@@ -261,7 +263,8 @@ class HomeViewController:
         case 2:
             dateAlertLabel.text = "모레"
         default:
-            dateAlertLabel.text = "" // Clear text for non-matching cases
+            dateAlertLabel.text = ""
+            dateAlertLabel.isHidden = true
         }
     }
     /// 체크리스트 관련 요소 제약조건
