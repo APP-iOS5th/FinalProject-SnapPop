@@ -367,10 +367,9 @@ class HomeViewController:
         
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
         
-        
         // 초기 상태 설정
-        noImageLabel.isHidden = true
-        noImageIcon.isHidden = true
+        noImageLabel.isHidden = false
+        noImageIcon.isHidden = false
     }
     /// 스냅뷰 (UICollectionViewDataSource)
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -379,27 +378,42 @@ class HomeViewController:
     ///스냅뷰 ( UICollectionViewDataSource - Cell Configuration)
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
-        
-        let isFirst = indexPath.item == 0
-        guard let snap = viewModel.snap else {
-            // 스냅이 없을 경우 셀 초기화 및 문구, 아이콘 표시
-            cell.prepareForReuse() // 셀 초기화
-            noImageLabel.isHidden = false // 스냅이 없으면 문구 표시
-            noImageIcon.isHidden = false // 스냅이 없으면 아이콘 표시
-            return cell
+
+        // viewModel의 snap 객체 가져오기
+        let snap = viewModel.snap
+
+        // snap이 nil인지 여부를 확인합니다.
+        if let snap = snap {
+            // snap이 비어있지 않은 경우 배열을 포함하는지 확인
+            let isArrayEmpty = snap.imageUrls.isEmpty // 예를 들어, snap이 imageUrls라는 배열 속성을 가진 경우
+
+            if isArrayEmpty {
+                // 이미지 URL이 비어 있을 경우 문구 및 아이콘 표시
+                print("이미지 URL이 비어 있습니다.")
+                cell.prepareForReuse()
+                noImageLabel.isHidden = false
+                noImageIcon.isHidden = false
+            } else {
+                // 이미지 URL이 있는 경우 셀 구성
+                let isFirst = indexPath.item == 0
+
+                cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
+                cell.deleteButton.tag = indexPath.item
+                cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
+                cell.currentIndex = indexPath.item
+                cell.imageUrls = snap.imageUrls
+
+                noImageLabel.isHidden = true
+                noImageIcon.isHidden = true
+            }
+        } else {
+            // snap이 nil일 경우 셀 초기화 및 문구, 아이콘 표시
+            print("snap이 nil입니다.")
+            cell.prepareForReuse()
+            noImageLabel.isHidden = false
+            noImageIcon.isHidden = false
         }
-        
-        // 스냅이 있을 경우 셀 구성
-        cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
-        cell.deleteButton.tag = indexPath.item
-        cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
-        cell.currentIndex = indexPath.item
-        cell.imageUrls = snap.imageUrls
-        
-        // 스냅이 있을 경우 문구와 아이콘 숨김
-        noImageLabel.isHidden = true
-        noImageIcon.isHidden = true
-        
+
         return cell
     }
     ///스냅뷰 (UICollectionViewDelegateFlowLayout)
