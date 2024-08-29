@@ -21,6 +21,12 @@ class HomeViewModel: ObservableObject {
     // MARK: - Properties
     var filteredSnapData: [Snap] = []
     @Published var checklistItems: [Management] = []
+    @Published var filteredItems: [Management] = [] // 필터링된 관리 항목
+    @Published var selectedDate: Date = Date() {
+        didSet {
+            filterManagements(for: selectedDate) // 날짜가 변경될 때마다 필터링
+        }
+    }
     @Published var snap: Snap?
     @Published var selectedCategoryId: String?
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
@@ -29,7 +35,9 @@ class HomeViewModel: ObservableObject {
     init(snapService: SnapService) {
         self.snapService = snapService
         self.selectedCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId")
+        filterManagements(for: selectedDate)
     }
+    
     /// Image Picker Methods
     func dateChanged(_ sender: UIDatePicker) -> String {
         let dateFormatter = DateFormatter()
@@ -40,6 +48,45 @@ class HomeViewModel: ObservableObject {
     func addManagement(_ management: Management) {
         checklistItems.append(management)
     }
+    
+    // 날짜 변경 시 필터링된 관리 목록 업데이트
+    private func bindSelectedDate() {
+        $selectedDate
+            .sink { [weak self] date in
+                self?.filterManagements(for: date)
+            }
+            .store(in: &cancellables)
+    }
+    
+    // 날짜 및 반복 규칙에 따른 관리 목록 필터링
+    private func filterManagements(for date: Date) {
+        let calendar = Calendar.current
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let selectedWeekday = calendar.component(.weekday, from: date)
+        
+        filteredItems = checklistItems.filter { management in
+            let managementStartDate = management.startDate
+            let managementDateString = dateFormatter.string(from: managementStartDate)
+            
+            switch management.repeatCycle {
+            case 0: // "안함"
+                return dateFormatter.string(from: date) == managementDateString
+                
+            case 1: // "매일"
+                return true
+                
+            case 7: // "매주"
+                let managementWeekday = calendar.component(.weekday, from: managementStartDate)
+                return selectedWeekday == managementWeekday
+                
+            default:
+                return false
+            }
+        }
+    }
+    
     // 관리 불러오기
     func fetchManagements(categoryId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         managementService.loadManagements(categoryId: categoryId) { [weak self] result in
@@ -47,10 +94,9 @@ class HomeViewModel: ObservableObject {
                 switch result {
                 case .success(let managements):
                     self?.checklistItems = managements
-                    print("Fetched managements: \(managements)")
+                    self?.filterManagements(for: self?.selectedDate ?? Date())
                     completion(.success(()))
                 case .failure(let error):
-                    print("Error fetching managements: \(error)")
                     completion(.failure(error))
                 }
             }
@@ -68,8 +114,7 @@ class HomeViewModel: ObservableObject {
     }
     // 관리 편집 후 업데이트
     func updateManagement(categoryId: String, managementId: String, updatedManagement: Management, completion: @escaping (Result<Void, Error>) -> Void) {
-        let db = ManagementService()
-        db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: updatedManagement) { result in
+        managementService.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: updatedManagement) { result in
             switch result {
             case .success():
                 DispatchQueue.main.async {
@@ -83,8 +128,7 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
-
-    
+        
     // 스냅 저장
     func saveSnap(categoryId: String, images: [UIImage], createdAt: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
         var imageUrls: [String?] = Array(repeating: nil, count: images.count)
