@@ -129,17 +129,32 @@ class HomeViewController:
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
-    
     // 체크리스트 테이블
     private let checklistTableViewController = ChecklistTableViewController()
     
+    private let noImageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "사진을 추가해보세요!"
+        label.textColor = .gray
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let noImageIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "photo")
+        imageView.tintColor = .gray
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
     deinit {
-         NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
-     }
-    
+        NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
@@ -315,6 +330,9 @@ class HomeViewController:
         view.addSubview(addButton)
         view.addSubview(snapCollectionView)
         
+        view.addSubview(noImageLabel)
+        view.addSubview(noImageIcon)
+        
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
@@ -325,6 +343,16 @@ class HomeViewController:
             
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            
+            noImageIcon.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noImageIcon.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -10),
+            noImageIcon.widthAnchor.constraint(equalToConstant: 40),
+            noImageIcon.heightAnchor.constraint(equalToConstant: 40),
+            
+            noImageLabel.topAnchor.constraint(equalTo: noImageIcon.bottomAnchor, constant: 8),
+            noImageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noImageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            noImageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             
             snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.01),
             snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
@@ -338,6 +366,11 @@ class HomeViewController:
         ])
         
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
+        
+        
+        // 초기 상태 설정
+        noImageLabel.isHidden = true
+        noImageIcon.isHidden = true
     }
     /// 스냅뷰 (UICollectionViewDataSource)
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -349,15 +382,23 @@ class HomeViewController:
         
         let isFirst = indexPath.item == 0
         guard let snap = viewModel.snap else {
+            // 스냅이 없을 경우 셀 초기화 및 문구, 아이콘 표시
+            cell.prepareForReuse() // 셀 초기화
+            noImageLabel.isHidden = false // 스냅이 없으면 문구 표시
+            noImageIcon.isHidden = false // 스냅이 없으면 아이콘 표시
             return cell
         }
         
+        // 스냅이 있을 경우 셀 구성
         cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
         cell.deleteButton.tag = indexPath.item
         cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
-        //cell.delegate = self
         cell.currentIndex = indexPath.item
         cell.imageUrls = snap.imageUrls
+        
+        // 스냅이 있을 경우 문구와 아이콘 숨김
+        noImageLabel.isHidden = true
+        noImageIcon.isHidden = true
         
         return cell
     }
@@ -701,4 +742,3 @@ extension HomeViewController: UIImagePickerControllerDelegate {
         picker.dismiss(animated: true, completion: nil)
     }
 }
-
