@@ -11,22 +11,6 @@ import MobileCoreServices
 import Combine
 import PhotosUI
 
-extension UIViewController {
-    private struct Preview: UIViewControllerRepresentable {
-        let vc: UIViewController
-        
-        func makeUIViewController(context: Context) -> UIViewController {
-            return vc
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-    }
-    
-    func toPreview() -> some View {
-        Preview(vc: self)
-    }
-}
-
 class HomeViewController:
     UIViewController,
     UINavigationControllerDelegate,
@@ -56,10 +40,43 @@ class HomeViewController:
         fatalError("init(coder:) has not been implemented") // 스토리보드 사용 시 필요
     }
     
-    // DatePicker UI 요소
-    private let datePickerContainer = UIView()
-    private let datePicker = UIDatePicker()
-    private let calendarImageView = UIImageView()
+    /// DatePicker UI 요소
+    private let datePickerContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
+        return view
+    }()
+    /// DatePicker UI 컨트롤
+    private let datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        picker.datePickerMode = .date
+        picker.locale = Locale(identifier: "ko_KR")
+        picker.backgroundColor = .clear
+        return picker
+    }()
+    /// DatePicker  캘린더 이미지 UI 컨트롤
+    private let calendarImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "CalenderIcon")
+        imageView.tintColor = .black
+        return imageView
+    }()
+    /// DatePicker 알림 레이블
+     private let dateAlertLabel: UILabel = {
+         let label = UILabel()
+         label.text = " "
+         label.textColor = .black
+         label.backgroundColor = UIColor.customButtonColor
+         label.textAlignment = .center
+         label.layer.cornerRadius = 10
+         label.clipsToBounds = true
+         label.translatesAutoresizingMaskIntoConstraints = false
+         return label
+     }()
     
     // 스냅 타이틀
     private let snapTitle: UILabel = {
@@ -70,9 +87,8 @@ class HomeViewController:
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+    // 편집 버튼 bool
     private var isEditingMode = false
-    
     // 편집 버튼
     private let editButton: UIButton = {
         let button = UIButton(type: .system)
@@ -81,7 +97,6 @@ class HomeViewController:
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
     // 이미지 추가 버튼
     private let addButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -92,10 +107,8 @@ class HomeViewController:
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
     // 선택된 이미지를 저장할 속성
     private var selectedImage: UIImage?
-    
     // 관리 목록 타이틀
     private let managementTitle: UILabel = {
         let label = UILabel()
@@ -105,7 +118,6 @@ class HomeViewController:
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
     // 스냅 컬렉션
     private let snapCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -124,17 +136,9 @@ class HomeViewController:
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Properties
-    private let dateAlertButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("", for: .normal) // 초기 텍스트는 비워둡니다.
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
     deinit {
-        NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
-    }
+         NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -143,9 +147,10 @@ class HomeViewController:
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
         
         setupDatePickerView()
-        setupDateAlertButton() // 버튼 설정
         setupSnapCollectionView()
         setupChecklistView()
+        updateDateAlertLabel()
+        
         
         snapCollectionView.dataSource = self
         snapCollectionView.delegate = self
@@ -168,7 +173,7 @@ class HomeViewController:
                 self?.updateSnapCollectionView()
             }
         }.store(in: &cancellables)
-
+        
         // Set the drag and drop delegates
         snapCollectionView.dragDelegate = self
         snapCollectionView.dropDelegate = self
@@ -179,7 +184,6 @@ class HomeViewController:
             self.snapCollectionView.reloadData() // UI 업데이트
         }
     }
-    
     @objc private func categoryDidChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
             viewModel.categoryDidChange(to: categoryId)
@@ -187,73 +191,44 @@ class HomeViewController:
             viewModel.categoryDidChange(to: nil)
         }
     }
-    
-    // MARK: - 날짜 선택 DatePicker UI 설정
+    private func updateUIWithCategories() {
+           // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
+           print("Loaded categories: \(navigationBarViewModel.categories)")
+       }
+    /// 날짜 선택 DatePicker UI 설정
     private func setupDatePickerView() {
-        setupDatePickerContainer()
-        setupCalendarImageView()
-        setupDatePicker()
-        setupDatePickerConstraints()
-    }
-    
-    // MARK: 날짜 선택 UI 컨트롤
-    private func setupDatePickerContainer() {
-        datePickerContainer.translatesAutoresizingMaskIntoConstraints = false
-        //datePickerContainer.backgroundColor = UIColor.customButtonColor
-        datePickerContainer.layer.cornerRadius = 10
-        datePickerContainer.layer.masksToBounds = true
         view.addSubview(datePickerContainer)
-    }
-    
-    // MARK: 날 캘린더 이미지 UI 컨트롤
-    private func setupCalendarImageView() {
-        calendarImageView.image = UIImage(named: "CalenderIcon")
-        calendarImageView.translatesAutoresizingMaskIntoConstraints = false
-        calendarImageView.tintColor = .black
         datePickerContainer.addSubview(calendarImageView)
-    }
-    
-    // MARK: 날짜 선택기 UI 컨트롤
-    private func setupDatePicker() {
-        datePicker.translatesAutoresizingMaskIntoConstraints = false
-        datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ko_KR")
-        datePicker.backgroundColor = .clear
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         datePickerContainer.addSubview(datePicker)
-    }
-    
-    // MARK: 날짜 선택기 제약 조건 설정
-    private func setupDatePickerConstraints() {
+        view.addSubview(dateAlertLabel)
+        
+        // Set up constraints
         NSLayoutConstraint.activate([
+            // datePickerContainer constraints
             datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.02),
             datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
             
+            // calendarImageView constraints
             calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor, constant: view.bounds.width * 0.02),
             calendarImageView.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
             calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
             calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
             
+            // datePicker constraints
             datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: view.bounds.width * 0.02),
             datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor, constant: -view.bounds.width * 0.02),
-            datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor)
+            datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
+            
+            // dateAlertLabel constraints
+            dateAlertLabel.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
+            dateAlertLabel.trailingAnchor.constraint(equalTo: dateAlertLabel.leadingAnchor, constant: 40),
+            dateAlertLabel.heightAnchor.constraint(equalTo: datePicker.heightAnchor),
+            dateAlertLabel.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
         ])
     }
-    
-    // MARK: - 날짜 알림 버튼 설정
-    private func setupDateAlertButton() {
-        dateAlertButton.addTarget(self, action: #selector(dateAlertButtonTapped), for: .touchUpInside)
-        view.addSubview(dateAlertButton)
-        
-        // 버튼 제약 조건 설정
-        NSLayoutConstraint.activate([
-            dateAlertButton.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
-            dateAlertButton.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
-        ])
-    }
-    
-    // MARK: - 날짜 변경 시 호출
+    /// 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
         guard let categoryId = viewModel.selectedCategoryId else { return }
         
@@ -261,11 +236,11 @@ class HomeViewController:
             self?.updateSnapCollectionView()
         }
         
-        updateDateAlertButtonTitle() // 버튼 텍스트 업데이트
+        updateDateAlertLabel() // 날짜 텍스트 업데이트
+        self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기
     }
-    
-    // MARK: - 날짜 알림 버튼 텍스트 업데이트
-    private func updateDateAlertButtonTitle() {
+    /// 날짜 알림 버튼 텍스트 업데이트
+    private func updateDateAlertLabel() {
         let selectedDate = datePicker.date
         let currentDate = Date()
         
@@ -273,30 +248,26 @@ class HomeViewController:
         let selectedDay = calendar.startOfDay(for: selectedDate)
         let today = calendar.startOfDay(for: currentDate)
         
-        // 날짜 차이를 계산
+        // Calculate day difference
         let dayDifference = calendar.dateComponents([.day], from: today, to: selectedDay).day ?? 0
+        
+        dateAlertLabel.isHidden = false
         
         switch dayDifference {
         case 0:
-            dateAlertButton.setTitle("오늘", for: .normal)
+            dateAlertLabel.text = "오늘"
         case -1:
-            dateAlertButton.setTitle("어제", for: .normal)
+            dateAlertLabel.text = "어제"
         case 1:
-            dateAlertButton.setTitle("내일", for: .normal)
+            dateAlertLabel.text = "내일"
         case 2:
-            dateAlertButton.setTitle("모레", for: .normal)
+            dateAlertLabel.text = "모레"
         default:
-            dateAlertButton.setTitle("", for: .normal) // 해당하지 않는 경우 비워둡니다.
+            dateAlertLabel.text = ""
+            dateAlertLabel.isHidden = true
         }
     }
-    
-    // MARK: - 날짜 알림 버튼 클릭 시 동작
-    @objc private func dateAlertButtonTapped() {
-        // 버튼 클릭 시의 동작을 정의합니다.
-        print("선택한 날짜: \(datePicker.date)")
-    }
-    
-    // MARK: - 체크리스트 관련 요소 제약조건
+    /// 체크리스트 관련 요소 제약조건
     private func setupChecklistView() {
         // Add managementTitle to the view
         view.addSubview(managementTitle)
@@ -325,13 +296,11 @@ class HomeViewController:
         
         checklistTableViewController.tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
     }
-    
-    // MARK: UITableViewDataSource - Number of Rows
+    /// 체크리스트( UITableViewDataSource - Number of Rows)
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.checklistItems.count
     }
-    
-    // MARK: UITableViewDataSource - Cell Configuration
+    /// 체크리스트(UITableViewDataSource - Cell Configuration)
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
         let item = viewModel.checklistItems[indexPath.row]
@@ -339,7 +308,7 @@ class HomeViewController:
         return cell
     }
     
-    // MARK: - 스냅뷰 컬렉션 관련 요소 제약조건
+    /// 스냅뷰 컬렉션 관련 요소 제약조건
     private func setupSnapCollectionView() {
         view.addSubview(snapTitle)
         view.addSubview(editButton)
@@ -370,13 +339,11 @@ class HomeViewController:
         
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
     }
-    
-    // MARK: UICollectionViewDataSource
+    /// 스냅뷰 (UICollectionViewDataSource)
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.snap?.imageUrls.count ?? 0
     }
-    
-    // MARK: UICollectionViewDataSource - Cell Configuration
+    ///스냅뷰 ( UICollectionViewDataSource - Cell Configuration)
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
         
@@ -394,15 +361,14 @@ class HomeViewController:
         
         return cell
     }
-    
-    // MARK: UICollectionViewDelegateFlowLayout
+    ///스냅뷰 (UICollectionViewDelegateFlowLayout)
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.bounds.width * 0.95
         let width = availableWidth / 2
         return CGSize(width: width, height: width)
     }
     
-    // 사진 추가
+    /// 스냅 사진 추가
     @objc private func addButtonTapped(_ sender: UIButton) {
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)
         
@@ -418,8 +384,7 @@ class HomeViewController:
         
         present(actionSheet, animated: true, completion: nil)
     }
-    
-    // 사진 편집
+    /// 스냅 사진 편집
     @objc private func editButtonTapped() {
         isEditingMode.toggle()
         
@@ -435,8 +400,7 @@ class HomeViewController:
         
         updateVisibleCellsForEditingMode(isEditingMode)
     }
-    
-    // 모드 전환 시 셀 업데이트
+    /// 스냅 편집  모드 전환 시 셀 업데이트
     private func updateVisibleCellsForEditingMode(_ isEditing: Bool) {
         let totalItems = snapCollectionView.numberOfItems(inSection: 0)  // 섹션이 하나이므로 0으로 고정
         for item in 0..<totalItems {
@@ -446,8 +410,7 @@ class HomeViewController:
             }
         }
     }
-    
-    // 사진 삭제
+    /// 스냅 사진 삭제
     @objc private func deleteButtonTapped(_ sender: UIButton) {
         let index = sender.tag
         
@@ -482,8 +445,7 @@ class HomeViewController:
             }
         }
     }
-    
-    // 사진 삭제 후 바뀐 셀들의 인덱스에 맞게 태그를 다시 설정하는 함수
+    /// 스냅 사진 삭제 후 바뀐 셀들의 인덱스에 맞게 태그를 다시 설정하는 함수
     private func updateCellTags() {
         let totalItems = snapCollectionView.numberOfItems(inSection: 0)  // 섹션이 하나이므로 0번째 섹션 사용
         for item in 0..<totalItems {
@@ -502,12 +464,6 @@ class HomeViewController:
             }
         }
     }
-    
-    
-    private func updateUIWithCategories() {
-        // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
-        print("Loaded categories: \(navigationBarViewModel.categories)")
-    }
     // MARK: - UICollectionViewDragDelegate
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         guard isEditingMode else { return [] } // 편집 모드가 아닐 경우 빈 배열 반환
@@ -518,12 +474,10 @@ class HomeViewController:
         dragItem.localObject = item
         return [dragItem]
     }
-
     // MARK: - UICollectionViewDropDelegate
     func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {
         return isEditingMode && session.canLoadObjects(ofClass: NSString.self) // 편집 모드일 때만 드롭 가능
     }
-
     func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
         if collectionView.hasActiveDrag {
             return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
@@ -531,7 +485,6 @@ class HomeViewController:
         
         return UICollectionViewDropProposal(operation: .forbidden)
     }
-
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
         guard isEditingMode else { return } // 편집 모드가 아닐 경우 아무 작업도 하지 않음
         guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
@@ -547,7 +500,6 @@ class HomeViewController:
             }
         }
     }
-
     func updateSnapAndMoveItem(collectionView: UICollectionView, from sourceIndex: Int, to destinationIndex: Int, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
         guard sourceIndex != destinationIndex, sourceIndex < viewModel.snap?.imageUrls.count ?? 0 else { return }
 
@@ -580,13 +532,11 @@ class HomeViewController:
             }
         })
     }
-    
     func didTapSnapCell(with imageUrls: [String], currentIndex: Int) {
         let expandVC = SnapExpandSheetViewController(imageUrls: imageUrls, currentIndex: currentIndex) // ViewController 초기화
         expandVC.modalPresentationStyle = .pageSheet // 모달 시트로 표시
         present(expandVC, animated: true, completion: nil) // ViewController 표시
     }
-    
     // MARK: - UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // 선택된 스냅 데이터 가져오기
@@ -752,14 +702,3 @@ extension HomeViewController: UIImagePickerControllerDelegate {
     }
 }
 
-
-#if DEBUG
-struct HomeViewControllerPreview: PreviewProvider {
-    static var previews: some View {
-        let navigationViewModel = CustomNavigationBarViewModel() // 기존 인스턴스 생성
-        let homeVC = HomeViewController(navigationBarViewModel: navigationViewModel)
-        let navController = UINavigationController(rootViewController: homeVC)
-        return navController.toPreview()
-    }
-}
-#endif
