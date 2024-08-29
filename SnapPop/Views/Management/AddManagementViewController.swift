@@ -53,6 +53,9 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         bindViewModel()
         setupTapGesture()
         
+        // 알림 다시 꺼도 앱 안터지게
+        isTimePickerVisible = viewModel.alertStatus
+
         // NotificationCenter를 사용하게 변경
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChangeNotification(_:)), name: .categoryDidChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(managementSavedNotification(_:)), name: .managementSavedNotification, object: nil)
@@ -191,19 +194,23 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // NotificationCellDelegate 메서드 - 알림 스위치 토글 시 호출
     func notificationCellDidToggle(_ cell: NotificationCell, isOn: Bool) {
         viewModel.alertStatus = isOn
-        isTimePickerVisible = isOn
+        let indexPath = IndexPath(row: 1, section: 2) // 타임 피커 행의 IndexPath
+        tableView.beginUpdates()
         
-        // 알림 스위치 상태에 따라 테이블뷰 업데이트
-        UIView.animate(withDuration: 0.3) {
-            self.tableView.beginUpdates()
-            if isOn {
-                self.tableView.insertRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
-            } else {
-                self.tableView.deleteRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
+        if isOn {
+            if !isTimePickerVisible {
+                isTimePickerVisible = true
+                tableView.insertRows(at: [indexPath], with: .fade)
             }
-            self.tableView.endUpdates()
+        } else {
+            if isTimePickerVisible {
+                isTimePickerVisible = false
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
         }
         
+        tableView.endUpdates()
+
         if isOn {
             viewModel.alertTime = Date()
         }

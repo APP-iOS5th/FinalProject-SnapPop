@@ -307,7 +307,6 @@ extension UIColor {
     }
 }
 
-
 extension Notification.Name {
     static let categoryDidChangeNotification = Notification.Name("categoryDidChangeNotification")
     static let managementSavedNotification = Notification.Name("managementSavedNotification")
