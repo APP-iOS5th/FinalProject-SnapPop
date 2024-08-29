@@ -82,6 +82,15 @@ class CategorySettingsViewController: UIViewController {
         print("CategorySettingsViewController의 viewModel 주소: \(Unmanaged.passUnretained(self.viewModel as AnyObject).toOpaque())")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.loadCategories {
+            DispatchQueue.main.async {
+                self.categoryTable.reloadData()
+            }
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         viewModel.categoryisUpdated?()
