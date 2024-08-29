@@ -13,6 +13,7 @@ class TodoTableViewCell: UITableViewCell {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "circle"), for: .normal)
         button.tintColor = .customToggle
+        button.sizeToFit()
         return button
     }()
     
@@ -42,8 +43,8 @@ class TodoTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
                 checkboxButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
                 checkboxButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-                checkboxButton.widthAnchor.constraint(equalToConstant: 24),
-                checkboxButton.heightAnchor.constraint(equalToConstant: 24),
+                checkboxButton.widthAnchor.constraint(equalToConstant: 30),
+                checkboxButton.heightAnchor.constraint(equalToConstant: 30),
                 
                 label.leadingAnchor.constraint(equalTo: checkboxButton.trailingAnchor, constant: 16),
                 label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -52,9 +53,18 @@ class TodoTableViewCell: UITableViewCell {
         
     }
     
-    func updateCheckbocState(isChecked: Bool) {
+    func updateCheckboxState(isChecked: Bool) {
         checkboxButton.isSelected = isChecked
         let image = isChecked ? UIImage(systemName: "circle.fill") : UIImage(systemName: "circle")
         checkboxButton.setImage(image, for: .normal)
     }
+    
+    func updateCheckboxColor(color: String) {
+        if let newColor = UIColor(hex: color) {
+                    checkboxButton.tintColor = newColor
+                } else {
+                    checkboxButton.tintColor = .customToggle
+                }
+            }
 }
+
