@@ -36,7 +36,11 @@ class NotificationSettingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.customBackground
-        
+        viewModel.loadCategories {
+            DispatchQueue.main.async {
+                self.notificationTableView.reloadData()
+            }
+        }
         setupLayout()
     }
     
@@ -105,6 +109,26 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
             }
             let category = viewModel.categories[indexPath.row]
             cell.configure(with: category)
+            cell.notificationButtonTapped = { [weak self] in
+                guard let self = self else { return }
+                let index = indexPath.row
+                self.viewModel.categories[index].alertStatus.toggle()
+                
+               
+                let updatedCategory = self.viewModel.categories[index]
+                guard let updatedCategotyId = updatedCategory.id else { return }
+                
+                // 알림 상태에 따라 버튼 이미지 변경
+                let alertStatusImage = updatedCategory.alertStatus ? "bell" : "bell.slash"
+                cell.notificationButton.setImage(UIImage(systemName: alertStatusImage), for: .normal)
+                
+                // Firebase에 업데이트 후, 테이블뷰 셀 리로드
+                self.viewModel.updateCategory(categoryId: updatedCategotyId, category: updatedCategory) {
+                    DispatchQueue.main.async {
+                        self.notificationTableView.reloadRows(at: [indexPath], with: .none)
+                    }
+                }
+            }
             cell.selectionStyle = .none
             return cell
             
