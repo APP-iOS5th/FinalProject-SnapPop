@@ -20,7 +20,7 @@ class NotificationViewController: UIViewController {
     
     // MARK: - UI Components
     /// 추천 알림, 관리 알림 선택 SegmentedControl
-    private let segmentedControl: UISegmentedControl = {
+    private lazy var segmentedControl: UISegmentedControl = {
         let segControl = UISegmentedControl(items: ["추천 알림", "관리 알림"])
         segControl.selectedSegmentIndex = 0
         segControl.backgroundColor = UIColor.customToggle
@@ -31,17 +31,16 @@ class NotificationViewController: UIViewController {
     }()
     
     /// 추천 알림 테이블뷰
-    private let recomenendTable = {
+    private lazy var recomenendTable = {
         let table = UITableView()
         table.backgroundColor = .customBackground
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()
     
-    
     // 관리 알람은 title: 오늘 ~~ 하셨나요? subTitle: 오늘의 관리 확인하기
     /// 관리 알림 테이블뷰
-    private let managementTable = {
+    private lazy var managementTable = {
         let table = UITableView()
         table.backgroundColor = .customBackground
         table.isHidden = true
@@ -53,6 +52,8 @@ class NotificationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .customBackground
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "알림 설정", style: .plain, target: self, action: #selector(moveToNotificationSettingView))
         
         self.segmentedControl.selectedSegmentIndex = 0
         self.didChangeValue(segment: self.segmentedControl)
@@ -90,5 +91,22 @@ class NotificationViewController: UIViewController {
     
     @objc func didChangeValue(segment: UISegmentedControl) {
         self.shouldHideFirstView = segment.selectedSegmentIndex != 0
+    }
+    
+    @objc func moveToNotificationSettingView() {
+        let notiViewModel = NotificationSettingViewModel()
+        let notificationSettingView = NotificationSettingViewController(viewModel: notiViewModel)
+        self.navigationController?.pushViewController(notificationSettingView, animated: true)
+    }
+}
+
+// MARK: - UITableViewDelegate, DataSource Methods
+extension NotificationViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        UITableViewCell()
     }
 }
