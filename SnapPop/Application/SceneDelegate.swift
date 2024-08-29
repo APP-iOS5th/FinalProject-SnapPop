@@ -103,7 +103,8 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
                 completionHandler([.banner, .list, .badge, .sound])
             } else {
                 // 특정 날짜로부터 시작하여 반복되는 관리 알림을 등록하기 위해 특정 날짜에 알림이 트리거되면 반복 알림을 등록한다
-                guard let managementID = userInfo["managementId"] as? String,
+                guard let categoryId = userInfo["categoryId"] as? String,
+                      let managementID = userInfo["managementId"] as? String,
                       let startDate = userInfo["startDate"] as? Date,
                       let alertTime = userInfo["alertTime"] as? Date,
                       let body = userInfo["body"] as? String else {
@@ -111,8 +112,12 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
                     return
                 }
                 
-                NotificationManager.shared.repeatingNotification(managementId: managementID, startDate: startDate,
-                                                                 alertTime: alertTime, repeatCycle: repeatCycle, body: body)
+                NotificationManager.shared.repeatingNotification(categoryId: categoryId,
+                                                                 managementId: managementID,
+                                                                 startDate: startDate,
+                                                                 alertTime: alertTime,
+                                                                 repeatCycle: repeatCycle,
+                                                                 body: body)
                 completionHandler([])
             }
         }
