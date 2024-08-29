@@ -66,6 +66,7 @@
 		EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */; };
 		EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */; };
 		EA49D3722C74EAC70002F243 /* CropViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA664E532C7455F80034B998 /* CropViewController.swift */; };
+		EA4D6BF12C800EBE000B00F9 /* SnapExpandSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4D6BF02C800EBE000B00F9 /* SnapExpandSheetViewController.swift */; };
 		EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA50475A2C64A1390033D807 /* HomeViewController.swift */; };
 		EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5047602C6500870033D807 /* HomeViewModel.swift */; };
 		EA57EB482C72CAAC007F8987 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA57EB472C72CAAC007F8987 /* Category.swift */; };
@@ -130,6 +131,7 @@
 		EA141F9B2C69F60800DD4B29 /* SnapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionViewCell.swift; sourceTree = "<group>"; };
 		EA141F9D2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewCell.swift; sourceTree = "<group>"; };
 		EA141F9F2C6AFC8400DD4B29 /* ChecklistTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistTableViewController.swift; sourceTree = "<group>"; };
+		EA4D6BF02C800EBE000B00F9 /* SnapExpandSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapExpandSheetViewController.swift; sourceTree = "<group>"; };
 		EA50475A2C64A1390033D807 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		EA5047602C6500870033D807 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		EA57EB472C72CAAC007F8987 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
@@ -430,6 +432,7 @@
 				EA664E532C7455F80034B998 /* CropViewController.swift */,
 				EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */,
 				EAE34EB22C776E6700BEFF3A /* CustomDatePickerViewController.swift */,
+				EA4D6BF02C800EBE000B00F9 /* SnapExpandSheetViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -560,6 +563,7 @@
 				C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */,
 				4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */,
 				C246CE602C74EF8200A631BE /* LegalType.swift in Sources */,
+				EA4D6BF12C800EBE000B00F9 /* SnapExpandSheetViewController.swift in Sources */,
 				C2F8B19F2C6A4FD900D73071 /* ManagementService.swift in Sources */,
 				B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */,
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
