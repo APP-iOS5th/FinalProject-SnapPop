@@ -15,6 +15,8 @@ class CategoryNotiSettingCell: UITableViewCell {
             updateNotificationButtonImage()
         }
     }
+    
+    var notificationButtonTapped: (() -> Void)?
     // MARK: - UI Components
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -22,10 +24,10 @@ class CategoryNotiSettingCell: UITableViewCell {
         return label
     }()
     
-    private lazy var notificationButton: UIButton = {
+    lazy var notificationButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(notificationButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapNotificationButton), for: .touchUpInside)
         return button
     }()
     
@@ -60,8 +62,9 @@ class CategoryNotiSettingCell: UITableViewCell {
         isNotificationEnabled = category.alertStatus
     }
     
-    @objc private func notificationButtonTapped() {
+    @objc private func didTapNotificationButton() {
         isNotificationEnabled.toggle()
+        notificationButtonTapped?()
         // 해당 카테고리의 알람 toggle -> 파이어베이스 연동
     }
     
