@@ -33,6 +33,7 @@ class SignInViewController: UIViewController {
                 switch result {
                 case .success(let user):
                     print("Successfully signed in as user: \(user.uid)")
+                    self.setupNotifications()
                 case .failure(let error):
                     print("Error signing in: \(error.localizedDescription)")
                 }
@@ -51,6 +52,7 @@ class SignInViewController: UIViewController {
                 switch result {
                 case .success(let user):
                     print("Successfully signed in as user: \(user.uid)")
+                    self.setupNotifications()
                 case .failure(let error):
                     print("Error signing in: \(error.localizedDescription)")
                 }
@@ -90,6 +92,20 @@ class SignInViewController: UIViewController {
             appleSignInButton.widthAnchor.constraint(equalToConstant: 200),
             appleSignInButton.heightAnchor.constraint(equalToConstant: 40)
         ])
+    }
+    
+    func setupNotifications() {
+        // 1. 이전에 있던 모든 알림 삭제
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        // 2. 카테고리의 alertState가 true 일때 해당 Managements의 알림 추가
+        NotificationSettingViewModel().loadCategories { [weak self] in
+            guard let self = self else { return }
+            let categories = NotificationSettingViewModel().categories
+            categories.filter { $0.alertStatus }.forEach { category in
+                NotificationSettingViewModel().registerAllNotifications(for: category.id ?? "")
+            }
+        }
     }
 }
 
