@@ -11,22 +11,6 @@ import MobileCoreServices
 import Combine
 import PhotosUI
 
-extension UIViewController {
-    private struct Preview: UIViewControllerRepresentable {
-        let vc: UIViewController
-        
-        func makeUIViewController(context: Context) -> UIViewController {
-            return vc
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-    }
-    
-    func toPreview() -> some View {
-        Preview(vc: self)
-    }
-}
-
 class HomeViewController:
     UIViewController,
     UINavigationControllerDelegate,
@@ -714,14 +698,3 @@ extension HomeViewController: UIImagePickerControllerDelegate {
     }
 }
 
-
-#if DEBUG
-struct HomeViewControllerPreview: PreviewProvider {
-    static var previews: some View {
-        let navigationViewModel = CustomNavigationBarViewModel() // 기존 인스턴스 생성
-        let homeVC = HomeViewController(navigationBarViewModel: navigationViewModel)
-        let navController = UINavigationController(rootViewController: homeVC)
-        return navController.toPreview()
-    }
-}
-#endif
