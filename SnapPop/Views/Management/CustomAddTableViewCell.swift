@@ -60,6 +60,7 @@ class BaseTableViewCell: UITableViewCell {
     }
 }
 
+
 // -MARK: 제목
 
 class TitleCell: BaseTableViewCell {
