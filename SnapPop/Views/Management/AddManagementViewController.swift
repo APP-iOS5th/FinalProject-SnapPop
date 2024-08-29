@@ -51,7 +51,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-        
+        setupTapGesture()
         
         // NotificationCenter를 사용하게 변경
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChangeNotification(_:)), name: .categoryDidChangeNotification, object: nil)
@@ -64,7 +64,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
 
         print(UserDefaults.standard.dictionaryRepresentation())
         viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
-        bindViewModel() // ViewModel 바인딩(combine)
+//        bindViewModel() // ViewModel 바인딩(combine)
     }
     
     // NotificationCenter에서 사용할 메서드
@@ -380,8 +380,14 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // MARK: - Keyboard Handling
 
     // 화면을 터치했을 때 키보드 내리기
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     // Return 키를 눌렀을 때 키보드 내리기

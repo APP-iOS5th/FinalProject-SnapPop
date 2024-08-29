@@ -43,6 +43,8 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         
         configureUI()
         setupKeyboardEvent()
+        setupTapGesture()
+
     }
     
     // MARK: - Methods
@@ -184,9 +186,14 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     // MARK: - Keyboard Handling
 
-    // 화면을 터치했을 때 키보드 내리기
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     // Return 키를 눌렀을 때 키보드 내리기

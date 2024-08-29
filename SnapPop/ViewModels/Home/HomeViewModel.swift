@@ -128,7 +128,6 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
-        
     // 스냅 저장
     func saveSnap(categoryId: String, images: [UIImage], createdAt: Date, completion: @escaping (Result<Snap, Error>) -> Void) {
         var imageUrls: [String?] = Array(repeating: nil, count: images.count)
