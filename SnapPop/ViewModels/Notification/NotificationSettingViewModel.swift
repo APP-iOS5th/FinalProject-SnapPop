@@ -8,20 +8,50 @@
 import Foundation
 protocol NotificationSettingViewModelProtocol {
     var categories: [Category] { get set }
+    
+    func loadCategories(completion: @escaping () -> Void)
+    func updateCategory(categoryId: String, category: Category, completion: @escaping () -> Void)
 }
 
 class NotificationSettingViewModel: NotificationSettingViewModelProtocol{
     // MARK: - Properties
-//    var categories: [Category] = []
     var categories: [Category] = [
-        Category(userId: "user1", title: "탈모 관리", alertStatus: true),
-        Category(userId: "user1", title: "팔자주름 관리", alertStatus: false),
-        Category(userId: "user1", title: "바디 체크", alertStatus: false)
     ]
+    private let categoryService = CategoryService()
     
-    //MARK: - Initializer
+    // MARK: - Initializer
     init() {
-        // 파이어 베이스 데이터 가져와서 categories 넣어주기;
+        loadCategories {
+            //ViewController에서 UI를 업데이트
+        }
     }
-    //MARK: - Methods
+    // MARK: - Methods
+    func loadCategories(completion: @escaping () -> Void) {
+        categoryService.loadCategories { result in
+            switch result {
+            case .success(let categories):
+                if categories.isEmpty {
+                    // 파이어베이스에 카테고리가 없는 경우
+                    print("파이어베이스에 카테고리가 없음")
+                } else {
+                    self.categories = categories
+                    completion()
+                }
+            case .failure(let error):
+                print("Failed to load categories: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func updateCategory(categoryId: String, category: Category, completion: @escaping () -> Void) {
+        categoryService.updateCategory(categoryId: categoryId, updatedCategory: category) { result in
+            switch result {
+            case .success:
+                completion()
+            case .failure(let error):
+                print("Failed to save error: \(error.localizedDescription)")
+                completion()
+            }
+        }
+    }
 }
