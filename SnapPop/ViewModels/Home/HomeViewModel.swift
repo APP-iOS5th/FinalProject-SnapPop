@@ -263,25 +263,6 @@ class HomeViewModel: ObservableObject {
     func categoryDidChange(to newCategoryId: String?) {
         self.selectedCategoryId = newCategoryId
     }
-    
-    // 아래부터는 이전에 사용하던 코드
-    func loadSnaps() {
-        let categoryId = "kzbh5r58xqs95cl2sXEK"
-        let snapDate = Date() // 여기서는 현재 날짜를 사용, 필요에 따라 변경 가능
-
-        snapService.loadSnap(categoryId: categoryId, snapDate: snapDate) { [weak self] result in
-            switch result {
-            case .success(let snap):
-                DispatchQueue.main.async {
-                    // 단일 Snap 객체를 snapData 배열에 추가 (또는 배열 전체를 교체)
-                    self?.snap = snap // Snap 객체를 배열로 만들어 사용
-                    print("Snap loaded successfully.")
-                }
-            case .failure(let error):
-                print("Error loading snap: \(error.localizedDescription)")
-            }
-        }
-    }
         
     /// 액션시트에 선택된 옵션에 따른 처리 메소드
     func showImagePickerActionSheet(from viewController: UIViewController) {
@@ -381,11 +362,4 @@ class HomeViewModel: ObservableObject {
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         viewController.present(alert, animated: true)
     }
-}
-
-// PHAsset을 가져오는 메서드
-private func fetchPHAsset(for snap: Snap) -> PHAsset? {
-    // PHAsset을 가져오는 로직을 구현합니다.
-    // 예를 들어, imageUrls를 사용하여 PHAsset을 찾는 방법을 구현할 수 있습니다.
-    return nil // 실제 구현 필요
 }
