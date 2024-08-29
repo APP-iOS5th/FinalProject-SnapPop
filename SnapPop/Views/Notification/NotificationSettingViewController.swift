@@ -67,7 +67,7 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 2 // 추천 알림, 관리 알림
+            return 1 // 추천 알림
         case 1:
             return viewModel.categories.count // 카테고리의 수
         default:
@@ -82,25 +82,8 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
                 return UITableViewCell()
             }
             
-            if indexPath.row == 0 {
-                cell.selectionStyle = .none
-                cell.recomendCellConfigure(title: "추천 알림", isOn: true)
-            } else {
-                
-                let menuItems: [UIAction] = [
-                    UIAction(title: "5분 전", handler: { action in
-                        print("5분 전 선택됨")
-                    }),
-                    UIAction(title: "10분 전", handler: { action in
-                        print("10분 전 선택됨")
-                    }),
-                    UIAction(title: "30분 전", handler: { action in
-                        print("30분 전 선택됨")
-                    })
-                ]
-                cell.selectionStyle = .none
-                cell.managementCellConfigure(title: "관리 알림", menuItems: menuItems)
-            }
+            cell.selectionStyle = .none
+            cell.configure(title: "추천 알림", isOn: true)
             return cell
             
         case 1:

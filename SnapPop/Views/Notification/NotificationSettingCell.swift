@@ -24,14 +24,6 @@ class NotificationSettingCell: UITableViewCell {
         return toggle
     }()
     
-    private let selectionButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.showsMenuAsPrimaryAction = true
-        button.isHidden = true
-        return button
-    }()
-    
     // MARK: - Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -46,8 +38,7 @@ class NotificationSettingCell: UITableViewCell {
     private func setupLayout() {
         contentView.addSubviews([
             titleLabel,
-            toggleSwitch,
-            selectionButton
+            toggleSwitch
         ])
         
         NSLayoutConstraint.activate([
@@ -55,27 +46,8 @@ class NotificationSettingCell: UITableViewCell {
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
             toggleSwitch.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            toggleSwitch.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            
-            selectionButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
-            selectionButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            toggleSwitch.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
-    }
-    
-    func recomendCellConfigure(title: String, isOn: Bool) {
-        titleLabel.text = title
-        toggleSwitch.isHidden = false
-        toggleSwitch.isOn = isOn
-        selectionButton.isHidden = true
-    }
-    
-    func managementCellConfigure(title: String, menuItems: [UIAction]) {
-        titleLabel.text = title
-        let menu = UIMenu(title: "", children: menuItems)
-        selectionButton.menu = menu
-        selectionButton.setTitle("시간 설정", for: .normal)
-        toggleSwitch.isHidden = true
-        selectionButton.isHidden = false
     }
     
     func configure(title: String, isOn: Bool) {
