@@ -131,7 +131,7 @@ class HomeViewController:
     }()
     // 체크리스트 테이블
     private let checklistTableViewController = ChecklistTableViewController()
-    
+    // 스냅 추가 안내문구
     private let noImageLabel: UILabel = {
         let label = UILabel()
         label.text = "사진을 추가해보세요!"
@@ -141,13 +141,6 @@ class HomeViewController:
         return label
     }()
     
-    private let noImageIcon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "photo")
-        imageView.tintColor = .gray
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
@@ -337,7 +330,6 @@ class HomeViewController:
         view.addSubview(snapCollectionView)
         
         view.addSubview(noImageLabel)
-        view.addSubview(noImageIcon)
         
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
@@ -350,14 +342,8 @@ class HomeViewController:
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
-            noImageIcon.centerYAnchor.constraint(equalTo: addButton.centerYAnchor), // addButton과 같은 수평 레벨에 위치
-            noImageIcon.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            noImageIcon.widthAnchor.constraint(equalToConstant: 30), // 크기 줄이기
-            noImageIcon.heightAnchor.constraint(equalToConstant: 30), // 크기 줄이기
-            
-            noImageLabel.centerYAnchor.constraint(equalTo: addButton.centerYAnchor), // addButton과 같은 수평 레벨에 위치
-            noImageLabel.leadingAnchor.constraint(equalTo: noImageIcon.trailingAnchor, constant: 8), // 아이콘 오른쪽에 위치
-            noImageLabel.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -view.bounds.width * 0.02),
+            noImageLabel.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.08),
+            noImageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor), // 중앙 정렬
             
             snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.01),
             snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
@@ -372,11 +358,9 @@ class HomeViewController:
            
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
         snapCollectionView.bringSubviewToFront(noImageLabel)
-        snapCollectionView.bringSubviewToFront(noImageIcon)
         // 초기 상태 설정
         snapCollectionView.isHidden = true
         noImageLabel.isHidden = false
-        noImageIcon.isHidden = false
     }
     /// 스냅뷰 (UICollectionViewDataSource)
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -396,7 +380,6 @@ class HomeViewController:
             // `snapCollectionView` 숨기기
             snapCollectionView.isHidden = true
             noImageLabel.isHidden = false
-            noImageIcon.isHidden = false
             
             // 셀 초기화
             cell.prepareForReuse()
@@ -415,7 +398,6 @@ class HomeViewController:
             // `snapCollectionView` 보이기
             snapCollectionView.isHidden = false
             noImageLabel.isHidden = true
-            noImageIcon.isHidden = true
         }
 
         return cell
