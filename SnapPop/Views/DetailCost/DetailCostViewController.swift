@@ -44,7 +44,6 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         configureUI()
         setupKeyboardEvent()
         setupTapGesture()
-
     }
     
     // MARK: - Methods
@@ -97,8 +96,14 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     @objc private func saveButtonTapped() {
-        delegate?.addDetailCost(data: DetailCost(title: titleText, description: descriptionText, oneTimeCost: oneTimeCost))
-        dismiss(animated: true, completion: nil)
+        if !titleText.isEmpty {
+            // DetailCost 객체 생성 (oneTimeCost는 옵셔널)
+            let detailCost = DetailCost(title: titleText, description: descriptionText, oneTimeCost: oneTimeCost)
+            // 데이터 전달
+            delegate?.addDetailCost(data: detailCost)
+            
+            dismiss(animated: true, completion: nil)
+        }
     }
     
     // MARK: - UITableViewDataSource
@@ -141,6 +146,9 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
                 cell.textField.autocapitalizationType = .none
                 cell.textField.spellCheckingType = .no
                 cell.textField.text = titleText
+                cell.textField.tag = 1
+                cell.textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionCell.identifier, for: indexPath) as? DescriptionCell else { return UITableViewCell() }
@@ -149,6 +157,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
                 cell.textField.autocapitalizationType = .none
                 cell.textField.spellCheckingType = .no
                 cell.textField.text = descriptionText
+                cell.textField.tag = 2
                 return cell
             default:
                 return UITableViewCell()
@@ -201,24 +210,16 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         textField.resignFirstResponder()
         return true
     }
-
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let currentText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? string
-        let indexPath = tableView.indexPath(for: textField.superview?.superview as! UITableViewCell)!
-        
-        switch indexPath.section {
-        case 0:
-            if indexPath.row == 0 {
-                titleText = currentText
-                navigationItem.rightBarButtonItem?.isEnabled = !currentText.isEmpty
-            } else if indexPath.row == 1 {
-                descriptionText = currentText
-            }
-        default:
-            break
+    // 유효성 검사 및 텍스트 누락 방지 
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        if textField.tag == 1 {
+            titleText = textField.text ?? ""
+            updateSaveButtonState()
         }
-        
-        return true
+    }
+
+    private func updateSaveButtonState() {
+        navigationItem.rightBarButtonItem?.isEnabled = !titleText.isEmpty
     }
     
     // 키보드 올라왔을때
