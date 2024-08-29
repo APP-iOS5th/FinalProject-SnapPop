@@ -66,13 +66,17 @@ class HomeViewController:
         return imageView
     }()
     /// DatePicker 알림 레이블
-    private let dateAlertLabel: UILabel = {
-        let label = UILabel()
-        label.text = " "
-        label.textColor = .blue
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+     private let dateAlertLabel: UILabel = {
+         let label = UILabel()
+         label.text = " "
+         label.textColor = .black
+         label.backgroundColor = UIColor.customButtonColor
+         label.textAlignment = .center
+         label.layer.cornerRadius = 10
+         label.clipsToBounds = true
+         label.translatesAutoresizingMaskIntoConstraints = false
+         return label
+     }()
     
     // 스냅 타이틀
     private let snapTitle: UILabel = {
@@ -219,6 +223,8 @@ class HomeViewController:
             
             // dateAlertLabel constraints
             dateAlertLabel.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
+            dateAlertLabel.trailingAnchor.constraint(equalTo: dateAlertLabel.leadingAnchor, constant: 40),
+            dateAlertLabel.heightAnchor.constraint(equalTo: datePicker.heightAnchor),
             dateAlertLabel.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
         ])
     }
@@ -230,7 +236,7 @@ class HomeViewController:
             self?.updateSnapCollectionView()
         }
         
-        updateDateAlertLabel() // 버튼 텍스트 업데이트
+        updateDateAlertLabel() // 날짜 텍스트 업데이트
         self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기
     }
     /// 날짜 알림 버튼 텍스트 업데이트
@@ -455,7 +461,6 @@ class HomeViewController:
             }
         }
     }
-    
     // MARK: - UICollectionViewDragDelegate
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         guard isEditingMode else { return [] } // 편집 모드가 아닐 경우 빈 배열 반환
@@ -470,7 +475,6 @@ class HomeViewController:
     func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {
         return isEditingMode && session.canLoadObjects(ofClass: NSString.self) // 편집 모드일 때만 드롭 가능
     }
-
     func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
         if collectionView.hasActiveDrag {
             return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
@@ -478,7 +482,6 @@ class HomeViewController:
         
         return UICollectionViewDropProposal(operation: .forbidden)
     }
-
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
         guard isEditingMode else { return } // 편집 모드가 아닐 경우 아무 작업도 하지 않음
         guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
@@ -494,7 +497,6 @@ class HomeViewController:
             }
         }
     }
-
     func updateSnapAndMoveItem(collectionView: UICollectionView, from sourceIndex: Int, to destinationIndex: Int, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
         guard sourceIndex != destinationIndex, sourceIndex < viewModel.snap?.imageUrls.count ?? 0 else { return }
 
@@ -527,13 +529,11 @@ class HomeViewController:
             }
         })
     }
-    
     func didTapSnapCell(with imageUrls: [String], currentIndex: Int) {
         let expandVC = SnapExpandSheetViewController(imageUrls: imageUrls, currentIndex: currentIndex) // ViewController 초기화
         expandVC.modalPresentationStyle = .pageSheet // 모달 시트로 표시
         present(expandVC, animated: true, completion: nil) // ViewController 표시
     }
-    
     // MARK: - UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // 선택된 스냅 데이터 가져오기
