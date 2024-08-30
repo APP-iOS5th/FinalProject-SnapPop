@@ -146,6 +146,7 @@ class HomeViewController:
         
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
         
+        setupBindings()
         setupDatePickerView()
         setupSnapCollectionView()
         setupChecklistView()
@@ -166,20 +167,33 @@ class HomeViewController:
             self?.updateUIWithCategories()
         }
         
-        viewModel.$selectedCategoryId.sink { [weak self] selectedCategoryId in
-            guard let self = self, let categoryId = selectedCategoryId else { return }
-            
-            viewModel.loadSnap(categoryId: categoryId, snapDate: self.datePicker.date) { [weak self] in
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSnap(categoryId: currentCategoryId, snapDate: viewModel.selectedDate) { [weak self] in
                 self?.updateSnapCollectionView()
             }
-        }.store(in: &cancellables)
-        
+        }
+
         // Set the drag and drop delegates
         snapCollectionView.dragDelegate = self
         snapCollectionView.dropDelegate = self
     }
     
-    @objc private func updateSnapCollectionView() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        if let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSnap(categoryId: categoryId, snapDate: viewModel.selectedDate) { [weak self] in
+                self?.updateSnapCollectionView()
+            }
+        }
+    }
+    
+    func setupBindings() {
+        viewModel.updateSnapCollectionView = { [weak self] in
+            self?.updateSnapCollectionView()
+        }
+    }
+    
+    func updateSnapCollectionView() {
         DispatchQueue.main.async {
             self.snapCollectionView.reloadData() // UI 업데이트
         }
@@ -230,10 +244,12 @@ class HomeViewController:
     }
     /// 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
-        guard let categoryId = viewModel.selectedCategoryId else { return }
+        viewModel.dateChanged(sender)
         
-        viewModel.loadSnap(categoryId: categoryId, snapDate: sender.date) { [weak self] in
-            self?.updateSnapCollectionView()
+        if let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSnap(categoryId: categoryId, snapDate: viewModel.selectedDate) { [weak self] in
+                self?.updateSnapCollectionView()
+            }
         }
         
         updateDateAlertLabel() // 날짜 텍스트 업데이트

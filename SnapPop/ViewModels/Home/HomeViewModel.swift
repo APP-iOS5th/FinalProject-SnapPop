@@ -30,6 +30,7 @@ class HomeViewModel: ObservableObject {
     @Published var snap: Snap?
     @Published var selectedCategoryId: String?
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
+    var updateSnapCollectionView: (() -> Void)?
     
     // MARK: - Initialization
     init(snapService: SnapService) {
@@ -39,10 +40,9 @@ class HomeViewModel: ObservableObject {
     }
     
     /// Image Picker Methods
-    func dateChanged(_ sender: UIDatePicker) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter.string(from: sender.date)
+    func dateChanged(_ sender: UIDatePicker) -> Date {
+        selectedDate = sender.date
+        return sender.date
     }
     
     func addManagement(_ management: Management) {
@@ -103,8 +103,8 @@ class HomeViewModel: ObservableObject {
         }
     }
     // 관리 삭제
-    func deleteManagement(categoryId: String, managementId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        managementService.deleteManagement(categoryId: categoryId, managementId: managementId) { error in
+    func deleteManagement(userId: String, categoryId: String, managementId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        managementService.deleteManagement(userId: userId, categoryId: categoryId, managementId: managementId) { error in
             if let error = error {
                 completion(.failure(error))
             } else {
@@ -240,7 +240,7 @@ class HomeViewModel: ObservableObject {
     
     // 스냅 사진 삭제
     func deleteImage(categoryId: String, snap: Snap, imageUrlToDelete: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        snapService.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrlToDelete) { result in
+        snapService.deleteImage(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrlToDelete) { result in
             switch result {
             case .success:
                 completion(.success(()))
@@ -252,7 +252,7 @@ class HomeViewModel: ObservableObject {
     
     // 스냅 자체를 삭제
     func deleteSnap(categoryId: String, snap: Snap) {
-        snapService.deleteSnap(categoryId: categoryId, snap: snap) { error in
+        snapService.deleteSnap(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: categoryId, snap: snap) { error in
             if let error = error {
                 print("스냅 삭제 실패: \(error.localizedDescription)")
             }
@@ -262,6 +262,16 @@ class HomeViewModel: ObservableObject {
     // MARK: - CategoryChangeDelegate
     func categoryDidChange(to newCategoryId: String?) {
         self.selectedCategoryId = newCategoryId
+        
+        if let categoryId = newCategoryId {
+            loadSnap(categoryId: categoryId, snapDate: selectedDate) { [weak self] in
+                self?.selectedCategoryId = newCategoryId
+                self?.updateSnapCollectionView?()
+            }
+        } else {
+            self.snap = nil
+            self.updateSnapCollectionView?()
+        }
     }
         
     /// 액션시트에 선택된 옵션에 따른 처리 메소드
