@@ -156,6 +156,7 @@ final class AuthViewModel {
                             print("Error deleting user data: \(error.localizedDescription)")
                         } else {
                             print("Successfully deleted user data")
+                            NotificationManager.shared.removeAllNotifications()
                         }
                     }
             case .failure(let error):

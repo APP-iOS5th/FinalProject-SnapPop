@@ -108,6 +108,7 @@ class HomeViewModel: ObservableObject {
             if let error = error {
                 completion(.failure(error))
             } else {
+                NotificationManager.shared.removeNotification(identifiers: ["initialNotification-\(categoryId)-\(managementId)", "repeatingNotification-\(categoryId)-\(managementId)"])
                 completion(.success(()))
             }
         }
