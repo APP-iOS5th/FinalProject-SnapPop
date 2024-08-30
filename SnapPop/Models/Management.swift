@@ -34,11 +34,6 @@ struct Management: Identifiable, Hashable, Codable {
     }
 }
 
-struct ManagementException: Hashable, Codable {
-    let managementId: String
-    let date: Date
-}
-
 // MARK: - Management Extension
 extension Management {
     static func generateSampleManagementItems() -> [Management] {
