@@ -195,38 +195,39 @@ class ChecklistTableViewController: UITableViewController {
         
         // 편집 액션 정의
         let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
-                    guard let self = self, let viewModel = self.viewModel else {
-                        completionHandler(false)
-                        return
-                    }
-                    
-                    let itemToEdit = viewModel.checklistItems[indexPath.row]
-                    let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
-                    let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
-                    addManagementVC.homeViewModel = viewModel
+            guard let self = self, let viewModel = self.viewModel else {
+                completionHandler(false)
+                return
+            }
+            
+            let itemToEdit = viewModel.checklistItems[indexPath.row]
+            let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
+            addManagementViewModel.edit = true // 편집 모드 설정
+            let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
+            addManagementVC.homeViewModel = viewModel
 
-                    addManagementVC.onSave = { [weak self] updatedManagement in
-                        guard let self = self else { return }
-                        
-                        // 기존 updateManagement 메서드를 통해 관리 항목 업데이트
-                        viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
-                            DispatchQueue.main.async {
-                                switch result {
-                                case .success():
-                                    self.tableView.reloadData()
-                                case .failure(let error):
-                                    self.showAlert(title: "업데이트 실패", message: "관리 항목을 업데이트할 수 없습니다. 다시 시도해 주세요.")
-                                    print("Failed to update management: \(error.localizedDescription)")
-                                }
-                            }
+            addManagementVC.onSave = { [weak self] updatedManagement in
+                guard let self = self else { return }
+                
+                viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success():
+                            self.tableView.reloadData()
+                            addManagementViewModel.edit = false // 업데이트 후 edit를 다시 false로 설정
+                        case .failure(let error):
+                            self.showAlert(title: "업데이트 실패", message: "관리 항목을 업데이트할 수 없습니다. 다시 시도해 주세요.")
+                            print("Failed to update management: \(error.localizedDescription)")
                         }
                     }
-
-                    self.navigationController?.pushViewController(addManagementVC, animated: true)
-                    completionHandler(true)
                 }
-                editAction.backgroundColor = .gray
-                editAction.image = UIImage(systemName: "pencil")
+            }
+
+            self.navigationController?.pushViewController(addManagementVC, animated: true)
+            completionHandler(true)
+        }
+        editAction.backgroundColor = .gray
+        editAction.image = UIImage(systemName: "pencil")
         
         // 삭제 및 편집 액션을 구성에 추가
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
@@ -234,6 +235,7 @@ class ChecklistTableViewController: UITableViewController {
         
         return configuration
     }
+
 
     // 왼쪽으로 스와이프할 때 핀 고정 액션 추가
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
