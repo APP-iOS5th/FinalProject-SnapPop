@@ -128,20 +128,56 @@ class ChecklistTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel?.checklistItems.count ?? 0 // checklistItems 배열의 개수 반환
+        // 관리 항목이 없을 경우에도 하나의 셀이 필요
+        return viewModel?.checklistItems.isEmpty ?? true ? 1 : viewModel?.checklistItems.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
-        if let item = viewModel?.checklistItems[indexPath.row] {
+        guard let viewModel = viewModel else { return UITableViewCell() }
+        
+        if viewModel.checklistItems.isEmpty {
+            // 관리 항목이 없을 때 메시지 셀을 반환
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            let messageLabel = UILabel()
+            messageLabel.text = "새로운 관리 추가하기를 통해 관리를 시작해보세요!"
+            messageLabel.textAlignment = .center
+            messageLabel.textColor = .gray
+            messageLabel.numberOfLines = 0
+            messageLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            cell.contentView.addSubview(messageLabel)
+            
+            // 메시지 레이블을 셀의 중앙에 배치
+            NSLayoutConstraint.activate([
+                messageLabel.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
+                messageLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                messageLabel.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 16),
+                messageLabel.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16)
+            ])
+            
+            cell.selectionStyle = .none
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude) // 셀의 구분선 제거
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
+            let item = viewModel.checklistItems[indexPath.row]
             cell.configure(with: item)
             
             // 체크박스 상태가 변경될 때 호출할 클로저 설정
             cell.onCheckBoxToggle = { [weak self] managementId, isCompleted in
                 self?.handleCheckBoxToggle(managementId: managementId, isCompleted: isCompleted)
             }
+            return cell
         }
-        return cell
+    }
+
+    // 높이 설정
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // 관리 항목이 없을 때 셀의 높이를 테이블 뷰의 나머지 높이로 설정하여 가운데 배치
+        if viewModel?.checklistItems.isEmpty ?? true {
+            return tableView.frame.height - tableView.contentInset.top - tableView.contentInset.bottom - selfcareAddButton.frame.height - 20 // 추가적인 마진 값
+        }
+        return UITableView.automaticDimension
     }
     
     private func handleCheckBoxToggle(managementId: String, isCompleted: Bool) {
@@ -161,6 +197,10 @@ class ChecklistTableViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        // 관리 항목이 없을 때는 스와이프 동작을 비활성화
+        guard let viewModel = viewModel, !viewModel.checklistItems.isEmpty else {
+            return nil
+        }
         // 삭제 액션 정의
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] (action, view, completionHandler) in
             guard let self = self, let viewModel = self.viewModel else {
@@ -239,6 +279,9 @@ class ChecklistTableViewController: UITableViewController {
 
     // 왼쪽으로 스와이프할 때 핀 고정 액션 추가
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard let viewModel = viewModel, !viewModel.checklistItems.isEmpty else {
+            return nil
+        }
         let pinAction = UIContextualAction(style: .normal, title: nil) { (action, view, completionHandler) in
             if let viewModel = self.viewModel {
                 let item = viewModel.checklistItems.remove(at: indexPath.row)
