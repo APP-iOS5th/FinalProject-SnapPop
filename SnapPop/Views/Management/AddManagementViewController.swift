@@ -403,9 +403,13 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                     return UITableViewCell()
                 }
                 cell.configure(with: viewModel.startDate)
-                cell.dismissHandler = { [weak self] in
-                    self?.presentedViewController?.dismiss(animated: false, completion: nil)
+                cell.dateChangedHandler = { [weak self] newDate in
+                    self?.viewModel.startDate = newDate
+                    print("ViewModel startDate updated to: \(newDate)")
                 }
+//                cell.dismissHandler = { [weak self] in
+//                    self?.presentedViewController?.dismiss(animated: false, completion: nil)
+//                }
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "RepeatCell", for: indexPath) as? RepeatCell else { return UITableViewCell() }
