@@ -13,8 +13,6 @@ class ChecklistTableViewController: UITableViewController {
     var viewModel: HomeViewModel?
     private var cancellables = Set<AnyCancellable>() // Combine 구독을 저장할 Set
     private let managementService = ManagementService() // ManagementService 인스턴스 추가
-
-//    private let refreshControl = UIRefreshControl()
     
     // 관리 항목 추가 버튼
     private let selfcareAddButton: UIButton = {
@@ -27,7 +25,13 @@ class ChecklistTableViewController: UITableViewController {
         button.addTarget(self, action: #selector(didSelfcareAddButton), for: .touchUpInside)
         return button
     }()
-    
+    // 로딩 있을 때를 대비한 loading indicator (필요시)
+//    private let loadingIndicator: UIActivityIndicatorView = {
+//        let indicator = UIActivityIndicatorView(style: .large)
+//        indicator.translatesAutoresizingMaskIntoConstraints = false
+//        return indicator
+//    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(selfcareAddButton)
@@ -47,11 +51,22 @@ class ChecklistTableViewController: UITableViewController {
         viewModel?.$checklistItems
              .receive(on: RunLoop.main)
              .sink { [weak self] _ in
-                 self?.tableView.reloadData()
+//                 self?.tableView.reloadData()
+//                 self?.startLoading()
+                 self?.loadData()
+
              }
              .store(in: &cancellables)
      }
-    
+//    // 카테고리 변경 시 로딩 indicator
+//    private func startLoading() {
+//        loadingIndicator.startAnimating()
+//    }
+//
+//    private func stopLoading() {
+//        loadingIndicator.stopAnimating()
+//    }
+
     private func setupButtonConstraints() {
         NSLayoutConstraint.activate([
             selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -60,22 +75,6 @@ class ChecklistTableViewController: UITableViewController {
             selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
         ])
     }
-    
-    private func setupRefreshControl() {
-        refreshControl = UIRefreshControl()
-//        refreshControl?.attributedTitle = NSAttributedString(string: "당겨서 새로고침")
-        refreshControl?.addTarget(self, action: #selector(refreshData), for: .valueChanged)
-        tableView.refreshControl = refreshControl
-    }
-
-
-    @objc private func refreshData() {
-        loadData()
-        DispatchQueue.main.async {
-            self.refreshControl?.endRefreshing()
-        }
-    }
-
 
     private func loadData() {
         guard let viewModel = viewModel else { return }
