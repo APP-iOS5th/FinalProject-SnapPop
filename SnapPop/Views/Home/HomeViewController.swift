@@ -203,6 +203,16 @@ class HomeViewController:
     
     // 스냅 업데이트 및 UI 리로드
     func updateSnapCollectionView() {
+        if let snap = viewModel.snap, !snap.imageUrls.isEmpty {
+            snapCollectionView.isHidden = false
+            noImageLabel.isHidden = true
+            editButton.isHidden = false
+        } else {
+            snapCollectionView.isHidden = true
+            noImageLabel.isHidden = false
+            editButton.isHidden = true
+        }
+        
         DispatchQueue.main.async {
             self.snapCollectionView.reloadData() // UI 업데이트
         }
@@ -385,37 +395,23 @@ class HomeViewController:
     ///스냅뷰 ( UICollectionViewDataSource - Cell Configuration)
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
-
-        // viewModel의 snap 객체 가져오기
-        let snap = viewModel.snap
-
-        // snap이 nil이거나 이미지 URL이 비어 있는 경우 문구와 아이콘 표시
-        if snap == nil || snap!.imageUrls.isEmpty {
-            print("snap이 nil이거나 이미지 URL이 비어 있습니다.")
-            
-            // `snapCollectionView` 숨기기
-            snapCollectionView.isHidden = true
-            noImageLabel.isHidden = false
-            
-            // 셀 초기화
-            cell.prepareForReuse()
-            
-        } else {
-            // `snap` 객체가 존재하고 이미지 URL이 있는 경우 셀 구성
-            let snap = snap!
-            let isFirst = indexPath.item == 0
-
-            cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
-            cell.deleteButton.tag = indexPath.item
-            cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
-            cell.currentIndex = indexPath.item
-            cell.imageUrls = snap.imageUrls
-
-            // `snapCollectionView` 보이기
-            snapCollectionView.isHidden = false
-            noImageLabel.isHidden = true
+        let isFirst = indexPath.item == 0
+        guard let snap = viewModel.snap else {
+            // 스냅이 없을 경우 셀 초기화 및 문구, 아이콘 표시
+            cell.prepareForReuse() // 셀 초기화
+            noImageLabel.isHidden = false // 스냅이 없으면 문구 표시
+            return cell
         }
-
+        
+        // 스냅이 있을 경우 셀 구성
+        cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
+        cell.deleteButton.tag = indexPath.item
+        cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
+        cell.currentIndex = indexPath.item
+        cell.imageUrls = snap.imageUrls
+        
+        // 스냅이 있을 경우 문구와 아이콘 숨김
+        noImageLabel.isHidden = true
         return cell
     }
     ///스냅뷰 (UICollectionViewDelegateFlowLayout)
@@ -478,27 +474,30 @@ class HomeViewController:
         let imageUrl = snap.imageUrls[index]
         
         viewModel.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
-            switch result {
-            case .success:
-                self.viewModel.snap?.imageUrls.remove(at: index) // 뷰모델의 snap객체에서 삭제할 사진 제거
-                
-                // 사진 아예 다 지워버리면 디비에서 스냅 자체를 삭제하고 nil로 초기화
-                if self.viewModel.snap?.imageUrls.isEmpty == true {
-                    self.viewModel.deleteSnap(categoryId: categoryId, snap: snap)
-                    self.viewModel.snap = nil
-                }
-                
-                self.snapCollectionView.performBatchUpdates({
-                    self.snapCollectionView.deleteItems(at: [IndexPath(item: index, section: 0)]) // 컬렉션뷰에서 인덱스로 삭제
-                }) { _ in
-                    // 삭제 후 나머지 셀들이 있다면 태그 업데이트
-                    if self.viewModel.snap != nil {
-                        self.updateCellTags()
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.viewModel.snap?.imageUrls.remove(at: index) // 뷰모델의 snap객체에서 삭제할 사진 제거
+                    
+                    // 사진 아예 다 지워버리면 디비에서 스냅 자체를 삭제하고 nil로 초기화
+                    if self.viewModel.snap?.imageUrls.isEmpty == true {
+                        self.viewModel.deleteSnap(categoryId: categoryId, snap: snap)
+                        self.viewModel.snap = nil
+                        self.updateSnapCollectionView()
                     }
+                    
+                    self.snapCollectionView.performBatchUpdates({
+                        self.snapCollectionView.deleteItems(at: [IndexPath(item: index, section: 0)]) // 컬렉션뷰에서 인덱스로 삭제
+                    }) { _ in
+                        // 삭제 후 나머지 셀들이 있다면 태그 업데이트
+                        if self.viewModel.snap != nil {
+                            self.updateCellTags()
+                        }
+                    }
+                    print("사진 삭제 성공")
+                case .failure(let error):
+                    print("사진 삭제 실패: \(error.localizedDescription)")
                 }
-                print("사진 삭제 성공")
-            case .failure(let error):
-                print("사진 삭제 실패: \(error.localizedDescription)")
             }
         }
     }

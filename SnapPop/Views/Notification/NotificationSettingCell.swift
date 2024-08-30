@@ -18,7 +18,7 @@ class NotificationSettingCell: UITableViewCell {
         return label
     }()
     
-    private let toggleSwitch: UISwitch = {
+    let toggleSwitch: UISwitch = {
         let toggle = UISwitch()
         toggle.translatesAutoresizingMaskIntoConstraints = false
         return toggle
