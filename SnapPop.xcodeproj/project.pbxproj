@@ -13,6 +13,7 @@
 		4A06CC3D2C8008950055194A /* NotificationSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A06CC3C2C8008950055194A /* NotificationSettingViewModel.swift */; };
 		4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */; };
 		4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */; };
+		4A6210232C80E634002229C3 /* ManagementTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */; };
 		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
 		4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4AC605B32C78769D00D3AF19 /* Kingfisher */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
@@ -87,6 +88,7 @@
 		4A06CC3C2C8008950055194A /* NotificationSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingViewModel.swift; sourceTree = "<group>"; };
 		4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonSheetViewModel.swift; sourceTree = "<group>"; };
 		4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCellViewModel.swift; sourceTree = "<group>"; };
+		4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementTableViewCell.swift; sourceTree = "<group>"; };
 		4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySettingsTableViewCell.swift; sourceTree = "<group>"; };
 		4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBarController.swift; sourceTree = "<group>"; };
 		4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 			children = (
 				4A06CC372C8004C60055194A /* CategoryNotiSettingCell.swift */,
 				4A06CC392C8004E50055194A /* NotificationSettingCell.swift */,
+				4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -618,7 +621,6 @@
 				C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */,
 				EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */,
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
-				8F4C73C22C6B1E71000AACDA /* svenmodels.swift in Sources */,
 				4A06CC3D2C8008950055194A /* NotificationSettingViewModel.swift in Sources */,
 				C246CE5C2C74EF7D00A631BE /* SettingTableViewCell.swift in Sources */,
 				8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */,
@@ -634,6 +636,7 @@
 				C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */,
 				B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */,
 				C246CE612C74EF8200A631BE /* LegalViewController.swift in Sources */,
+				4A6210232C80E634002229C3 /* ManagementTableViewCell.swift in Sources */,
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
 				8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */,
 				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,
