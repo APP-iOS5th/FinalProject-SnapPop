@@ -112,9 +112,21 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
                 let notificationData = NotificationData(categoryId: categoryId, managementId: managementID, title: body, date: alertTime)
                 
                 var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
-                if let encoded = try? JSONEncoder().encode(notificationData) {
-                    savedNotifications.append(encoded)
-                    UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+                // 중복 확인
+                if !savedNotifications.contains(where: {
+                    guard let decodedData = try? JSONDecoder().decode(NotificationData.self, from: $0) else {
+                        return false
+                    }
+                    return decodedData.categoryId == notificationData.categoryId &&
+                    decodedData.managementId == notificationData.managementId &&
+                    decodedData.date == notificationData.date
+                }) {
+                    if let encoded = try? JSONEncoder().encode(notificationData) {
+                        savedNotifications.append(encoded)
+                        UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+                    }
+                    
+                    NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
                 }
                 
                 NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
@@ -142,12 +154,23 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
                 let notificationData = NotificationData(categoryId: categoryId, managementId: managementID, title: body, date: alertTime)
                 
                 var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
-                if let encoded = try? JSONEncoder().encode(notificationData) {
-                    savedNotifications.append(encoded)
-                    UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
-                }
                 
-                NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
+                // 중복 확인
+                if !savedNotifications.contains(where: {
+                    guard let decodedData = try? JSONDecoder().decode(NotificationData.self, from: $0) else {
+                        return false
+                    }
+                    return decodedData.categoryId == notificationData.categoryId &&
+                    decodedData.managementId == notificationData.managementId &&
+                    decodedData.date == notificationData.date
+                }) {
+                    if let encoded = try? JSONEncoder().encode(notificationData) {
+                        savedNotifications.append(encoded)
+                        UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+                    }
+                    
+                    NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
+                }
                 
                 completionHandler([])
             }
@@ -197,9 +220,21 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
         }
         
         var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
-        if let encoded = try? JSONEncoder().encode(notificationData) {
-            savedNotifications.append(encoded)
-            UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+        // 중복 확인
+        if !savedNotifications.contains(where: {
+            guard let decodedData = try? JSONDecoder().decode(NotificationData.self, from: $0) else {
+                return false
+            }
+            return decodedData.categoryId == notificationData.categoryId &&
+            decodedData.managementId == notificationData.managementId &&
+            decodedData.date == notificationData.date
+        }) {
+            if let encoded = try? JSONEncoder().encode(notificationData) {
+                savedNotifications.append(encoded)
+                UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+            }
+            
+            NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
         }
         
         NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
