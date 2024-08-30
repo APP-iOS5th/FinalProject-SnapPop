@@ -13,12 +13,13 @@ class NotificationViewController: UIViewController {
     var shouldHideFirstView: Bool? {
         didSet {
             guard let shouldHideFirstView = self.shouldHideFirstView else { return }
-            self.recomenendTable.isHidden = shouldHideFirstView
-            self.managementTable.isHidden = !self.recomenendTable.isHidden
+            self.recommendTable.isHidden = shouldHideFirstView
+            self.managementTable.isHidden = !self.recommendTable.isHidden
         }
     }
     
-    var notifications: [NotificationData] = []
+    var managementNotifications: [NotificationData] = []
+    var recommendNotifications: [NotificationData] = []
     
     // MARK: - UI Components
     /// 추천 알림, 관리 알림 선택 SegmentedControl
@@ -33,23 +34,45 @@ class NotificationViewController: UIViewController {
     }()
     
     /// 추천 알림 테이블뷰
-    private var recomenendTable = {
+    private var recommendTable = {
         let table = UITableView()
         table.backgroundColor = .customBackground
+        table.register(ManagementTableViewCell.self, forCellReuseIdentifier: "ManagementTableViewCell")
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()
     
-    // 관리 알람은 title: 오늘 ~~ 하셨나요? subTitle: 오늘의 관리 확인하기
     /// 관리 알림 테이블뷰
     private var managementTable = {
         let table = UITableView()
         table.backgroundColor = .customBackground
         table.register(ManagementTableViewCell.self, forCellReuseIdentifier: "ManagementTableViewCell")
-        table.isHidden = true
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()
+    
+    /// 관리 알림이 없을때의 문구
+    private let managementEmptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "관리 알림이 없습니다"
+        label.textAlignment = .center
+        label.textColor = .gray
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    /// 추천 알림이 없을때의 문구
+    private let recommendEmptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "추천 알림이 없습니다"
+        label.textAlignment = .center
+        label.textColor = .gray
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -58,34 +81,45 @@ class NotificationViewController: UIViewController {
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "알림 설정", style: .plain, target: self, action: #selector(moveToNotificationSettingView))
         
-        self.segmentedControl.selectedSegmentIndex = 0
+        self.segmentedControl.selectedSegmentIndex = 1
         self.didChangeValue(segment: self.segmentedControl)
         
-//        recomenendTable.dataSource = self
-//        recomenendTable.delegate = self
+        recommendTable.dataSource = self
+        recommendTable.delegate = self
         managementTable.dataSource = self
         managementTable.delegate = self
-            
         
         setupLayout() // 레이아웃 설정
         
-        loadNotifications()
-                
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNewNotification), name: .newNotificationReceived, object: nil)
+        loadManagementNotifications()
+        loadRecommendedNotifications()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewManagementNotification), name: .newNotificationReceived, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNewRecommendNotification), name: .newRecommendNotificationReceived, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
-        loadNotifications()
+        if segmentedControl.selectedSegmentIndex == 0 {
+            managementEmptyLabel.isHidden = true
+            loadRecommendedNotifications()
+        } else {
+            recommendEmptyLabel.isHidden = true
+            loadManagementNotifications()
+        }
     }
     
     // MARK: - Methods
     func setupLayout() {
         view.addSubviews([
             segmentedControl,
-            recomenendTable,
-            managementTable
+            recommendTable,
+            managementTable,
+            managementEmptyLabel,
+            recommendEmptyLabel
+            
         ])
         
         NSLayoutConstraint.activate([
@@ -94,23 +128,56 @@ class NotificationViewController: UIViewController {
             segmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             segmentedControl.heightAnchor.constraint(equalToConstant: 44),
             
-            recomenendTable.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 16),
-            recomenendTable.leadingAnchor.constraint(equalTo: segmentedControl.leadingAnchor),
-            recomenendTable.trailingAnchor.constraint(equalTo: segmentedControl.trailingAnchor),
-            recomenendTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            recommendTable.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 16),
+            recommendTable.leadingAnchor.constraint(equalTo: segmentedControl.leadingAnchor),
+            recommendTable.trailingAnchor.constraint(equalTo: segmentedControl.trailingAnchor),
+            recommendTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             
             managementTable.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 16),
             managementTable.leadingAnchor.constraint(equalTo: segmentedControl.leadingAnchor),
             managementTable.trailingAnchor.constraint(equalTo: segmentedControl.trailingAnchor),
-            managementTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
+            managementTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            
+            managementEmptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            managementEmptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            recommendEmptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            recommendEmptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
-    func loadNotifications() {
-        guard let savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] else { return }
-        notifications = savedNotifications.compactMap { try? JSONDecoder().decode(NotificationData.self, from: $0) }
+    func loadManagementNotifications() {
+        guard let savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] else { 
+            self.managementNotifications = []
+            self.managementTable.isHidden = true
+            self.managementEmptyLabel.isHidden = false
+            return
+        }
+        managementNotifications = savedNotifications.compactMap { try? JSONDecoder().decode(NotificationData.self, from: $0) }
+        
+        // 데이터가 없는 경우 테이블뷰를 숨기고 레이블을 표시
+       
+        managementTable.isHidden = managementNotifications.isEmpty
+        managementEmptyLabel.isHidden = !managementNotifications.isEmpty
         DispatchQueue.main.async {
             self.managementTable.reloadData()
+        }
+    }
+    
+    func loadRecommendedNotifications() {
+        guard let savedNotifications = UserDefaults.standard.array(forKey: "savedRecommendedNotifications") as? [Data] else { 
+            self.recommendNotifications = []
+            self.recommendTable.isHidden = true
+            self.recommendEmptyLabel.isHidden = false
+            return
+        }
+        recommendNotifications = savedNotifications.compactMap { try? JSONDecoder().decode(NotificationData.self, from: $0) }
+        
+        // 데이터가 없는 경우 테이블뷰를 숨기고 레이블을 표시
+        recommendTable.isHidden = recommendNotifications.isEmpty
+        recommendEmptyLabel.isHidden = !recommendNotifications.isEmpty
+        DispatchQueue.main.async {
+            self.recommendTable.reloadData()
         }
     }
     
@@ -118,6 +185,14 @@ class NotificationViewController: UIViewController {
     ///  세그먼트 피커 value 변경시 action
     @objc func didChangeValue(segment: UISegmentedControl) {
         self.shouldHideFirstView = segment.selectedSegmentIndex != 0
+        
+        if segment.selectedSegmentIndex == 0 {
+            managementEmptyLabel.isHidden = true
+            loadRecommendedNotifications()
+        } else {
+            recommendEmptyLabel.isHidden = true
+            loadManagementNotifications()
+        }
     }
     
     @objc func moveToNotificationSettingView() {
@@ -126,9 +201,14 @@ class NotificationViewController: UIViewController {
         self.navigationController?.pushViewController(notificationSettingView, animated: true)
     }
     
-    @objc func handleNewNotification() {
+    @objc func handleNewManagementNotification() {
         print("New notification received")
-        loadNotifications()
+        loadManagementNotifications()
+    }
+    
+    @objc func handleNewRecommendNotification() {
+        print("New notification received")
+        loadRecommendedNotifications()
     }
 }
 
@@ -136,9 +216,9 @@ class NotificationViewController: UIViewController {
 extension NotificationViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == managementTable {
-            notifications.count
+            managementNotifications.count
         } else {
-            1
+            recommendNotifications.count
         }
         
     }
@@ -149,7 +229,24 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
             guard let cell = tableView.dequeueReusableCell(withIdentifier: ManagementTableViewCell.identifier, for: indexPath) as? ManagementTableViewCell else {
                 return UITableViewCell()
             }
-            let notification = notifications[indexPath.row]
+            let notification = managementNotifications[indexPath.row]
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy년 MM월 d일"
+            let updatedDateString = formatter.string(from: notification.date)
+            cell.configure(title: notification.title, time: updatedDateString)
+            
+            cell.selectionStyle = .none
+            return cell
+        } else if tableView == recommendTable {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ManagementTableViewCell.identifier, for: indexPath) as? ManagementTableViewCell else {
+                return UITableViewCell()
+            }
+            guard indexPath.row < recommendNotifications.count else {
+                return UITableViewCell()
+            }
+            
+            let notification = recommendNotifications[indexPath.row]
             
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy년 MM월 d일"
@@ -165,11 +262,23 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            notifications.remove(at: indexPath.row)
-            
-            if var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] {
-                savedNotifications.remove(at: indexPath.row)
-                UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+            if tableView == managementTable {
+                // 관리 알림 삭제
+                managementNotifications.remove(at: indexPath.row)
+                
+                if var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] {
+                    savedNotifications.remove(at: indexPath.row)
+                    UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+                }
+                
+            } else if tableView == recommendTable {
+                // 추천 알림 삭제
+                recommendNotifications.remove(at: indexPath.row)
+                
+                if var savedNotifications = UserDefaults.standard.array(forKey: "savedRecommendNotifications") as? [Data] {
+                    savedNotifications.remove(at: indexPath.row)
+                    UserDefaults.standard.set(savedNotifications, forKey: "savedRecommendNotifications")
+                }
             }
             
             tableView.deleteRows(at: [indexPath], with: .automatic)

@@ -30,6 +30,10 @@ struct NotificationManager {
             content.body = "오늘 스냅을 놓치신거같아요! 지금 바로 등록해보세요."
         }
         
+        let alertTime = Calendar.current.date(from: dateComponents) ?? Date()
+        content.userInfo = ["body": content.body,
+                            "alertTime": alertTime]
+        
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
         let request = UNNotificationRequest(identifier: "dailySnapNotification", content: content, trigger: trigger)
 
