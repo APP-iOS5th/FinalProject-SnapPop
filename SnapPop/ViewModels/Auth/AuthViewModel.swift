@@ -20,6 +20,8 @@ final class AuthViewModel {
     private let db = Firestore.firestore()
     private let storage = Storage.storage().reference()
     
+    private let categoryService = CategoryService()
+    
     var currentNonce: String?
     
     var currentUser: User? {
@@ -53,9 +55,7 @@ final class AuthViewModel {
                 if let error = error {
                     completion(.failure(error))
                 } else if let user = authResult?.user {
-                    self.db.collection("Users")
-                        .document(user.uid)
-                        .setData([:])
+                    self.saveUserToCollection(userId: user.uid)
                     completion(.success(user))
                 }
             }
@@ -91,9 +91,16 @@ final class AuthViewModel {
             if let error = error {
                 completion(.failure(error))
             } else if let user = authResult?.user {
+                self.saveUserToCollection(userId: user.uid)
                 completion(.success(user))
             }
         }
+    }
+    
+    func saveUserToCollection(userId: String) {
+        db.collection("Users")
+            .document(userId)
+            .setData([:])
     }
     
     func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -120,11 +127,12 @@ final class AuthViewModel {
             signInWithGoogle(on: viewController) { result in
                 switch result {
                 case .success:
-                    AuthViewModel.shared.currentUser?.delete { error in
+                    user.delete { error in
                         if let error = error {
                             print("Error deleting user: \(error.localizedDescription)")
                         } else {
                             print("Successfully deleted user")
+                            self.deleteUserFromCollection(userId: user.uid)
                         }
                     }
                 case .failure(let error):
@@ -133,6 +141,25 @@ final class AuthViewModel {
             }
         } else if providerID == "apple.com" {
             startSignInWithAppleFlow(on: viewController) { _ in
+            }
+        }
+    }
+    
+    func deleteUserFromCollection(userId: String) {
+        categoryService.deleteCategories(userId: userId) { result in
+            switch result {
+            case .success:
+                self.db.collection("Users")
+                    .document(userId)
+                    .delete { error in
+                        if let error = error {
+                            print("Error deleting user data: \(error.localizedDescription)")
+                        } else {
+                            print("Successfully deleted user data")
+                        }
+                    }
+            case .failure(let error):
+                print("Error deleting user categories: \(error.localizedDescription)")
             }
         }
     }

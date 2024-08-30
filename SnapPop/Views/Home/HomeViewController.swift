@@ -154,6 +154,7 @@ class HomeViewController:
         
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
         
+        setupBindings()
         setupDatePickerView()
         setupSnapCollectionView()
         setupChecklistView()
@@ -174,20 +175,39 @@ class HomeViewController:
             self?.updateUIWithCategories()
         }
         
-        viewModel.$selectedCategoryId.sink { [weak self] selectedCategoryId in
-            guard let self = self, let categoryId = selectedCategoryId else { return }
-            
-            viewModel.loadSnap(categoryId: categoryId, snapDate: self.datePicker.date) { [weak self] in
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSnap(categoryId: currentCategoryId, snapDate: viewModel.selectedDate) { [weak self] in
                 self?.updateSnapCollectionView()
             }
-        }.store(in: &cancellables)
-        
+        }
+
         // Set the drag and drop delegates
         snapCollectionView.dragDelegate = self
         snapCollectionView.dropDelegate = self
     }
     
-    // MARK: - Notification Handling
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        if let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSnap(categoryId: categoryId, snapDate: viewModel.selectedDate) { [weak self] in
+                self?.updateSnapCollectionView()
+            }
+        }
+    }
+    
+    func setupBindings() {
+        viewModel.updateSnapCollectionView = { [weak self] in
+            self?.updateSnapCollectionView()
+        }
+    }
+    
+    // 스냅 업데이트 및 UI 리로드
+    func updateSnapCollectionView() {
+        DispatchQueue.main.async {
+            self.snapCollectionView.reloadData() // UI 업데이트
+        }
+    }
+    
     @objc private func categoryDidChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
             viewModel.categoryDidChange(to: categoryId)
@@ -198,17 +218,11 @@ class HomeViewController:
         // 카테고리 변경 시 snapCollectionView 리로드
         updateSnapCollectionView()
     }
-    // 스냅 업데이트 및 UI 리로드
-    @objc private func updateSnapCollectionView() {
-        DispatchQueue.main.async {
-            self.snapCollectionView.reloadData() // UI 업데이트
-        }
-    }
     
     private func updateUIWithCategories() {
-           // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
-           print("Loaded categories: \(navigationBarViewModel.categories)")
-       }
+        // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
+        print("Loaded categories: \(navigationBarViewModel.categories)")
+    }
     /// 날짜 선택 DatePicker UI 설정
     private func setupDatePickerView() {
         view.addSubview(datePickerContainer)
@@ -244,10 +258,12 @@ class HomeViewController:
     }
     /// 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
-        guard let categoryId = viewModel.selectedCategoryId else { return }
+        viewModel.dateChanged(sender)
         
-        viewModel.loadSnap(categoryId: categoryId, snapDate: sender.date) { [weak self] in
-            self?.updateSnapCollectionView()
+        if let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            viewModel.loadSnap(categoryId: categoryId, snapDate: viewModel.selectedDate) { [weak self] in
+                self?.updateSnapCollectionView()
+            }
         }
         
         updateDateAlertLabel() // 날짜 텍스트 업데이트

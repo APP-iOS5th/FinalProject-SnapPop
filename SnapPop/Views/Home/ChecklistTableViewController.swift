@@ -171,7 +171,7 @@ class ChecklistTableViewController: UITableViewController {
             let itemToDelete = viewModel.checklistItems[indexPath.row]
             
             // Firebase에서 항목 삭제
-            viewModel.deleteManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: itemToDelete.id ?? "") { result in
+            viewModel.deleteManagement(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: viewModel.selectedCategoryId ?? "default", managementId: itemToDelete.id ?? "") { result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success():
