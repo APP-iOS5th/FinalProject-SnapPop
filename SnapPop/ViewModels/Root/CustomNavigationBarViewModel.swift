@@ -11,10 +11,6 @@ protocol CategoryChangeDelegate: AnyObject {
     func categoryDidChange(to newCategoryId: String?)
 }
 
-extension Notification.Name {
-    static let categoryDidChange = Notification.Name("categoryDidChange")
-}
-
 protocol CustomNavigationBarViewModelProtocol {
     var categories: [Category] { get set }
     var currentCategory: Category? { get set }
@@ -26,6 +22,8 @@ protocol CustomNavigationBarViewModelProtocol {
     func deleteCategory(at index: Int, completion: @escaping (String?) -> Void)
     func selectCategory(at index: Int)
     func handleCategoryId(completion: @escaping (String) -> Void)
+    func registerAllNotifications(for categoryId: String)
+    func removeAllNotifications(for categoryId: String)
 }
 
 class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
@@ -176,7 +174,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
         guard index >= 0 && index < categories.count else { return }
         guard let categoryId = categories[index].id else { return }
         UserDefaults.standard.set(categoryId, forKey: "currentCategoryId")
-//        delegate?.categoryDidChange(to: String(categoryId))
+        //        delegate?.categoryDidChange(to: String(categoryId))
         self.currentCategory = categories[index]
         
         NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: ["categoryId": categoryId])
@@ -214,6 +212,51 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
             
             self.categoryisUpdated?()
             completion(title)
+        }
+    }
+    
+    /// 모든 알림 제거
+    func removeAllNotifications(for categoryId: String) {
+        managementService.loadManagements(categoryId: categoryId) { result in
+            switch result {
+            case .success(let managements):
+                let identifiers = managements.filter { $0.alertStatus }.map { "initialNotification-\(categoryId)-\($0.id ?? "")" }
+                NotificationManager.shared.removeNotification(identifiers: identifiers)
+            case .failure(let error):
+                print("Failed to load managements: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    /// 모든 알림 등록
+    func registerAllNotifications(for categoryId: String) {
+        managementService.loadManagements(categoryId: categoryId) { result in
+            switch result {
+            case .success(let managements):
+                managements.forEach { management in
+                    if management.alertStatus {
+                        if management.repeatCycle != 0 {
+                            // 반복이 없는 알림 추가
+                            NotificationManager.shared.initialNotification(categoryId: categoryId,
+                                                                           managementId: management.id ?? "",
+                                                                           startDate: management.startDate,
+                                                                           alertTime: management.alertTime,
+                                                                           repeatCycle: management.repeatCycle,
+                                                                           body: management.title)
+                        } else {
+                            // 반복이 있는 알림 추가
+                            NotificationManager.shared.repeatingNotification(categoryId: categoryId,
+                                                                             managementId: management.id ?? "",
+                                                                             startDate: management.startDate,
+                                                                             alertTime: management.alertTime,
+                                                                             repeatCycle: management.repeatCycle,
+                                                                             body: management.title)
+                        }
+                    }
+                }
+            case .failure(let error):
+                print("Failed to load managements: \(error.localizedDescription)")
+            }
         }
     }
     

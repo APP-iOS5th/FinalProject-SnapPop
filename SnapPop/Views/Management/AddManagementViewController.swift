@@ -27,7 +27,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     
     private let addDetailButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("상세 비용 추가하기", for: .normal)
+        button.setTitle("상세 내역 추가하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
@@ -51,7 +51,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-        
+        setupTapGesture()
         
         // NotificationCenter를 사용하게 변경
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChangeNotification(_:)), name: .categoryDidChangeNotification, object: nil)
@@ -64,7 +64,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
 
         print(UserDefaults.standard.dictionaryRepresentation())
         viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
-        bindViewModel() // ViewModel 바인딩(combine)
+//        bindViewModel() // ViewModel 바인딩(combine)
     }
     
     // NotificationCenter에서 사용할 메서드
@@ -147,20 +147,26 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func saveButtonTapped() {
-        viewModel.save { [weak self] result in
-            switch result {
-            case .success:
-                if let management = self?.viewModel.management {
-                    self?.onSave?(management)  // 변경된 저장 항목을 저장
+            if !viewModel.edit {
+                viewModel.save { [weak self] result in
+                    switch result {
+                    case .success:
+                        if let management = self?.viewModel.management {
+                            self?.onSave?(management)  // 변경된 저장 항목을 저장
+                        }
+                        self?.navigationController?.popViewController(animated: true)
+                    case .failure(let error):
+                        let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .default))
+                        self?.present(alert, animated: true)
+                    }
                 }
-                self?.navigationController?.popViewController(animated: true)
-            case .failure(let error):
-                let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default))
-                self?.present(alert, animated: true)
+            } else {
+                self.onSave?(self.viewModel.management)
+                self.navigationController?.popViewController(animated: true)
             }
         }
-    }
+
     
     @objc private func titleChanged(_ sender: UITextField) {
         // 타이틀 텍스트 필드 값 변경 시 ViewModel에 반영
@@ -306,6 +312,54 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         }
     }
     
+    // 섹션 별 소제목
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            return "기본 정보"
+        case 1:
+            return "설정"
+        case 2:
+            return "알림"
+        case 3:
+            return viewModel.detailCostArray.isEmpty ? nil : "상세내역 및 비용"
+        default:
+            return nil
+        }
+    }
+    // 상세내역 아무것도 없을떄
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if section == 3 && viewModel.detailCostArray.isEmpty {
+            let footerView = UIView()
+            let label = UILabel()
+            label.text = "아래의 버튼을 눌러 상세 내역을 추가해보세요!"
+            label.textAlignment = .center
+            label.textColor = .gray
+            label.font = UIFont.systemFont(ofSize: 14)
+            label.translatesAutoresizingMaskIntoConstraints = false
+
+            footerView.addSubview(label)
+
+            NSLayoutConstraint.activate([
+                label.centerXAnchor.constraint(equalTo: footerView.centerXAnchor),
+                label.centerYAnchor.constraint(equalTo: footerView.centerYAnchor),
+                label.leadingAnchor.constraint(equalTo: footerView.leadingAnchor, constant: 16),
+                label.trailingAnchor.constraint(equalTo: footerView.trailingAnchor, constant: -16)
+            ])
+
+            return footerView
+        }
+        return nil
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if section == 3 && viewModel.detailCostArray.isEmpty {
+            return 50 // Footer 높이 설정
+        }
+        return 0
+    }
+
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
@@ -376,12 +430,45 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             return UITableViewCell()
         }
     }
+    // 상세내역 스와이프 삭제
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard indexPath.section == 3 else {
+            return nil // 다른 섹션에 대해서는 스와이프 동작을 비활성화
+        }
+
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] (_, _, completionHandler) in
+            guard let self = self else {
+                completionHandler(false)
+                return
+            }
+
+            self.viewModel.detailCostArray.remove(at: indexPath.row)
+
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            if self.viewModel.detailCostArray.isEmpty {
+                tableView.reloadSections(IndexSet(integer: 3), with: .automatic)
+            }
+
+            completionHandler(true)
+        }
+
+        deleteAction.image = UIImage(systemName: "trash")
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        return configuration
+    }
+
     
-    // MARK: - Keyboard Handling
+// MARK: - Keyboard Handling
 
     // 화면을 터치했을 때 키보드 내리기
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     // Return 키를 눌렀을 때 키보드 내리기

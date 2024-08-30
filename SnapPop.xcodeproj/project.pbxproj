@@ -7,8 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A06CC352C7F83D20055194A /* NotificationSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A06CC342C7F83D20055194A /* NotificationSettingViewController.swift */; };
+		4A06CC382C8004C60055194A /* CategoryNotiSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A06CC372C8004C60055194A /* CategoryNotiSettingCell.swift */; };
+		4A06CC3A2C8004E50055194A /* NotificationSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A06CC392C8004E50055194A /* NotificationSettingCell.swift */; };
+		4A06CC3D2C8008950055194A /* NotificationSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A06CC3C2C8008950055194A /* NotificationSettingViewModel.swift */; };
 		4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */; };
 		4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */; };
+		4A6210232C80E634002229C3 /* ManagementTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */; };
+		4A6210252C8152CB002229C3 /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210242C8152CB002229C3 /* NotificationData.swift */; };
+		4A6210272C815344002229C3 /* Notification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210262C815344002229C3 /* Notification+Extensions.swift */; };
 		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
 		4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4AC605B32C78769D00D3AF19 /* Kingfisher */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
@@ -77,8 +84,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A06CC342C7F83D20055194A /* NotificationSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingViewController.swift; sourceTree = "<group>"; };
+		4A06CC372C8004C60055194A /* CategoryNotiSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryNotiSettingCell.swift; sourceTree = "<group>"; };
+		4A06CC392C8004E50055194A /* NotificationSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingCell.swift; sourceTree = "<group>"; };
+		4A06CC3C2C8008950055194A /* NotificationSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingViewModel.swift; sourceTree = "<group>"; };
 		4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonSheetViewModel.swift; sourceTree = "<group>"; };
 		4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCellViewModel.swift; sourceTree = "<group>"; };
+		4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementTableViewCell.swift; sourceTree = "<group>"; };
+		4A6210242C8152CB002229C3 /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
+		4A6210262C815344002229C3 /* Notification+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Extensions.swift"; sourceTree = "<group>"; };
 		4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySettingsTableViewCell.swift; sourceTree = "<group>"; };
 		4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBarController.swift; sourceTree = "<group>"; };
 		4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
@@ -160,6 +174,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A06CC362C8004A20055194A /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				4A06CC372C8004C60055194A /* CategoryNotiSettingCell.swift */,
+				4A06CC392C8004E50055194A /* NotificationSettingCell.swift */,
+				4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
+		4A06CC3B2C80086C0055194A /* Notification */ = {
+			isa = PBXGroup;
+			children = (
+				4A06CC3C2C8008950055194A /* NotificationSettingViewModel.swift */,
+			);
+			path = Notification;
+			sourceTree = "<group>";
+		};
 		4A20F6452C6B3D4000F263FF /* SnapComparison */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,6 +234,8 @@
 			isa = PBXGroup;
 			children = (
 				4AC9A0382C72E96700EB5FFC /* NotificationViewController.swift */,
+				4A06CC342C7F83D20055194A /* NotificationSettingViewController.swift */,
+				4A06CC362C8004A20055194A /* Cells */,
 			);
 			path = Notification;
 			sourceTree = "<group>";
@@ -322,6 +356,7 @@
 				EA57EB492C72CAD2007F8987 /* Management.swift */,
 				EA57EB4B2C72CAEC007F8987 /* Snap.swift */,
 				C2F080FF2C7D6DD600BE8B0D /* DetailCost.swift */,
+				4A6210242C8152CB002229C3 /* NotificationData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -345,6 +380,7 @@
 		C24BFA5B2C64801100A5B40A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				4A06CC3B2C80086C0055194A /* Notification */,
 				B8339E0A2C76C7E80021A57D /* Management */,
 				4AC9A03D2C731E1200EB5FFC /* Root */,
 				EA141FA42C6B31DE00DD4B29 /* Home */,
@@ -364,6 +400,7 @@
 				C259C81A2C787B89004F569A /* NotificationManager.swift */,
 				C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */,
 				C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */,
+				4A6210262C815344002229C3 /* Notification+Extensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -569,7 +606,9 @@
 				4AD29AA82C6512E800A9BEDD /* HorizontalSnapPhotoCollectionViewCell.swift in Sources */,
 				4AC9A0392C72E96700EB5FFC /* NotificationViewController.swift in Sources */,
 				C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */,
+				4A06CC352C7F83D20055194A /* NotificationSettingViewController.swift in Sources */,
 				B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */,
+				4A6210252C8152CB002229C3 /* NotificationData.swift in Sources */,
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
@@ -589,18 +628,23 @@
 				C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */,
 				EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */,
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
+				4A06CC3D2C8008950055194A /* NotificationSettingViewModel.swift in Sources */,
 				C246CE5C2C74EF7D00A631BE /* SettingTableViewCell.swift in Sources */,
 				8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */,
 				EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */,
 				4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */,
 				4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */,
+				4A06CC382C8004C60055194A /* CategoryNotiSettingCell.swift in Sources */,
 				4AF17D802C73298800C1E5A2 /* CategorySettingsViewController.swift in Sources */,
 				8F1685322C6354590010F8D8 /* SceneDelegate.swift in Sources */,
+				4A06CC3A2C8004E50055194A /* NotificationSettingCell.swift in Sources */,
 				4AC9A03F2C731E2200EB5FFC /* CustomNavigationBarViewModel.swift in Sources */,
 				C2F416472C6B397800A2F544 /* SnapService.swift in Sources */,
 				C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */,
 				B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */,
 				C246CE612C74EF8200A631BE /* LegalViewController.swift in Sources */,
+				4A6210232C80E634002229C3 /* ManagementTableViewCell.swift in Sources */,
+				4A6210272C815344002229C3 /* Notification+Extensions.swift in Sources */,
 				EA57EB4A2C72CAD2007F8987 /* Management.swift in Sources */,
 				8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */,
 				EA141F9E2C6AEAB200DD4B29 /* ChecklistTableViewCell.swift in Sources */,

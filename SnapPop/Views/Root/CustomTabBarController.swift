@@ -10,6 +10,7 @@ import UIKit
 class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.delegate = self
         
         setupTabbarLayout()
         setupTabbarItem()
@@ -63,5 +64,18 @@ class CustomTabBarController: UITabBarController {
             secondNavController,
             thirdNavController
         ]
+    }
+}
+
+extension CustomTabBarController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if let viewControllers = tabBarController.viewControllers {
+            for controller in viewControllers {
+                if let navigationController = controller as? CustomNavigationBarController {
+                    navigationController.popToRootViewController(animated: false)
+                }
+            }
+        }
+        return true
     }
 }

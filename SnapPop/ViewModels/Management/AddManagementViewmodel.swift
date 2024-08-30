@@ -21,6 +21,7 @@ class AddManagementViewModel {
     @Published var alertTime: Date = Date()
     @Published var alertStatus: Bool = false
     
+    var edit = false // 편집
     private var cancellables = Set<AnyCancellable>()
     var management: Management
     var detailCostArray: [DetailCost] = [] // 추가한 상세 비용들을 담을 배열
@@ -137,6 +138,20 @@ class AddManagementViewModel {
         NotificationCenter.default.post(name: .categoryDidChangeNotification, object: nil, userInfo: ["newCategoryId": newCategoryId ?? "default"])
     }
     
+    func saveOrUpdate(completion: @escaping (Result<Void, Error>) -> Void) {
+        if edit {
+            // 편집 모드 - 관리 항목 업데이트
+            guard let categoryId = categoryId, let managementId = management.id else {
+                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "카테고리 ID 또는 관리 항목 ID가 필요합니다."])))
+                return
+            }
+            db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: management, completion: completion)
+        } else {
+            // 추가 모드 - 새로운 관리 항목 저장(맞네이렇게해야되네)
+            save(completion: completion)
+        }
+    }
+    
     // 유효성 검증 프로퍼티
     var isValid: AnyPublisher<Bool, Never> {
         return Publishers.CombineLatest3($title, $color, $startDate)
@@ -164,30 +179,50 @@ class AddManagementViewModel {
         }
         
         self.management.completions = generateSixMonthsCompletions(startDate: startDate, repeatInterval: management.repeatCycle)
+        
+        // Firebase에 관리 항목 저장
         db.saveManagement(categoryId: categoryId ?? "", management: management) { result in
             switch result {
             case .success(let management):
                 print("Management saved successfully")
                 
+                self.management = management
+            
                 NotificationCenter.default.post(name: .managementSavedNotification, object: nil)
                 guard let categoryId = self.categoryId else { return }
                 
+                // 상세 비용 저장
                 for detailCost in self.detailCostArray {
                     self.saveDetailCost(categoryId: categoryId, managementId: management.id ?? "", detailCost: detailCost)
                 }
                 
+                // 알림 설정
                 if management.alertStatus {
                     if management.repeatCycle == 0 {
-                        NotificationManager.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
-                                                                       alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                        // 반복 안함으로 설정한 알림
+                        NotificationManager.shared.initialNotification(categoryId: categoryId,
+                                                                       managementId: management.id ?? "",
+                                                                       startDate: management.startDate,
+                                                                       alertTime: management.alertTime,
+                                                                       repeatCycle: management.repeatCycle,
+                                                                       body: management.title)
                     }
                     else {
                         if self.isSpecificDateInPast(startDate: self.startDate, alertTime: self.alertTime) {
-                            NotificationManager.shared.repeatingNotification(managementId: management.id ?? "", startDate: management.startDate,
-                                                                             alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                            // 만약 현재 시간보다 과거부터 시작하는 알림을 등록하면 초기 알림을 등록하여 반복 알림을 트리거 할 필요가 없으므로 바로 반복 알림을 등록해줌
+                            NotificationManager.shared.repeatingNotification(categoryId: categoryId,
+                                                                             managementId: management.id ?? "",
+                                                                             startDate: management.startDate,
+                                                                             alertTime: management.alertTime,
+                                                                             repeatCycle: management.repeatCycle,
+                                                                             body: management.title)
                         } else {
-                            NotificationManager.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
-                                                                           alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                            NotificationManager.shared.initialNotification(categoryId: categoryId,
+                                                                           managementId: management.id ?? "",
+                                                                           startDate: management.startDate,
+                                                                           alertTime: management.alertTime,
+                                                                           repeatCycle: management.repeatCycle,
+                                                                           body: management.title)
                         }
                     }
                 }

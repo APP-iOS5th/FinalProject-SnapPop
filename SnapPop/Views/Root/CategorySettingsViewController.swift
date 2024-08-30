@@ -82,6 +82,15 @@ class CategorySettingsViewController: UIViewController {
         print("CategorySettingsViewController의 viewModel 주소: \(Unmanaged.passUnretained(self.viewModel as AnyObject).toOpaque())")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.loadCategories {
+            DispatchQueue.main.async {
+                self.categoryTable.reloadData()
+            }
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         viewModel.categoryisUpdated?()
@@ -230,10 +239,26 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
             let index = indexPath.row
             self.viewModel.categories[index].alertStatus.toggle()
             
+            let updatedCategory = self.viewModel.categories[index]
+            guard let updatedCategoryId = updatedCategory.id else { return }
+            
+            // 알림 상태에 따라 버튼 이미지 변경
             let alertStatusImage = self.viewModel.categories[index].alertStatus ? "bell" : "bell.slash"
             cell.notificationButton.setImage(UIImage(systemName: alertStatusImage), for: .normal)
             
-            let updatedCategory = self.viewModel.categories[index]
+            // 알림 상태에 따른 알림 삭제 or 추가
+            if updatedCategory.alertStatus {
+                // 알림 ON
+                // 1. 기존 Managements의 alertStateTrue 알림 삭제
+                self.viewModel.removeAllNotifications(for: updatedCategoryId)
+                // 2. Managements의 alertStateTrue의 알림 추가
+                self.viewModel.registerAllNotifications(for: updatedCategoryId)
+            } else {
+                // 알림 OFF
+                // 1. Managements의 alertStateTrue의 알림 삭제
+                self.viewModel.registerAllNotifications(for: updatedCategoryId)
+            }
+            
             self.viewModel.updateCategory(categoryId: updatedCategory.id!, category: updatedCategory) {
                 DispatchQueue.main.async {
                     self.categoryTable.reloadRows(at: [indexPath], with: .none)

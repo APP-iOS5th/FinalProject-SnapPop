@@ -41,21 +41,27 @@ struct NotificationManager {
     }
     
     // 초기 알림 (반복되지 않는 알림이나, 반복되는 알림을 등록하기 위한 트리거로 사용함)
-    func initialNotification(managementId: String, startDate: Date, alertTime: Date, repeatCycle: Int, body: String) {
+    func initialNotification(categoryId: String, managementId: String, startDate: Date, alertTime: Date, repeatCycle: Int, body: String) {
         let content = UNMutableNotificationContent()
         content.title = "관리 알림"
         content.body = body
         content.sound = .default
         
         // 반복 알림을 등록하는 시점에 사용하기 위해 초기 알림에 정보를 실어서 보내기 위한 userInfo
-        content.userInfo = ["managementId": managementId, "startDate": startDate, "alertTime": alertTime, "repeatCycle": repeatCycle, "body": body]
+        content.userInfo = ["categoryId": categoryId,
+                            "managementId": managementId,
+                            "startDate": startDate,
+                            "alertTime": alertTime,
+                            "repeatCycle": repeatCycle,
+                            "body": body]
         
         var dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: startDate)
         dateComponents.hour = Calendar.current.component(.hour, from: alertTime)
         dateComponents.minute = Calendar.current.component(.minute, from: alertTime)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-        let request = UNNotificationRequest(identifier: "initialNotification-\(managementId)", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: "initialNotification-\(categoryId)-\(managementId)",
+                                            content: content, trigger: trigger)
         
         center.add(request) { error in
             if let error = error {
@@ -65,7 +71,7 @@ struct NotificationManager {
     }
     
     // 반복 알림 (매일 반복, 매주 반복)
-    func repeatingNotification(managementId: String, startDate: Date, alertTime: Date, repeatCycle: Int, body: String) {
+    func repeatingNotification(categoryId: String, managementId: String, startDate: Date, alertTime: Date, repeatCycle: Int, body: String) {
         let content = UNMutableNotificationContent()
         content.title = "관리 알림"
         content.body = body
@@ -83,7 +89,8 @@ struct NotificationManager {
         }
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        let request = UNNotificationRequest(identifier: "repeatingNotification-\(managementId)", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: "repeatingNotification-\(categoryId)-\(managementId)",
+                                            content: content, trigger: trigger)
         
         center.add(request) { error in
             if let error = error {
