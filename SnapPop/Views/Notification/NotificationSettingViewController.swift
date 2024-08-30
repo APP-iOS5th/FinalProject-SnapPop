@@ -117,7 +117,7 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
                 } else {
                     // 알림 OFF
                     // 1. Managements의 alertStateTrue의 알림 삭제
-                    self.viewModel.registerAllNotifications(for: updatedCategoryId)
+                    self.viewModel.removeAllNotifications(for: updatedCategoryId)
                 }
                 
                 // Firebase에 업데이트 후, 테이블뷰 셀 리로드
