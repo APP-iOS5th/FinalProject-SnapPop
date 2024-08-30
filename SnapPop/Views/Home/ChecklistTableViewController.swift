@@ -51,10 +51,7 @@ class ChecklistTableViewController: UITableViewController {
         viewModel?.$checklistItems
              .receive(on: RunLoop.main)
              .sink { [weak self] _ in
-//                 self?.tableView.reloadData()
-//                 self?.startLoading()
-                 self?.loadData()
-
+                 self?.tableView.reloadData()
              }
              .store(in: &cancellables)
      }
