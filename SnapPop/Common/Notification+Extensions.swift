@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+extension Notification.Name {
+    static let newNotificationReceived = Notification.Name("newNotificationReceived")
+    static let categoryDidChange = Notification.Name("categoryDidChange")
+}

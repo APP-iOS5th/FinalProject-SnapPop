@@ -7,10 +7,6 @@
 
 import UIKit
 
-extension Notification.Name {
-    static let newNotificationReceived = Notification.Name("newNotificationReceived")
-}
-
 class NotificationViewController: UIViewController {
     
     // MARK: - Properties

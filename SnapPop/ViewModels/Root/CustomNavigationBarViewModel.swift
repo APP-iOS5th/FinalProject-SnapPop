@@ -11,10 +11,6 @@ protocol CategoryChangeDelegate: AnyObject {
     func categoryDidChange(to newCategoryId: String?)
 }
 
-extension Notification.Name {
-    static let categoryDidChange = Notification.Name("categoryDidChange")
-}
-
 protocol CustomNavigationBarViewModelProtocol {
     var categories: [Category] { get set }
     var currentCategory: Category? { get set }
