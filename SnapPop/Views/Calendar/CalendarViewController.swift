@@ -8,7 +8,7 @@
 import UIKit
 import Foundation
 
-class CalendarViewController: UIViewController, CategoryChangeDelegate {
+class CalendarViewController: UIViewController {
  
     var selectedDateComponents: DateComponents?
     lazy var selectedDate = selectedDateComponents?.date ?? Date()
@@ -145,10 +145,7 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-//        if let navigationController = self.navigationController as? CustomNavigationBarController {
-//            navigationController.viewModel.delegate = self }
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil) //구독
-            
         calendarView.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
@@ -168,13 +165,6 @@ class CalendarViewController: UIViewController, CategoryChangeDelegate {
             return
         }
         updateIsDoneChart(month: visibleMonth, year: visibleYear)
-        updateChartWithNewData()
-        
-     
-       
-
-//        categoryDidChange(to: categoryId)
-
     }
     
     private func setupViews() {
@@ -462,6 +452,25 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         isDoneChart.updateChart(withPercentage: percentage)
         updatMonthlyInfo(month: month, year: year)
     }
+    
+    private func updateCostChart(month: Int, year: Int) {
+       
+        let chartColorsFromManagement: [UIColor]
+        let chartValues: [Int]
+        let chartNames: [String]
+                
+        let chartItems = [
+                   ChartItem(name: "식비", value: 300000, color: .systemRed),
+                   ChartItem(name: "주거비", value: 500000, color: .systemBlue),
+                   ChartItem(name: "교통비", value: 100000, color: .systemGreen),
+                   ChartItem(name: "여가비", value: 200000, color: .systemOrange),
+                   ChartItem(name: "기타", value: 150000, color: .systemGray)
+               ]
+               
+               // CostChartViewController의 updateChartData 메서드 호출
+               costChart.updateChartData(chartItems)
+    }
+    
     func compareYearMonth(_ year: Int, _ month: Int, with dateString: String) -> Bool {
         // 1. 년과 월을 사용하여 비교할 문자열 생성
         let compareString = String(format: "%04d-%02d", year, month)
@@ -573,6 +582,10 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         return matchingManagements.isEmpty ? 1 : matchingManagements.count
     }
     
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        return nil
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell", for: indexPath) as? TodoTableViewCell else {
             fatalError("Unable to dequeue CustomTableViewCell")
@@ -645,19 +658,7 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         self.calendarView.reloadDecorations(forDateComponents: [dateComponents], animated: true)
         }
 
-    func updateChartWithNewData() {
-           // 새로운 데이터 준비
-           let chartItems = [
-               ChartItem(name: "식비", value: 300000, color: .systemRed),
-               ChartItem(name: "주거비", value: 500000, color: .systemBlue),
-               ChartItem(name: "교통비", value: 100000, color: .systemGreen),
-               ChartItem(name: "여가비", value: 200000, color: .systemOrange),
-               ChartItem(name: "기타", value: 150000, color: .systemGray)
-           ]
-           
-           // CostChartViewController의 updateChartData 메서드 호출
-           costChart.updateChartData(chartItems)
-       }
+   
 
     }
 extension UIImage {
