@@ -11,6 +11,7 @@ import UserNotifications
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    private var appSwitcherModeImageView = UIImageView()
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -68,11 +69,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        appSwitcherModeImageView.removeFromSuperview()
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
         // Called when the scene will move from an active state to an inactive state.
         // This may occur due to temporary interruptions (ex. an incoming phone call).
+        let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
+        
+        if appLockState {
+            // 앱 잠금 상태일 때만 보호 화면 추가
+            setupAppSwitcherMode()
+        }
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
@@ -186,6 +194,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
     } // addManagementNotificationData
+    
+    
+    // 화면 가리기 뷰 구성 (임시)
+    private func setupAppSwitcherMode() {
+        guard let window = window else { return }
+        appSwitcherModeImageView = UIImageView(frame: window.frame)
+        appSwitcherModeImageView.image = UIImage(named: "filledpop")?.resized(to: CGSize(width: 100, height: 100))
+        appSwitcherModeImageView.contentMode = .center
+        appSwitcherModeImageView.backgroundColor = UIColor.customMainColor
+        window.addSubview(appSwitcherModeImageView)
+    }
 }
 
 extension SceneDelegate: UNUserNotificationCenterDelegate {
