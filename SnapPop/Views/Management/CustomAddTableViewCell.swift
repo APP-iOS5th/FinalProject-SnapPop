@@ -128,6 +128,7 @@ class ColorCell: BaseTableViewCell {
 // -MARK: 날짜
 class DateCell: BaseTableViewCell {
     var dismissHandler: (() -> Void)?
+    var dateChangedHandler: ((Date) -> Void)?
     
     private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -159,10 +160,11 @@ class DateCell: BaseTableViewCell {
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
+        print("Date changed to: \(sender.date)")
+        dateChangedHandler?(sender.date)
         dismissHandler?()
     }
 }
-
 // -MARK: 반복
 class RepeatCell: BaseTableViewCell {
     let repeatButton: UIButton = {

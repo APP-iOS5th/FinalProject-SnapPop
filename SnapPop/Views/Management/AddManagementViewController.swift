@@ -53,6 +53,9 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         bindViewModel()
         setupTapGesture()
         
+        // 알림 다시 꺼도 앱 안터지게
+        isTimePickerVisible = viewModel.alertStatus
+
         // NotificationCenter를 사용하게 변경
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChangeNotification(_:)), name: .categoryDidChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(managementSavedNotification(_:)), name: .managementSavedNotification, object: nil)
@@ -64,7 +67,12 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
 
         print(UserDefaults.standard.dictionaryRepresentation())
         viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
-//        bindViewModel() // ViewModel 바인딩(combine)
+        // 네비게이션 타이틀 설정
+        if viewModel.edit {
+            title = "관리 수정"
+        } else {
+            title = "새로운 자기 관리"
+        }
     }
     
     // NotificationCenter에서 사용할 메서드
@@ -191,19 +199,23 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // NotificationCellDelegate 메서드 - 알림 스위치 토글 시 호출
     func notificationCellDidToggle(_ cell: NotificationCell, isOn: Bool) {
         viewModel.alertStatus = isOn
-        isTimePickerVisible = isOn
+        let indexPath = IndexPath(row: 1, section: 2) // 타임 피커 행의 IndexPath
+        tableView.beginUpdates()
         
-        // 알림 스위치 상태에 따라 테이블뷰 업데이트
-        UIView.animate(withDuration: 0.3) {
-            self.tableView.beginUpdates()
-            if isOn {
-                self.tableView.insertRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
-            } else {
-                self.tableView.deleteRows(at: [IndexPath(row: 1, section: 2)], with: .fade)
+        if isOn {
+            if !isTimePickerVisible {
+                isTimePickerVisible = true
+                tableView.insertRows(at: [indexPath], with: .fade)
             }
-            self.tableView.endUpdates()
+        } else {
+            if isTimePickerVisible {
+                isTimePickerVisible = false
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
         }
         
+        tableView.endUpdates()
+
         if isOn {
             viewModel.alertTime = Date()
         }
@@ -327,38 +339,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             return nil
         }
     }
-    // 상세내역 아무것도 없을떄
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if section == 3 && viewModel.detailCostArray.isEmpty {
-            let footerView = UIView()
-            let label = UILabel()
-            label.text = "아래의 버튼을 눌러 상세 내역을 추가해보세요!"
-            label.textAlignment = .center
-            label.textColor = .gray
-            label.font = UIFont.systemFont(ofSize: 14)
-            label.translatesAutoresizingMaskIntoConstraints = false
-
-            footerView.addSubview(label)
-
-            NSLayoutConstraint.activate([
-                label.centerXAnchor.constraint(equalTo: footerView.centerXAnchor),
-                label.centerYAnchor.constraint(equalTo: footerView.centerYAnchor),
-                label.leadingAnchor.constraint(equalTo: footerView.leadingAnchor, constant: 16),
-                label.trailingAnchor.constraint(equalTo: footerView.trailingAnchor, constant: -16)
-            ])
-
-            return footerView
-        }
-        return nil
-    }
-
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if section == 3 && viewModel.detailCostArray.isEmpty {
-            return 50 // Footer 높이 설정
-        }
-        return 0
-    }
-
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
@@ -396,6 +376,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                     return UITableViewCell()
                 }
                 cell.configure(with: viewModel.startDate)
+                cell.dateChangedHandler = { [weak self] newDate in
+                    self?.viewModel.startDate = newDate
+                    print("ViewModel startDate updated to: \(newDate)")
+                }
                 cell.dismissHandler = { [weak self] in
                     self?.presentedViewController?.dismiss(animated: false, completion: nil)
                 }

@@ -28,7 +28,13 @@ class HomeViewModel: ObservableObject {
         }
     }
     @Published var snap: Snap?
-    @Published var selectedCategoryId: String?
+    @Published var selectedCategoryId: String? {
+        didSet {
+            fetchManagements(categoryId: selectedCategoryId ?? "default") { _ in
+                // 카테고리 아이디가 변경되었을 때 필요한 작업
+            }
+        }
+    }
     var selectedSource: ((UIImagePickerController.SourceType) -> Void)?
     var updateSnapCollectionView: (() -> Void)?
     
@@ -170,7 +176,6 @@ class HomeViewModel: ObservableObject {
                             NotificationManager.shared.removeNotification(identifiers: ["dailySnapNotification"])
                             NotificationManager.shared.scheduleDailySnapNotification(hour: hour)
                         }
-                        
                         
                         completion(.success(snap))
                     case .failure(let error):
