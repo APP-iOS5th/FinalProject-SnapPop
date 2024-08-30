@@ -8,8 +8,8 @@
 import Foundation
 
 struct NotificationData: Codable {
-    let categoryId: String
-    let managementId: String
+    let categoryId: String?
+    let managementId: String?
     let title: String
     let date: Date
 }
