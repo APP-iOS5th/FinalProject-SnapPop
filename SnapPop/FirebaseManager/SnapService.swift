@@ -124,9 +124,9 @@ final class SnapService {
             }
     }
     
-    func loadSnaps(categoryId: String, completion: @escaping (Result<[Snap], Error>) -> Void) {
+    func loadSnaps(userId: String, categoryId: String, completion: @escaping (Result<[Snap], Error>) -> Void) {
         db.collection("Users")
-            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .document(userId)
             .collection("Categories")
             .document(categoryId)
             .collection("Snaps")
@@ -170,7 +170,8 @@ final class SnapService {
         }
     }
     
-    func deleteImage(categoryId: String, snap: Snap, imageUrlToDelete: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    // 회원 탈퇴 시 모든 데이터 삭제하는 부분에서 current user id 를 가져올수 없어 파라미터로 넣어서 전달하도록 수정
+    func deleteImage(userId: String, categoryId: String, snap: Snap, imageUrlToDelete: String, completion: @escaping (Result<Void, Error>) -> Void) {
         if let snapId = snap.id {
             var imageUrls = snap.imageUrls
             if let index = imageUrls.firstIndex(of: imageUrlToDelete) {
@@ -178,7 +179,7 @@ final class SnapService {
             }
             
             db.collection("Users")
-                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .document(userId)
                 .collection("Categories")
                 .document(categoryId)
                 .collection("Snaps")
@@ -201,10 +202,10 @@ final class SnapService {
         }
     }
     
-    func deleteSnap(categoryId: String, snap: Snap, completion: @escaping (Error?) -> Void) {
+    func deleteSnap(userId: String, categoryId: String, snap: Snap, completion: @escaping (Error?) -> Void) {
         if let snapId = snap.id {
             db.collection("Users")
-                .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                .document(userId)
                 .collection("Categories")
                 .document(categoryId)
                 .collection("Snaps")
@@ -217,9 +218,9 @@ final class SnapService {
         }
     }
     
-    func deleteSnaps(categoryId: String, completion: @escaping (Error?) -> Void) {
+    func deleteSnaps(userId: String, categoryId: String, completion: @escaping (Error?) -> Void) {
         
-        loadSnaps(categoryId: categoryId) { result in
+        loadSnaps(userId: userId, categoryId: categoryId) { result in
             switch result {
             case .success(let snaps):
                 
@@ -230,7 +231,7 @@ final class SnapService {
                 
                 for snap in snaps {
                     for imageUrl in snap.imageUrls {
-                        self.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
+                        self.deleteImage(userId: userId, categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
                             switch result {
                             case .success():
                                 print("[SnapService] Success to deleteImage")
@@ -241,7 +242,7 @@ final class SnapService {
                     }
                     guard let snapId = snap.id else { return }
                     self.db.collection("Users")
-                        .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                        .document(userId)
                         .collection("Categories")
                         .document(categoryId)
                         .collection("Snaps")
