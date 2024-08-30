@@ -199,15 +199,30 @@ class AddManagementViewModel {
                 // 알림 설정
                 if management.alertStatus {
                     if management.repeatCycle == 0 {
-                        NotificationManager.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
-                                                                       alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
-                    } else {
+                        // 반복 안함으로 설정한 알림
+                        NotificationManager.shared.initialNotification(categoryId: categoryId,
+                                                                       managementId: management.id ?? "",
+                                                                       startDate: management.startDate,
+                                                                       alertTime: management.alertTime,
+                                                                       repeatCycle: management.repeatCycle,
+                                                                       body: management.title)
+                    }
+                    else {
                         if self.isSpecificDateInPast(startDate: self.startDate, alertTime: self.alertTime) {
-                            NotificationManager.shared.repeatingNotification(managementId: management.id ?? "", startDate: management.startDate,
-                                                                             alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                            // 만약 현재 시간보다 과거부터 시작하는 알림을 등록하면 초기 알림을 등록하여 반복 알림을 트리거 할 필요가 없으므로 바로 반복 알림을 등록해줌
+                            NotificationManager.shared.repeatingNotification(categoryId: categoryId,
+                                                                             managementId: management.id ?? "",
+                                                                             startDate: management.startDate,
+                                                                             alertTime: management.alertTime,
+                                                                             repeatCycle: management.repeatCycle,
+                                                                             body: management.title)
                         } else {
-                            NotificationManager.shared.initialNotification(managementId: management.id ?? "", startDate: management.startDate,
-                                                                           alertTime: management.alertTime, repeatCycle: management.repeatCycle, body: management.title)
+                            NotificationManager.shared.initialNotification(categoryId: categoryId,
+                                                                           managementId: management.id ?? "",
+                                                                           startDate: management.startDate,
+                                                                           alertTime: management.alertTime,
+                                                                           repeatCycle: management.repeatCycle,
+                                                                           body: management.title)
                         }
                     }
                 }
