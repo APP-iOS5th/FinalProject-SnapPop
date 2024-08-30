@@ -100,10 +100,8 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
             }
             
             if repeatCycle == 0 {
-                completionHandler([.banner, .list, .badge, .sound])
-            } else {
-                // 특정 날짜로부터 시작하여 반복되는 관리 알림을 등록하기 위해 특정 날짜에 알림이 트리거되면 반복 알림을 등록한다
-                guard let managementID = userInfo["managementId"] as? String,
+                guard let categoryId = userInfo["categoryId"] as? String,
+                      let managementID = userInfo["managementId"] as? String,
                       let startDate = userInfo["startDate"] as? Date,
                       let alertTime = userInfo["alertTime"] as? Date,
                       let body = userInfo["body"] as? String else {
@@ -111,14 +109,101 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
                     return
                 }
                 
-                NotificationManager.shared.repeatingNotification(managementId: managementID, startDate: startDate,
-                                                                 alertTime: alertTime, repeatCycle: repeatCycle, body: body)
+                let notificationData = NotificationData(categoryId: categoryId, managementId: managementID, title: body, date: alertTime)
+                
+                var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
+                if let encoded = try? JSONEncoder().encode(notificationData) {
+                    savedNotifications.append(encoded)
+                    UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+                }
+                
+                NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
+                
+                
+                completionHandler([.banner, .list, .badge, .sound])
+            } else {
+                // 특정 날짜로부터 시작하여 반복되는 관리 알림을 등록하기 위해 특정 날짜에 알림이 트리거되면 반복 알림을 등록한다
+                guard let categoryId = userInfo["categoryId"] as? String,
+                      let managementID = userInfo["managementId"] as? String,
+                      let startDate = userInfo["startDate"] as? Date,
+                      let alertTime = userInfo["alertTime"] as? Date,
+                      let body = userInfo["body"] as? String else {
+                    completionHandler([])
+                    return
+                }
+                
+                NotificationManager.shared.repeatingNotification(categoryId: categoryId,
+                                                                 managementId: managementID,
+                                                                 startDate: startDate,
+                                                                 alertTime: alertTime,
+                                                                 repeatCycle: repeatCycle,
+                                                                 body: body)
+                
+                let notificationData = NotificationData(categoryId: categoryId, managementId: managementID, title: body, date: alertTime)
+                
+                var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
+                if let encoded = try? JSONEncoder().encode(notificationData) {
+                    savedNotifications.append(encoded)
+                    UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+                }
+                
+                NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
+                
                 completionHandler([])
             }
         }
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        guard let categoryId = userInfo["categoryId"] as? String,
+              let managementID = userInfo["managementId"] as? String,
+              let startDate = userInfo["startDate"] as? Date,
+              let alertTime = userInfo["alertTime"] as? Date,
+              let body = userInfo["body"] as? String else { return }
+        
+        let notificationData = NotificationData(categoryId: categoryId, managementId: managementID, title: body, date: alertTime)
+        
+        switch response.actionIdentifier {
+        case UNNotificationDefaultActionIdentifier:
+            // 알림을 클릭했을 때
+            print("User tapped on the notification")
+
+            var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
+            if let encoded = try? JSONEncoder().encode(notificationData) {
+                savedNotifications.append(encoded)
+                UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+            }
+            
+            NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
+        case UNNotificationDismissActionIdentifier:
+            // 알림을 닫았을 때
+            var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
+            if let encoded = try? JSONEncoder().encode(notificationData) {
+                savedNotifications.append(encoded)
+                UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+            }
+            
+            NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
+        default:
+            var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
+            if let encoded = try? JSONEncoder().encode(notificationData) {
+                savedNotifications.append(encoded)
+                UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+            }
+            
+            NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
+            break
+        }
+        
+        var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
+        if let encoded = try? JSONEncoder().encode(notificationData) {
+            savedNotifications.append(encoded)
+            UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
+        }
+        
+        NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
+        
         completionHandler()
     }
 }

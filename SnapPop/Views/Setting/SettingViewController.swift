@@ -13,6 +13,8 @@ import AuthenticationServices
 
 class SettingViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    private let authViewModel = AuthViewModel()
+    
     private lazy var settingTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.delegate = self
@@ -233,12 +235,18 @@ extension SettingViewController: ASAuthorizationControllerDelegate {
             return
         }
         
+        guard let user = AuthViewModel.shared.currentUser else {
+            print("No current user found")
+            return
+        }
+        
         Auth.auth().revokeToken(withAuthorizationCode: authCodeString)
-        AuthViewModel.shared.currentUser?.delete { error in
+        user.delete { error in
             if let error = error {
                 print("Error deleting user: \(error.localizedDescription)")
             } else {
                 print("Successfully deleted user")
+                self.authViewModel.deleteUserFromCollection(userId: user.uid)
             }
         }
     }
