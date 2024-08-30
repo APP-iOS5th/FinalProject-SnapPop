@@ -110,6 +110,8 @@ final class ManagementService {
                     .delete { error in
                         if let error = error {
                             completion(error)
+                        } else {
+                            completion(nil)
                         }
                     }
             case .failure(let error):

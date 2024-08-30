@@ -474,28 +474,30 @@ class HomeViewController:
         let imageUrl = snap.imageUrls[index]
         
         viewModel.deleteImage(categoryId: categoryId, snap: snap, imageUrlToDelete: imageUrl) { result in
-            switch result {
-            case .success:
-                self.viewModel.snap?.imageUrls.remove(at: index) // 뷰모델의 snap객체에서 삭제할 사진 제거
-                
-                // 사진 아예 다 지워버리면 디비에서 스냅 자체를 삭제하고 nil로 초기화
-                if self.viewModel.snap?.imageUrls.isEmpty == true {
-                    self.viewModel.deleteSnap(categoryId: categoryId, snap: snap)
-                    self.viewModel.snap = nil
-                    self.updateSnapCollectionView()
-                }
-                
-                self.snapCollectionView.performBatchUpdates({
-                    self.snapCollectionView.deleteItems(at: [IndexPath(item: index, section: 0)]) // 컬렉션뷰에서 인덱스로 삭제
-                }) { _ in
-                    // 삭제 후 나머지 셀들이 있다면 태그 업데이트
-                    if self.viewModel.snap != nil {
-                        self.updateCellTags()
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.viewModel.snap?.imageUrls.remove(at: index) // 뷰모델의 snap객체에서 삭제할 사진 제거
+                    
+                    // 사진 아예 다 지워버리면 디비에서 스냅 자체를 삭제하고 nil로 초기화
+                    if self.viewModel.snap?.imageUrls.isEmpty == true {
+                        self.viewModel.deleteSnap(categoryId: categoryId, snap: snap)
+                        self.viewModel.snap = nil
+                        self.updateSnapCollectionView()
                     }
+                    
+                    self.snapCollectionView.performBatchUpdates({
+                        self.snapCollectionView.deleteItems(at: [IndexPath(item: index, section: 0)]) // 컬렉션뷰에서 인덱스로 삭제
+                    }) { _ in
+                        // 삭제 후 나머지 셀들이 있다면 태그 업데이트
+                        if self.viewModel.snap != nil {
+                            self.updateCellTags()
+                        }
+                    }
+                    print("사진 삭제 성공")
+                case .failure(let error):
+                    print("사진 삭제 실패: \(error.localizedDescription)")
                 }
-                print("사진 삭제 성공")
-            case .failure(let error):
-                print("사진 삭제 실패: \(error.localizedDescription)")
             }
         }
     }
