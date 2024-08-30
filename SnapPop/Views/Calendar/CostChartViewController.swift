@@ -34,7 +34,7 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
     
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 20)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -49,7 +49,7 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
     private let totalButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("총액", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -80,12 +80,12 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
         
         NSLayoutConstraint.activate([
             monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 70),
+            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 60),
             
             totalButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            totalButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -70),
+            totalButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -60),
             
-            pieChartView.topAnchor.constraint(equalTo: monthLabel.topAnchor),
+            pieChartView.topAnchor.constraint(equalTo: monthLabel.topAnchor, constant: 10),
             pieChartView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             pieChartView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             pieChartView.heightAnchor.constraint(equalTo: pieChartView.widthAnchor)
@@ -158,12 +158,13 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
         
         let centerText = NSMutableAttributedString(string: "총액\n", attributes: [
             .font: UIFont.boldSystemFont(ofSize: 16),
-            .paragraphStyle: paragraphStyle
+            .paragraphStyle: paragraphStyle,
+            .foregroundColor: UIColor.dynamicTextColor
         ])
         centerText.append(NSAttributedString(string: formatCurrency(totalCost), attributes: [
             .font: UIFont.boldSystemFont(ofSize: 20),
-            .foregroundColor: UIColor.black,
-            .paragraphStyle: paragraphStyle
+            .paragraphStyle: paragraphStyle,
+            .foregroundColor: UIColor.dynamicTextColor
         ]))
         
         pieChartView.centerAttributedText = centerText
@@ -216,12 +217,13 @@ extension CostChartViewController {
         
         let centerText = NSMutableAttributedString(string: "\(selectedItem.name)\n", attributes: [
             .font: UIFont.boldSystemFont(ofSize: 16),
-            .paragraphStyle: paragraphStyle
+            .paragraphStyle: paragraphStyle,
+            .foregroundColor: UIColor.dynamicTextColor
         ])
         centerText.append(NSAttributedString(string: formatCurrency(selectedItem.value), attributes: [
             .font: UIFont.boldSystemFont(ofSize: 20),
             .foregroundColor: selectedItem.color,
-            .paragraphStyle: paragraphStyle
+            .paragraphStyle: paragraphStyle,
         ]))
         
         pieChartView.centerAttributedText = centerText
@@ -232,5 +234,6 @@ extension CostChartViewController {
     }
     @objc private func totalButtonTapped() {
         updateCenterText()
+        pieChartView.highlightValue(nil, callDelegate: false)
     }
 }

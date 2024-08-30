@@ -41,6 +41,7 @@
 		8F1685532C6599A20010F8D8 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1685522C6599A20010F8D8 /* CalendarViewController.swift */; };
 		8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */; };
 		8F83A4B12C7DC73F0095133A /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 8F83A4B02C7DC73F0095133A /* DGCharts */; };
+		8F8F2C882C82240E0006C30F /* UICalendarView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F8F2C872C82240E0006C30F /* UICalendarView+Extensions.swift */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
 		8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215932C745B4300891F93 /* CostChartViewController.swift */; };
 		B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E002C76C7350021A57D /* AddManagementViewController.swift */; };
@@ -115,6 +116,7 @@
 		8F16853D2C63545A0010F8D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F1685522C6599A20010F8D8 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		8F5EE7EB2C6C798C007AF73B /* isDonePercentageChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isDonePercentageChartViewController.swift; sourceTree = "<group>"; };
+		8F8F2C872C82240E0006C30F /* UICalendarView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICalendarView+Extensions.swift"; sourceTree = "<group>"; };
 		8FA215902C731E0500891F93 /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
 		8FA215932C745B4300891F93 /* CostChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostChartViewController.swift; sourceTree = "<group>"; };
 		B8339E002C76C7350021A57D /* AddManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewController.swift; sourceTree = "<group>"; };
@@ -401,6 +403,7 @@
 				C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */,
 				C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */,
 				4A6210262C815344002229C3 /* Notification+Extensions.swift */,
+				8F8F2C872C82240E0006C30F /* UICalendarView+Extensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -632,6 +635,7 @@
 				C246CE5C2C74EF7D00A631BE /* SettingTableViewCell.swift in Sources */,
 				8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */,
 				EA57EB4C2C72CAEC007F8987 /* Snap.swift in Sources */,
+				8F8F2C882C82240E0006C30F /* UICalendarView+Extensions.swift in Sources */,
 				4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */,
 				4AC9A0322C72DE0C00EB5FFC /* CustomTabBarController.swift in Sources */,
 				4A06CC382C8004C60055194A /* CategoryNotiSettingCell.swift in Sources */,

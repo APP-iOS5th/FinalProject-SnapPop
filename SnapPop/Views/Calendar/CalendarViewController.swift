@@ -34,7 +34,7 @@ class CalendarViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = .systemBackground
+        scrollView.backgroundColor = UIColor.customBackgroundColor
         scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = true
         scrollView.showsHorizontalScrollIndicator = false
@@ -42,7 +42,7 @@ class CalendarViewController: UIViewController {
     }()
     private let contentView: UIStackView = {
         let view = UIStackView()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor.customBackgroundColor
         view.axis = .vertical
         view.spacing = 20
         view.alignment = .center
@@ -68,7 +68,7 @@ class CalendarViewController: UIViewController {
         var view = UICalendarView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsDateDecorations = true
-        view.tintColor = UIColor(red: 120/255, green: 200/255, blue: 200/255, alpha: 0.8)
+        view.tintColor = UIColor.customMainColor
         view.backgroundColor = .systemBackground
         return view
     }()
@@ -85,7 +85,7 @@ class CalendarViewController: UIViewController {
     
     private let dashButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(red: 94/255, green: 230/255, blue: 245/255, alpha: 0.2)
+        button.backgroundColor = UIColor.customButtonColor
         button.translatesAutoresizingMaskIntoConstraints = false
         let dashText = "—"
         let attributes: [NSAttributedString.Key: Any] = [
@@ -119,7 +119,7 @@ class CalendarViewController: UIViewController {
         UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.backgroundColor = UIColor(red: 92/255, green: 223/255, blue: 231/255, alpha: 0.6)
+        segmentedControl.backgroundColor = UIColor.customToggleColor
         segmentedControl.layer.borderColor = UIColor.lightGray.cgColor
         segmentedControl.layer.borderWidth = 0.5
         return segmentedControl
@@ -181,7 +181,7 @@ class CalendarViewController: UIViewController {
         addChild(costChart)
         isDoneChart.view.frame = graphView.bounds
         costChart.view.frame = graphView.bounds
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.customBackgroundColor
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addArrangedSubview(firstStackViewView)
@@ -246,7 +246,7 @@ class CalendarViewController: UIViewController {
     private func setupTableViewConstraints() {
         tableViewHeightConstraint?.isActive = false
         
-        let cellHeight: CGFloat = 44
+        let cellHeight: CGFloat = 50
         let numberOfRows = tableView.numberOfRows(inSection: 0)
         let newHeight = CGFloat(numberOfRows) * cellHeight
         
@@ -454,6 +454,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
             return nil
         }
     }
+    
     func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
         guard let visibleMonth = calendarView.visibleDateComponents.month,
               let visibleYear = calendarView.visibleDateComponents.year else {
@@ -703,20 +704,17 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TodoCell", for: indexPath) as? TodoTableViewCell else {
             fatalError("Unable to dequeue CustomTableViewCell")
         }
+        
         filteringMatchingManagements()
         dateFormatter.dateFormat = "yyyy-MM-dd"
+        
         if matchingManagements.isEmpty {
-            cell.checkboxButton.isHidden = true
-            cell.label.text = "등록된 자기관리가 없습니다."
-            cell.label.textAlignment = .center
-            
-            
+            cell.setLabelText("등록된 자기관리가 없습니다.", isManagementEmpty: true)
         } else {
             let management = matchingManagements[indexPath.row]
-            cell.label.text = management.title
-            cell.checkboxButton.isHidden = false
+            cell.setLabelText(management.title, isManagementEmpty: false)
             cell.checkboxButton.tag = indexPath.row
-            cell.label.textAlignment = .left
+            
             let isCompleted = management.completions.contains { (key, value) in
                 if let keyDate = dateFormatter.date(from: key),
                    Calendar.current.isDate(keyDate, inSameDayAs: selectedDate) {
@@ -728,9 +726,9 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
             cell.updateCheckboxColor(color: management.color)
             cell.checkboxButton.addTarget(self, action: #selector(checkboxTapped(_:)), for: .touchUpInside)
         }
+        
         return cell
     }
-    
     @objc func checkboxTapped(_ sender: UIButton) {
         
         sender.isSelected.toggle()
@@ -772,11 +770,4 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         self.calendarView.reloadDecorations(forDateComponents: [dateComponents], animated: true)
         }
     }
-extension UIImage {
-    func resized(to size: CGSize) -> UIImage? {
-        let renderer = UIGraphicsImageRenderer(size: size)
-        return renderer.image { _ in
-            self.draw(in: CGRect(origin: .zero, size: size))
-        }
-    }
-}
+
