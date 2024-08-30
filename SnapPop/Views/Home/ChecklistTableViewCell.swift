@@ -11,6 +11,7 @@ class ChecklistTableViewCell: UITableViewCell {
     
     var managementId: String? // 관리 항목 ID를 저장할 변수 추가
     var onCheckBoxToggle: ((String, Bool) -> Void)? // 체크박스 상태 변경 시 호출할 클로저 추가
+
     // 체크박스 버튼
     let checkBox: UIButton = {
         let button = UIButton(type: .custom)
@@ -45,7 +46,6 @@ class ChecklistTableViewCell: UITableViewCell {
         checkBox.addTarget(self, action: #selector(didTapCheckBox), for: .touchUpInside)
         
         selectionStyle = .none
-
     }
     
     required init?(coder: NSCoder) {
@@ -61,7 +61,6 @@ class ChecklistTableViewCell: UITableViewCell {
         
         // 체크박스 색상 설정
         if let color = UIColor(hex: item.color) {
-            updateCheckBoxImages(with: color)
             checkBox.layer.borderColor = color.cgColor
             checkBox.tintColor = color
         } else {
@@ -71,19 +70,24 @@ class ChecklistTableViewCell: UITableViewCell {
         }
         
         // 체크박스 상태 설정
-        checkBox.isSelected = item.completions[currentDateString()] == 1 // 현재 날짜에 대한 완료 상태 설정
-    }
-
-    // MARK: - 체크박스 이미지 업데이트
-    private func updateCheckBoxImages(with color: UIColor) {
-        let noncheckmarkImage = UIImage(systemName: "circle")?.withTintColor(color, renderingMode: .alwaysOriginal)
-        let checkmarkImage = UIImage(systemName: "circle.fill")?.withTintColor(color, renderingMode: .alwaysOriginal)
-        checkBox.setImage(noncheckmarkImage, for: .normal)
-        checkBox.setImage(checkmarkImage, for: .selected)
+        let isChecked = item.completions[currentDateString()] == 1 // 현재 날짜에 대한 완료 상태 설정
+        updateCheckboxState(isChecked: isChecked) // 상태 업데이트
     }
     
+    // MARK: - 체크박스 이미지 업데이트
+    func updateCheckboxState(isChecked: Bool) {
+        let imageName = isChecked ? "checkmark.circle.fill" : "circle"
+        let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
+        let image = UIImage(systemName: imageName, withConfiguration: configuration)?.withRenderingMode(.alwaysTemplate)
+        checkBox.setImage(image, for: .normal)
+        checkBox.imageView?.contentMode = .scaleAspectFit
+        checkBox.contentHorizontalAlignment = .fill
+        checkBox.contentVerticalAlignment = .fill
+    }
+
     @objc private func didTapCheckBox() {
         checkBox.isSelected.toggle()
+        updateCheckboxState(isChecked: checkBox.isSelected) // 체크박스 상태 업데이트
         if let managementId = managementId {
             onCheckBoxToggle?(managementId, checkBox.isSelected)
         }
