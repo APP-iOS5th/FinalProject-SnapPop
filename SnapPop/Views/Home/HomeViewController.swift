@@ -201,6 +201,7 @@ class HomeViewController:
         }
     }
     
+    // 스냅 업데이트 및 UI 리로드
     func updateSnapCollectionView() {
         DispatchQueue.main.async {
             self.snapCollectionView.reloadData() // UI 업데이트
@@ -217,17 +218,11 @@ class HomeViewController:
         // 카테고리 변경 시 snapCollectionView 리로드
         updateSnapCollectionView()
     }
-    // 스냅 업데이트 및 UI 리로드
-    @objc private func updateSnapCollectionView() {
-        DispatchQueue.main.async {
-            self.snapCollectionView.reloadData() // UI 업데이트
-        }
-    }
     
     private func updateUIWithCategories() {
-           // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
-           print("Loaded categories: \(navigationBarViewModel.categories)")
-       }
+        // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
+        print("Loaded categories: \(navigationBarViewModel.categories)")
+    }
     /// 날짜 선택 DatePicker UI 설정
     private func setupDatePickerView() {
         view.addSubview(datePickerContainer)

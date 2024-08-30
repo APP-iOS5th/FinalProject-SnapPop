@@ -258,7 +258,6 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    // MARK: - CategoryChangeDelegate
     func categoryDidChange(to newCategoryId: String?) {
         self.selectedCategoryId = newCategoryId
         
