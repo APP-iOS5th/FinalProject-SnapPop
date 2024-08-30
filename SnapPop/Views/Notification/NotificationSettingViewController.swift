@@ -82,8 +82,11 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
                 return UITableViewCell()
             }
             
+            let isRecommendNotificationOn = UserDefaults.standard.bool(forKey: "isRecommendNotificationOn")
+            
             cell.selectionStyle = .none
-            cell.configure(title: "추천 알림", isOn: true)
+            cell.configure(title: "추천 알림", isOn: isRecommendNotificationOn)
+            cell.toggleSwitch.addTarget(self, action: #selector(recommendNotificationSwitchChanged), for: .valueChanged)
             return cell
             
         case 1:
@@ -97,7 +100,6 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
                 let index = indexPath.row
                 self.viewModel.categories[index].alertStatus.toggle()
                 
-               
                 let updatedCategory = self.viewModel.categories[index]
                 guard let updatedCategoryId = updatedCategory.id else { return }
                 
@@ -141,6 +143,20 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
             return "카테고리 알림 설정"
         default:
             return nil
+        }
+    }
+    
+    // 추천 알림 toggle 액션
+    @objc private func recommendNotificationSwitchChanged(_ sender: UISwitch) {
+        UserDefaults.standard.set(sender.isOn, forKey: "isRecommendNotificationOn")
+        
+        if sender.isOn {
+            // 알림 켜기
+            UserDefaults.standard.set(true, forKey: "isRecommendNotificationOn")
+        } else {
+            // 알림 끄기
+            UserDefaults.standard.set(false, forKey: "isRecommendNotificationOn")
+            NotificationManager.shared.removeNotification(identifiers: ["dailySnapNotification"])
         }
     }
 }

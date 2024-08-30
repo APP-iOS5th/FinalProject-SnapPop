@@ -162,9 +162,14 @@ class HomeViewModel: ObservableObject {
                         let calendar = Calendar.current
                         let hour = calendar.component(.hour, from: now)   // 현재 시간
                         
-                        // 기존 알림은 지우고 새로운 스냅 알림 등록
-                        NotificationManager.shared.removeNotification(identifiers: ["dailySnapNotification"])
-                        NotificationManager.shared.scheduleDailySnapNotification(hour: hour)
+                        // 추천 알림의 Bool값에 따라 알림 추가
+                        let isRecommendNotificationOn = UserDefaults.standard.bool(forKey: "isRecommendNotificationOn")
+                        if isRecommendNotificationOn {
+                            // 기존 알림은 지우고 새로운 스냅 알림 등록
+                            NotificationManager.shared.removeNotification(identifiers: ["dailySnapNotification"])
+                            NotificationManager.shared.scheduleDailySnapNotification(hour: hour)
+                        }
+                        
                         
                         completion(.success(snap))
                     case .failure(let error):
