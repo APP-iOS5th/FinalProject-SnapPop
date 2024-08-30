@@ -7,13 +7,6 @@
 
 import UIKit
 
-struct NotificationData: Codable {
-    let categoryId: String
-    let managementId: String
-    let title: String
-    let date: Date
-}
-
 extension Notification.Name {
     static let newNotificationReceived = Notification.Name("newNotificationReceived")
 }
@@ -88,7 +81,7 @@ class NotificationViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
-        loadNotifications() 
+        loadNotifications()
     }
     
     // MARK: - Methods
