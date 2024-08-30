@@ -40,8 +40,6 @@ class ChecklistTableViewController: UITableViewController {
         tableView.dataSource = self
         tableView.delegate = self
         
-        setupRefreshControl()
-        
         // 데이터 가져오기
         loadData()
 
