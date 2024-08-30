@@ -14,6 +14,7 @@
 		4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */; };
 		4A20F6492C6C32E900F263FF /* SnapComparisonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */; };
 		4A6210232C80E634002229C3 /* ManagementTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */; };
+		4A6210252C8152CB002229C3 /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210242C8152CB002229C3 /* NotificationData.swift */; };
 		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
 		4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4AC605B32C78769D00D3AF19 /* Kingfisher */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
@@ -89,6 +90,7 @@
 		4A20F6462C6C32B600F263FF /* SnapComparisonSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonSheetViewModel.swift; sourceTree = "<group>"; };
 		4A20F6482C6C32E900F263FF /* SnapComparisonCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapComparisonCellViewModel.swift; sourceTree = "<group>"; };
 		4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementTableViewCell.swift; sourceTree = "<group>"; };
+		4A6210242C8152CB002229C3 /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
 		4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySettingsTableViewCell.swift; sourceTree = "<group>"; };
 		4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBarController.swift; sourceTree = "<group>"; };
 		4AC9A0312C72DE0C00EB5FFC /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
@@ -352,6 +354,7 @@
 				EA57EB492C72CAD2007F8987 /* Management.swift */,
 				EA57EB4B2C72CAEC007F8987 /* Snap.swift */,
 				C2F080FF2C7D6DD600BE8B0D /* DetailCost.swift */,
+				4A6210242C8152CB002229C3 /* NotificationData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -602,6 +605,7 @@
 				C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */,
 				4A06CC352C7F83D20055194A /* NotificationSettingViewController.swift in Sources */,
 				B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */,
+				4A6210252C8152CB002229C3 /* NotificationData.swift in Sources */,
 				EA57EB482C72CAAC007F8987 /* Category.swift in Sources */,
 				EA5047612C6500870033D807 /* HomeViewModel.swift in Sources */,
 				8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */,
