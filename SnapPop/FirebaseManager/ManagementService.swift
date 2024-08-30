@@ -187,53 +187,60 @@ final class ManagementService {
                 }
             }
     }
+      
+    func saveDetailCost(categoryId: String, managementId: String, detailCost: DetailCost, completion: @escaping (Result<Void, Error>) -> Void) {
+        var updatedDetailCost = detailCost
+        updatedDetailCost.managementId = managementId
+        
+        let documentRef = db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
+            .document(categoryId)
+            .collection("Managements")
+            .document(managementId)
+            .collection("DetailCosts")
+            .document()
+
+        updatedDetailCost.id = documentRef.documentID
+
+        do {
+            try documentRef.setData(from: updatedDetailCost) { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success(()))
+                }
+            }
+        } catch {
+            completion(.failure(error))
+        }
+    }
     
-    func getManagementExceptions(categoryId: String, managementId: String, completion: @escaping (Result<[Date], Error>) -> Void) {
+    func loadDetailCosts(categoryId: String, managementId: String, completion: @escaping (Result<[DetailCost], Error>) -> Void) {
         db.collection("Users")
             .document(AuthViewModel.shared.currentUser?.uid ?? "")
             .collection("Categories")
             .document(categoryId)
             .collection("Managements")
             .document(managementId)
-            .getDocument { (document, error) in
+            .collection("DetailCosts")
+            .getDocuments { (querySnapshot, error) in
                 if let error = error {
                     completion(.failure(error))
                     return
                 }
                 
-                guard let document = document, document.exists else {
-                    completion(.failure(NSError(domain: "FirestoreError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Management document not found"])))
+                guard let documents = querySnapshot?.documents else {
+                    completion(.success([]))
                     return
                 }
                 
-                let exceptionDates = document.data()?["exceptionDates"] as? [String] ?? []
-                let dates = exceptionDates.compactMap { dateString -> Date? in
-                    self.dateFormatter.date(from: dateString)
+                let detailCosts = documents.compactMap { document -> DetailCost? in
+                    try? document.data(as: DetailCost.self)
                 }
                 
-                completion(.success(dates))
+                completion(.success(detailCosts))
             }
-    }
-    
-    func saveDetailCost(categoryId: String, managementId: String, detailCost: DetailCost, completion: @escaping (Result<Void, Error>) -> Void) {
-        do {
-            try db.collection("Users")
-                .document(AuthViewModel.shared.currentUser?.uid ?? "")
-                .collection("Categories")
-                .document(categoryId)
-                .collection("Managements")
-                .document(managementId)
-                .collection("DetailCosts")
-                .addDocument(from: detailCost) { error in
-                    if let error = error {
-                        completion(.failure(error))
-                        return
-                    }
-                    completion(.success(()))
-                }
-        } catch {
-            completion(.failure(error))
-        }
     }
     
     // 관리 하위의 상세 내역들 모두 삭제
