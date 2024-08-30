@@ -275,7 +275,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     
     /// Firebase Snap Load Method
     func loadSanpstoFireStore(to categoryId: String) {
-        snapService.loadSnaps(categoryId: categoryId) { result in
+        snapService.loadSnaps(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: categoryId) { result in
             switch result {
             case .success(let snaps):
                 print("[FB] [Snap비교] 파이어베이스 스냅 로드")
