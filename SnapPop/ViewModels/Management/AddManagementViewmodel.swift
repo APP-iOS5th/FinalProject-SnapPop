@@ -26,7 +26,8 @@ class AddManagementViewModel {
     var management: Management
     var detailCostArray: [DetailCost] = [] // 추가한 상세 비용들을 담을 배열
     private let db = ManagementService()
-    
+    private let categoryService = CategoryService()
+
     let repeatOptions = ["매일", "매주", "안함"]
     
     init(categoryId: String?, management: Management) {
@@ -115,6 +116,19 @@ class AddManagementViewModel {
             .store(in: &cancellables)
     }
     
+    func loadCategories(completion: @escaping (Result<[Category], Error>) -> Void) {
+        categoryService.loadCategories { result in
+            switch result {
+            case .success(let categories):
+                print("카테고리를 성공적으로 불러왔습니다: \(categories)")
+                completion(.success(categories))
+            case .failure(let error):
+                print("카테고리 불러오기 실패: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
+    }
+    
     func updateRepeatCycle(_ cycleIndex: Int) {
         self.repeatCycle = cycleIndex
         
@@ -139,16 +153,39 @@ class AddManagementViewModel {
     }
     
     func saveOrUpdate(completion: @escaping (Result<Void, Error>) -> Void) {
-        if edit {
-            // 편집 모드 - 관리 항목 업데이트
-            guard let categoryId = categoryId, let managementId = management.id else {
-                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "카테고리 ID 또는 관리 항목 ID가 필요합니다."])))
-                return
+        guard let categoryId = self.categoryId else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "카테고리 ID가 필요합니다."])))
+            return
+        }
+
+        checkCategoryNotificationStatus(categoryId: categoryId) { isCategoryNotificationEnabled in
+            if self.edit {
+                // 편집 모드 - 관리 항목 업데이트
+                guard let managementId = self.management.id else {
+                    completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "관리 항목 ID가 필요합니다."])))
+                    return
+                }
+                self.db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: self.management) { result in
+                    if case .success = result {
+                        // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
+                        if isCategoryNotificationEnabled && self.management.alertStatus {
+                            self.addNotification(for: self.management)
+                        }
+                    }
+                    completion(result)
+                }
+            } else {
+                // 추가 모드 - 새로운 관리 항목 저장
+                self.save { result in
+                    if case .success = result {
+                        // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
+                        if isCategoryNotificationEnabled && self.management.alertStatus {
+                            self.addNotification(for: self.management)
+                        }
+                    }
+                    completion(result)
+                }
             }
-            db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: management, completion: completion)
-        } else {
-            // 추가 모드 - 새로운 관리 항목 저장(맞네이렇게해야되네)
-            save(completion: completion)
         }
     }
     
@@ -231,6 +268,58 @@ class AddManagementViewModel {
             case .failure(let error):
                 print("Failed to save management: \(error.localizedDescription)")
                 completion(.failure(error))
+            }
+        }
+    }
+    
+    // 카테고리 알림 상태 확인 메서드 추가
+    private func checkCategoryNotificationStatus(categoryId: String, completion: @escaping (Bool) -> Void) {
+        categoryService.loadCategories { result in
+            switch result {
+            case .success(let categories):
+                // 특정 categoryId를 가진 카테고리 검색
+                if let category = categories.first(where: { $0.id == categoryId }) {
+                    completion(category.alertStatus)
+                } else {
+                    print("카테고리를 찾을 수 없습니다.")
+                    completion(false)
+                }
+            case .failure(let error):
+                print("카테고리 로드 실패: \(error.localizedDescription)")
+                completion(false)
+            }
+        }
+    }
+
+    // 알림 추가 메서드 추가
+    private func addNotification(for management: Management) {
+        guard let categoryId = self.categoryId, let managementId = management.id else { return }
+        
+        if management.repeatCycle == 0 {
+            // 한 번만 알림 추가
+            NotificationManager.shared.initialNotification(categoryId: categoryId,
+                                                           managementId: managementId,
+                                                           startDate: management.startDate,
+                                                           alertTime: management.alertTime,
+                                                           repeatCycle: management.repeatCycle,
+                                                           body: management.title)
+        } else {
+            if isSpecificDateInPast(startDate: self.startDate, alertTime: self.alertTime) {
+                // 과거 날짜에 대한 반복 알림 추가
+                NotificationManager.shared.repeatingNotification(categoryId: categoryId,
+                                                                 managementId: managementId,
+                                                                 startDate: management.startDate,
+                                                                 alertTime: management.alertTime,
+                                                                 repeatCycle: management.repeatCycle,
+                                                                 body: management.title)
+            } else {
+                // 반복 알림을 트리거할 초기 알림 추가
+                NotificationManager.shared.initialNotification(categoryId: categoryId,
+                                                               managementId: managementId,
+                                                               startDate: management.startDate,
+                                                               alertTime: management.alertTime,
+                                                               repeatCycle: management.repeatCycle,
+                                                               body: management.title)
             }
         }
     }

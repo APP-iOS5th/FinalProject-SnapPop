@@ -67,7 +67,12 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
 
         print(UserDefaults.standard.dictionaryRepresentation())
         viewModel.categoryDidChange(to: UserDefaults.standard.string(forKey: "currentCategoryId") ?? "default")
-//        bindViewModel() // ViewModel 바인딩(combine)
+        // 네비게이션 타이틀 설정
+        if viewModel.edit {
+            title = "관리 수정"
+        } else {
+            title = "새로운 자기 관리"
+        }
     }
     
     // NotificationCenter에서 사용할 메서드
