@@ -97,18 +97,72 @@ final class ManagementService {
             }
     }
     
-    func deleteManagement(categoryId: String, managementId: String, completion: @escaping (Error?) -> Void) {
-        db.collection("Users")
-            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+    func deleteManagement(userId: String, categoryId: String, managementId: String, completion: @escaping (Error?) -> Void) {
+        deleteDetailCosts(userId: userId, categoryId: categoryId, managementId: managementId) { result in
+            switch result {
+            case .success:
+                self.db.collection("Users")
+                    .document(userId)
+                    .collection("Categories")
+                    .document(categoryId)
+                    .collection("Managements")
+                    .document(managementId)
+                    .delete { error in
+                        if let error = error {
+                            completion(error)
+                        }
+                    }
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+    
+    // 관리들 모두 삭제
+    func deleteManagements(userId: String, categoryId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        let documentRef = db.collection("Users")
+            .document(userId)
             .collection("Categories")
             .document(categoryId)
             .collection("Managements")
-            .document(managementId)
-            .delete { error in
-                if let error = error {
-                    completion(error)
+        
+        documentRef.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                completion(.failure(error))
+                return
+            } else {
+                guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                    completion(.success(()))
+                    return
+                }
+                
+                let group = DispatchGroup()
+                
+                for document in documents {
+                    group.enter()
+                    self.deleteDetailCosts(userId: userId, categoryId: categoryId, managementId: document.documentID) { result in
+                        switch result {
+                        case .success:
+                            document.reference.delete { error in
+                                if let error = error {
+                                    completion(.failure(error))
+                                    group.leave()
+                                    return
+                                }
+                                group.leave()
+                            }
+                        case .failure(let error):
+                            completion(.failure(error))
+                            group.leave()
+                        }
+                    }
+                }
+                
+                group.notify(queue: .main) {
+                    completion(.success(()))
                 }
             }
+        }
     }
     
     func addManagementException(categoryId: String, managementId: String, exceptionDate: Date, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -177,6 +231,46 @@ final class ManagementService {
                 }
         } catch {
             completion(.failure(error))
+        }
+    }
+    
+    // 관리 하위의 상세 내역들 모두 삭제
+    func deleteDetailCosts(userId: String, categoryId: String, managementId: String, completion: @escaping (Result<Void ,Error>) -> Void) {
+        let documentRef = db.collection("Users")
+            .document(userId)
+            .collection("Categories")
+            .document(categoryId)
+            .collection("Managements")
+            .document(managementId)
+            .collection("DetailCosts")
+        
+        documentRef.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                completion(.failure(error))
+                return
+            } else {
+                guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                    completion(.success(()))
+                    return
+                }
+                
+                let group = DispatchGroup()
+                
+                for document in documents {
+                    group.enter()
+                    document.reference.delete { error in
+                        if let error = error {
+                            completion(.failure(error))
+                            return
+                        }
+                        group.leave()
+                    }
+                }
+                
+                group.notify(queue: .main) {
+                    completion(.success(()))
+                }
+            }
         }
     }
 }
