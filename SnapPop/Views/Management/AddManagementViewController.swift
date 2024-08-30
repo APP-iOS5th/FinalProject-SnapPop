@@ -339,38 +339,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             return nil
         }
     }
-    // 상세내역 아무것도 없을떄
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if section == 3 && viewModel.detailCostArray.isEmpty {
-            let footerView = UIView()
-            let label = UILabel()
-            label.text = "아래의 버튼을 눌러 상세 내역을 추가해보세요!"
-            label.textAlignment = .center
-            label.textColor = .gray
-            label.font = UIFont.systemFont(ofSize: 14)
-            label.translatesAutoresizingMaskIntoConstraints = false
-
-            footerView.addSubview(label)
-
-            NSLayoutConstraint.activate([
-                label.centerXAnchor.constraint(equalTo: footerView.centerXAnchor),
-                label.centerYAnchor.constraint(equalTo: footerView.centerYAnchor),
-                label.leadingAnchor.constraint(equalTo: footerView.leadingAnchor, constant: 16),
-                label.trailingAnchor.constraint(equalTo: footerView.trailingAnchor, constant: -16)
-            ])
-
-            return footerView
-        }
-        return nil
-    }
-
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if section == 3 && viewModel.detailCostArray.isEmpty {
-            return 50 // Footer 높이 설정
-        }
-        return 0
-    }
-
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {

@@ -4,7 +4,6 @@
 //
 //  Created by 장예진 on 8/9/24.
 //
-
 import Combine
 import UIKit
 import FirebaseFirestore
@@ -158,6 +157,7 @@ class AddManagementViewModel {
             return
         }
 
+        // 카테고리의 알림 상태 확인
         checkCategoryNotificationStatus(categoryId: categoryId) { isCategoryNotificationEnabled in
             if self.edit {
                 // 편집 모드 - 관리 항목 업데이트
@@ -170,6 +170,9 @@ class AddManagementViewModel {
                         // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
                         if isCategoryNotificationEnabled && self.management.alertStatus {
                             self.addNotification(for: self.management)
+                        } else {
+                            // 알림 상태가 false이거나 카테고리 알림이 꺼져 있으면 기존 알림 취소
+                            self.cancelNotification(for: self.management)
                         }
                     }
                     completion(result)
@@ -181,6 +184,9 @@ class AddManagementViewModel {
                         // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
                         if isCategoryNotificationEnabled && self.management.alertStatus {
                             self.addNotification(for: self.management)
+                        } else {
+                            // 알림 상태가 false이거나 카테고리 알림이 꺼져 있으면 기존 알림 취소
+                            self.cancelNotification(for: self.management)
                         }
                     }
                     completion(result)
@@ -188,6 +194,7 @@ class AddManagementViewModel {
             }
         }
     }
+
     
     // 유효성 검증 프로퍼티
     var isValid: AnyPublisher<Bool, Never> {
@@ -262,6 +269,9 @@ class AddManagementViewModel {
                                                                            body: management.title)
                         }
                     }
+                } else {
+                    // 알림 상태가 false일 때 기존 알림 취소
+                    self.cancelNotification(for: management)
                 }
                 
                 completion(.success(()))
@@ -270,6 +280,15 @@ class AddManagementViewModel {
                 completion(.failure(error))
             }
         }
+    }
+       
+    private func cancelNotification(for management: Management) {
+        guard let categoryId = self.categoryId, let managementId = management.id else { return }
+        let identifiers = [
+            "initialNotification-\(categoryId)-\(managementId)",
+            "repeatingNotification-\(categoryId)-\(managementId)"
+        ]
+        NotificationManager.shared.removeNotification(identifiers: identifiers)
     }
     
     // 카테고리 알림 상태 확인 메서드 추가

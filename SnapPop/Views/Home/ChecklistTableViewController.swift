@@ -215,7 +215,15 @@ class ChecklistTableViewController: UITableViewController {
                     case .success():
                         // 삭제가 성공한 경우 UI 업데이트
                         viewModel.checklistItems.remove(at: indexPath.row)
-                        tableView.deleteRows(at: [indexPath], with: .automatic)
+                        
+                        if viewModel.checklistItems.isEmpty {
+                            // 모든 항목이 삭제된 경우 전체 섹션을 다시 로드하여 빈 상태를 보여줍니다.
+                            tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                        } else {
+                            // 항목이 남아 있는 경우 해당 행만 삭제합니다.
+                            tableView.deleteRows(at: [indexPath], with: .automatic)
+                        }
+                        
                         completionHandler(true)
                     case .failure(let error):
                         // 삭제가 실패한 경우 사용자에게 알림
@@ -273,6 +281,7 @@ class ChecklistTableViewController: UITableViewController {
         
         return configuration
     }
+
 
 
     // 왼쪽으로 스와이프할 때 핀 고정 액션 추가
