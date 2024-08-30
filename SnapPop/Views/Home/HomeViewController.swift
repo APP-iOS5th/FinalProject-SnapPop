@@ -129,17 +129,25 @@ class HomeViewController:
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
-    
     // 체크리스트 테이블
     private let checklistTableViewController = ChecklistTableViewController()
+    // 스냅 추가 안내문구
+    private let noImageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "사진을 추가해보세요!"
+        label.textColor = .gray
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
     deinit {
-         NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
-     }
-    
+        NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
@@ -179,18 +187,24 @@ class HomeViewController:
         snapCollectionView.dropDelegate = self
     }
     
-    @objc private func updateSnapCollectionView() {
-        DispatchQueue.main.async {
-            self.snapCollectionView.reloadData() // UI 업데이트
-        }
-    }
+    // MARK: - Notification Handling
     @objc private func categoryDidChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
             viewModel.categoryDidChange(to: categoryId)
         } else {
             viewModel.categoryDidChange(to: nil)
         }
+        
+        // 카테고리 변경 시 snapCollectionView 리로드
+        updateSnapCollectionView()
     }
+    // 스냅 업데이트 및 UI 리로드
+    @objc private func updateSnapCollectionView() {
+        DispatchQueue.main.async {
+            self.snapCollectionView.reloadData() // UI 업데이트
+        }
+    }
+    
     private func updateUIWithCategories() {
            // 카테고리 목록을 UI에 반영하는 로직을 추가합니다.
            print("Loaded categories: \(navigationBarViewModel.categories)")
@@ -315,6 +329,8 @@ class HomeViewController:
         view.addSubview(addButton)
         view.addSubview(snapCollectionView)
         
+        view.addSubview(noImageLabel)
+        
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
@@ -326,6 +342,9 @@ class HomeViewController:
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
+            noImageLabel.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.08),
+            noImageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor), // 중앙 정렬
+            
             snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.01),
             snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             snapCollectionView.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -view.bounds.width * 0.02),
@@ -336,8 +355,12 @@ class HomeViewController:
             addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.10),
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor)
         ])
-        
+           
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
+        snapCollectionView.bringSubviewToFront(noImageLabel)
+        // 초기 상태 설정
+        snapCollectionView.isHidden = true
+        noImageLabel.isHidden = false
     }
     /// 스냅뷰 (UICollectionViewDataSource)
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -346,19 +369,37 @@ class HomeViewController:
     ///스냅뷰 ( UICollectionViewDataSource - Cell Configuration)
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
-        
-        let isFirst = indexPath.item == 0
-        guard let snap = viewModel.snap else {
-            return cell
+
+        // viewModel의 snap 객체 가져오기
+        let snap = viewModel.snap
+
+        // snap이 nil이거나 이미지 URL이 비어 있는 경우 문구와 아이콘 표시
+        if snap == nil || snap!.imageUrls.isEmpty {
+            print("snap이 nil이거나 이미지 URL이 비어 있습니다.")
+            
+            // `snapCollectionView` 숨기기
+            snapCollectionView.isHidden = true
+            noImageLabel.isHidden = false
+            
+            // 셀 초기화
+            cell.prepareForReuse()
+            
+        } else {
+            // `snap` 객체가 존재하고 이미지 URL이 있는 경우 셀 구성
+            let snap = snap!
+            let isFirst = indexPath.item == 0
+
+            cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
+            cell.deleteButton.tag = indexPath.item
+            cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
+            cell.currentIndex = indexPath.item
+            cell.imageUrls = snap.imageUrls
+
+            // `snapCollectionView` 보이기
+            snapCollectionView.isHidden = false
+            noImageLabel.isHidden = true
         }
-        
-        cell.configure(with: snap, index: indexPath.item, isFirst: isFirst, isEditing: self.isEditingMode)
-        cell.deleteButton.tag = indexPath.item
-        cell.deleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
-        //cell.delegate = self
-        cell.currentIndex = indexPath.item
-        cell.imageUrls = snap.imageUrls
-        
+
         return cell
     }
     ///스냅뷰 (UICollectionViewDelegateFlowLayout)
@@ -701,4 +742,3 @@ extension HomeViewController: UIImagePickerControllerDelegate {
         picker.dismiss(animated: true, completion: nil)
     }
 }
-
