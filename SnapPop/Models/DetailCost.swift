@@ -14,4 +14,5 @@ struct DetailCost: Identifiable, Hashable, Codable {
     var title: String
     var description: String?
     var oneTimeCost: Int?
+    var managementId: String?
 }

@@ -16,6 +16,8 @@ class CalendarViewController: UIViewController {
     var categoryId = ""
     var hasSnapDates: Set<DateComponents> = []
     var managements: [Management] = []
+    private var detailCosts: [DetailCost] = []
+    private var detailCostsCache: [String: [DetailCost]] = [:]
     private var matchingManagements: [Management] = []
     private var snapService = SnapService()
     private var managementService = ManagementService()
@@ -145,7 +147,7 @@ class CalendarViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil) //구독
+        NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
         calendarView.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
@@ -452,24 +454,41 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         isDoneChart.updateChart(withPercentage: percentage)
         updatMonthlyInfo(month: month, year: year)
     }
-    
-    private func updateCostChart(month: Int, year: Int) {
-       
-        let chartColorsFromManagement: [UIColor]
-        let chartValues: [Int]
-        let chartNames: [String]
-                
-        let chartItems = [
-                   ChartItem(name: "식비", value: 300000, color: .systemRed),
-                   ChartItem(name: "주거비", value: 500000, color: .systemBlue),
-                   ChartItem(name: "교통비", value: 100000, color: .systemGreen),
-                   ChartItem(name: "여가비", value: 200000, color: .systemOrange),
-                   ChartItem(name: "기타", value: 150000, color: .systemGray)
-               ]
-               
-               // CostChartViewController의 updateChartData 메서드 호출
-               costChart.updateChartData(chartItems)
+
+    func updateChartData(month: Int, year: Int) -> (names: [String], values: [Int], colors: [String]) {
+        var chartNames: [String] = []
+        var chartValues: [Int] = []
+        var managementIds: [String] = []
+        
+        for (managementId, detailCosts) in detailCostsCache {
+            for detailCost in detailCosts {
+                chartNames.append(detailCost.title)
+                if let cost = detailCost.oneTimeCost {
+                    let completionCount = countingCompletionOfManagement(managementId: managementId, month: month, year: year)
+                    chartValues.append(cost * completionCount)
+                }
+                managementIds.append(detailCost.managementId!)
+            }
+        }
+        
+        let chartColors = managementIds.compactMap { getDetailColor(managementId: $0) }
+        
+        return (chartNames, chartValues, chartColors)
     }
+
+    private func updateCostChart(month: Int, year: Int) {
+        guard !managements.isEmpty else { return }
+        
+        let (chartNames, chartValues, chartColors) = updateChartData(month: month, year: year)
+        
+        let chartItems = zip(zip(chartNames, chartValues), chartColors).map { (nameValue, colorString) in
+            ChartItem(name: nameValue.0, value: nameValue.1, color: UIColor(hex: colorString) ?? .systemGray)
+        }
+        
+        // CostChartViewController의 updateChartData 메서드 호출
+        costChart.updateChartData(chartItems)
+    }
+    
     
     func compareYearMonth(_ year: Int, _ month: Int, with dateString: String) -> Bool {
         // 1. 년과 월을 사용하여 비교할 문자열 생성
@@ -511,6 +530,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
             }
         }
     }
+    
     func loadManagements(completion: @escaping () -> Void) {
         managementService.loadManagements(categoryId: categoryId) { [weak self] result in
             switch result {
@@ -528,6 +548,38 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         }
     }
     
+    func loadDetailCosts(categoryId: String, managementId: String, completion: @escaping (Result<[DetailCost], Error>) -> Void) {
+        managementService.loadDetailCosts(categoryId: categoryId, managementId: managementId) { result in
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+    }
+
+    func loadInitialChartData(categoryId: String, completion: @escaping () -> Void) {
+        let group = DispatchGroup()
+        
+        for management in managements {
+            group.enter()
+            loadDetailCosts(categoryId: categoryId, managementId: management.id!) { [weak self] result in
+                defer { group.leave() }
+                
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let detailCosts):
+                    self.detailCostsCache[management.id!] = detailCosts
+                case .failure(let error):
+                    print("Error loading detail costs for management \(management.id!): \(error)")
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion()
+        }
+    }
+    
     private func filteringMatchingManagements() {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         selectedDate = selectedDateComponents?.date ?? Date()
@@ -539,6 +591,21 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
                 return false
             }
         }
+    }
+    
+    private func getDetailColor(managementId: String) -> String? {
+        return managements.first { $0.id == managementId }?.color
+    }
+    
+    private func countingCompletionOfManagement(managementId: String, month: Int, year: Int) -> Int {
+        var totalCompletions = 0
+        let completions = managements.first { $0.id == managementId }?.completions
+        for (key, value) in completions! {
+            if compareYearMonth(year, month, with: key) {
+                totalCompletions += value
+            }
+        }
+        return totalCompletions
     }
     
     private func getAllDatesForMonth(year: Int, month: Int) -> [DateComponents] {
@@ -560,12 +627,14 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
                 multiSelection.setSelectedDates([], animated: true)
             }
-        loadManagements {
-            if let month = self.calendarView.visibleDateComponents.month, let year = self.calendarView.visibleDateComponents.year {
-                self.updateIsDoneChart(month: month, year: year)
+        if let month = self.calendarView.visibleDateComponents.month, let year = self.calendarView.visibleDateComponents.year {
+            loadManagements {
+                 self.updateIsDoneChart(month: month, year: year)
+            }
+            loadInitialChartData(categoryId: categoryId) {
+                self.updateCostChart(month: month, year: year)
             }
         }
-
         updateSnapsForMonth()
         selectedDateComponents = nil
         tableView.isHidden = true
@@ -653,6 +722,7 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         
         if let month = calendarView.visibleDateComponents.month, let year = calendarView.visibleDateComponents.year {
             updateIsDoneChart(month: month, year: year)
+            updateCostChart(month: month, year: year)
         }
         let dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: selectedDate)
         self.calendarView.reloadDecorations(forDateComponents: [dateComponents], animated: true)
