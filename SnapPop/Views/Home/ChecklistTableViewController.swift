@@ -176,12 +176,31 @@ class ChecklistTableViewController: UITableViewController {
     
     private func handleCheckBoxToggle(managementId: String, isCompleted: Bool) {
         guard let viewModel = viewModel else { return }
-        let currentDate = Date()
-        
-        managementService.updateCompletion(categoryId: viewModel.selectedCategoryId ?? "default", managementId: managementId, date: currentDate, isCompleted: isCompleted) { result in
+
+        // 선택된 항목의 관리 아이템 가져오기
+        guard let selectedManagementIndex = viewModel.checklistItems.firstIndex(where: { $0.id == managementId }) else { return }
+
+        // 관리 항목이 선택된 날짜를 가져오기
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let selectedDate = viewModel.selectedDate
+        let selectedDateString = dateFormatter.string(from: selectedDate)
+
+        // 완료 상태 업데이트
+        managementService.updateCompletion(categoryId: viewModel.selectedCategoryId ?? "default", managementId: managementId, date: selectedDate, isCompleted: isCompleted) { result in
             switch result {
             case .success():
                 print("Completion status updated successfully")
+
+                // 완료 상태 업데이트 후 ViewModel에서 필터링 다시 적용
+                if isCompleted {
+                    viewModel.checklistItems[selectedManagementIndex].completions[selectedDateString] = 1
+                } else {
+                    viewModel.checklistItems[selectedManagementIndex].completions[selectedDateString] = 0
+                }
+                
+                viewModel.filterManagements(for: viewModel.selectedDate) // 필터링 재적용
+                self.tableView.reloadData()                 
             case .failure(let error):
                 print("Failed to update completion status: \(error.localizedDescription)")
                 self.showAlert(title: "업데이트 실패", message: "완료 상태를 업데이트할 수 없습니다. 다시 시도해 주세요.")
