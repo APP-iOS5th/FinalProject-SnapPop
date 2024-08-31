@@ -107,4 +107,9 @@ struct NotificationManager {
     func removeNotification(identifiers: [String]) {
         center.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
+    
+    // 알림 전체삭제
+    func removeAllNotifications() {
+        center.removeAllPendingNotificationRequests()
+    }
 }

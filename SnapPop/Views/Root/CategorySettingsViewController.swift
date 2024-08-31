@@ -256,7 +256,7 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
             } else {
                 // 알림 OFF
                 // 1. Managements의 alertStateTrue의 알림 삭제
-                self.viewModel.registerAllNotifications(for: updatedCategoryId)
+                self.viewModel.removeAllNotifications(for: updatedCategoryId)
             }
             
             self.viewModel.updateCategory(categoryId: updatedCategory.id!, category: updatedCategory) {
