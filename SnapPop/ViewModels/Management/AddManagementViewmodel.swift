@@ -81,7 +81,11 @@ class AddManagementViewModel {
         
         $startDate
             .sink { [weak self] newValue in
-                self?.management.startDate = newValue
+                guard let self = self else { return }
+                self.management.startDate = newValue
+                if self.edit {
+                    self.updateCompletions()
+                }
             }
             .store(in: &cancellables)
         
@@ -99,9 +103,12 @@ class AddManagementViewModel {
                     repeatValue = 0
                 }
                 self?.management.repeatCycle = repeatValue
+                if self?.edit == true {
+                    self?.updateCompletions()
+                }
             }
             .store(in: &cancellables)
-        
+            
         $alertTime
             .sink { [weak self] newValue in
                 self?.management.alertTime = newValue
@@ -143,6 +150,13 @@ class AddManagementViewModel {
             repeatValue = 0
         }
         self.management.repeatCycle = repeatValue
+    }
+    
+    private func updateCompletions() {
+        // 초기화
+        self.management.completions.removeAll()
+        // 새로운 completions 값 생성
+        self.management.completions = generateSixMonthsCompletions(startDate: self.management.startDate, repeatInterval: self.management.repeatCycle)
     }
     
     func categoryDidChange(to newCategoryId: String?) {
