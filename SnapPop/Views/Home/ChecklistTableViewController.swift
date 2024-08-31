@@ -48,13 +48,16 @@ class ChecklistTableViewController: UITableViewController {
         loadData()
 
         // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
-        viewModel?.$checklistItems
-             .receive(on: RunLoop.main)
-             .sink { [weak self] _ in
-                 self?.tableView.reloadData()
-             }
-             .store(in: &cancellables)
-     }
+        viewModel?.$filteredItems
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+
+        // 데이터 가져오기
+        loadData()
+    }
 //    // 카테고리 변경 시 로딩 indicator
 //    private func startLoading() {
 //        loadingIndicator.startAnimating()
@@ -122,14 +125,14 @@ class ChecklistTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // 관리 항목이 없을 경우에도 하나의 셀이 필요
-        return viewModel?.checklistItems.isEmpty ?? true ? 1 : viewModel?.checklistItems.count ?? 0
+        // filteredItems를 기준으로 테이블 뷰 셀 수 결정
+        return viewModel?.filteredItems.isEmpty ?? true ? 1 : viewModel?.filteredItems.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel else { return UITableViewCell() }
         
-        if viewModel.checklistItems.isEmpty {
+        if viewModel.filteredItems.isEmpty {
             // 관리 항목이 없을 때 메시지 셀을 반환
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let messageLabel = UILabel()
@@ -154,7 +157,7 @@ class ChecklistTableViewController: UITableViewController {
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
-            let item = viewModel.checklistItems[indexPath.row]
+            let item = viewModel.filteredItems[indexPath.row]
             cell.configure(with: item)
             
             // 체크박스 상태가 변경될 때 호출할 클로저 설정

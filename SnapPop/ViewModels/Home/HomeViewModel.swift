@@ -66,30 +66,16 @@ class HomeViewModel: ObservableObject {
     
     // 날짜 및 반복 규칙에 따른 관리 목록 필터링
     private func filterManagements(for date: Date) {
-        let calendar = Calendar.current
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        let selectedWeekday = calendar.component(.weekday, from: date)
+        let selectedDateString = dateFormatter.string(from: date)
         
         filteredItems = checklistItems.filter { management in
-            let managementStartDate = management.startDate
-            let managementDateString = dateFormatter.string(from: managementStartDate)
-            
-            switch management.repeatCycle {
-            case 0: // "안함"
-                return dateFormatter.string(from: date) == managementDateString
-                
-            case 1: // "매일"
+            // completions에 선택한 날짜가 있는지 확인
+            if let _ = management.completions[selectedDateString] {
                 return true
-                
-            case 7: // "매주"
-                let managementWeekday = calendar.component(.weekday, from: managementStartDate)
-                return selectedWeekday == managementWeekday
-                
-            default:
-                return false
             }
+            return false
         }
     }
     
@@ -100,7 +86,7 @@ class HomeViewModel: ObservableObject {
                 switch result {
                 case .success(let managements):
                     self?.checklistItems = managements
-                    self?.filterManagements(for: self?.selectedDate ?? Date())
+                    self?.filterManagements(for: self?.selectedDate ?? Date()) // 관리 항목을 불러온 후 필터링 적용
                     completion(.success(()))
                 case .failure(let error):
                     completion(.failure(error))
@@ -108,6 +94,7 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
+    
     // 관리 삭제
     func deleteManagement(userId: String, categoryId: String, managementId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         managementService.deleteManagement(userId: userId, categoryId: categoryId, managementId: managementId) { error in
