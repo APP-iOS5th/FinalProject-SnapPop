@@ -108,7 +108,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
                     return UITableViewCell()
                 }
-                cell.configure(with: "개인정보 보호 설정")
+                cell.configure(with: "개인정보 보호 정책")
                 return cell
             case 2:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {

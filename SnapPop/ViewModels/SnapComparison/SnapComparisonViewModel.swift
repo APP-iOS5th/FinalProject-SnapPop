@@ -26,6 +26,7 @@ protocol SnapComparisonViewModelProtocol {
     var categoryisEmpty: (() -> Void)? { get set }
     var snapisEmpty: (() -> Void)? { get set }
     var showSnapCollectionView: (() -> Void)? { get set }
+    var updateMenu: (() -> Void)? { get set }
     
     func filterSnaps()
     func item(at indexPath: IndexPath) -> Snap
@@ -136,6 +137,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
         }
     }
     
+    // MARK: - Closures
     /// 버튼 타이틀 업데이트 클로저
     var updateSnapPhotoButtonTitle: ((String) -> Void)?
     /// 버튼 타이틀 업데이트 클로저
@@ -150,6 +152,8 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     var showSnapCollectionView: (() -> Void)?
     /// 컬렉션뷰 reload 클로저
     var reloadCollectionView: (() -> Void)?
+    /// 버튼의 메뉴를 업데이트 하는 클로저
+    var updateMenu: (() -> Void)?
     
     // MARK: - Initializer
     init() {
@@ -170,8 +174,32 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
             snapisEmpty?()
             return
         }
-        filteredSnapData = filterSnapsByPeriod(snapData, periodType: snapPeriodType)
         
+        filteredSnapData = snapData
+        
+        if let selectedDate = selectedDate {
+            // 선택한 날짜를 기준으로 과거 스냅 필터링
+            filteredSnapData = filteredSnapData.filter { snap in
+                guard let snapDate = snap.createdAt else { return false }
+                return snapDate <= selectedDate
+            }
+            
+            // 기간 필터링이 있는 경우
+            if snapPeriodType != "전체" {
+                filteredSnapData = filterSnapsByPeriod(filteredSnapData, periodType: snapPeriodType)
+            }
+            
+            // 선택된 날짜의 스냅이 포함되지 않았으면 맨 앞에 추가
+            if !filteredSnapData.contains(where: { Calendar.current.isDate($0.createdAt ?? Date(), inSameDayAs: selectedDate) }) {
+                if let selectedSnap = snapData.first(where: { Calendar.current.isDate($0.createdAt ?? Date(), inSameDayAs: selectedDate) }) {
+                    filteredSnapData.insert(selectedSnap, at: 0)
+                }
+            }
+        } else if snapPeriodType != "전체" {
+            // 선택된 날짜가 없고 기간 필터링이 있는 경우
+            filteredSnapData = filterSnapsByPeriod(filteredSnapData, periodType: snapPeriodType)
+        }
+                
         if snapPhotoSelectionType == "메인" {
             filteredSnapData = filteredSnapData.map({ snap in
                 let mainImage = snap.imageUrls.first.map { [$0] } ?? []
@@ -179,39 +207,38 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
                 return Snap(imageUrls: mainImage, createdAt: createdAt)
             })
         }
-        print("필터링된 스냅 개수: \(filteredSnapData.count)")
+        
+        // 과거의 스냅부터 보여주기 위한 정렬
+        filteredSnapData.sort { ($0.createdAt ?? Date()) > ($1.createdAt ?? Date()) }
         
         if filteredSnapData.isEmpty {
             snapisEmpty?()
         } else {
             showSnapCollectionView?()
         }
-        
-        // 최신 순으로 보여주기
-        filteredSnapData = filteredSnapData.reversed()
     }
     
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap] {
-        // 기준이 되는 날짜를 설정
-        guard let firstSnapDate = selectedDate ?? snaps.first?.createdAt else { return snaps }
+        // 기준이 되는 날짜
+        guard let firstSnapDate = snaps.first?.createdAt else { return snaps }
         
         var filteredSnaps: [Snap] = []
         var standardDate: Date = firstSnapDate
         
-        for snap in snaps {
+        for snap in snaps.dropFirst() { // 첫번째 스냅은 포함, 따라서 제외 (중복 방지)
             guard let date = snap.createdAt else { return snaps }
             
             let shouldInclude: Bool
             switch periodType {
             case "일주일":
                 // 기준 스냅과 일주일 간격이라면
-                shouldInclude = Calendar.current.dateComponents([.day], from: standardDate, to: date).day ?? 0 >= 7
+                shouldInclude = date >= Calendar.current.date(byAdding: .day, value: 7, to: standardDate) ?? date
             case "한달":
                 // 기준 스냅과 한달 간격이라면
-                shouldInclude = Calendar.current.dateComponents([.month], from: standardDate, to: date).month ?? 0 >= 1
+                shouldInclude = date >= Calendar.current.date(byAdding: .month, value: 1, to: standardDate) ?? date
             case "일년":
                 // 기준 스냅과 일년 간격이라면
-                shouldInclude = Calendar.current.dateComponents([.year], from: standardDate, to: date).year ?? 0 >= 1
+                shouldInclude = date >= Calendar.current.date(byAdding: .year, value: 1, to: standardDate) ?? date
             default:
                 shouldInclude = true
             }
@@ -219,13 +246,6 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
             if shouldInclude {
                 filteredSnaps.append(snap)
                 standardDate = date // 새로운 기준 날짜로 업데이트
-            }
-        }
-        
-        // 선택된 기준 날짜의 스냅 데이터도 포함
-        if let selectedDate = selectedDate, let snapForSelectedDate = snaps.first(where: { $0.createdAt == selectedDate }) {
-            if !filteredSnaps.contains(where: { $0.createdAt == selectedDate }) {
-                filteredSnaps.insert(snapForSelectedDate, at: 0)
             }
         }
         
@@ -251,6 +271,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     /// selectedDate를 정해주는 메소드
     func changeSnapDate(date: Date, completion: @escaping () -> Void) {
         self.selectedDate = date
+        filterSnaps()
         completion()
     }
     
@@ -270,6 +291,9 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
             return }
         print("[Snap비교] 스냅 비교뷰 카테고리 변경됨 \(newCategoryId)")
         loadSanpstoFireStore(to: newCategoryId)
+        snapDateMenuItems = []
+        updateSnapDateButtonTitle?("날짜 선택")
+        updateMenu?()
         reloadCollectionView?()
     }
     

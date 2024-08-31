@@ -169,6 +169,7 @@ class AddManagementViewModel {
                     if case .success = result {
                         // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
                         if isCategoryNotificationEnabled && self.management.alertStatus {
+                            self.cancelNotification(for: self.management)
                             self.addNotification(for: self.management)
                         } else {
                             // 알림 상태가 false이거나 카테고리 알림이 꺼져 있으면 기존 알림 취소
@@ -184,9 +185,6 @@ class AddManagementViewModel {
                         // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
                         if isCategoryNotificationEnabled && self.management.alertStatus {
                             self.addNotification(for: self.management)
-                        } else {
-                            // 알림 상태가 false이거나 카테고리 알림이 꺼져 있으면 기존 알림 취소
-                            self.cancelNotification(for: self.management)
                         }
                     }
                     completion(result)
@@ -239,41 +237,7 @@ class AddManagementViewModel {
                 for detailCost in self.detailCostArray {
                     self.saveDetailCost(categoryId: categoryId, managementId: management.id ?? "", detailCost: detailCost)
                 }
-                
-                // 알림 설정
-                if management.alertStatus {
-                    if management.repeatCycle == 0 {
-                        // 반복 안함으로 설정한 알림
-                        NotificationManager.shared.initialNotification(categoryId: categoryId,
-                                                                       managementId: management.id ?? "",
-                                                                       startDate: management.startDate,
-                                                                       alertTime: management.alertTime,
-                                                                       repeatCycle: management.repeatCycle,
-                                                                       body: management.title)
-                    }
-                    else {
-                        if self.isSpecificDateInPast(startDate: self.startDate, alertTime: self.alertTime) {
-                            // 만약 현재 시간보다 과거부터 시작하는 알림을 등록하면 초기 알림을 등록하여 반복 알림을 트리거 할 필요가 없으므로 바로 반복 알림을 등록해줌
-                            NotificationManager.shared.repeatingNotification(categoryId: categoryId,
-                                                                             managementId: management.id ?? "",
-                                                                             startDate: management.startDate,
-                                                                             alertTime: management.alertTime,
-                                                                             repeatCycle: management.repeatCycle,
-                                                                             body: management.title)
-                        } else {
-                            NotificationManager.shared.initialNotification(categoryId: categoryId,
-                                                                           managementId: management.id ?? "",
-                                                                           startDate: management.startDate,
-                                                                           alertTime: management.alertTime,
-                                                                           repeatCycle: management.repeatCycle,
-                                                                           body: management.title)
-                        }
-                    }
-                } else {
-                    // 알림 상태가 false일 때 기존 알림 취소
-                    self.cancelNotification(for: management)
-                }
-                
+
                 completion(.success(()))
             case .failure(let error):
                 print("Failed to save management: \(error.localizedDescription)")
@@ -281,6 +245,7 @@ class AddManagementViewModel {
             }
         }
     }
+
        
     private func cancelNotification(for management: Management) {
         guard let categoryId = self.categoryId, let managementId = management.id else { return }

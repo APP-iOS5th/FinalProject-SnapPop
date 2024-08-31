@@ -207,12 +207,27 @@ class SnapComparisonViewController: UIViewController {
         if viewModel.snapDateMenuItems.isEmpty {
             selectSnapDateButton.isEnabled = false
             selectSnapDateButton.setTitle("날짜 없음", for: .normal)
+            selectSnapDateButton.menu = nil
         } else {
-            let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems)
+            let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems.map { action in
+                UIAction(title: action.title, handler: { [weak self] _ in
+                    if let date = self?.titleToDateString(action.title) {
+                        self?.viewModel.changeSnapDate(date: date) {
+                            self?.reloadCollectionView()
+                        }
+                    }
+                })
+            })
             selectSnapDateButton.menu = selectDateMenu
             selectSnapDateButton.showsMenuAsPrimaryAction = true
             selectSnapDateButton.isEnabled = true
         }
+    }
+    
+    private func titleToDateString(_ title: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 d일"
+        return formatter.date(from: title)
     }
     
     func setupBindings() {
@@ -249,6 +264,11 @@ class SnapComparisonViewController: UIViewController {
             self.snapAndCategoryCheckLabel.isHidden = true
             self.snapAndCategoryCheckLabel.text = ""
             self.selectSnapDateButton.isEnabled = true
+        }
+        viewModel.updateMenu = { [weak self] in
+            DispatchQueue.main.async {
+                self?.setupMenu()
+            }
         }
     }
     

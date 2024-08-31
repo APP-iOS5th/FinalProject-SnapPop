@@ -18,7 +18,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
-
+        
+        let userDefaults = UserDefaults.standard
+        // 앱 첫 시작이면 로그아웃
+        if userDefaults.value(forKey: "appFirstTimeOpend") == nil {
+            userDefaults.setValue(true, forKey: "appFirstTimeOpend")
+            do {
+                AuthViewModel.shared.signOut() {_ in }
+            } catch {
+                print("로그아웃 에러: \(error)")
+            }
+            // go to beginning of app
+        } else {
+            //go to where you want
+        }
+        
         return true
     }
     
