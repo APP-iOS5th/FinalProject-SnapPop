@@ -53,6 +53,7 @@ class HomeViewModel: ObservableObject {
     
     func addManagement(_ management: Management) {
         checklistItems.append(management)
+        filterManagements(for: selectedDate) // 관리 추가 후 필터링 적용
     }
     
     // 날짜 변경 시 필터링된 관리 목록 업데이트
@@ -65,7 +66,7 @@ class HomeViewModel: ObservableObject {
     }
     
     // 날짜 및 반복 규칙에 따른 관리 목록 필터링
-    private func filterManagements(for date: Date) {
+    func filterManagements(for date: Date) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let selectedDateString = dateFormatter.string(from: date)
@@ -97,10 +98,14 @@ class HomeViewModel: ObservableObject {
     
     // 관리 삭제
     func deleteManagement(userId: String, categoryId: String, managementId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        managementService.deleteManagement(userId: userId, categoryId: categoryId, managementId: managementId) { error in
+        managementService.deleteManagement(userId: userId, categoryId: categoryId, managementId: managementId) { [weak self] error in
             if let error = error {
                 completion(.failure(error))
             } else {
+                // 삭제된 항목을 checklistItems에서 제거
+                self?.checklistItems.removeAll { $0.id == managementId }
+                self?.filterManagements(for: self?.selectedDate ?? Date()) // 관리 삭제 후 필터링 적용
+                
                 NotificationManager.shared.removeNotification(identifiers: ["initialNotification-\(categoryId)-\(managementId)", "repeatingNotification-\(categoryId)-\(managementId)"])
                 completion(.success(()))
             }
@@ -108,13 +113,14 @@ class HomeViewModel: ObservableObject {
     }
     // 관리 편집 후 업데이트
     func updateManagement(categoryId: String, managementId: String, updatedManagement: Management, completion: @escaping (Result<Void, Error>) -> Void) {
-        managementService.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: updatedManagement) { result in
+        managementService.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: updatedManagement) { [weak self] result in
             switch result {
             case .success():
                 DispatchQueue.main.async {
-                    if let index = self.checklistItems.firstIndex(where: { $0.id == managementId }) {
-                        self.checklistItems[index] = updatedManagement
+                    if let index = self?.checklistItems.firstIndex(where: { $0.id == managementId }) {
+                        self?.checklistItems[index] = updatedManagement
                     }
+                    self?.filterManagements(for: self?.selectedDate ?? Date()) // 관리 업데이트 후 필터링 적용
                     completion(.success(()))
                 }
             case .failure(let error):
