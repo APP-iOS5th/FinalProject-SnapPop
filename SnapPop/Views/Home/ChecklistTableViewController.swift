@@ -285,7 +285,8 @@ class ChecklistTableViewController: UITableViewController {
                     }
                 }
             }
-
+            
+            addManagementVC.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(addManagementVC, animated: true)
             completionHandler(true)
         }

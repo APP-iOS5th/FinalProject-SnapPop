@@ -157,25 +157,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 self?.present(alert, animated: true)
             }
         }
-//            if !viewModel.edit {
-//                viewModel.save { [weak self] result in
-//                    switch result {
-//                    case .success:
-//                        if let management = self?.viewModel.management {
-//                            self?.onSave?(management)  // 변경된 저장 항목을 저장
-//                        }
-//                        self?.navigationController?.popViewController(animated: true)
-//                    case .failure(let error):
-//                        let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
-//                        alert.addAction(UIAlertAction(title: "확인", style: .default))
-//                        self?.present(alert, animated: true)
-//                    }
-//                }
-//            } else {
-//                self.onSave?(self.viewModel.management)
-//                self.navigationController?.popViewController(animated: true)
-//            }
-        }
+    }
 
     
     @objc private func titleChanged(_ sender: UITextField) {
@@ -241,7 +223,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // ViewModel의 Publisher를 UI 업데이트와 바인딩
     private func bind<T>(_ publisher: Published<T>.Publisher, to update: @escaping (T) -> Void) {
         publisher
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 update(value)
             }
@@ -301,9 +282,13 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             }
         }
         
-        bind(viewModel.$detailCostArray) { [weak self] _ in
-            self?.tableView.reloadData()
-        }
+        // bind함수에 receive(on: DispatchQueue.main)를 넣으니 화면이 이상하게 업데이트됨
+        viewModel.$detailCostArray
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+            }
+            .store(in: &cancellables)
     }
     
     // MARK: - UITableViewDataSource
