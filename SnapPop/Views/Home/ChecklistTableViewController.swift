@@ -128,9 +128,9 @@ class ChecklistTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel else { return UITableViewCell() }
-        
+
         if viewModel.filteredItems.isEmpty {
-            // 관리 항목이 없을 때 메시지 셀을 반환
+            // 관리 항목이 없을 때의 셀 반환
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let messageLabel = UILabel()
             messageLabel.text = "새로운 관리 추가하기를 통해 관리를 시작해보세요!"
@@ -155,9 +155,11 @@ class ChecklistTableViewController: UITableViewController {
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
             let item = viewModel.filteredItems[indexPath.row]
-            cell.configure(with: item)
             
-            // 체크박스 상태가 변경될 때 호출할 클로저 설정
+            // 선택된 날짜 전달
+            cell.configure(with: item, for: viewModel.selectedDate)
+            
+            // 체크박스 토글 이벤트 핸들링
             cell.onCheckBoxToggle = { [weak self] managementId, isCompleted in
                 self?.handleCheckBoxToggle(managementId: managementId, isCompleted: isCompleted)
             }

@@ -53,8 +53,8 @@ class ChecklistTableViewCell: UITableViewCell {
     }
     
     // MARK: - Configure Cell with Checklist Item
-    func configure(with item: Management) {
-        print("Configuring cell with item: \(item)")
+    func configure(with item: Management, for date: Date) {
+//        print("Configuring cell with item: \(item)")
         managementId = item.id // 관리 항목 ID 설정
 
         checkLabel.text = item.title
@@ -69,9 +69,12 @@ class ChecklistTableViewCell: UITableViewCell {
             checkBox.tintColor = UIColor.lightGray
         }
         
-        // 체크박스 상태 설정
-        let isChecked = item.completions[currentDateString()] == 1 // 현재 날짜에 대한 완료 상태 설정
-        updateCheckboxState(isChecked: isChecked) // 상태 업데이트
+        // 선택된 날짜에 따라 체크박스 상태 설정
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: date)
+        let isChecked = item.completions[dateString] == 1
+        updateCheckboxState(isChecked: isChecked)
     }
     
     // MARK: - 체크박스 이미지 업데이트
