@@ -21,6 +21,7 @@ struct Management: Identifiable, Hashable, Codable {
     var alertTime: Date
     var alertStatus: Bool
     var completions: [String: Int]
+    @ServerTimestamp var timeStamp: Timestamp?
     
     init(title: String, memo: String, color: String, startDate: Date, repeatCycle: Int, alertTime: Date, alertStatus: Bool, completions: [String: Int]) {
         self.title = title

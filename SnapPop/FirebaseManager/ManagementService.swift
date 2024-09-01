@@ -24,6 +24,7 @@ final class ManagementService {
         
         var managementWithID = management
         managementWithID.id = documentRef.documentID
+        managementWithID.timeStamp = Timestamp(date: Date())
         
         do {
             try documentRef.setData(from: managementWithID) { error in
@@ -44,6 +45,7 @@ final class ManagementService {
             .collection("Categories")
             .document(categoryId)
             .collection("Managements")
+            .order(by: "timeStamp", descending: false)
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
                     completion(.failure(error))
@@ -191,6 +193,7 @@ final class ManagementService {
     func saveDetailCost(categoryId: String, managementId: String, detailCost: DetailCost, completion: @escaping (Result<Void, Error>) -> Void) {
         var updatedDetailCost = detailCost
         updatedDetailCost.managementId = managementId
+        updatedDetailCost.timeStamp = Timestamp(date: Date())
         
         let documentRef = db.collection("Users")
             .document(AuthViewModel.shared.currentUser?.uid ?? "")
@@ -224,6 +227,7 @@ final class ManagementService {
             .collection("Managements")
             .document(managementId)
             .collection("DetailCosts")
+            .order(by: "timeStamp", descending: false)
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
                     completion(.failure(error))

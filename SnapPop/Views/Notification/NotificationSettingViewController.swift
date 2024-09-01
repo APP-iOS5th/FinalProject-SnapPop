@@ -42,6 +42,9 @@ class NotificationSettingViewController: UIViewController {
             }
         }
         setupLayout()
+        
+        title = "알림 설정"
+        setupLeftBarButtonItem()
     }
     
     // MARK: - Methods

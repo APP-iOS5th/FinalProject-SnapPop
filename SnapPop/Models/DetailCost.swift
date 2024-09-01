@@ -15,4 +15,5 @@ struct DetailCost: Identifiable, Hashable, Codable {
     var description: String?
     var oneTimeCost: Int?
     var managementId: String?
+    @ServerTimestamp var timeStamp: Timestamp?
 }
