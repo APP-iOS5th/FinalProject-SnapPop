@@ -106,6 +106,7 @@ final class AuthViewModel {
     func signOut(completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             try Auth.auth().signOut()
+            NotificationManager.shared.removeAllNotifications()
             completion(.success(()))
         } catch let error {
             completion(.failure(error))

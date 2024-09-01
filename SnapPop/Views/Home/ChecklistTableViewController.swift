@@ -17,7 +17,7 @@ class ChecklistTableViewController: UITableViewController {
     // 관리 항목 추가 버튼
     private let selfcareAddButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("새로운 관리 추가하기 +", for: .normal)
+        button.setTitle("새로운 관리 등록하기 +", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
@@ -110,6 +110,7 @@ class ChecklistTableViewController: UITableViewController {
         }
 
         if let parentVC = self.view.parentViewController(), !(parentVC.navigationController?.viewControllers.contains(addManagementVC) ?? false) {
+            addManagementVC.hidesBottomBarWhenPushed = true // 탭바 숨기기
             parentVC.navigationController?.pushViewController(addManagementVC, animated: true)
         } else {
             print("Parent ViewController를 찾을 수 없거나, 이미 추가되었습니다.")
@@ -134,7 +135,7 @@ class ChecklistTableViewController: UITableViewController {
             // 관리 항목이 없을 때의 셀 반환
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let messageLabel = UILabel()
-            messageLabel.text = "새로운 관리 추가하기를 통해 관리를 시작해보세요!"
+            messageLabel.text = "새로운 관리 등록을 통해 관리를 시작해보세요!"
             messageLabel.textAlignment = .center
             messageLabel.textColor = .gray
             messageLabel.numberOfLines = 0
@@ -285,7 +286,8 @@ class ChecklistTableViewController: UITableViewController {
                     }
                 }
             }
-
+            
+            addManagementVC.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(addManagementVC, animated: true)
             completionHandler(true)
         }

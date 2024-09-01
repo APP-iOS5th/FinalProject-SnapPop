@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum LegalType {
-    case privacyPolicy
-    case dataUsagePolicy
-    case termsOfService
+enum LegalType: String {
+    case privacyPolicy = "개인정보 보호 정책"
+    case dataUsagePolicy = "데이터 사용 정책"
+    case termsOfService = "이용 약관"
     
     var content: String {
         switch self {

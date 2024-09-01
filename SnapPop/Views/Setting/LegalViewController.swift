@@ -32,6 +32,9 @@ class LegalViewController: UIViewController {
         
         configureUI()
         setupTextView()
+        
+        title = legalType.rawValue
+        setupLeftBarButtonItem()
     }
     
     private func configureUI() {
