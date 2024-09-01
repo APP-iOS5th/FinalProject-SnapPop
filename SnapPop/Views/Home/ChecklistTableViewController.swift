@@ -43,18 +43,18 @@ class ChecklistTableViewController: UITableViewController {
         tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
         tableView.dataSource = self
         tableView.delegate = self
-        
-        // 데이터 가져오기
-        loadData()
 
         // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
-        viewModel?.$checklistItems
-             .receive(on: RunLoop.main)
-             .sink { [weak self] _ in
-                 self?.tableView.reloadData()
-             }
-             .store(in: &cancellables)
-     }
+        viewModel?.$filteredItems
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+
+        // 데이터 가져오기
+        loadData()
+    }
 //    // 카테고리 변경 시 로딩 indicator
 //    private func startLoading() {
 //        loadingIndicator.startAnimating()
@@ -122,14 +122,14 @@ class ChecklistTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // 관리 항목이 없을 경우에도 하나의 셀이 필요
-        return viewModel?.checklistItems.isEmpty ?? true ? 1 : viewModel?.checklistItems.count ?? 0
+        // filteredItems를 기준으로 테이블 뷰 셀 수 결정
+        return viewModel?.filteredItems.isEmpty ?? true ? 1 : viewModel?.filteredItems.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel else { return UITableViewCell() }
         
-        if viewModel.checklistItems.isEmpty {
+        if viewModel.filteredItems.isEmpty {
             // 관리 항목이 없을 때 메시지 셀을 반환
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let messageLabel = UILabel()
@@ -154,7 +154,7 @@ class ChecklistTableViewController: UITableViewController {
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
-            let item = viewModel.checklistItems[indexPath.row]
+            let item = viewModel.filteredItems[indexPath.row]
             cell.configure(with: item)
             
             // 체크박스 상태가 변경될 때 호출할 클로저 설정
@@ -176,12 +176,31 @@ class ChecklistTableViewController: UITableViewController {
     
     private func handleCheckBoxToggle(managementId: String, isCompleted: Bool) {
         guard let viewModel = viewModel else { return }
-        let currentDate = Date()
-        
-        managementService.updateCompletion(categoryId: viewModel.selectedCategoryId ?? "default", managementId: managementId, date: currentDate, isCompleted: isCompleted) { result in
+
+        // 선택된 항목의 관리 아이템 가져오기
+        guard let selectedManagementIndex = viewModel.checklistItems.firstIndex(where: { $0.id == managementId }) else { return }
+
+        // 관리 항목이 선택된 날짜를 가져오기
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let selectedDate = viewModel.selectedDate
+        let selectedDateString = dateFormatter.string(from: selectedDate)
+
+        // 완료 상태 업데이트
+        managementService.updateCompletion(categoryId: viewModel.selectedCategoryId ?? "default", managementId: managementId, date: selectedDate, isCompleted: isCompleted) { result in
             switch result {
             case .success():
                 print("Completion status updated successfully")
+
+                // 완료 상태 업데이트 후 ViewModel에서 필터링 다시 적용
+                if isCompleted {
+                    viewModel.checklistItems[selectedManagementIndex].completions[selectedDateString] = 1
+                } else {
+                    viewModel.checklistItems[selectedManagementIndex].completions[selectedDateString] = 0
+                }
+                
+                viewModel.filterManagements(for: viewModel.selectedDate) // 필터링 재적용
+                self.tableView.reloadData()                 
             case .failure(let error):
                 print("Failed to update completion status: \(error.localizedDescription)")
                 self.showAlert(title: "업데이트 실패", message: "완료 상태를 업데이트할 수 없습니다. 다시 시도해 주세요.")
@@ -191,35 +210,34 @@ class ChecklistTableViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        // 관리 항목이 없을 때는 스와이프 동작을 비활성화
-        guard let viewModel = viewModel, !viewModel.checklistItems.isEmpty else {
+        guard let viewModel = viewModel, !viewModel.filteredItems.isEmpty else {
             return nil
         }
+
+        // 유효한 인덱스인지 확인
+        guard indexPath.row < viewModel.filteredItems.count else {
+            return nil
+        }
+
         // 삭제 액션 정의
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] (action, view, completionHandler) in
             guard let self = self, let viewModel = self.viewModel else {
                 completionHandler(false)
                 return
             }
-            
-            let itemToDelete = viewModel.checklistItems[indexPath.row]
-            
+
+            let itemToDelete = viewModel.filteredItems[indexPath.row] // filteredItems를 기준으로 삭제
+
             // Firebase에서 항목 삭제
             viewModel.deleteManagement(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: viewModel.selectedCategoryId ?? "default", managementId: itemToDelete.id ?? "") { result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success():
                         // 삭제가 성공한 경우 UI 업데이트
-                        viewModel.checklistItems.remove(at: indexPath.row)
-                        
-                        if viewModel.checklistItems.isEmpty {
-                            // 모든 항목이 삭제된 경우 전체 섹션을 다시 로드하여 빈 상태를 보여줍니다.
-                            tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                        } else {
-                            // 항목이 남아 있는 경우 해당 행만 삭제합니다.
-                            tableView.deleteRows(at: [indexPath], with: .automatic)
-                        }
-                        
+                        viewModel.checklistItems.removeAll { $0.id == itemToDelete.id }
+                        viewModel.filterManagements(for: viewModel.selectedDate) // 필터링 재적용
+                        self.tableView.reloadData() // 전체 테이블 뷰를 다시 로드하여 업데이트
+
                         completionHandler(true)
                     case .failure(let error):
                         // 삭제가 실패한 경우 사용자에게 알림
@@ -232,17 +250,17 @@ class ChecklistTableViewController: UITableViewController {
                 }
             }
         }
-        deleteAction.backgroundColor = .red
+        deleteAction.backgroundColor = UIColor.red
         deleteAction.image = UIImage(systemName: "trash")
-        
+
         // 편집 액션 정의
         let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
             guard let self = self, let viewModel = self.viewModel else {
                 completionHandler(false)
                 return
             }
-            
-            let itemToEdit = viewModel.checklistItems[indexPath.row]
+
+            let itemToEdit = viewModel.filteredItems[indexPath.row] // filteredItems를 기준으로 편집
             let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
             addManagementViewModel.edit = true // 편집 모드 설정
             let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
@@ -250,7 +268,7 @@ class ChecklistTableViewController: UITableViewController {
 
             addManagementVC.onSave = { [weak self] updatedManagement in
                 guard let self = self else { return }
-                
+
                 viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
                     DispatchQueue.main.async {
                         switch result {
@@ -270,13 +288,14 @@ class ChecklistTableViewController: UITableViewController {
         }
         editAction.backgroundColor = .gray
         editAction.image = UIImage(systemName: "pencil")
-        
+
         // 삭제 및 편집 액션을 구성에 추가
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         configuration.performsFirstActionWithFullSwipe = false
-        
+
         return configuration
     }
+
 
 
 
