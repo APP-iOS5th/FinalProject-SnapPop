@@ -130,7 +130,8 @@ class ChecklistTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel else { return UITableViewCell() }
 
-        if viewModel.filteredItems.isEmpty {
+        // 모든 관리 항목이 없거나 현재 날짜에 관리 항목이 없는 경우
+        if viewModel.checklistItems.isEmpty || viewModel.filteredItems.isEmpty {
             // 관리 항목이 없을 때의 셀 반환
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let messageLabel = UILabel()
@@ -170,9 +171,9 @@ class ChecklistTableViewController: UITableViewController {
 
     // 높이 설정
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        // 관리 항목이 없을 때 셀의 높이를 테이블 뷰의 나머지 높이로 설정하여 가운데 배치
-        if viewModel?.checklistItems.isEmpty ?? true {
-            return tableView.frame.height - tableView.contentInset.top - tableView.contentInset.bottom - selfcareAddButton.frame.height - 20 // 추가적인 마진 값
+        // 관리 항목이 없거나, 현재 선택된 날짜에 관리 항목이 없는 경우
+        if viewModel?.checklistItems.isEmpty ?? true || viewModel?.filteredItems.isEmpty ?? true {
+            return tableView.frame.height - tableView.contentInset.top - tableView.contentInset.bottom - selfcareAddButton.frame.height - 20
         }
         return UITableView.automaticDimension
     }
@@ -299,8 +300,6 @@ class ChecklistTableViewController: UITableViewController {
 
         return configuration
     }
-
-
 
 
     // 왼쪽으로 스와이프할 때 핀 고정 액션 추가
