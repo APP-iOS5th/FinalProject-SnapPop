@@ -141,9 +141,6 @@ class DateCell: BaseTableViewCell {
     override func setupUI() {
         super.setupUI()
         textLabel?.text = "날짜"
-        imageView?.image = UIImage(systemName: "calendar")
-        imageView?.tintColor = .black
-        
         contentView.addSubview(datePicker)
         selectionStyle = .none
 
@@ -165,6 +162,7 @@ class DateCell: BaseTableViewCell {
         dismissHandler?()
     }
 }
+
 // -MARK: 반복
 class RepeatCell: BaseTableViewCell {
     let repeatButton: UIButton = {
