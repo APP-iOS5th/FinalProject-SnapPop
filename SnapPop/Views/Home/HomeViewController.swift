@@ -65,18 +65,6 @@ class HomeViewController:
         imageView.tintColor = .black
         return imageView
     }()
-    /// DatePicker 알림 레이블
-     private let dateAlertLabel: UILabel = {
-         let label = UILabel()
-         label.text = " "
-         label.textColor = .black
-         label.backgroundColor = UIColor.customButtonColor
-         label.textAlignment = .center
-         label.layer.cornerRadius = 10
-         label.clipsToBounds = true
-         label.translatesAutoresizingMaskIntoConstraints = false
-         return label
-     }()
     
     // 스냅 타이틀
     private let snapTitle: UILabel = {
@@ -93,7 +81,7 @@ class HomeViewController:
     private let editButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("편집", for: .normal)
-        button.setTitleColor(.blue, for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -146,19 +134,23 @@ class HomeViewController:
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .categoryDidChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .categoryEmptycheck, object: nil)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.customBackgroundColor
         
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange(_:)), name: .categoryDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(categoryEmptycheck(_:)), name: .categoryEmptycheck, object: nil)
+        
+        //checkCurrentCategory() // 초기 카테고리 상태 확인
+        
         
         setupBindings()
         setupDatePickerView()
         setupSnapCollectionView()
         setupChecklistView()
-        updateDateAlertLabel()
         
         
         snapCollectionView.dataSource = self
@@ -180,10 +172,11 @@ class HomeViewController:
                 self?.updateSnapCollectionView()
             }
         }
-
+        
         // Set the drag and drop delegates
         snapCollectionView.dragDelegate = self
         snapCollectionView.dropDelegate = self
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -239,7 +232,6 @@ class HomeViewController:
         datePickerContainer.addSubview(calendarImageView)
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         datePickerContainer.addSubview(datePicker)
-        view.addSubview(dateAlertLabel)
         
         // Set up constraints
         NSLayoutConstraint.activate([
@@ -258,12 +250,6 @@ class HomeViewController:
             datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: view.bounds.width * 0.02),
             datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor, constant: -view.bounds.width * 0.02),
             datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
-            
-            // dateAlertLabel constraints
-            dateAlertLabel.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
-            dateAlertLabel.trailingAnchor.constraint(equalTo: dateAlertLabel.leadingAnchor, constant: 40),
-            dateAlertLabel.heightAnchor.constraint(equalTo: datePicker.heightAnchor),
-            dateAlertLabel.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
         ])
     }
     /// 날짜 변경 시 호출
@@ -275,37 +261,7 @@ class HomeViewController:
                 self?.updateSnapCollectionView()
             }
         }
-        
-        updateDateAlertLabel() // 날짜 텍스트 업데이트
         self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기
-    }
-    /// 날짜 알림 버튼 텍스트 업데이트
-    private func updateDateAlertLabel() {
-        let selectedDate = datePicker.date
-        let currentDate = Date()
-        
-        let calendar = Calendar.current
-        let selectedDay = calendar.startOfDay(for: selectedDate)
-        let today = calendar.startOfDay(for: currentDate)
-        
-        // Calculate day difference
-        let dayDifference = calendar.dateComponents([.day], from: today, to: selectedDay).day ?? 0
-        
-        dateAlertLabel.isHidden = false
-        
-        switch dayDifference {
-        case 0:
-            dateAlertLabel.text = "오늘"
-        case -1:
-            dateAlertLabel.text = "어제"
-        case 1:
-            dateAlertLabel.text = "내일"
-        case 2:
-            dateAlertLabel.text = "모레"
-        default:
-            dateAlertLabel.text = ""
-            dateAlertLabel.isHidden = true
-        }
     }
     /// 체크리스트 관련 요소 제약조건
     private func setupChecklistView() {
@@ -368,10 +324,10 @@ class HomeViewController:
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
-            noImageLabel.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.08),
-            noImageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor), // 중앙 정렬
+            noImageLabel.centerYAnchor.constraint(equalTo: addButton.centerYAnchor), // addButton과 같은 높이로 배치
+            noImageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05), // 왼쪽 정렬
             
-            snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.01),
+            snapCollectionView.topAnchor.constraint(equalTo: noImageLabel.bottomAnchor, constant: 8), // noImageLabel 아래에 위치
             snapCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             snapCollectionView.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -view.bounds.width * 0.02),
             snapCollectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.20),
@@ -381,7 +337,7 @@ class HomeViewController:
             addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.10),
             addButton.heightAnchor.constraint(equalTo: addButton.widthAnchor)
         ])
-           
+        
         snapCollectionView.register(SnapCollectionViewCell.self, forCellWithReuseIdentifier: "SnapCollectionViewCell")
         snapCollectionView.bringSubviewToFront(noImageLabel)
         // 초기 상태 설정
@@ -397,9 +353,8 @@ class HomeViewController:
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SnapCollectionViewCell", for: indexPath) as! SnapCollectionViewCell
         let isFirst = indexPath.item == 0
         guard let snap = viewModel.snap else {
-            // 스냅이 없을 경우 셀 초기화 및 문구, 아이콘 표시
-            cell.prepareForReuse() // 셀 초기화
-            noImageLabel.isHidden = false // 스냅이 없으면 문구 표시
+            // 스냅이 없을 경 셀 초기화
+            cell.prepareForReuse()
             return cell
         }
         
@@ -410,8 +365,6 @@ class HomeViewController:
         cell.currentIndex = indexPath.item
         cell.imageUrls = snap.imageUrls
         
-        // 스냅이 있을 경우 문구와 아이콘 숨김
-        noImageLabel.isHidden = true
         return cell
     }
     ///스냅뷰 (UICollectionViewDelegateFlowLayout)
@@ -521,7 +474,7 @@ class HomeViewController:
     // MARK: - UICollectionViewDragDelegate
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         guard isEditingMode else { return [] } // 편집 모드가 아닐 경우 빈 배열 반환
-
+        
         let item = viewModel.snap?.imageUrls[indexPath.item]
         let itemProvider = NSItemProvider(object: item as! NSString)
         let dragItem = UIDragItem(itemProvider: itemProvider)
@@ -543,12 +496,12 @@ class HomeViewController:
         guard isEditingMode else { return } // 편집 모드가 아닐 경우 아무 작업도 하지 않음
         guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
         guard let categoryId = viewModel.selectedCategoryId, let snap = viewModel.snap else { return }
-
+        
         for item in coordinator.items {
             if let sourceIndexPath = item.sourceIndexPath {
                 let sourceIndex = sourceIndexPath.item
                 let destinationIndex = destinationIndexPath.item
-
+                
                 // Snap 데이터 업데이트 및 UICollectionView의 아이템 이동
                 updateSnapAndMoveItem(collectionView: collectionView, from: sourceIndex, to: destinationIndex, sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
             }
@@ -556,7 +509,7 @@ class HomeViewController:
     }
     func updateSnapAndMoveItem(collectionView: UICollectionView, from sourceIndex: Int, to destinationIndex: Int, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
         guard sourceIndex != destinationIndex, sourceIndex < viewModel.snap?.imageUrls.count ?? 0 else { return }
-
+        
         // Snap 데이터 업데이트
         let itemToMove = viewModel.snap?.imageUrls[sourceIndex]
         viewModel.snap?.imageUrls.remove(at: sourceIndex)
@@ -567,7 +520,7 @@ class HomeViewController:
         }
         print("Item moved from index \(sourceIndex) to \(destinationIndex)")
         print("Updated imageUrls: \(viewModel.snap?.imageUrls ?? [])")
-
+        
         // CollectionView에서 아이템 이동
         collectionView.performBatchUpdates({
             collectionView.moveItem(at: sourceIndexPath, to: destinationIndexPath)
@@ -612,6 +565,30 @@ class HomeViewController:
         // 모달 표시
         present(expandVC, animated: true, completion: nil)
     }
+    
+    
+    @objc private func categoryEmptycheck(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // 카테고리 상태 확인
+            let categories = self.navigationBarViewModel.categories // Optional이 아닌 배열로 가져옴
+            if categories.isEmpty {
+                print("Categories are empty") // 카테고리가 비어 있는 경우 출력
+                let emptyViewController = CategoryEmptyViewController()
+                emptyViewController.viewModel = self.navigationBarViewModel // 기존 ViewModel 전달
+                emptyViewController.modalPresentationStyle = .overFullScreen // 기존 화면 위에 표시
+                self.present(emptyViewController, animated: true, completion: nil)
+            } else {
+                print("Current categories: \(categories)") // 카테고리 출력
+                // 카테고리가 추가되었으므로 CategoryEmptyViewController를 닫습니다.
+                if let presentedVC = self.presentedViewController as? CategoryEmptyViewController {
+                    presentedVC.dismiss(animated: true, completion: nil) // CategoryEmptyViewController 닫기
+                }
+            }
+        }
+    }
+    
 }
 
 extension HomeViewController: PHPickerViewControllerDelegate {
@@ -755,3 +732,4 @@ extension HomeViewController: UIImagePickerControllerDelegate {
         picker.dismiss(animated: true, completion: nil)
     }
 }
+
