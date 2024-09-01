@@ -344,7 +344,7 @@ class HomeViewController:
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
         let item = viewModel.checklistItems[indexPath.row]
-        cell.configure(with: item)
+        cell.configure(with: item, for: Date())
         return cell
     }
     
