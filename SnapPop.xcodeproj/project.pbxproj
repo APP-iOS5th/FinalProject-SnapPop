@@ -62,6 +62,7 @@
 		C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C8132C784610004F569A /* UIImageView+Extensions.swift */; };
 		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
+		C2740B082C849D91006CA4F6 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2740B072C849D91006CA4F6 /* UIViewController+Extensions.swift */; };
 		C2A6CAAB2C7EDB1100F7670A /* UITextField+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */; };
 		C2A6CAAD2C7EE2F800F7670A /* UIResponder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
@@ -135,6 +136,7 @@
 		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
+		C2740B072C849D91006CA4F6 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extensions.swift"; sourceTree = "<group>"; };
 		C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Extensions.swift"; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
@@ -401,6 +403,7 @@
 				C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */,
 				C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */,
 				4A6210262C815344002229C3 /* Notification+Extensions.swift */,
+				C2740B072C849D91006CA4F6 /* UIViewController+Extensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -620,6 +623,7 @@
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
 				4AD29AD32C699DF200A9BEDD /* SnapPhotoViewController.swift in Sources */,
 				4AD29AA42C65051B00A9BEDD /* SnapComparisonViewModel.swift in Sources */,
+				C2740B082C849D91006CA4F6 /* UIViewController+Extensions.swift in Sources */,
 				4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
 				EAE34EB32C776E6700BEFF3A /* CustomDatePickerViewController.swift in Sources */,
