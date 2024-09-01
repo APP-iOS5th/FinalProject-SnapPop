@@ -49,6 +49,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                 } else {
                     self.categories = categories
                     self.categoryisUpdated?()
+                    NotificationCenter.default.post(name: .categoryEmptycheck, object: nil)
                     completion()
                 }
             case .failure(let error):
@@ -64,6 +65,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                 print("success save Category")
                 self.categories.append(savedCategory)
                 self.categoryisUpdated?()
+                NotificationCenter.default.post(name: .categoryEmptycheck, object: nil)
                 completion()
             case .failure(let error):
                 print("Failed to save error: \(error.localizedDescription)")
@@ -120,6 +122,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                         print("카테고리가 남아있지 않은 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
         //                                self.delegate?.categoryDidChange(to: nil)
                                         NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: nil)
+                                        NotificationCenter.default.post(name: .categoryEmptycheck, object: nil)
                                         completion("카테고리를 추가해 주세요")
                                     } else {
                                         // 카테고리가 남아있는 경우 첫 번째 카테고리를 선택
@@ -154,6 +157,7 @@ class CustomNavigationBarViewModel: CustomNavigationBarViewModelProtocol {
                                         print("categories 배열이 비어있는 경우 삭제 후의 Current UserDefaults: \(String(describing: UserDefaults.standard.string(forKey: "currentCategoryId")))")
         //                                self.delegate?.categoryDidChange(to: nil)
                                         NotificationCenter.default.post(name: .categoryDidChange, object: nil, userInfo: nil)
+                                        NotificationCenter.default.post(name: .categoryEmptycheck, object: nil)
                                         completion("카테고리를 추가해 주세요")
                                     }
                                 }
