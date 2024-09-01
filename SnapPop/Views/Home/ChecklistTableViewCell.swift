@@ -74,6 +74,7 @@ class ChecklistTableViewCell: UITableViewCell {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let dateString = dateFormatter.string(from: date)
         let isChecked = item.completions[dateString] == 1
+        checkBox.isSelected = isChecked
         updateCheckboxState(isChecked: isChecked)
     }
     
