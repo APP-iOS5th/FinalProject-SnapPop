@@ -20,10 +20,11 @@ class AddManagementViewModel {
     @Published var alertTime: Date = Date()
     @Published var alertStatus: Bool = false
     
+    @Published var detailCostArray: [DetailCost] = [] // 추가한 상세 비용들을 담을 배열
+    
     var edit = false // 편집
     private var cancellables = Set<AnyCancellable>()
     var management: Management
-    var detailCostArray: [DetailCost] = [] // 추가한 상세 비용들을 담을 배열
     private let db = ManagementService()
     private let categoryService = CategoryService()
 
@@ -41,7 +42,6 @@ class AddManagementViewModel {
         self.repeatCycle = management.repeatCycle
         self.alertTime = management.alertTime
         self.alertStatus = management.alertStatus
-        
         bindManagementData()
     }
     
@@ -113,6 +113,8 @@ class AddManagementViewModel {
                 self?.management.alertStatus = newValue
             }
             .store(in: &cancellables)
+        
+        loadDetailCosts(categoryId: categoryId, managementId: management.id)
     }
     
     func loadCategories(completion: @escaping (Result<[Category], Error>) -> Void) {
@@ -167,6 +169,17 @@ class AddManagementViewModel {
                 }
                 self.db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: self.management) { result in
                     if case .success = result {
+                        self.db.deleteDetailCosts(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: categoryId, managementId: managementId) { result in
+                            switch result {
+                            case .success:
+                                for detailCost in self.detailCostArray {
+                                    self.saveDetailCost(categoryId: self.categoryId, managementId: managementId, detailCost: detailCost)
+                                }
+                            case .failure(let error):
+                                print("전체 상세 비용 삭제 실패: \(error.localizedDescription)")
+                            }
+                        }
+                        
                         // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
                         if isCategoryNotificationEnabled && self.management.alertStatus {
                             self.cancelNotification(for: self.management)
@@ -231,11 +244,10 @@ class AddManagementViewModel {
                 self.management = management
             
                 NotificationCenter.default.post(name: .managementSavedNotification, object: nil)
-                guard let categoryId = self.categoryId else { return }
                 
                 // 상세 비용 저장
                 for detailCost in self.detailCostArray {
-                    self.saveDetailCost(categoryId: categoryId, managementId: management.id ?? "", detailCost: detailCost)
+                    self.saveDetailCost(categoryId: self.categoryId, managementId: management.id, detailCost: detailCost)
                 }
 
                 completion(.success(()))
@@ -245,7 +257,6 @@ class AddManagementViewModel {
             }
         }
     }
-
        
     private func cancelNotification(for management: Management) {
         guard let categoryId = self.categoryId, let managementId = management.id else { return }
@@ -349,13 +360,28 @@ class AddManagementViewModel {
         }
     }
     
-    func saveDetailCost(categoryId: String, managementId: String, detailCost: DetailCost) {
-        db.saveDetailCost(categoryId: categoryId, managementId: managementId, detailCost: detailCost) { result in
-            switch result {
-            case .success:
-                print("상세 비용 저장 성공")
-            case .failure(let error):
-                print("상세 비용 저장 실패: \(error.localizedDescription)")
+    func saveDetailCost(categoryId: String?, managementId: String?, detailCost: DetailCost) {
+        if let categoryId = categoryId, let managementId = management.id {
+            db.saveDetailCost(categoryId: categoryId, managementId: managementId, detailCost: detailCost) { result in
+                switch result {
+                case .success:
+                    print("상세 비용 저장 성공")
+                case .failure(let error):
+                    print("상세 비용 저장 실패: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    func loadDetailCosts(categoryId: String?, managementId: String?) {
+        if let categoryId = categoryId, let managementId = management.id {
+            db.loadDetailCosts(categoryId: categoryId, managementId: managementId) { result in
+                switch result {
+                case .success(let detailCosts):
+                    self.detailCostArray = detailCosts
+                case .failure(let error):
+                    print("Failed to load detail costs: \(error.localizedDescription)")
+                }
             }
         }
     }

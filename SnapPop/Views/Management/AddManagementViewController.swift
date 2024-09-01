@@ -25,14 +25,14 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         return tableView
     }()
     
-    private let addDetailButton: UIButton = {
+    private let saveButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("상세 내역 추가하기", for: .normal)
+        button.setTitle("등록 완료", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -99,7 +99,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         
         // 테이블뷰와 버튼들
         view.addSubview(tableView)
-        view.addSubview(addDetailButton)
+        view.addSubview(saveButton)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -124,13 +124,9 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         
         // 네비게이션 바 설정
         title = "새로운 자기 관리"
-        let cancelButton = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
-        cancelButton.tintColor = .systemBlue
-        let saveButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(saveButtonTapped))
-        saveButton.tintColor = .systemBlue
+        let cancelButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(cancelButtonTapped))
         
         navigationItem.leftBarButtonItem = cancelButton
-        navigationItem.rightBarButtonItem = saveButton
     }
     
     // MARK: - Constraints Setup
@@ -139,12 +135,12 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: addDetailButton.topAnchor, constant: -10),
+            tableView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
             
-            addDetailButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            addDetailButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            addDetailButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            addDetailButton.heightAnchor.constraint(equalToConstant: 50)
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            saveButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
@@ -155,24 +151,37 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func saveButtonTapped() {
-            if !viewModel.edit {
-                viewModel.save { [weak self] result in
-                    switch result {
-                    case .success:
-                        if let management = self?.viewModel.management {
-                            self?.onSave?(management)  // 변경된 저장 항목을 저장
-                        }
-                        self?.navigationController?.popViewController(animated: true)
-                    case .failure(let error):
-                        let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "확인", style: .default))
-                        self?.present(alert, animated: true)
-                    }
+        viewModel.saveOrUpdate { [weak self] result in
+            switch result {
+            case .success:
+                if let management = self?.viewModel.management {
+                    self?.onSave?(management)  // 변경된 저장 항목을 저장
                 }
-            } else {
-                self.onSave?(self.viewModel.management)
-                self.navigationController?.popViewController(animated: true)
+                self?.navigationController?.popViewController(animated: true)
+            case .failure(let error):
+                let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default))
+                self?.present(alert, animated: true)
             }
+        }
+//            if !viewModel.edit {
+//                viewModel.save { [weak self] result in
+//                    switch result {
+//                    case .success:
+//                        if let management = self?.viewModel.management {
+//                            self?.onSave?(management)  // 변경된 저장 항목을 저장
+//                        }
+//                        self?.navigationController?.popViewController(animated: true)
+//                    case .failure(let error):
+//                        let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
+//                        alert.addAction(UIAlertAction(title: "확인", style: .default))
+//                        self?.present(alert, animated: true)
+//                    }
+//                }
+//            } else {
+//                self.onSave?(self.viewModel.management)
+//                self.navigationController?.popViewController(animated: true)
+//            }
         }
 
     
@@ -239,6 +248,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     // ViewModel의 Publisher를 UI 업데이트와 바인딩
     private func bind<T>(_ publisher: Published<T>.Publisher, to update: @escaping (T) -> Void) {
         publisher
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 update(value)
             }
@@ -297,11 +307,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 cell.switchControl.isOn = hasNotification
             }
         }
-        viewModel.isValid
-                .receive(on: DispatchQueue.main)
-                .assign(to: \.isEnabled, on: navigationItem.rightBarButtonItem!)
-                .store(in: &cancellables)
         
+        bind(viewModel.$detailCostArray) { [weak self] _ in
+            self?.tableView.reloadData()
+        }
     }
     
     // MARK: - UITableViewDataSource
@@ -333,10 +342,75 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             return "설정"
         case 2:
             return "알림"
-        case 3:
-            return viewModel.detailCostArray.isEmpty ? nil : "상세내역 및 비용"
         default:
             return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UITableViewHeaderFooterView()
+        
+        let titleLabel = UILabel()
+        let screenWidth = UIScreen.main.bounds.width
+        
+        titleLabel.text = "상세내역 및 비용 추가"
+        titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        titleLabel.textColor = .gray
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let addButton = UIButton(type: .system)
+        addButton.setTitle("+", for: .normal)
+        addButton.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .regular)
+        addButton.translatesAutoresizingMaskIntoConstraints = false
+        addButton.addTarget(self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
+        
+        // Add subviews to headerView
+        headerView.addSubview(titleLabel)
+        headerView.addSubview(addButton)
+        
+        
+        NSLayoutConstraint.activate([
+            // Title label constraints
+            titleLabel.leadingAnchor.constraint(equalTo: headerView.contentView.leadingAnchor, constant: leadingConstant(for: screenWidth)),
+            titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+            
+            // Add button constraints
+            addButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+            addButton.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            
+        ])
+        
+        switch section {
+        case 3:
+            return headerView
+        default:
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch section {
+        case 3:
+            return 44
+        default:
+            return UITableView.automaticDimension
+        }
+    }
+    
+    func leadingConstant(for width: CGFloat) -> CGFloat {
+        switch width {
+        case 0..<375:
+            return 16 // 예: iPhone SE, iPhone 8
+        case 375..<414:
+            return 18 // 예: iPhone 11, iPhone 12 Mini
+        case 414..<768:
+            return 20 // 예: iPhone 12 Pro Max, iPhone 13 Pro Max
+        case 768..<1024:
+            return 24 // 예: iPad Mini
+        case 1024..<1366:
+            return 28 // 예: iPad Pro 11인치
+        default:
+            return 32 // 예: iPad Pro 12.9인치 이상
         }
     }
     
@@ -465,6 +539,5 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
 extension AddManagementViewController: DetailCostViewControllerDelegate {
     func addDetailCost(data detailCost: DetailCost) {
         viewModel.detailCostArray.append(detailCost)
-        tableView.reloadSections(IndexSet(integer: 3), with: .automatic)
     }
 }
