@@ -45,10 +45,14 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         
         configureUI()
+        
+        title = "설정"
+        setupLeftBarButtonItem()
     }
     
     private func configureUI() {
         view.backgroundColor = .systemBackground
+        
         view.addSubview(settingTableView)
         footerView.addSubview(footerButton)
         
@@ -66,7 +70,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
             footerButton.bottomAnchor.constraint(equalTo: footerView.bottomAnchor, constant: 8)
         ])
     }
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         4
     }
@@ -142,20 +146,14 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 1:
             switch indexPath.row {
             case 1:
-                let legalVC = LegalViewController(legalType: .privacyPolicy)
-                legalVC.hidesBottomBarWhenPushed = true // 탭바 숨기기
-                navigationController?.pushViewController(legalVC, animated: true)
+                navigationController?.pushViewController(LegalViewController(legalType: .privacyPolicy), animated: true)
             case 2:
-                let legalVC = LegalViewController(legalType: .dataUsagePolicy)
-                legalVC.hidesBottomBarWhenPushed = true
-                navigationController?.pushViewController(legalVC, animated: true)
+                navigationController?.pushViewController(LegalViewController(legalType: .dataUsagePolicy), animated: true)
             default:
                 break
             }
         case 2:
-            let legalVC = LegalViewController(legalType: .termsOfService)
-            legalVC.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(legalVC, animated: true)
+            navigationController?.pushViewController(LegalViewController(legalType: .termsOfService), animated: true)
         case 3:
             showLogoutAlert()
         default:

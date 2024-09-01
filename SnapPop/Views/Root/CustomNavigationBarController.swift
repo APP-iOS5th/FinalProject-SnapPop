@@ -163,11 +163,15 @@ class CustomNavigationBarController: UINavigationController {
     // MARK: - Actions
     
     @objc private func bellButtonTapped() {
-        pushViewController(NotificationViewController(), animated: true)
+        let notificationVC = NotificationViewController()
+        notificationVC.hidesBottomBarWhenPushed = true
+        pushViewController(notificationVC, animated: true)
     }
     
     @objc private func gearButtonTapped() {
-        pushViewController(SettingViewController(), animated: true)
+        let settingVC = SettingViewController()
+        settingVC.hidesBottomBarWhenPushed = true
+        pushViewController(settingVC, animated: true)
     }
     
     @objc private func categoryButtonTapped() {

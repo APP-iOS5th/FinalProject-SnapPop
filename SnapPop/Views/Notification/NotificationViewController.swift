@@ -91,6 +91,10 @@ class NotificationViewController: UIViewController {
         
         setupLayout() // 레이아웃 설정
         
+        // 네비게이션
+        title = "알림"
+        setupLeftBarButtonItem()
+        
         loadManagementNotifications()
         loadRecommendedNotifications()
         

@@ -124,9 +124,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         
         // 네비게이션 바 설정
         title = "새로운 자기 관리"
-        let cancelButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(cancelButtonTapped))
-        
-        navigationItem.leftBarButtonItem = cancelButton
+        setupLeftBarButtonItem()
     }
     
     // MARK: - Constraints Setup
@@ -144,12 +142,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         ])
     }
     
-    // MARK: - Actions
-    @objc private func cancelButtonTapped() {
-        // HomeViewController로 돌아가기
-        navigationController?.popViewController(animated: true)
-    }
-    
+    // MARK: - Actions    
     @objc private func saveButtonTapped() {
         viewModel.saveOrUpdate { [weak self] result in
             switch result {
