@@ -69,7 +69,7 @@ final class ManagementService {
                 .document(categoryId)
                 .collection("Managements")
                 .document(managementId)
-                .setData(from: updatedManagement, merge: true) { error in
+                .setData(from: updatedManagement, merge: false) { error in
                     if let error = error {
                         completion(.failure(error))
                         return
