@@ -252,7 +252,7 @@ class SnapComparisonViewController: UIViewController {
         viewModel.snapisEmpty = {
             self.collectionView.isHidden = true
             self.snapAndCategoryCheckLabel.isHidden = false
-            self.snapAndCategoryCheckLabel.text = "사진을 추가해 비교해 보세요!"
+            self.snapAndCategoryCheckLabel.text = "스냅을 추가해 비교해 보세요!"
             self.selectSnapDateButton.isEnabled = true
         }
         viewModel.showSnapCollectionView = {
