@@ -43,7 +43,7 @@ class IsDonePercentageChart: UIViewController {
             monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
             monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50),
             
-            circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor),
+            circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -5),
             circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             circularView.widthAnchor.constraint(equalToConstant: 300),
             circularView.heightAnchor.constraint(equalToConstant: 300)
@@ -92,14 +92,14 @@ open class IsDoneDoughnut: UIView {
     // MARK: - Private Variables
     private var _percentages: [Double]
     private var _colors: [UIColor] = [UIColor.customButton, .lightGray]
-    private var _lineWidth = CGFloat(3.0)
+    private var _lineWidth = CGFloat(1)
     lazy var donePercentage = "\(Float(_percentages[0]))%" {
         didSet {
             setNeedsDisplay()
         }
     }
     // MARK: - Initialization
-    public init(percentages: [Double], lineWidth: CGFloat = 3.0) {
+    public init(percentages: [Double], lineWidth: CGFloat = 1) {
             self._percentages = percentages
             super.init(frame: CGRect.zero)
             self.backgroundColor = .clear
@@ -147,8 +147,8 @@ open class IsDoneDoughnut: UIView {
     // MARK: - Drawing
     override public func draw(_ rect: CGRect) {
         let center = CGPoint(x: rect.midX, y: rect.midY)
-        let outerRadius = min(rect.width, rect.height) / 2 - _lineWidth / 2
-        let innerRadius = outerRadius * 0.50 // Adjust the multiplier as needed for the size of the hole
+        let outerRadius = (min(rect.width, rect.height) / 2 - _lineWidth / 1.3) * 1.05
+        let innerRadius = outerRadius * 0.5 // Adjust the multiplier as needed for the size of the hole
         
         var startAngle: CGFloat = -CGFloat.pi / 2
         

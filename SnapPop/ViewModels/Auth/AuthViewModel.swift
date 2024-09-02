@@ -107,6 +107,7 @@ final class AuthViewModel {
         do {
             try Auth.auth().signOut()
             NotificationManager.shared.removeAllNotifications()
+            self.resetUserDefaults()
             completion(.success(()))
         } catch let error {
             completion(.failure(error))
@@ -158,10 +159,20 @@ final class AuthViewModel {
                         } else {
                             print("Successfully deleted user data")
                             NotificationManager.shared.removeAllNotifications()
+                            self.resetUserDefaults()
                         }
                     }
             case .failure(let error):
                 print("Error deleting user categories: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func resetUserDefaults() {
+        for key in UserDefaults.standard.dictionaryRepresentation().keys {
+            // 로그아웃, 회원탈퇴 시에 앱 첫 시작여부를 담는 UserDefault는 삭제할 필요가 없음. 앱 삭제시에만 지워지면 됨
+            if key.description != "appFirstTimeOpen" {
+                UserDefaults.standard.removeObject(forKey: key.description)
             }
         }
     }

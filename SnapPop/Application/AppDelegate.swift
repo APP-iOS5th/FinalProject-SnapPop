@@ -21,8 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let userDefaults = UserDefaults.standard
         // 앱 첫 시작이면 로그아웃
-        if userDefaults.value(forKey: "appFirstTimeOpend") == nil {
-            userDefaults.setValue(true, forKey: "appFirstTimeOpend")
+        if userDefaults.value(forKey: "appFirstTimeOpen") == nil {
+            userDefaults.setValue(true, forKey: "appFirstTimeOpen")
             do {
                 AuthViewModel.shared.signOut() {_ in }
             } catch {
