@@ -47,13 +47,6 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
         setupLayout() // 레이아웃 설정
         setupPageControl()
         updateUI()
-        
-        // 모달 시트 스타일 설정
-        self.modalPresentationStyle = .pageSheet
-        if let sheet = self.sheetPresentationController {
-            sheet.detents = [.medium()] // 모달 크기 설정
-            sheet.prefersGrabberVisible = true // 그랩바 표시
-        }
     }
     
     // MARK: - Methods

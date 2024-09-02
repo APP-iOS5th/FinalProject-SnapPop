@@ -49,8 +49,8 @@ class CustomTabBarController: UITabBarController {
             selectedImage: UIImage(systemName: "calendar.fill")
         )
         
-        let customNavViewModel = CustomNavigationBarViewModel()
-        let secondViewController = ConditionalViewController(viewModel: customNavViewModel)
+        let customNavigationBarViewModel = CustomNavigationBarViewModel()
+        let secondViewController = ConditionalViewController(viewModel: customNavigationBarViewModel)
         secondViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(systemName: "house"),
@@ -64,7 +64,6 @@ class CustomTabBarController: UITabBarController {
             image: UIImage(systemName: "arrow.left.arrow.right.square"),
             selectedImage: UIImage(systemName: "arrow.left.arrow.right.square.fill")
         )
-        let customNavigationBarViewModel = CustomNavigationBarViewModel()
         let firstNavController = CustomNavigationBarController(viewModel: customNavigationBarViewModel, rootViewController: firstViewController)
         let secondNavController = CustomNavigationBarController(viewModel: customNavigationBarViewModel, rootViewController: secondViewController)
         let thirdNavController = CustomNavigationBarController(viewModel: customNavigationBarViewModel, rootViewController: thirdViewController)
