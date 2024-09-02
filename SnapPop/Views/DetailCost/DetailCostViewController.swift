@@ -74,7 +74,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         title = "상세내역"
         
         let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = .customBackgroundColor
         appearance.backgroundEffect = nil
         appearance.shadowColor = nil
         navigationController?.navigationBar.standardAppearance = appearance

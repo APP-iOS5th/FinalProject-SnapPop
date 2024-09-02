@@ -27,7 +27,7 @@ class NotificationViewController: UIViewController {
         let segControl = UISegmentedControl(items: ["추천 알림", "관리 알림"])
         segControl.selectedSegmentIndex = 0
         segControl.backgroundColor = UIColor.customToggle
-        segControl.selectedSegmentTintColor = UIColor.white
+//        segControl.selectedSegmentTintColor = UIColor.white
         segControl.addTarget(self, action: #selector(didChangeValue(segment:)), for: .valueChanged)
         segControl.translatesAutoresizingMaskIntoConstraints = false
         return segControl
@@ -77,7 +77,7 @@ class NotificationViewController: UIViewController {
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .customBackground
+        self.view.backgroundColor = .customBackgroundColor
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "알림 설정", style: .plain, target: self, action: #selector(moveToNotificationSettingView))
         

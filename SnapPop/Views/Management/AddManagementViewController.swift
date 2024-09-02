@@ -95,7 +95,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     
     // MARK: - UI Setup
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .dynamicBackgroundInsideColor
         
         // 테이블뷰와 버튼들
         view.addSubview(tableView)
@@ -332,7 +332,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         let screenWidth = UIScreen.main.bounds.width
         
         titleLabel.text = "상세내역 및 비용 추가"
-        titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         titleLabel.textColor = .gray
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 

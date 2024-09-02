@@ -35,8 +35,8 @@ class CategorySettingsTableViewCell: UITableViewCell {
     lazy var notificationButton: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "bell")
-        config.baseForegroundColor = .black
-        config.baseBackgroundColor = .customBackground
+        config.baseForegroundColor = .dynamicTextColor
+        config.baseBackgroundColor = .customBackgroundColor
         let button = UIButton(configuration: config)
         button.addTarget(self, action: #selector(didTapNotificationButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -46,8 +46,8 @@ class CategorySettingsTableViewCell: UITableViewCell {
     lazy var editCategoryNameButton: UIButton = {
         var config = UIButton.Configuration.filled()
         config.image = UIImage(systemName: "pencil")
-        config.baseForegroundColor = .black
-        config.baseBackgroundColor = .customBackground
+        config.baseForegroundColor = .dynamicTextColor
+        config.baseBackgroundColor = .customBackgroundColor
         let button = UIButton(configuration: config)
         button.addTarget(self, action: #selector(didTapEditButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

@@ -142,7 +142,7 @@ class DateCell: BaseTableViewCell {
         super.setupUI()
         textLabel?.text = "날짜"
         imageView?.image = UIImage(systemName: "calendar")
-        imageView?.tintColor = .black
+        imageView?.tintColor = .dynamicTextColor
         
         contentView.addSubview(datePicker)
         selectionStyle = .none
@@ -170,14 +170,14 @@ class RepeatCell: BaseTableViewCell {
     let repeatButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("안함", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.dynamicTextColor, for: .normal)
         
         let arrowImage = UIImage(systemName: "chevron.up.chevron.down")
         button.setImage(arrowImage, for: .normal)
         
         button.semanticContentAttribute = .forceRightToLeft
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: -8)
-        button.tintColor = .black
+        button.tintColor = .dynamicTextColor
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()

@@ -64,7 +64,7 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
     
     // MARK: - UI Setup
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .dynamicBackgroundInsideColor
         
         setupPieChartView()
         setupMonthLabel()

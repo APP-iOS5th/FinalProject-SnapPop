@@ -172,6 +172,7 @@ final class CalculateCostCell: BaseTableViewCell2 {
         textField.placeholder = "가격을 입력해주세요"
         textField.borderStyle = .roundedRect
         textField.keyboardType = .numberPad
+        textField.backgroundColor = .dynamicBackgroundInsideColor
         textField.delegate = self
         textField.addDoneCancelToolbar(onDone: (target: self, action: #selector(doneButtonTappedForPurchasePrice)))
         
@@ -192,6 +193,7 @@ final class CalculateCostCell: BaseTableViewCell2 {
         textField.placeholder = "얼마나 쓸수있을까?"
         textField.borderStyle = .roundedRect
         textField.keyboardType = .numberPad
+        textField.backgroundColor = .dynamicBackgroundInsideColor
         textField.delegate = self
         textField.addDoneCancelToolbar(onDone: (target: self, action: #selector(doneButtonTappedForUsageCount)))
         

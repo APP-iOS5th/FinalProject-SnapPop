@@ -41,7 +41,7 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .customBackgroundColor
         
         setupPageViewController() // 페이지 뷰 컨트롤러 설정
         setupLayout() // 레이아웃 설정

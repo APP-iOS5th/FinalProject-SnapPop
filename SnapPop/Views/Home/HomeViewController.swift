@@ -62,7 +62,7 @@ class HomeViewController:
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(systemName: "calendar")
-        imageView.tintColor = .black
+        imageView.tintColor = .dynamicTextColor
         return imageView
     }()
     
@@ -71,7 +71,7 @@ class HomeViewController:
         let label = UILabel()
         label.text = "Snap"
         label.font = UIFont.boldSystemFont(ofSize: 24)
-        label.textColor = .black
+        label.textColor = .dynamicTextColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -81,7 +81,7 @@ class HomeViewController:
     private let editButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("편집", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.dynamicTextColor, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -102,7 +102,7 @@ class HomeViewController:
         let label = UILabel()
         label.text = "관리 목록"
         label.font = UIFont.boldSystemFont(ofSize: 24)
-        label.textColor = .black
+        label.textColor = .dynamicTextColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -122,7 +122,7 @@ class HomeViewController:
     // 스냅 추가 안내문구
     private let noImageLabel: UILabel = {
         let label = UILabel()
-        label.text = "스냅을 추가해보세요!"
+        label.text = "오늘의 스냅을 기록하세요!"
         label.textColor = .gray
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -399,6 +399,7 @@ class HomeViewController:
             snapCollectionView.isScrollEnabled = false // 스크롤 비활성화
         } else {
             // 편집 모드 종료
+            editButton.setTitle("편집", for: .normal)
             editButton.setTitle("편집", for: .normal)
             snapCollectionView.isScrollEnabled = true // 스크롤 활성화
         }

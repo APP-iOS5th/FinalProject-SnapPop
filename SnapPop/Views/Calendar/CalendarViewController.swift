@@ -56,7 +56,7 @@ class CalendarViewController: UIViewController {
         stackView.spacing = 0
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .center
-        stackView.backgroundColor = .systemBackground
+        stackView.backgroundColor = .dynamicBackgroundInsideColor
         stackView.layer.borderWidth = 0.7
         stackView.layer.borderColor = UIColor.lightGray.cgColor
         stackView.layer.cornerRadius = 10
@@ -69,7 +69,7 @@ class CalendarViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsDateDecorations = true
         view.tintColor = UIColor.customMainColor
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .dynamicBackgroundInsideColor
         return view
     }()
     
@@ -77,9 +77,11 @@ class CalendarViewController: UIViewController {
         var view = UITableView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .dynamicBackgroundInsideColor
         view.sectionIndexColor = UIColor.black
         view.register(TodoTableViewCell.self, forCellReuseIdentifier: "TodoCell")
+        view.layer.borderWidth = 0.16
+        view.layer.borderColor = UIColor.lightGray.cgColor
         return view
     }()
     
@@ -109,6 +111,7 @@ class CalendarViewController: UIViewController {
         stackView.layer.borderColor = UIColor.lightGray.cgColor
         stackView.layer.cornerRadius = 10
         stackView.clipsToBounds = true
+        stackView.backgroundColor = .dynamicBackgroundInsideColor
         return stackView
     }()
     
@@ -117,6 +120,7 @@ class CalendarViewController: UIViewController {
         let font = UIFont.boldSystemFont(ofSize: 16)
         UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .selected)
         UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
+        
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.backgroundColor = UIColor.customToggleColor
@@ -707,7 +711,7 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         
         filteringMatchingManagements()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        
+        cell.backgroundColor = .dynamicBackgroundInsideColor
         if matchingManagements.isEmpty {
             cell.setLabelText("등록된 자기관리가 없습니다.", isManagementEmpty: true)
         } else {
@@ -770,4 +774,3 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         self.calendarView.reloadDecorations(forDateComponents: [dateComponents], animated: true)
         }
     }
-

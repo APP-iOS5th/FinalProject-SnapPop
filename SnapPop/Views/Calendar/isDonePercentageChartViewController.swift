@@ -33,7 +33,7 @@ class IsDonePercentageChart: UIViewController {
     private func setupViews() {
         circularView = IsDoneDoughnut(percentages: [50, 50])
         circularView.translatesAutoresizingMaskIntoConstraints = false
-        
+        view.backgroundColor = .dynamicBackgroundInsideColor
         view.addSubview(monthLabel)
         view.addSubview(circularView)
     }
