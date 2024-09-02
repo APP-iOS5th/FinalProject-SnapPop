@@ -19,7 +19,7 @@ class CustomNavigationBarController: UINavigationController {
         config.image = UIImage(systemName: "chevron.down")
         config.imagePlacement = .trailing
         config.imagePadding = 10
-        config.baseForegroundColor = .black
+        config.baseForegroundColor = .dynamicTextColor
         
         let button = UIButton(configuration: config, primaryAction: nil)
         button.menu = self.createCategoryMenu(categories: viewModel.categories)
@@ -75,16 +75,16 @@ class CustomNavigationBarController: UINavigationController {
     private func setupCustomNavigationBar() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = UIColor.customBackgroundColor
         
         appearance.titleTextAttributes = [.font: UIFont.boldSystemFont(ofSize: 20.0),
-                                          .foregroundColor: UIColor.black]
+                                          .foregroundColor: UIColor.dynamicTextColor]
         
         navigationBar.standardAppearance = appearance
         navigationBar.compactAppearance = appearance
         navigationBar.scrollEdgeAppearance = appearance
         navigationBar.isTranslucent = false
-        navigationBar.tintColor = .black
+        navigationBar.tintColor = .dynamicTextColor
     }
     
     private func setupNavigationBarItems() {
@@ -153,7 +153,7 @@ class CustomNavigationBarController: UINavigationController {
     
     func updateCategoryTitle() {
         guard let currentCategory = self.viewModel.currentCategory else { 
-            self.categoryButton.setTitle("카테고리를 추가해 주세요", for: .normal)
+            self.categoryButton.setTitle("카테고리 추가하기", for: .normal)
             return }
         self.categoryButton.setTitle(currentCategory.title, for: .normal)
         print("카테고리 타이틀 업데이트: \(currentCategory.title)")

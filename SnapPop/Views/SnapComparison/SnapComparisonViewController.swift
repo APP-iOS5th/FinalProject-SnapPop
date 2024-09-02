@@ -33,6 +33,12 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
+        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 15)
+            return outgoing
+        }
+        buttonConfig.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(scale: .medium)
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -47,6 +53,12 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
+        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 15)
+            return outgoing
+        }
+        buttonConfig.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(scale: .medium)
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -61,6 +73,12 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
+        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 15)
+            return outgoing
+        }
+        buttonConfig.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(scale: .medium)
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -73,7 +91,7 @@ class SnapComparisonViewController: UIViewController {
         stackView.spacing = 10
         stackView.alignment = .top
         stackView.distribution = .fillProportionally
-        stackView.backgroundColor = .customBackground
+        stackView.backgroundColor = .dynamicBackgroundInsideColor
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -81,7 +99,7 @@ class SnapComparisonViewController: UIViewController {
     /// 스택뷰를 넣을 스크롤뷰
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = .customBackground
+        scrollView.backgroundColor = .customBackgroundColor
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
@@ -97,7 +115,7 @@ class SnapComparisonViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(SnapComparisonCollectionViewCell.self, forCellWithReuseIdentifier: SnapComparisonCollectionViewCell.identifier)
-        collectionView.backgroundColor = .customBackground
+        collectionView.backgroundColor = .dynamicBackgroundInsideColor
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -127,7 +145,7 @@ class SnapComparisonViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
-        self.view.backgroundColor = .customBackground
+        self.view.backgroundColor = .customBackgroundColor
         
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)

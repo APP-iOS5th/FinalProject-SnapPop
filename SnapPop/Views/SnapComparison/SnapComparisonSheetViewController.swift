@@ -24,7 +24,7 @@ class SnapComparisonSheetViewController: UIViewController {
     private lazy var leftArrowButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .dynamicTextColor
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(didTapLeftArrow), for: .touchUpInside)
         return button
@@ -34,7 +34,7 @@ class SnapComparisonSheetViewController: UIViewController {
     private lazy var rightArrowButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .dynamicTextColor
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(didTapRightArrow), for: .touchUpInside)
         return button
@@ -71,7 +71,7 @@ class SnapComparisonSheetViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .customBackground
+        view.backgroundColor = .customBackgroundColor
         
         setupLayout()
         setupPageViewController()

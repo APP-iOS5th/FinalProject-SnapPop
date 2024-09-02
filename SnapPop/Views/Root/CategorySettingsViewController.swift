@@ -16,7 +16,7 @@ class CategorySettingsViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "카테고리 설정"
-        label.textColor = .black
+        label.textColor = .dynamicTextColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -27,7 +27,7 @@ class CategorySettingsViewController: UIViewController {
         let leftPadding = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textField.frame.height))
         textField.leftViewMode = .always
         textField.leftView = leftPadding
-        textField.backgroundColor = .customBackground
+        textField.backgroundColor = .customBackgroundColor
         textField.layer.cornerRadius = 5
         textField.layer.borderColor = UIColor.customToggle.cgColor
         textField.layer.borderWidth = 1
@@ -42,7 +42,7 @@ class CategorySettingsViewController: UIViewController {
         var buttonConfig = UIButton.Configuration.filled()
         buttonConfig.title = "추가"
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
-        buttonConfig.baseForegroundColor = .black
+        buttonConfig.baseForegroundColor = .white
         buttonConfig.background.cornerRadius = 8
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -52,7 +52,7 @@ class CategorySettingsViewController: UIViewController {
     
     private lazy var categoryTable: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .customBackground
+        tableView.backgroundColor = .customBackgroundColor
         tableView.separatorStyle = .none
         tableView.delegate = self
         tableView.dataSource = self
@@ -75,7 +75,7 @@ class CategorySettingsViewController: UIViewController {
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .customBackground
+        self.view.backgroundColor = .customBackgroundColor
         setupLayout()
         hideKeyboardWhenTappedAround()
         viewModel.categoryisUpdated?()
@@ -209,7 +209,6 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
         
         let category = viewModel.categories[indexPath.row]
         cell.categoryNameLabel.text = category.title
-        
         if category.alertStatus {
             cell.notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
         } else {
@@ -265,9 +264,8 @@ extension CategorySettingsViewController: UITableViewDelegate, UITableViewDataSo
                 }
             }
         }
-        
+        cell.backgroundColor = .customBackgroundColor
         cell.selectionStyle = .none
-        cell.backgroundColor = .customBackground
         return cell
     }
     

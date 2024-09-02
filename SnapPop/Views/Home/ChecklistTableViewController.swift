@@ -18,7 +18,7 @@ class ChecklistTableViewController: UITableViewController {
     private let selfcareAddButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("새로운 관리 등록하기 +", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -36,7 +36,7 @@ class ChecklistTableViewController: UITableViewController {
         super.viewDidLoad()
         view.addSubview(selfcareAddButton)
         setupButtonConstraints()
-        
+        view.backgroundColor = .dynamicBackgroundInsideColor
         tableView.layer.cornerRadius = 20
         tableView.layer.masksToBounds = true
         
@@ -129,13 +129,12 @@ class ChecklistTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel else { return UITableViewCell() }
-
         // 모든 관리 항목이 없거나 현재 날짜에 관리 항목이 없는 경우
         if viewModel.checklistItems.isEmpty || viewModel.filteredItems.isEmpty {
             // 관리 항목이 없을 때의 셀 반환
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let messageLabel = UILabel()
-            messageLabel.text = "새로운 관리 등록을 통해 관리를 시작해보세요!"
+            messageLabel.text = "새로운 자기 관리를 시작해보세요!"
             messageLabel.textAlignment = .center
             messageLabel.textColor = .gray
             messageLabel.numberOfLines = 0
@@ -153,6 +152,7 @@ class ChecklistTableViewController: UITableViewController {
             
             cell.selectionStyle = .none
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude) // 셀의 구분선 제거
+            cell.backgroundColor = .dynamicBackgroundInsideColor
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
@@ -160,7 +160,7 @@ class ChecklistTableViewController: UITableViewController {
             
             // 선택된 날짜 전달
             cell.configure(with: item, for: viewModel.selectedDate)
-            
+            cell.backgroundColor = .dynamicBackgroundInsideColor
             // 체크박스 토글 이벤트 핸들링
             cell.onCheckBoxToggle = { [weak self] managementId, isCompleted in
                 self?.handleCheckBoxToggle(managementId: managementId, isCompleted: isCompleted)

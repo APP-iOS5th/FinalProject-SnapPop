@@ -28,7 +28,7 @@ class SnapPhotoViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .customBackgroundColor
         view.addSubview(imageView)
         
         NSLayoutConstraint.activate([

@@ -29,8 +29,10 @@ class CustomTabBarController: UITabBarController {
     private func setupTabbarLayout() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .customBackground
-        appearance.shadowColor = .black
+        appearance.backgroundColor = UIColor.customBackgroundColor
+        appearance.shadowColor = .dynamicTextColor
+        let thinLineImage = createThinLineImage(color: UIColor.dynamicTextColor, height: 0.1)
+            appearance.shadowImage = thinLineImage
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.customMain]
         appearance.stackedLayoutAppearance.selected.iconColor = .customMain
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
@@ -72,6 +74,15 @@ class CustomTabBarController: UITabBarController {
             secondNavController,
             thirdNavController
         ]
+    }
+    
+    private func createThinLineImage(color: UIColor, height: CGFloat) -> UIImage {
+        let size = CGSize(width: 1, height: height)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            color.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
     }
 }
 

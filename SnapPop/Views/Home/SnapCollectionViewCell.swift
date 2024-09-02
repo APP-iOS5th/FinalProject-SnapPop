@@ -49,11 +49,10 @@ class SnapCollectionViewCell: UICollectionViewCell {
             snapImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             snapImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
-            // 삭제 버튼 제약 조건
-            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: contentView.bounds.height * 0.04),
-            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentView.bounds.width * 0.05),
-            deleteButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1),
-            deleteButton.heightAnchor.constraint(equalTo: deleteButton.widthAnchor)
+            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5), // 상단 여백 줄임
+                deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5), // 우측 여백 줄임
+                deleteButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.22), // 크기 증가
+                deleteButton.heightAnchor.constraint(equalTo: deleteButton.widthAnchor) // 정사각형 유지
         ])
     }
     

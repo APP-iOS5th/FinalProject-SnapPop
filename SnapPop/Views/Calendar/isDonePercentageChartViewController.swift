@@ -13,7 +13,7 @@ class IsDonePercentageChart: UIViewController {
     
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 20)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -33,7 +33,7 @@ class IsDonePercentageChart: UIViewController {
     private func setupViews() {
         circularView = IsDoneDoughnut(percentages: [50, 50])
         circularView.translatesAutoresizingMaskIntoConstraints = false
-        
+        view.backgroundColor = .dynamicBackgroundInsideColor
         view.addSubview(monthLabel)
         view.addSubview(circularView)
     }
@@ -41,9 +41,9 @@ class IsDonePercentageChart: UIViewController {
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 70),
+            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 60),
             
-            circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor, constant: -20),
+            circularView.topAnchor.constraint(equalTo: monthLabel.topAnchor, constant: 10),
             circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             circularView.widthAnchor.constraint(equalToConstant: 300),
             circularView.heightAnchor.constraint(equalToConstant: 300)
@@ -91,7 +91,7 @@ open class IsDoneDoughnut: UIView {
     
     // MARK: - Private Variables
     private var _percentages: [Double]
-    private var _colors: [UIColor] = [.red, .lightGray]
+    private var _colors: [UIColor] = [UIColor.customButton, .lightGray]
     private var _lineWidth = CGFloat(3.0)
     lazy var donePercentage = "\(Float(_percentages[0]))%" {
         didSet {
@@ -126,7 +126,7 @@ open class IsDoneDoughnut: UIView {
         case 50.01...70.00:
             percentageColor = dynamicColor(light: .black, dark: .white)
         case 70.01...85.00:
-            percentageColor = .green
+            percentageColor = .systemCyan
         case 85.01...100.00:
             percentageColor = .blue
         default:
