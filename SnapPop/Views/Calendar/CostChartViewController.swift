@@ -48,9 +48,12 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
     
     private let totalButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("총액", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        let image = UIImage(systemName: "pin.slash.fill", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        button.tintColor = .dynamicTextColor // 시스템 색상을 사용하여 다크 모드 대응
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
         return button
     }()
     
@@ -79,11 +82,11 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
         ])
         
         NSLayoutConstraint.activate([
-            monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 60),
+            monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50),
             
-            totalButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            totalButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -60),
+            totalButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            totalButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -55),
             
             pieChartView.topAnchor.constraint(equalTo: monthLabel.topAnchor, constant: 10),
             pieChartView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -227,6 +230,7 @@ extension CostChartViewController {
         ]))
         
         pieChartView.centerAttributedText = centerText
+        totalButton.isHidden = false
     }
     
     func chartValueNothingSelected(_ chartView: ChartViewBase) {
@@ -235,5 +239,6 @@ extension CostChartViewController {
     @objc private func totalButtonTapped() {
         updateCenterText()
         pieChartView.highlightValue(nil, callDelegate: false)
+        totalButton.isHidden = true
     }
 }

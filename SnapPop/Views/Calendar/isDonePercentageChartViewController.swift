@@ -40,10 +40,10 @@ class IsDonePercentageChart: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 60),
+            monthLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            monthLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50),
             
-            circularView.topAnchor.constraint(equalTo: monthLabel.topAnchor, constant: 10),
+            circularView.topAnchor.constraint(equalTo: monthLabel.bottomAnchor),
             circularView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             circularView.widthAnchor.constraint(equalToConstant: 300),
             circularView.heightAnchor.constraint(equalToConstant: 300)
