@@ -174,6 +174,10 @@ class SnapComparisonSheetViewController: UIViewController {
         return photoViewController
     }
     
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        super.dismiss(animated: flag, completion: completion)
+    }
+    
     // MARK: - Actions
     
     @objc private func didTapLeftArrow() {
