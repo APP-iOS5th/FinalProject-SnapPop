@@ -70,9 +70,17 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         // 네비게이션 타이틀 설정
         if viewModel.edit {
             title = "관리 수정"
+            saveButton.setTitle("수정 완료", for: .normal)
         } else {
             title = "새로운 자기 관리"
+            saveButton.setTitle("등록 완료", for: .normal)
         }
+        setupLeftBarButtonItem()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        enableInteractivePopGesture()
     }
     
     // NotificationCenter에서 사용할 메서드
@@ -121,10 +129,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         
         // 제약 조건 설정
         setupConstraints()
-        
-        // 네비게이션 바 설정
-        title = "새로운 자기 관리"
-        setupLeftBarButtonItem()
     }
     
     // MARK: - Constraints Setup

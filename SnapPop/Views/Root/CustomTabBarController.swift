@@ -6,8 +6,12 @@
 //
 
 import UIKit
+import Combine
 
 class CustomTabBarController: UITabBarController {
+    
+    private var cancellables = Set<AnyCancellable>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
@@ -39,7 +43,7 @@ class CustomTabBarController: UITabBarController {
         )
         
         let customNavViewModel = CustomNavigationBarViewModel()
-        let secondViewController = HomeViewController(navigationBarViewModel: customNavViewModel)
+        let secondViewController = ConditionalViewController(viewModel: customNavViewModel)
         secondViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(systemName: "house"),
