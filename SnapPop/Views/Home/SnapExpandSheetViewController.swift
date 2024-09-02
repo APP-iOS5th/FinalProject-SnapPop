@@ -14,7 +14,11 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     var currentIndex: Int // 현재 인덱스
 
     // MARK: - UIComponents
-    private var pageViewController: UIPageViewController!
+    private var pageViewController: UIPageViewController = {
+        let pageVC = UIPageViewController()
+        pageVC.view.translatesAutoresizingMaskIntoConstraints = false
+        return pageVC
+    }()
     
     /// 페이지 컨트롤
     private lazy var pageControl: UIPageControl = {
@@ -42,15 +46,36 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .customBackgroundColor
-        
         setupPageViewController() // 페이지 뷰 컨트롤러 설정
-        setupLayout() // 레이아웃 설정
-        setupPageControl()
-        updateUI()
+        setupPageControll() // 페이지 컨트롤 설정
+        setupPageControllIndex()
     }
     
     // MARK: - Methods
-    private func setupLayout() {
+    private func setupPageViewController() {
+        pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        pageViewController.dataSource = self
+        pageViewController.delegate = self
+        
+        if let startViewController = viewControllerAt(index: currentIndex) {
+            pageViewController.setViewControllers([startViewController], direction: .forward, animated: true, completion: nil)
+        }
+        
+        addChild(pageViewController)
+        pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(pageViewController.view)
+        pageViewController.didMove(toParent: self)
+        
+        view.addSubview(pageControl)
+        NSLayoutConstraint.activate([
+            pageViewController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
+            pageViewController.view.bottomAnchor.constraint(equalTo: pageControl.topAnchor, constant: -20),
+            pageViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            pageViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+    }
+    
+    private func setupPageControll() {
         view.addSubviews([
             pageControl
         ])
@@ -62,22 +87,7 @@ class SnapExpandSheetViewController: UIViewController, UIPageViewControllerDataS
         ])
     }
     
-    private func setupPageViewController() {
-        pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        pageViewController.dataSource = self
-        pageViewController.delegate = self
-        
-        if let startViewController = viewControllerAt(index: currentIndex) {
-            pageViewController.setViewControllers([startViewController], direction: .forward, animated: true, completion: nil)
-        }
-        
-        addChild(pageViewController)
-        view.addSubview(pageViewController.view)
-        pageViewController.view.frame = view.bounds // 전체 화면에 맞게 설정
-        pageViewController.didMove(toParent: self)
-    }
-    
-    private func setupPageControl() {
+    private func setupPageControllIndex() {
         pageControl.numberOfPages = imageUrls.count
         pageControl.currentPage = currentIndex
     }
