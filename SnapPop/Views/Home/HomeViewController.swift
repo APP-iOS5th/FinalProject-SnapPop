@@ -63,6 +63,7 @@ class HomeViewController:
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(systemName: "calendar")
         imageView.tintColor = .dynamicTextColor
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     

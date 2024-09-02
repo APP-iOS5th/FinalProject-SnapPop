@@ -43,6 +43,10 @@ class ChecklistTableViewController: UITableViewController {
         tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
         tableView.dataSource = self
         tableView.delegate = self
+        let buttonHeight: CGFloat = 50 // 버튼의 높이
+        let bottomPadding: CGFloat = 20 // 추가 여백
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: buttonHeight + bottomPadding, right: 0)
+        tableView.scrollIndicatorInsets = tableView.contentInset
 
         // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
         viewModel?.$filteredItems

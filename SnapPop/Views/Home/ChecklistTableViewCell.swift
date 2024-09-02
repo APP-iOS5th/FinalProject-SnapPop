@@ -23,6 +23,7 @@ class ChecklistTableViewCell: UITableViewCell {
     let checkLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 19)
         return label
     }()
     
