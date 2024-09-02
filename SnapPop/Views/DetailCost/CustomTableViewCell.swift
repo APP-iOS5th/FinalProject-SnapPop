@@ -124,7 +124,7 @@ final class OneTimeCostCell: BaseTableViewCell2 {
     
     private let costLabel: UILabel = {
         let label = UILabel()
-        label.text = "000 원"
+        label.text = "0 원"
         label.textColor = .gray
         
         return label

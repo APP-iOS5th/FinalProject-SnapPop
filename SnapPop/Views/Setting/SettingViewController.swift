@@ -64,13 +64,12 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         footerButton.translatesAutoresizingMaskIntoConstraints = false
         settingTableView.translatesAutoresizingMaskIntoConstraints = false
-        let safeArea = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
-            settingTableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            settingTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            settingTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-            settingTableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            settingTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            settingTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            settingTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            settingTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             footerButton.trailingAnchor.constraint(equalTo: footerView.trailingAnchor),
             footerButton.bottomAnchor.constraint(equalTo: footerView.bottomAnchor, constant: 8)
