@@ -222,22 +222,17 @@ class SnapComparisonViewController: UIViewController {
         selectSnapPeriodButton.menu = selectPeriodMenu
         selectSnapPeriodButton.showsMenuAsPrimaryAction = true
         
-        if viewModel.snapDateMenuItems.isEmpty {
-            selectSnapDateButton.setTitle("날짜 없음", for: .normal)
-            selectSnapDateButton.menu = nil
-        } else {
-            let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems.map { action in
-                UIAction(title: action.title, handler: { [weak self] _ in
-                    if let date = self?.titleToDateString(action.title) {
-                        self?.viewModel.changeSnapDate(date: date) {
-                            self?.reloadCollectionView()
-                        }
+        let selectDateMenu = UIMenu(title: "날짜 선택", children: viewModel.snapDateMenuItems.map { action in
+            UIAction(title: action.title, handler: { [weak self] _ in
+                if let date = self?.titleToDateString(action.title) {
+                    self?.viewModel.changeSnapDate(date: date) {
+                        self?.reloadCollectionView()
                     }
-                })
+                }
             })
-            selectSnapDateButton.menu = selectDateMenu
-            selectSnapDateButton.showsMenuAsPrimaryAction = true
-        }
+        })
+        selectSnapDateButton.menu = selectDateMenu
+        selectSnapDateButton.showsMenuAsPrimaryAction = true
     }
     
     private func titleToDateString(_ title: String) -> Date? {
