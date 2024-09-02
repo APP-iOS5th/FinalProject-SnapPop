@@ -246,13 +246,6 @@ class HomeViewController:
     /// 날짜 변경 시 호출
     @objc private func dateChanged(_ sender: UIDatePicker) {
         viewModel.dateChanged(sender)
-        
-//        if let categoryId = viewModel.selectedCategoryId {
-//            viewModel.loadSnap(categoryId: categoryId, snapDate: sender.date) { [weak self] in
-//                self?.updateSnapCollectionView()
-//            }
-//        }
-
         self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기
     }
 
@@ -397,7 +390,6 @@ class HomeViewController:
         } else {
             // 편집 모드 종료
             editButton.setTitle("편집", for: .normal)
-            editButton.setTitle("편집", for: .normal)
             snapCollectionView.isScrollEnabled = true // 스크롤 활성화
         }
         
@@ -433,6 +425,7 @@ class HomeViewController:
                     if self.viewModel.snap?.imageUrls.isEmpty == true {
                         self.viewModel.deleteSnap(categoryId: categoryId, snap: snap)
                         self.viewModel.snap = nil
+                        self.editButtonTapped()
                         self.updateSnapCollectionView()
                     }
                     

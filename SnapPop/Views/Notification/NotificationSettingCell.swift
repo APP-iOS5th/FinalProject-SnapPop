@@ -20,6 +20,7 @@ class NotificationSettingCell: UITableViewCell {
     
     let toggleSwitch: UISwitch = {
         let toggle = UISwitch()
+        toggle.onTintColor = UIColor.customToggleColor
         toggle.translatesAutoresizingMaskIntoConstraints = false
         return toggle
     }()
