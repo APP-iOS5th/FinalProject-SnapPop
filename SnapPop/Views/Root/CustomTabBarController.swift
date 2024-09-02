@@ -20,7 +20,12 @@ class CustomTabBarController: UITabBarController {
         setupTabbarItem()
         selectedIndex = 1
     }
-    
+
+    override func loadView() {
+        super.loadView()
+        setValue(CustomTabBar(), forKey: "tabBar")
+    }
+
     private func setupTabbarLayout() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -57,7 +62,6 @@ class CustomTabBarController: UITabBarController {
             image: UIImage(systemName: "arrow.left.arrow.right.square"),
             selectedImage: UIImage(systemName: "arrow.left.arrow.right.square.fill")
         )
-                
         let customNavigationBarViewModel = CustomNavigationBarViewModel()
         let firstNavController = CustomNavigationBarController(viewModel: customNavigationBarViewModel, rootViewController: firstViewController)
         let secondNavController = CustomNavigationBarController(viewModel: customNavigationBarViewModel, rootViewController: secondViewController)
@@ -81,5 +85,15 @@ extension CustomTabBarController: UITabBarControllerDelegate {
             }
         }
         return true
+    }
+}
+
+class CustomTabBar: UITabBar {
+    var customHeight: CGFloat = 95 // 원하는 높이를 설정합니다.
+
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        var sizeThatFits = super.sizeThatFits(size)
+        sizeThatFits.height = customHeight
+        return sizeThatFits
     }
 }

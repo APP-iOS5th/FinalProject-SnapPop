@@ -46,6 +46,10 @@
 		B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E002C76C7350021A57D /* AddManagementViewController.swift */; };
 		B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */; };
 		B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */; };
+		B8A7253A2C854515002290E4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B8A725392C854515002290E4 /* GoogleService-Info.plist */; };
+		B8A7253C2C854697002290E4 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = B8A7253B2C854697002290E4 /* Config.xcconfig */; };
+		B8A725432C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8A725422C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf */; };
+		B8A725452C854FFF002290E4 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A725442C854FFF002290E4 /* UIFont+Extensions.swift */; };
 		C241D91D2C8548E7006E24E6 /* CategoryEmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241D91C2C8548E7006E24E6 /* CategoryEmptyViewController.swift */; };
 		C241D91F2C85800E006E24E6 /* ConditionalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241D91E2C85800E006E24E6 /* ConditionalViewController.swift */; };
 		C246CE5A2C74EF7D00A631BE /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */; };
@@ -59,7 +63,6 @@
 		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
 		C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA692C649E4300A5B40A /* GoogleSignIn */; };
 		C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */; };
-		C24E0AFC2C762ECF00CCC055 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */; };
 		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
 		C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C8132C784610004F569A /* UIImageView+Extensions.swift */; };
 		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
@@ -124,6 +127,10 @@
 		B8339E002C76C7350021A57D /* AddManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewController.swift; sourceTree = "<group>"; };
 		B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAddTableViewCell.swift; sourceTree = "<group>"; };
 		B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewmodel.swift; sourceTree = "<group>"; };
+		B8A725392C854515002290E4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B8A7253B2C854697002290E4 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		B8A725422C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BalooChettan2-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		B8A725442C854FFF002290E4 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		C241D91C2C8548E7006E24E6 /* CategoryEmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryEmptyViewController.swift; sourceTree = "<group>"; };
 		C241D91E2C85800E006E24E6 /* ConditionalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalViewController.swift; sourceTree = "<group>"; };
 		C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
@@ -136,7 +143,6 @@
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		C24BFA722C64B01400A5B40A /* SnapPop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnapPop.entitlements; sourceTree = "<group>"; };
-		C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -270,7 +276,7 @@
 		8F1685232C6354590010F8D8 = {
 			isa = PBXGroup;
 			children = (
-				C2740B092C84A66C006CA4F6 /* Config.xcconfig */,
+				B8A7253B2C854697002290E4 /* Config.xcconfig */,
 				C24BFA542C647BA600A5B40A /* .swiftlint.yml */,
 				8F16852E2C6354590010F8D8 /* SnapPop */,
 				8F16852D2C6354590010F8D8 /* Products */,
@@ -297,7 +303,7 @@
 				C24BFA5B2C64801100A5B40A /* ViewModels */,
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
-				C24E0AFB2C762ECF00CCC055 /* GoogleService-Info.plist */,
+				B8A725392C854515002290E4 /* GoogleService-Info.plist */,
 			);
 			path = SnapPop;
 			sourceTree = "<group>";
@@ -354,6 +360,7 @@
 			children = (
 				8F1685382C63545A0010F8D8 /* Assets.xcassets */,
 				8F16853A2C63545A0010F8D8 /* LaunchScreen.storyboard */,
+				B8A725422C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -404,6 +411,7 @@
 			isa = PBXGroup;
 			children = (
 				4AD29AD42C6AE1F200A9BEDD /* UIView+Extensions.swift */,
+				B8A725442C854FFF002290E4 /* UIFont+Extensions.swift */,
 				4AD29AD72C6B35BE00A9BEDD /* Color+Extensions.swift */,
 				C259C8132C784610004F569A /* UIImageView+Extensions.swift */,
 				C259C81A2C787B89004F569A /* NotificationManager.swift */,
@@ -570,9 +578,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C24BFA552C647BA600A5B40A /* .swiftlint.yml in Resources */,
-				C2740B0A2C84A66C006CA4F6 /* Config.xcconfig in Resources */,
-				C24E0AFC2C762ECF00CCC055 /* GoogleService-Info.plist in Resources */,
+				B8A7253C2C854697002290E4 /* Config.xcconfig in Resources */,
+				B8A7253A2C854515002290E4 /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
+				B8A725432C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -628,6 +637,7 @@
 				C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */,
 				C2A6CAAD2C7EE2F800F7670A /* UIResponder+Extensions.swift in Sources */,
 				4AD29AD52C6AE1F200A9BEDD /* UIView+Extensions.swift in Sources */,
+				B8A725452C854FFF002290E4 /* UIFont+Extensions.swift in Sources */,
 				C2F081002C7D6DD600BE8B0D /* DetailCost.swift in Sources */,
 				4A20F6472C6C32B600F263FF /* SnapComparisonSheetViewModel.swift in Sources */,
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
@@ -690,7 +700,7 @@
 /* Begin XCBuildConfiguration section */
 		8F16853E2C63545A0010F8D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2740B092C84A66C006CA4F6 /* Config.xcconfig */;
+			baseConfigurationReference = B8A7253B2C854697002290E4 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -754,7 +764,7 @@
 		};
 		8F16853F2C63545A0010F8D8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2740B092C84A66C006CA4F6 /* Config.xcconfig */;
+			baseConfigurationReference = B8A7253B2C854697002290E4 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

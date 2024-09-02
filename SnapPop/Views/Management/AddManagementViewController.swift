@@ -321,7 +321,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         case 0:
             return "기본 정보"
         case 1:
-            return "설정"
+            return "스케줄 설정"
         case 2:
             return "알림"
         default:
