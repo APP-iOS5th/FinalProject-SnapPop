@@ -553,11 +553,18 @@ class HomeViewController:
         
         // SnapExpandSheetViewController 초기화
         let expandVC = SnapExpandSheetViewController(imageUrls: snap.imageUrls, currentIndex: indexPath.item) // ViewController 초기화
-        expandVC.modalPresentationStyle = .pageSheet // 모달 시트로 표시
+        expandVC.modalPresentationStyle = .formSheet // 모달 시트로 표시
         
         // sheetPresentationController 설정
         if let sheet = expandVC.sheetPresentationController {
-            sheet.detents = [.medium()] // 모달 크기 설정
+            
+            // 뷰의 2/3크기로 모달 크기 설정
+            let targetHeight = UIScreen.main.bounds.height * 2 / 3
+            let customDetent = UISheetPresentationController.Detent.custom(identifier: .init("customDetent")) { _ in
+                return targetHeight
+            }
+            
+            sheet.detents = [customDetent] // 모달 크기 설정
             sheet.prefersGrabberVisible = true // 그랩바 표시
         }
         
