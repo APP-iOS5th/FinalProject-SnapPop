@@ -19,8 +19,6 @@ class CustomTabBarController: UITabBarController {
         setupTabbarLayout()
         setupTabbarItem()
         selectedIndex = 1
-        
-        bind()
     }
     
     private func setupTabbarLayout() {
@@ -45,23 +43,12 @@ class CustomTabBarController: UITabBarController {
         )
         
         let customNavViewModel = CustomNavigationBarViewModel()
-        var secondViewController: UIViewController
-        
-        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
-            secondViewController = HomeViewController(navigationBarViewModel: customNavViewModel)
-            secondViewController.tabBarItem = UITabBarItem(
-                title: "",
-                image: UIImage(systemName: "house"),
-                selectedImage: UIImage(systemName: "house.fill")
-            )
-        } else {
-            secondViewController = CategoryEmptyViewController(viewModel: customNavViewModel)
-            secondViewController.tabBarItem = UITabBarItem(
-                title: "",
-                image: UIImage(systemName: "house"),
-                selectedImage: UIImage(systemName: "house.fill")
-            )
-        }
+        let secondViewController = ConditionalViewController(viewModel: customNavViewModel)
+        secondViewController.tabBarItem = UITabBarItem(
+            title: "",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill")
+        )
         
         let snapComparisonViewModel = SnapComparisonViewModel()
         let thirdViewController = SnapComparisonViewController(viewModel: snapComparisonViewModel)
@@ -81,42 +68,6 @@ class CustomTabBarController: UITabBarController {
             secondNavController,
             thirdNavController
         ]
-    }
-    
-    private func setupSecondViewController() {
-        let customNavViewModel = CustomNavigationBarViewModel()
-        var secondViewController: UIViewController
-        
-        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
-            secondViewController = HomeViewController(navigationBarViewModel: customNavViewModel)
-        } else {
-            secondViewController = CategoryEmptyViewController(viewModel: customNavViewModel)
-        }
-        
-        secondViewController.tabBarItem = UITabBarItem(
-            title: "",
-            image: UIImage(systemName: "house"),
-            selectedImage: UIImage(systemName: "house.fill")
-        )
-        
-        let secondNavController = CustomNavigationBarController(viewModel: customNavViewModel, rootViewController: secondViewController)
-        
-        if var currentViewControllers = viewControllers {
-            currentViewControllers[1] = secondNavController
-            viewControllers = currentViewControllers
-        } else {
-            viewControllers = [secondNavController]
-        }
-    }
-    
-    private func bind() {
-        NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification, object: nil)
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                self.setupSecondViewController()
-                self.selectedIndex = 1
-            }
-            .store(in: &cancellables)
     }
 }
 
