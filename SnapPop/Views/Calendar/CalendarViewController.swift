@@ -117,10 +117,18 @@ class CalendarViewController: UIViewController {
     
     private let segmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["달성률", "비용"])
-        let font = UIFont.boldSystemFont(ofSize: 16)
-        UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .selected)
-        UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
-        
+        let font = UIFont.systemFont(ofSize: 14) // Adjust the font size as needed
+        let blackColor = UIColor.black
+
+        UISegmentedControl.appearance().setTitleTextAttributes([
+            .font: font,
+            .foregroundColor: blackColor
+        ], for: .selected)
+
+        UISegmentedControl.appearance().setTitleTextAttributes([
+            .font: font,
+            .foregroundColor: blackColor
+        ], for: .normal)
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.backgroundColor = UIColor.customToggleColor

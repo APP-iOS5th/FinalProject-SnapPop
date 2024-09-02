@@ -18,7 +18,7 @@ class ChecklistTableViewController: UITableViewController {
     private let selfcareAddButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("새로운 관리 등록하기 +", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false

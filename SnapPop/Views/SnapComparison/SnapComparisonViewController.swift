@@ -33,6 +33,12 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
+        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 15)
+            return outgoing
+        }
+        buttonConfig.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(scale: .medium)
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -47,6 +53,12 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
+        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 15)
+            return outgoing
+        }
+        buttonConfig.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(scale: .medium)
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -61,6 +73,12 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
         buttonConfig.baseForegroundColor = .black
         buttonConfig.background.cornerRadius = 8
+        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 15)
+            return outgoing
+        }
+        buttonConfig.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(scale: .medium)
         let button = UIButton(configuration: buttonConfig)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -73,7 +91,7 @@ class SnapComparisonViewController: UIViewController {
         stackView.spacing = 10
         stackView.alignment = .top
         stackView.distribution = .fillProportionally
-        stackView.backgroundColor = .customBackgroundColor
+        stackView.backgroundColor = .dynamicBackgroundInsideColor
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()

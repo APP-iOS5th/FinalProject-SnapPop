@@ -89,7 +89,7 @@ class HomeViewController:
     private let addButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("+", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
