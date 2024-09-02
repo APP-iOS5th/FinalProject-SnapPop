@@ -47,6 +47,11 @@ class NotificationSettingViewController: UIViewController {
         setupLeftBarButtonItem()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        enableInteractivePopGesture()
+    }
+    
     // MARK: - Methods
     private func setupLayout() {
         view.addSubview(notificationTableView)
