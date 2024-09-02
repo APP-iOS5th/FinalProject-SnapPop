@@ -20,10 +20,11 @@ class AddManagementViewModel {
     @Published var alertTime: Date = Date()
     @Published var alertStatus: Bool = false
     
+    @Published var detailCostArray: [DetailCost] = [] // 추가한 상세 비용들을 담을 배열
+    
     var edit = false // 편집
     private var cancellables = Set<AnyCancellable>()
     var management: Management
-    var detailCostArray: [DetailCost] = [] // 추가한 상세 비용들을 담을 배열
     private let db = ManagementService()
     private let categoryService = CategoryService()
 
@@ -41,7 +42,6 @@ class AddManagementViewModel {
         self.repeatCycle = management.repeatCycle
         self.alertTime = management.alertTime
         self.alertStatus = management.alertStatus
-        
         bindManagementData()
     }
     
@@ -81,7 +81,11 @@ class AddManagementViewModel {
         
         $startDate
             .sink { [weak self] newValue in
-                self?.management.startDate = newValue
+                guard let self = self else { return }
+                self.management.startDate = newValue
+                if self.edit {
+                    self.updateCompletions()
+                }
             }
             .store(in: &cancellables)
         
@@ -99,9 +103,12 @@ class AddManagementViewModel {
                     repeatValue = 0
                 }
                 self?.management.repeatCycle = repeatValue
+                if self?.edit == true {
+                    self?.updateCompletions()
+                }
             }
             .store(in: &cancellables)
-        
+            
         $alertTime
             .sink { [weak self] newValue in
                 self?.management.alertTime = newValue
@@ -113,6 +120,8 @@ class AddManagementViewModel {
                 self?.management.alertStatus = newValue
             }
             .store(in: &cancellables)
+        
+        loadDetailCosts(categoryId: categoryId, managementId: management.id)
     }
     
     func loadCategories(completion: @escaping (Result<[Category], Error>) -> Void) {
@@ -145,6 +154,13 @@ class AddManagementViewModel {
         self.management.repeatCycle = repeatValue
     }
     
+    private func updateCompletions() {
+        // 초기화
+        self.management.completions.removeAll()
+        // 새로운 completions 값 생성
+        self.management.completions = generateSixMonthsCompletions(startDate: self.management.startDate, repeatInterval: self.management.repeatCycle)
+    }
+    
     func categoryDidChange(to newCategoryId: String?) {
         self.categoryId = newCategoryId
         print("Notification을 포스트합니다: categoryDidChangeNotification")
@@ -167,8 +183,20 @@ class AddManagementViewModel {
                 }
                 self.db.updateManagement(categoryId: categoryId, managementId: managementId, updatedManagement: self.management) { result in
                     if case .success = result {
+                        self.db.deleteDetailCosts(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: categoryId, managementId: managementId) { result in
+                            switch result {
+                            case .success:
+                                for detailCost in self.detailCostArray {
+                                    self.saveDetailCost(categoryId: self.categoryId, managementId: managementId, detailCost: detailCost)
+                                }
+                            case .failure(let error):
+                                print("전체 상세 비용 삭제 실패: \(error.localizedDescription)")
+                            }
+                        }
+                        
                         // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
                         if isCategoryNotificationEnabled && self.management.alertStatus {
+                            self.cancelNotification(for: self.management)
                             self.addNotification(for: self.management)
                         } else {
                             // 알림 상태가 false이거나 카테고리 알림이 꺼져 있으면 기존 알림 취소
@@ -184,9 +212,6 @@ class AddManagementViewModel {
                         // 카테고리와 관리 항목의 알림 상태가 모두 true일 때만 알림을 추가
                         if isCategoryNotificationEnabled && self.management.alertStatus {
                             self.addNotification(for: self.management)
-                        } else {
-                            // 알림 상태가 false이거나 카테고리 알림이 꺼져 있으면 기존 알림 취소
-                            self.cancelNotification(for: self.management)
                         }
                     }
                     completion(result)
@@ -200,25 +225,25 @@ class AddManagementViewModel {
     var isValid: AnyPublisher<Bool, Never> {
         return Publishers.CombineLatest3($title, $color, $startDate)
             .map { title, color, startDate in
-                return title.count >= 2 && color != .clear && startDate != nil
+                return title.count >= 1 && color != .clear && startDate != nil
             }
             .eraseToAnyPublisher()
     }
 
     func save(completion: @escaping (Result<Void, Error>) -> Void) {
         // 유효성 검증
-        guard title.count >= 2 else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "제목은 2자 이상이어야 합니다."])))
+        guard title.count >= 1 else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "제목을 적어주세요."])))
             return
         }
         
         guard color != .clear else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "색상을 선택해야 합니다."])))
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "색상을 선택해주세요."])))
             return
         }
         
         guard startDate != nil else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "날짜를 선택해야 합니다."])))
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "날짜를 선택해주세요."])))
             return
         }
         
@@ -233,47 +258,12 @@ class AddManagementViewModel {
                 self.management = management
             
                 NotificationCenter.default.post(name: .managementSavedNotification, object: nil)
-                guard let categoryId = self.categoryId else { return }
                 
                 // 상세 비용 저장
                 for detailCost in self.detailCostArray {
-                    self.saveDetailCost(categoryId: categoryId, managementId: management.id ?? "", detailCost: detailCost)
+                    self.saveDetailCost(categoryId: self.categoryId, managementId: management.id, detailCost: detailCost)
                 }
-                
-                // 알림 설정
-                if management.alertStatus {
-                    if management.repeatCycle == 0 {
-                        // 반복 안함으로 설정한 알림
-                        NotificationManager.shared.initialNotification(categoryId: categoryId,
-                                                                       managementId: management.id ?? "",
-                                                                       startDate: management.startDate,
-                                                                       alertTime: management.alertTime,
-                                                                       repeatCycle: management.repeatCycle,
-                                                                       body: management.title)
-                    }
-                    else {
-                        if self.isSpecificDateInPast(startDate: self.startDate, alertTime: self.alertTime) {
-                            // 만약 현재 시간보다 과거부터 시작하는 알림을 등록하면 초기 알림을 등록하여 반복 알림을 트리거 할 필요가 없으므로 바로 반복 알림을 등록해줌
-                            NotificationManager.shared.repeatingNotification(categoryId: categoryId,
-                                                                             managementId: management.id ?? "",
-                                                                             startDate: management.startDate,
-                                                                             alertTime: management.alertTime,
-                                                                             repeatCycle: management.repeatCycle,
-                                                                             body: management.title)
-                        } else {
-                            NotificationManager.shared.initialNotification(categoryId: categoryId,
-                                                                           managementId: management.id ?? "",
-                                                                           startDate: management.startDate,
-                                                                           alertTime: management.alertTime,
-                                                                           repeatCycle: management.repeatCycle,
-                                                                           body: management.title)
-                        }
-                    }
-                } else {
-                    // 알림 상태가 false일 때 기존 알림 취소
-                    self.cancelNotification(for: management)
-                }
-                
+
                 completion(.success(()))
             case .failure(let error):
                 print("Failed to save management: \(error.localizedDescription)")
@@ -384,13 +374,28 @@ class AddManagementViewModel {
         }
     }
     
-    func saveDetailCost(categoryId: String, managementId: String, detailCost: DetailCost) {
-        db.saveDetailCost(categoryId: categoryId, managementId: managementId, detailCost: detailCost) { result in
-            switch result {
-            case .success:
-                print("상세 비용 저장 성공")
-            case .failure(let error):
-                print("상세 비용 저장 실패: \(error.localizedDescription)")
+    func saveDetailCost(categoryId: String?, managementId: String?, detailCost: DetailCost) {
+        if let categoryId = categoryId, let managementId = management.id {
+            db.saveDetailCost(categoryId: categoryId, managementId: managementId, detailCost: detailCost) { result in
+                switch result {
+                case .success:
+                    print("상세 비용 저장 성공")
+                case .failure(let error):
+                    print("상세 비용 저장 실패: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    func loadDetailCosts(categoryId: String?, managementId: String?) {
+        if let categoryId = categoryId, let managementId = management.id {
+            db.loadDetailCosts(categoryId: categoryId, managementId: managementId) { result in
+                switch result {
+                case .success(let detailCosts):
+                    self.detailCostArray = detailCosts
+                case .failure(let error):
+                    print("Failed to load detail costs: \(error.localizedDescription)")
+                }
             }
         }
     }

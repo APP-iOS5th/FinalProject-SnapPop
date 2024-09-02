@@ -61,27 +61,15 @@ class HomeViewController:
     private let calendarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "CalenderIcon")
+        imageView.image = UIImage(systemName: "calendar")
         imageView.tintColor = .black
         return imageView
     }()
-    /// DatePicker 알림 레이블
-     private let dateAlertLabel: UILabel = {
-         let label = UILabel()
-         label.text = " "
-         label.textColor = .black
-         label.backgroundColor = UIColor.customButtonColor
-         label.textAlignment = .center
-         label.layer.cornerRadius = 10
-         label.clipsToBounds = true
-         label.translatesAutoresizingMaskIntoConstraints = false
-         return label
-     }()
     
     // 스냅 타이틀
     private let snapTitle: UILabel = {
         let label = UILabel()
-        label.text = "Snap Pop"
+        label.text = "Snap"
         label.font = UIFont.boldSystemFont(ofSize: 24)
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -93,7 +81,7 @@ class HomeViewController:
     private let editButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("편집", for: .normal)
-        button.setTitleColor(.blue, for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -134,7 +122,7 @@ class HomeViewController:
     // 스냅 추가 안내문구
     private let noImageLabel: UILabel = {
         let label = UILabel()
-        label.text = "사진을 추가해보세요!"
+        label.text = "스냅을 추가해보세요!"
         label.textColor = .gray
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -158,7 +146,6 @@ class HomeViewController:
         setupDatePickerView()
         setupSnapCollectionView()
         setupChecklistView()
-        updateDateAlertLabel()
         
         
         snapCollectionView.dataSource = self
@@ -239,7 +226,6 @@ class HomeViewController:
         datePickerContainer.addSubview(calendarImageView)
         datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         datePickerContainer.addSubview(datePicker)
-        view.addSubview(dateAlertLabel)
         
         // Set up constraints
         NSLayoutConstraint.activate([
@@ -249,7 +235,7 @@ class HomeViewController:
             datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
             
             // calendarImageView constraints
-            calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor, constant: view.bounds.width * 0.02),
+            calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor),
             calendarImageView.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
             calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
             calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
@@ -258,12 +244,6 @@ class HomeViewController:
             datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: view.bounds.width * 0.02),
             datePicker.trailingAnchor.constraint(equalTo: datePickerContainer.trailingAnchor, constant: -view.bounds.width * 0.02),
             datePicker.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
-            
-            // dateAlertLabel constraints
-            dateAlertLabel.leadingAnchor.constraint(equalTo: datePicker.trailingAnchor, constant: 10),
-            dateAlertLabel.trailingAnchor.constraint(equalTo: dateAlertLabel.leadingAnchor, constant: 40),
-            dateAlertLabel.heightAnchor.constraint(equalTo: datePicker.heightAnchor),
-            dateAlertLabel.centerYAnchor.constraint(equalTo: datePicker.centerYAnchor)
         ])
     }
     /// 날짜 변경 시 호출
@@ -275,38 +255,10 @@ class HomeViewController:
                 self?.updateSnapCollectionView()
             }
         }
-        
-        updateDateAlertLabel() // 날짜 텍스트 업데이트
+
         self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기
     }
-    /// 날짜 알림 버튼 텍스트 업데이트
-    private func updateDateAlertLabel() {
-        let selectedDate = datePicker.date
-        let currentDate = Date()
-        
-        let calendar = Calendar.current
-        let selectedDay = calendar.startOfDay(for: selectedDate)
-        let today = calendar.startOfDay(for: currentDate)
-        
-        // Calculate day difference
-        let dayDifference = calendar.dateComponents([.day], from: today, to: selectedDay).day ?? 0
-        
-        dateAlertLabel.isHidden = false
-        
-        switch dayDifference {
-        case 0:
-            dateAlertLabel.text = "오늘"
-        case -1:
-            dateAlertLabel.text = "어제"
-        case 1:
-            dateAlertLabel.text = "내일"
-        case 2:
-            dateAlertLabel.text = "모레"
-        default:
-            dateAlertLabel.text = ""
-            dateAlertLabel.isHidden = true
-        }
-    }
+
     /// 체크리스트 관련 요소 제약조건
     private func setupChecklistView() {
         // Add managementTitle to the view
@@ -344,7 +296,7 @@ class HomeViewController:
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistCell", for: indexPath) as! ChecklistTableViewCell
         let item = viewModel.checklistItems[indexPath.row]
-        cell.configure(with: item)
+        cell.configure(with: item, for: Date())
         return cell
     }
     
@@ -368,7 +320,7 @@ class HomeViewController:
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
-            noImageLabel.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.08),
+            noImageLabel.centerYAnchor.constraint(equalTo: snapCollectionView.centerYAnchor),
             noImageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor), // 중앙 정렬
             
             snapCollectionView.topAnchor.constraint(equalTo: snapTitle.bottomAnchor, constant: view.bounds.height * 0.01),
