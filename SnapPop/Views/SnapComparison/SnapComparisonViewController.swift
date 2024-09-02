@@ -99,7 +99,7 @@ class SnapComparisonViewController: UIViewController {
     /// 스택뷰를 넣을 스크롤뷰
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = .customBackgroundColor
+        scrollView.backgroundColor = .dynamicBackgroundInsideColor
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
@@ -145,7 +145,7 @@ class SnapComparisonViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
-        self.view.backgroundColor = .customBackgroundColor
+        self.view.backgroundColor = .dynamicBackgroundInsideColor
         
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)
@@ -195,7 +195,7 @@ class SnapComparisonViewController: UIViewController {
             scrollView.heightAnchor.constraint(equalToConstant: 44),
 
             buttonStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
-            buttonStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 50),
+            buttonStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 10),
             buttonStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -10),
             buttonStackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             
@@ -244,7 +244,7 @@ class SnapComparisonViewController: UIViewController {
     
     private func titleToDateString(_ title: String) -> Date? {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 d일"
+        formatter.dateFormat = "yy년 MM월 d일"
         return formatter.date(from: title)
     }
     

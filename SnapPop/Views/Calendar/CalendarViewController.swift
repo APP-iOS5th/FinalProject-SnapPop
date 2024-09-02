@@ -70,6 +70,7 @@ class CalendarViewController: UIViewController {
         view.wantsDateDecorations = true
         view.tintColor = UIColor.customMainColor
         view.backgroundColor = .dynamicBackgroundInsideColor
+        view.transform = CGAffineTransform(scaleX: 1.0, y: 0.93)
         return view
     }()
     
@@ -250,7 +251,7 @@ class CalendarViewController: UIViewController {
     private func setupCalendarViewConstraints() {
         calendarView.locale = Locale(identifier: "ko_KR")
         NSLayoutConstraint.activate([
-            calendarView.topAnchor.constraint(equalTo: firstStackViewView.topAnchor, constant: -10),
+            calendarView.topAnchor.constraint(equalTo: firstStackViewView.topAnchor, constant: -25),
             calendarView.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
             calendarView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor)
         ])
@@ -258,7 +259,7 @@ class CalendarViewController: UIViewController {
     private func setupTableViewConstraints() {
         tableViewHeightConstraint?.isActive = false
         
-        let cellHeight: CGFloat = 50
+        let cellHeight: CGFloat = 45
         let numberOfRows = tableView.numberOfRows(inSection: 0)
         let newHeight = CGFloat(numberOfRows) * cellHeight
         
@@ -272,7 +273,7 @@ class CalendarViewController: UIViewController {
         tableView.layoutMargins = .zero
         tableView.separatorInset = .zero
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -10),
+            tableView.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -25),
             tableView.leadingAnchor.constraint(equalTo: firstStackViewView.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: firstStackViewView.trailingAnchor),
             tableViewHeightConstraint!
@@ -281,7 +282,7 @@ class CalendarViewController: UIViewController {
     private func setupdashButtonConstraints() {
         dashBarTopConstraint?.isActive = false
         if tableView.isHidden {
-            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -10)
+            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -25)
         } else {
             dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor)
         }
