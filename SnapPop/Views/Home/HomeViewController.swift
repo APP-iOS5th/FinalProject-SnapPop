@@ -211,9 +211,6 @@ class HomeViewController:
         } else {
             viewModel.categoryDidChange(to: nil)
         }
-        
-        // 카테고리 변경 시 snapCollectionView 리로드
-        updateSnapCollectionView()
     }
     
     private func updateUIWithCategories() {
@@ -250,11 +247,11 @@ class HomeViewController:
     @objc private func dateChanged(_ sender: UIDatePicker) {
         viewModel.dateChanged(sender)
         
-        if let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
-            viewModel.loadSnap(categoryId: categoryId, snapDate: viewModel.selectedDate) { [weak self] in
-                self?.updateSnapCollectionView()
-            }
-        }
+//        if let categoryId = viewModel.selectedCategoryId {
+//            viewModel.loadSnap(categoryId: categoryId, snapDate: sender.date) { [weak self] in
+//                self?.updateSnapCollectionView()
+//            }
+//        }
 
         self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기
     }

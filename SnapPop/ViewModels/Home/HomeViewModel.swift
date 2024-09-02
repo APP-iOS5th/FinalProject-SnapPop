@@ -46,9 +46,14 @@ class HomeViewModel: ObservableObject {
     }
     
     /// Image Picker Methods
-    func dateChanged(_ sender: UIDatePicker) -> Date {
+    func dateChanged(_ sender: UIDatePicker) {
         selectedDate = sender.date
-        return sender.date
+        
+        if let categoryId = selectedCategoryId {
+            loadSnap(categoryId: categoryId, snapDate: selectedDate) { [weak self] in
+                self?.updateSnapCollectionView?()
+            }
+        }
     }
     
     func addManagement(_ management: Management) {

@@ -50,6 +50,8 @@
 		B8A7253C2C854697002290E4 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = B8A7253B2C854697002290E4 /* Config.xcconfig */; };
 		B8A725432C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8A725422C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf */; };
 		B8A725452C854FFF002290E4 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A725442C854FFF002290E4 /* UIFont+Extensions.swift */; };
+		C241D91D2C8548E7006E24E6 /* CategoryEmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241D91C2C8548E7006E24E6 /* CategoryEmptyViewController.swift */; };
+		C241D91F2C85800E006E24E6 /* ConditionalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241D91E2C85800E006E24E6 /* ConditionalViewController.swift */; };
 		C246CE5A2C74EF7D00A631BE /* AccountInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */; };
 		C246CE5B2C74EF7D00A631BE /* AppLockSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */; };
 		C246CE5C2C74EF7D00A631BE /* SettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C246CE582C74EF7D00A631BE /* SettingTableViewCell.swift */; };
@@ -66,6 +68,7 @@
 		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2740B082C849D91006CA4F6 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2740B072C849D91006CA4F6 /* UIViewController+Extensions.swift */; };
+		C2740B0A2C84A66C006CA4F6 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = C2740B092C84A66C006CA4F6 /* Config.xcconfig */; };
 		C2A6CAAB2C7EDB1100F7670A /* UITextField+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */; };
 		C2A6CAAD2C7EE2F800F7670A /* UIResponder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
@@ -128,6 +131,8 @@
 		B8A7253B2C854697002290E4 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B8A725422C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BalooChettan2-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		B8A725442C854FFF002290E4 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		C241D91C2C8548E7006E24E6 /* CategoryEmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryEmptyViewController.swift; sourceTree = "<group>"; };
+		C241D91E2C85800E006E24E6 /* ConditionalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalViewController.swift; sourceTree = "<group>"; };
 		C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
 		C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockSettingTableViewCell.swift; sourceTree = "<group>"; };
 		C246CE582C74EF7D00A631BE /* SettingTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -143,6 +148,7 @@
 		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		C2740B072C849D91006CA4F6 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
+		C2740B092C84A66C006CA4F6 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extensions.swift"; sourceTree = "<group>"; };
 		C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Extensions.swift"; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
@@ -482,6 +488,8 @@
 				EA664E4D2C73914B0034B998 /* CustomCropToolbar.swift */,
 				EAE34EB22C776E6700BEFF3A /* CustomDatePickerViewController.swift */,
 				EA4D6BF02C800EBE000B00F9 /* SnapExpandSheetViewController.swift */,
+				C241D91C2C8548E7006E24E6 /* CategoryEmptyViewController.swift */,
+				C241D91E2C85800E006E24E6 /* ConditionalViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -635,6 +643,7 @@
 				4AD29AA22C64A03F00A9BEDD /* SnapComparisonViewController.swift in Sources */,
 				4AD29AD32C699DF200A9BEDD /* SnapPhotoViewController.swift in Sources */,
 				4AD29AA42C65051B00A9BEDD /* SnapComparisonViewModel.swift in Sources */,
+				C241D91D2C8548E7006E24E6 /* CategoryEmptyViewController.swift in Sources */,
 				C2740B082C849D91006CA4F6 /* UIViewController+Extensions.swift in Sources */,
 				4AD29AA62C650A5A00A9BEDD /* SnapComparisonCollectionViewCell.swift in Sources */,
 				8F1685302C6354590010F8D8 /* AppDelegate.swift in Sources */,
@@ -644,6 +653,7 @@
 				C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */,
 				EA141FA02C6AFC8400DD4B29 /* ChecklistTableViewController.swift in Sources */,
 				C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */,
+				C241D91F2C85800E006E24E6 /* ConditionalViewController.swift in Sources */,
 				4A06CC3D2C8008950055194A /* NotificationSettingViewModel.swift in Sources */,
 				C246CE5C2C74EF7D00A631BE /* SettingTableViewCell.swift in Sources */,
 				8F5EE7EC2C6C798C007AF73B /* isDonePercentageChartViewController.swift in Sources */,
