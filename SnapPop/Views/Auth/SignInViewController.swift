@@ -15,18 +15,68 @@ class SignInViewController: UIViewController {
     
     private let appName: UILabel = {
         let label = UILabel()
-        label.text = "SNAP POP"
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.numberOfLines = 0
+        label.textAlignment = .center
         
+        let text1 = NSAttributedString(string: "Snap \nP", attributes: [
+            .font: UIFont.balooChettanExtraBold(size: 77),
+            .foregroundColor: UIColor.white
+        ])
+        
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = UIImage(named: "filledpop")?.withRenderingMode(.alwaysOriginal)
+        imageAttachment.bounds = CGRect(x: 0, y: -15, width: 50, height: 50)
+        let imageString = NSAttributedString(attachment: imageAttachment)
+        let text2 = NSAttributedString(string: "p", attributes: [
+            .font: UIFont.balooChettanExtraBold(size: 70),
+            .foregroundColor: UIColor.white
+        ])
+        
+        // 전체 문자열 조합
+        let completeText = NSMutableAttributedString()
+        completeText.append(text1)
+        completeText.append(imageString)
+        completeText.append(text2)
+        
+        label.attributedText = completeText
+        
+        // 그림자 설정
+        label.layer.shadowColor = UIColor.gray.cgColor
+        label.layer.shadowOffset = CGSize(width: 2, height: 2)
+        label.layer.shadowOpacity = 0.5
+        label.layer.shadowRadius = 1
+
         return label
     }()
+
     
-    private lazy var googleSignInButton: GIDSignInButton = {
-        let signInButton = GIDSignInButton()
+    // google signing button custom
+    private lazy var googleSignInButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Sign in with Google", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 10
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.white.cgColor
+        button.tintColor = .none
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+
+        button.layer.shadowColor = UIColor.gray.cgColor
+        button.layer.shadowOffset = CGSize(width: 2, height: 2)
+        button.layer.shadowOpacity = 0.1
+        button.layer.shadowRadius = 2
         
-        signInButton.style = .wide
+        if let googleIcon = UIImage(named: "google_logo")?.withRenderingMode(.alwaysOriginal) {
+            button.setImage(googleIcon, for: .normal)
+        }
+        button.imageView?.contentMode = .scaleAspectFit
         
-        signInButton.addAction(UIAction { [weak self] _ in
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 0)
+        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
+
+        // Action for Google Sign-In
+        button.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
             
             AuthViewModel.shared.signInWithGoogle(on: self) { result in
@@ -40,11 +90,16 @@ class SignInViewController: UIViewController {
             }
         }, for: .touchUpInside)
         
-        return signInButton
+        return button
     }()
     
     private lazy var appleSignInButton: ASAuthorizationAppleIDButton = {
         let signInButton = ASAuthorizationAppleIDButton()
+        // apple button shadow
+        signInButton.layer.shadowColor = UIColor.gray.cgColor
+        signInButton.layer.shadowOffset = CGSize(width: 2, height: 2)
+        signInButton.layer.shadowOpacity = 0.1
+        signInButton.layer.shadowRadius = 2
         
         signInButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
@@ -68,8 +123,7 @@ class SignInViewController: UIViewController {
     }
     
     func configureUI() {
-        view.backgroundColor = .systemBackground
-        
+        view.backgroundColor = UIColor(named: "backgroundMain")
         view.addSubview(appName)
         view.addSubview(googleSignInButton)
         view.addSubview(appleSignInButton)
@@ -80,17 +134,19 @@ class SignInViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             appName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            appName.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            appName.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 200),
             
             googleSignInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            googleSignInButton.topAnchor.constraint(equalTo: appName.bottomAnchor, constant: 16),
-            googleSignInButton.widthAnchor.constraint(equalToConstant: 200),
-            googleSignInButton.heightAnchor.constraint(equalToConstant: 40),
+            googleSignInButton.bottomAnchor.constraint(equalTo: appleSignInButton.topAnchor, constant: -16),
+            googleSignInButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            googleSignInButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            googleSignInButton.heightAnchor.constraint(equalToConstant: 50),
             
             appleSignInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            appleSignInButton.topAnchor.constraint(equalTo: googleSignInButton.bottomAnchor, constant: 8),
-            appleSignInButton.widthAnchor.constraint(equalToConstant: 200),
-            appleSignInButton.heightAnchor.constraint(equalToConstant: 40)
+            appleSignInButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -120),
+            appleSignInButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            appleSignInButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            appleSignInButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
