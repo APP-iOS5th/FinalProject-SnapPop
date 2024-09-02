@@ -143,7 +143,13 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
         print("Current Date Index: \(viewModel.currentDateIndex)")
         
         if let sheet = sheetViewController.sheetPresentationController {
-            sheet.detents = [.medium()]
+            // 뷰의 2/3크기로 모달 크기 설정
+            let targetHeight = UIScreen.main.bounds.height * 2 / 3
+            let customDetent = UISheetPresentationController.Detent.custom(identifier: .init("customDetent")) { _ in
+                return targetHeight
+            }
+                    
+            sheet.detents = [customDetent]
             sheet.prefersGrabberVisible = true
         }
         
