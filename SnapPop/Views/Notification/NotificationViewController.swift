@@ -79,8 +79,11 @@ class NotificationViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .customBackgroundColor
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "알림 설정", style: .plain, target: self, action: #selector(moveToNotificationSettingView))
-        
+        // 네비게이션
+        title = "알림"
+        setupLeftBarButtonItem()
+        setupRightBarButtonItemForNotification()
+
         self.segmentedControl.selectedSegmentIndex = 1
         self.didChangeValue(segment: self.segmentedControl)
         
@@ -90,10 +93,6 @@ class NotificationViewController: UIViewController {
         managementTable.delegate = self
         
         setupLayout() // 레이아웃 설정
-        
-        // 네비게이션
-        title = "알림"
-        setupLeftBarButtonItem()
         
         loadManagementNotifications()
         loadRecommendedNotifications()
@@ -113,6 +112,8 @@ class NotificationViewController: UIViewController {
             recommendEmptyLabel.isHidden = true
             loadManagementNotifications()
         }
+        
+        enableInteractivePopGesture()
     }
     
     // MARK: - Methods
@@ -197,12 +198,6 @@ class NotificationViewController: UIViewController {
             recommendEmptyLabel.isHidden = true
             loadManagementNotifications()
         }
-    }
-    
-    @objc func moveToNotificationSettingView() {
-        let notiViewModel = NotificationSettingViewModel()
-        let notificationSettingView = NotificationSettingViewController(viewModel: notiViewModel)
-        self.navigationController?.pushViewController(notificationSettingView, animated: true)
     }
     
     @objc func handleNewManagementNotification() {

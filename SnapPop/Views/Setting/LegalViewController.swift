@@ -35,6 +35,12 @@ class LegalViewController: UIViewController {
         
         title = legalType.rawValue
         setupLeftBarButtonItem()
+        enableInteractivePopGesture()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        enableInteractivePopGesture()
     }
     
     private func configureUI() {

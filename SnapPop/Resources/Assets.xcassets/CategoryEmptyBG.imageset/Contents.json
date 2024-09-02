@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "google_logo.svg",
+      "filename" : "CategoryEmptyBG 1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "google_logo 1.svg",
+      "filename" : "CategoryEmptyBG 2.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "google_logo 2.svg",
+      "filename" : "CategoryEmptyBG.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

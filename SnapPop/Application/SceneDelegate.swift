@@ -57,6 +57,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 self.window?.makeKeyAndVisible()
             }
         }
+//        // 실제 폰트랑 폰트네임이 달라서 family name 찍어보고 확인하여 호출
+//        UIFont.familyNames.sorted().forEach { familyName in
+//            print("*** \(familyName) ***")
+//            UIFont.fontNames(forFamilyName: familyName).forEach { fontName in
+//                print("\(fontName)")
+//            }
+//            print("---------------------")
+//        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

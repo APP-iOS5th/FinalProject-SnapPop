@@ -48,6 +48,12 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         title = "설정"
         setupLeftBarButtonItem()
+        enableInteractivePopGesture()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        enableInteractivePopGesture()
     }
     
     private func configureUI() {
