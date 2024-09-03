@@ -33,7 +33,7 @@ class CategoryEmptyViewController: UIViewController {
         attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: text.count))
         
         label.attributedText = attributedString
-        label.textColor = .black
+        label.textColor = .dynamicTextColor
         label.textAlignment = .center
         label.numberOfLines = 0 // 여러 줄을 표시하도록 설정
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -66,6 +66,7 @@ class CategoryEmptyViewController: UIViewController {
     }
 
     private func setupViews() {
+        view.backgroundColor = UIColor.customBackgroundColor
         view.addSubview(categoryImageView)
         view.addSubview(messageLabel)
         view.addSubview(actionButton)
