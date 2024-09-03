@@ -82,8 +82,8 @@ class CategoryEmptyViewController: UIViewController {
             messageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05), // 상대값으로 변경
             
             actionButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: view.bounds.height * 0.1), // 아래로 내리기 위해 여백 증가
-            actionButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            actionButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             actionButton.heightAnchor.constraint(equalToConstant: 50),
             actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
         ])
