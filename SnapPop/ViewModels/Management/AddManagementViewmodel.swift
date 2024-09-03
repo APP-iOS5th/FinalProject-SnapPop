@@ -16,7 +16,7 @@ class AddManagementViewModel {
     @Published var memo: String = ""
     @Published var color: UIColor = .black
     @Published var startDate: Date = Date()
-    @Published var repeatCycle: Int = 2
+    @Published var repeatCycle: Int = 0 
     @Published var alertTime: Date = Date()
     @Published var alertStatus: Bool = false
     
@@ -51,7 +51,7 @@ class AddManagementViewModel {
             memo: "",
             color: "#000000",
             startDate: Date(),
-            repeatCycle: 2,
+            repeatCycle: 0,
             alertTime: Date(),
             alertStatus: false,
             completions: [:]
@@ -90,21 +90,12 @@ class AddManagementViewModel {
             .store(in: &cancellables)
         
         $repeatCycle
+            .removeDuplicates()
             .sink { [weak self] newValue in
-                let repeatValue: Int
-                switch newValue {
-                case 0: // "매일"
-                    repeatValue = 1
-                case 1: // "매주"
-                    repeatValue = 7
-                case 2: // "안함"
-                    repeatValue = 0
-                default:
-                    repeatValue = 0
-                }
-                self?.management.repeatCycle = repeatValue
-                if self?.edit == true {
-                    self?.updateCompletions()
+                guard let self = self else { return }
+                self.management.repeatCycle = newValue
+                if self.edit {
+                    self.updateCompletions()
                 }
             }
             .store(in: &cancellables)
@@ -135,23 +126,6 @@ class AddManagementViewModel {
                 completion(.failure(error))
             }
         }
-    }
-    
-    func updateRepeatCycle(_ cycleIndex: Int) {
-        self.repeatCycle = cycleIndex
-        
-        let repeatValue: Int
-        switch cycleIndex {
-        case 0: // "매일"
-            repeatValue = 1
-        case 1: // "매주"
-            repeatValue = 7
-        case 2: // "안함"
-            repeatValue = 0
-        default:
-            repeatValue = 0
-        }
-        self.management.repeatCycle = repeatValue
     }
     
     private func updateCompletions() {

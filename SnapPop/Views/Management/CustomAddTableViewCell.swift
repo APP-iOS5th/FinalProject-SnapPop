@@ -195,32 +195,46 @@ class RepeatCell: BaseTableViewCell {
     }
     
     func configure(with viewModel: AddManagementViewModel) {
-
-        let index = viewModel.repeatOptions.firstIndex { option in
-            switch option {
-            case "매일":
-                return viewModel.repeatCycle == 1
-            case "매주":
-                return viewModel.repeatCycle == 7
-            case "안함":
-                return viewModel.repeatCycle == 0
-            default:
-                return false
-            }
-        } ?? 2 // 기본값으로 "안함"을 선택
+        // 현재 repeatCycle에 맞추어서 UI
+        updateRepeatButtonTitle(for: viewModel)
         
-
-        repeatButton.setTitle(viewModel.repeatOptions[index], for: .normal)
-        
-        let actions = viewModel.repeatOptions.enumerated().map { idx, option in
-            UIAction(title: option) { _ in
-                viewModel.updateRepeatCycle(idx)
-                self.repeatButton.setTitle(option, for: .normal)
+        let actions = [
+            UIAction(title: "매일") { [weak self] _ in
+                guard let self = self else { return }
+                viewModel.repeatCycle = 1 // 매일 is 1
+                self.updateRepeatButtonTitle(for: viewModel)
+            },
+            UIAction(title: "매주") { [weak self] _ in
+                guard let self = self else { return }
+                viewModel.repeatCycle = 7 // 매주 is 7
+                self.updateRepeatButtonTitle(for: viewModel)
+            },
+            UIAction(title: "안함") { [weak self] _ in
+                guard let self = self else { return }
+                viewModel.repeatCycle = 0 // 안함 is 0
+                self.updateRepeatButtonTitle(for: viewModel)
             }
-        }
+        ]
         
         repeatButton.menu = UIMenu(title: "", children: actions)
         repeatButton.showsMenuAsPrimaryAction = true
+    }
+
+    private func updateRepeatButtonTitle(for viewModel: AddManagementViewModel) {
+        let repeatText: String
+        
+        switch viewModel.management.repeatCycle {
+        case 1:
+            repeatText = "매일"
+        case 7:
+            repeatText = "매주"
+        case 0:
+            repeatText = "안함"
+        default:
+            repeatText = "안함"
+        }
+        
+        repeatButton.setTitle(repeatText, for: .normal)
     }
 }
 
