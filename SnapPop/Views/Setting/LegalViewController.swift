@@ -11,7 +11,6 @@ class LegalViewController: UIViewController {
     
     private let textView: UITextView = {
         let textView = UITextView()
-        textView.backgroundColor = .customBackgroundColor
         textView.isEditable = false
         textView.isScrollEnabled = true
         return textView
@@ -45,7 +44,7 @@ class LegalViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .customBackgroundColor
+        view.backgroundColor = .systemBackground
         view.addSubview(textView)
         
         textView.translatesAutoresizingMaskIntoConstraints = false
