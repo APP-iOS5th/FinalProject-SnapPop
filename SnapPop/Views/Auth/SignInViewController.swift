@@ -81,7 +81,7 @@ class SignInViewController: UIViewController {
 
         button.layer.shadowColor = UIColor.gray.cgColor
         button.layer.shadowOffset = CGSize(width: 2, height: 2)
-        button.layer.shadowOpacity = 0.1
+        button.layer.shadowOpacity = 0.5
         button.layer.shadowRadius = 2
         
         if let googleIcon = UIImage(named: "google_logo")?.withRenderingMode(.alwaysOriginal) {
@@ -140,7 +140,7 @@ class SignInViewController: UIViewController {
     }
     
     func configureUI() {
-        view.backgroundColor = UIColor(named: "backgroundMain")
+        view.backgroundColor = UIColor(named: "customBackground")
         view.addSubview(appName)
         view.addSubview(googleSignInButton)
         view.addSubview(appleSignInButton)
