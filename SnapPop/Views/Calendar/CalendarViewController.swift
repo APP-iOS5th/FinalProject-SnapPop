@@ -130,10 +130,10 @@ class CalendarViewController: UIViewController {
             .font: font,
             .foregroundColor: color
         ], for: .normal)
-        segmentedControl.selectedSegmentTintColor = UIColor.segmentSelectedColor
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.backgroundColor = UIColor.segmentColor
+        segmentedControl.selectedSegmentTintColor = UIColor(named: "segmentSelected")
+        segmentedControl.backgroundColor = UIColor.customMain
         segmentedControl.layer.borderColor = UIColor.lightGray.cgColor
         segmentedControl.layer.borderWidth = 0.5
         return segmentedControl
