@@ -130,6 +130,20 @@ class HomeViewController:
         return label
     }()
     
+    private let loadingView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.customBackgroundColor
+        return view
+    }()
+    
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+    
     // Add a property to hold the cancellables
     private var cancellables = Set<AnyCancellable>()
     
@@ -148,7 +162,6 @@ class HomeViewController:
         setupSnapCollectionView()
         setupChecklistView()
         
-        
         snapCollectionView.dataSource = self
         snapCollectionView.delegate = self
         
@@ -163,9 +176,32 @@ class HomeViewController:
             self?.updateUIWithCategories()
         }
         
+        showLoadingIndicator()
+        
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            let startTime = Date()
+            
             viewModel.loadSnap(categoryId: currentCategoryId, snapDate: viewModel.selectedDate) { [weak self] in
                 self?.updateSnapCollectionView()
+                
+                let elapsedTime = Date().timeIntervalSince(startTime)
+                let minimumLoadingTime: TimeInterval = 0.2 // 너무 빨리 로딩이 끝나버리면 화면이 튀어서 최소 로딩 시간을 줌
+                
+                if elapsedTime < minimumLoadingTime {
+                    // 남은 시간만큼 대기
+                    let remainingTime = minimumLoadingTime - elapsedTime
+                    DispatchQueue.main.asyncAfter(deadline: .now() + remainingTime) {
+                        self?.hideLoadingIndicator()
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self?.hideLoadingIndicator()
+                    }
+                }
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.hideLoadingIndicator()
             }
         }
 
@@ -564,6 +600,31 @@ class HomeViewController:
         
         // 모달 표시
         present(expandVC, animated: true, completion: nil)
+    }
+    
+    private func showLoadingIndicator() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.addSubview(loadingView)
+            loadingView.addSubview(loadingIndicator)
+            
+            NSLayoutConstraint.activate([
+                loadingView.topAnchor.constraint(equalTo: window.topAnchor),
+                loadingView.bottomAnchor.constraint(equalTo: window.bottomAnchor),
+                loadingView.leadingAnchor.constraint(equalTo: window.leadingAnchor),
+                loadingView.trailingAnchor.constraint(equalTo: window.trailingAnchor),
+                
+                loadingIndicator.centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
+                loadingIndicator.centerYAnchor.constraint(equalTo: loadingView.centerYAnchor)
+            ])
+            
+            loadingIndicator.startAnimating()
+        }
+    }
+    
+    private func hideLoadingIndicator() {
+        self.loadingIndicator.stopAnimating()
+        self.loadingView.removeFromSuperview()
     }
 }
 
