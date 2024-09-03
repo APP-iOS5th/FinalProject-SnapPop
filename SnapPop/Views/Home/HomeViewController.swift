@@ -492,7 +492,7 @@ class HomeViewController:
                 let isFirst = (item == 0)
                 if isFirst {
                     snapCell.contentView.layer.borderWidth = 3
-                    snapCell.contentView.layer.borderColor = UIColor.customMainColor.cgColor
+                    snapCell.contentView.layer.borderColor = UIColor.customMainColor?.cgColor
                 } else {
                     snapCell.contentView.layer.borderWidth = 0
                     snapCell.contentView.layer.borderColor = nil

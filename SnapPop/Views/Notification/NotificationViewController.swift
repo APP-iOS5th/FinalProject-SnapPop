@@ -26,8 +26,8 @@ class NotificationViewController: UIViewController {
     private lazy var segmentedControl: UISegmentedControl = {
         let segControl = UISegmentedControl(items: ["추천 알림", "관리 알림"])
         segControl.selectedSegmentIndex = 0
-        segControl.backgroundColor = UIColor.segmentColor
-        segControl.selectedSegmentTintColor = UIColor.segmentSelectedColor
+        segControl.backgroundColor = UIColor.customToggleColor
+        segControl.selectedSegmentTintColor = UIColor.segmentSelected
         segControl.addTarget(self, action: #selector(didChangeValue(segment:)), for: .valueChanged)
         segControl.translatesAutoresizingMaskIntoConstraints = false
         return segControl

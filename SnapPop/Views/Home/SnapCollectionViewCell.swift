@@ -72,7 +72,7 @@ class SnapCollectionViewCell: UICollectionViewCell {
         // 첫 번째 셀의 테두리 설정
         if isFirst {
             contentView.layer.borderWidth = 3
-            contentView.layer.borderColor = UIColor.customMainColor.cgColor
+            contentView.layer.borderColor = UIColor.customMainColor?.cgColor
         } else {
             contentView.layer.borderWidth = 0
             contentView.layer.borderColor = nil
