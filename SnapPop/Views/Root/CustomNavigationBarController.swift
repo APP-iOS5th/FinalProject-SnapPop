@@ -80,11 +80,18 @@ class CustomNavigationBarController: UINavigationController {
         appearance.titleTextAttributes = [.font: UIFont.boldSystemFont(ofSize: 20.0),
                                           .foregroundColor: UIColor.dynamicTextColor]
         
+        // 네비게이션 바 라인 제거
+        appearance.shadowImage = UIImage()
+        appearance.shadowColor = .clear
+        
         navigationBar.standardAppearance = appearance
         navigationBar.compactAppearance = appearance
         navigationBar.scrollEdgeAppearance = appearance
         navigationBar.isTranslucent = false
         navigationBar.tintColor = .dynamicTextColor
+        
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
     }
     
     private func setupNavigationBarItems() {
