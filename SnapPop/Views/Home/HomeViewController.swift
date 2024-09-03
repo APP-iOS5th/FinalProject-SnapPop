@@ -90,7 +90,7 @@ class HomeViewController:
     private let addButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("+", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
         button.layer.cornerRadius = 8
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -492,7 +492,7 @@ class HomeViewController:
                 let isFirst = (item == 0)
                 if isFirst {
                     snapCell.contentView.layer.borderWidth = 3
-                    snapCell.contentView.layer.borderColor = UIColor.customMainColor?.cgColor
+                    snapCell.contentView.layer.borderColor = UIColor.customMainColor.cgColor
                 } else {
                     snapCell.contentView.layer.borderWidth = 0
                     snapCell.contentView.layer.borderColor = nil

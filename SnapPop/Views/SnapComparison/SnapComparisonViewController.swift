@@ -31,7 +31,7 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.image = UIImage(systemName: "photo")
         buttonConfig.imagePadding = 3
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
-        buttonConfig.baseForegroundColor = .black
+        buttonConfig.baseForegroundColor = .white
         buttonConfig.background.cornerRadius = 8
         buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
@@ -51,7 +51,7 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.image = UIImage(systemName: "slider.vertical.3")
         buttonConfig.imagePadding = 3
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
-        buttonConfig.baseForegroundColor = .black
+        buttonConfig.baseForegroundColor = .white
         buttonConfig.background.cornerRadius = 8
         buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
@@ -71,7 +71,7 @@ class SnapComparisonViewController: UIViewController {
         buttonConfig.image = UIImage(systemName: "calendar")
         buttonConfig.imagePadding = 3
         buttonConfig.baseBackgroundColor = UIColor.customButtonColor
-        buttonConfig.baseForegroundColor = .black
+        buttonConfig.baseForegroundColor = .white
         buttonConfig.background.cornerRadius = 8
         buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
