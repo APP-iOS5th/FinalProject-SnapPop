@@ -130,6 +130,7 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
         totalCost = newData.reduce(0) { $0 + $1.value }
         if newData.isEmpty {
             showNoDataMessage("해당 월의 비용 데이터가 없습니다.")
+            totalButton.isHidden = true
         } else {
             hideNoDataMessage()
             let entries = newData.enumerated().map { (index, item) in
@@ -235,6 +236,7 @@ extension CostChartViewController {
     
     func chartValueNothingSelected(_ chartView: ChartViewBase) {
         updateCenterText()
+        totalButton.isHidden = true
     }
     @objc private func totalButtonTapped() {
         updateCenterText()
