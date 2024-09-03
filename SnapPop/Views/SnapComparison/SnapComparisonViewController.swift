@@ -91,7 +91,7 @@ class SnapComparisonViewController: UIViewController {
         stackView.spacing = 10
         stackView.alignment = .top
         stackView.distribution = .fillProportionally
-        stackView.backgroundColor = .dynamicBackgroundInsideColor
+        stackView.backgroundColor = .customBackgroundColor
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -99,7 +99,7 @@ class SnapComparisonViewController: UIViewController {
     /// 스택뷰를 넣을 스크롤뷰
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = .dynamicBackgroundInsideColor
+        scrollView.backgroundColor = .customBackgroundColor
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
@@ -115,7 +115,7 @@ class SnapComparisonViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(SnapComparisonCollectionViewCell.self, forCellWithReuseIdentifier: SnapComparisonCollectionViewCell.identifier)
-        collectionView.backgroundColor = .dynamicBackgroundInsideColor
+        collectionView.backgroundColor = .customBackgroundColor
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -145,7 +145,7 @@ class SnapComparisonViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
-        self.view.backgroundColor = .dynamicBackgroundInsideColor
+        self.view.backgroundColor = .customBackgroundColor
         
         if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
             viewModel.loadSanpstoFireStore(to: currentCategoryId)

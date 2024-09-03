@@ -57,7 +57,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     private func configureUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .customBackgroundColor
         
         view.addSubview(settingTableView)
         footerView.addSubview(footerButton)

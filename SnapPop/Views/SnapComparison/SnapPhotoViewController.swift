@@ -46,7 +46,6 @@ class SnapPhotoViewController: UIViewController {
         if let image = image {
             DispatchQueue.main.async {
                 self.imageView.image = image
-                self.imageView.layer.cornerRadius = 50
                 self.imageView.layer.masksToBounds = true
             }
         } else {
