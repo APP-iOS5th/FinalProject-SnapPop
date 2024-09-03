@@ -35,7 +35,7 @@ class NotificationSettingViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.customBackground
+        self.view.backgroundColor = UIColor.customBackgroundColor
         viewModel.loadCategories {
             DispatchQueue.main.async {
                 self.notificationTableView.reloadData()

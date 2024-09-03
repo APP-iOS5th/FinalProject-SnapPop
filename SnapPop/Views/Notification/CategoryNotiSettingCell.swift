@@ -69,8 +69,13 @@ class CategoryNotiSettingCell: UITableViewCell {
     }
     
     private func updateNotificationButtonImage() {
-        let imageName = isNotificationEnabled ? "bell.fill" : "bell.slash.fill"
-        notificationButton.setImage(UIImage(systemName: imageName), for: .normal)
+        if isNotificationEnabled {
+            notificationButton.setImage(UIImage(systemName: "bell.fill"), for: .normal)
+            notificationButton.tintColor = .customMainColor
+        } else {
+            notificationButton.setImage(UIImage(systemName: "bell.slash.fill"), for: .normal)
+            notificationButton.tintColor = .gray
+        }
     }
 
 }

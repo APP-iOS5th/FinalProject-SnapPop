@@ -114,7 +114,7 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
         }
         
         if indexPath.row == 0 {
-            cell.snapPhoto.layer.borderColor = UIColor.customMainColor?.cgColor
+            cell.snapPhoto.layer.borderColor = UIColor.customMainColor.cgColor
             cell.snapPhoto.layer.borderWidth = 3
             cell.snapPhoto.layer.cornerRadius = 30
             cell.snapPhoto.layer.masksToBounds = true

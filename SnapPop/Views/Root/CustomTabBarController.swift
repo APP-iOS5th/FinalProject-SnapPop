@@ -33,8 +33,8 @@ class CustomTabBarController: UITabBarController {
         appearance.shadowColor = .dynamicTextColor
         let thinLineImage = createThinLineImage(color: UIColor.dynamicTextColor, height: 0.1)
             appearance.shadowImage = thinLineImage
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.customMain]
-        appearance.stackedLayoutAppearance.selected.iconColor = .customMain
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.customMainColor]
+        appearance.stackedLayoutAppearance.selected.iconColor = .customMainColor
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
         appearance.stackedLayoutAppearance.normal.iconColor = .gray
         tabBar.standardAppearance = appearance
