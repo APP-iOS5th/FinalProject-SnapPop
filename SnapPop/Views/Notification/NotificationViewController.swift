@@ -159,9 +159,8 @@ class NotificationViewController: UIViewController {
             return
         }
         managementNotifications = savedNotifications.compactMap { try? JSONDecoder().decode(NotificationData.self, from: $0) }
-        
+               
         // 데이터가 없는 경우 테이블뷰를 숨기고 레이블을 표시
-       
         managementTable.isHidden = managementNotifications.isEmpty
         managementEmptyLabel.isHidden = !managementNotifications.isEmpty
         DispatchQueue.main.async {
@@ -170,7 +169,7 @@ class NotificationViewController: UIViewController {
     }
     
     func loadRecommendedNotifications() {
-        guard let savedNotifications = UserDefaults.standard.array(forKey: "savedRecommendedNotifications") as? [Data] else { 
+        guard let savedNotifications = UserDefaults.standard.array(forKey: "savedRecommendNotifications") as? [Data] else {
             self.recommendNotifications = []
             self.recommendTable.isHidden = true
             self.recommendEmptyLabel.isHidden = false
@@ -201,12 +200,12 @@ class NotificationViewController: UIViewController {
     }
     
     @objc func handleNewManagementNotification() {
-        print("New notification received")
+        print("New management notification received")
         loadManagementNotifications()
     }
     
     @objc func handleNewRecommendNotification() {
-        print("New notification received")
+        print("New Recommend notification received")
         loadRecommendedNotifications()
     }
 }

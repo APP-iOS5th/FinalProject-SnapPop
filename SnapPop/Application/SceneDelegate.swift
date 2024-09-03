@@ -229,125 +229,12 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        if !notification.request.identifier.contains("initialNotification") {
-            // 추천 알림
-            let userInfo = notification.request.content.userInfo
-            guard let alertTime = userInfo["alertTime"] as? Date,
-                  let body = userInfo["body"] as? String else {
-                completionHandler([.banner, .list, .badge, .sound])
-                return
-            }
-            
-            let notificationData = NotificationData(categoryId: nil,
-                                                    managementId: nil,
-                                                    title: body,
-                                                    date: alertTime)
-            
-            var savedNotifications = UserDefaults.standard.array(forKey: "savedRecommendNotifications") as? [Data] ?? []
-            if !savedNotifications.contains(where: {
-                guard let decodedData = try? JSONDecoder().decode(NotificationData.self, from: $0) else {
-                    return false
-                }
-                return decodedData.title == notificationData.title && decodedData.date == notificationData.date
-            }) {
-                if let encoded = try? JSONEncoder().encode(notificationData) {
-                    savedNotifications.append(encoded)
-                    UserDefaults.standard.set(savedNotifications, forKey: "savedRecommendNotifications")
-                }
-                
-                NotificationCenter.default.post(name: .newRecommendNotificationReceived, object: nil)
-            }
-            
-            completionHandler([.banner, .list, .badge, .sound])
-        } else {
-            // 관리 알림
-            let userInfo = notification.request.content.userInfo
-            
-            guard let repeatCycle = userInfo["repeatCycle"] as? Int else {
-                completionHandler([])
-                return
-            }
-            
-            if repeatCycle == 0 {
-                guard let categoryId = userInfo["categoryId"] as? String,
-                      let managementID = userInfo["managementId"] as? String,
-                      let alertTime = userInfo["alertTime"] as? Date,
-                      let body = userInfo["body"] as? String else {
-                    completionHandler([])
-                    return
-                }
-                
-                let notificationData = NotificationData(categoryId: categoryId, managementId: managementID, title: body, date: alertTime)
-                
-                var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
-                // 중복 확인
-                if !savedNotifications.contains(where: {
-                    guard let decodedData = try? JSONDecoder().decode(NotificationData.self, from: $0) else {
-                        return false
-                    }
-                    return decodedData.categoryId == notificationData.categoryId &&
-                    decodedData.managementId == notificationData.managementId &&
-                    decodedData.date == notificationData.date
-                }) {
-                    if let encoded = try? JSONEncoder().encode(notificationData) {
-                        savedNotifications.append(encoded)
-                        UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
-                    }
-                    
-                    NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
-                }
-                
-                NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
-                
-                
-                completionHandler([.banner, .list, .badge, .sound])
-            } else {
-                // 특정 날짜로부터 시작하여 반복되는 관리 알림을 등록하기 위해 특정 날짜에 알림이 트리거되면 반복 알림을 등록한다
-                guard let categoryId = userInfo["categoryId"] as? String,
-                      let managementID = userInfo["managementId"] as? String,
-                      let startDate = userInfo["startDate"] as? Date,
-                      let alertTime = userInfo["alertTime"] as? Date,
-                      let body = userInfo["body"] as? String else {
-                    completionHandler([])
-                    return
-                }
-                
-                NotificationManager.shared.repeatingNotification(categoryId: categoryId,
-                                                                 managementId: managementID,
-                                                                 startDate: startDate,
-                                                                 alertTime: alertTime,
-                                                                 repeatCycle: repeatCycle,
-                                                                 body: body)
-                
-                let notificationData = NotificationData(categoryId: categoryId, managementId: managementID, title: body, date: alertTime)
-                
-                var savedNotifications = UserDefaults.standard.array(forKey: "savedNotifications") as? [Data] ?? []
-                
-                // 중복 확인
-                if !savedNotifications.contains(where: {
-                    guard let decodedData = try? JSONDecoder().decode(NotificationData.self, from: $0) else {
-                        return false
-                    }
-                    return decodedData.categoryId == notificationData.categoryId &&
-                    decodedData.managementId == notificationData.managementId &&
-                    decodedData.date == notificationData.date
-                }) {
-                    if let encoded = try? JSONEncoder().encode(notificationData) {
-                        savedNotifications.append(encoded)
-                        UserDefaults.standard.set(savedNotifications, forKey: "savedNotifications")
-                    }
-                    
-                    NotificationCenter.default.post(name: .newNotificationReceived, object: nil)
-                }
-                
-                completionHandler([])
-            }
-        }
+        completionHandler([.banner, .list, .badge, .sound])
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
-        if !response.notification.request.identifier.contains("initialNotification") {
+        if !response.notification.request.identifier.contains("initialNotification") || response.notification.request.identifier.contains("dailySnapNotification")  {
             // 추천 알림
             
             let userInfo = response.notification.request.content.userInfo
