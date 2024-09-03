@@ -99,7 +99,7 @@ extension CustomTabBarController: UITabBarControllerDelegate {
 }
 
 class CustomTabBar: UITabBar {
-    var customHeight: CGFloat = 95 // 원하는 높이를 설정합니다.
+    var customHeight: CGFloat = 95
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         var sizeThatFits = super.sizeThatFits(size)
