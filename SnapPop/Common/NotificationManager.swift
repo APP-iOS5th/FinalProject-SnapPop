@@ -20,8 +20,8 @@ struct NotificationManager {
         content.sound = .default
         
         var dateComponents = DateComponents()
-        dateComponents.hour = 14
-        dateComponents.minute = 50
+        dateComponents.hour = alertHour
+        dateComponents.minute = 0
         
         // 오전, 오후에 보내는 알림 메세지가 각각 다르게 처리
         if 5 <= alertHour && alertHour < 12 {

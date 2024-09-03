@@ -36,7 +36,7 @@ class NotificationViewController: UIViewController {
     /// 추천 알림 테이블뷰
     private var recommendTable = {
         let table = UITableView()
-        table.backgroundColor = .customBackground
+        table.backgroundColor = .customBackgroundColor
         table.register(ManagementTableViewCell.self, forCellReuseIdentifier: "ManagementTableViewCell")
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
@@ -45,7 +45,7 @@ class NotificationViewController: UIViewController {
     /// 관리 알림 테이블뷰
     private var managementTable = {
         let table = UITableView()
-        table.backgroundColor = .customBackground
+        table.backgroundColor = .customBackgroundColor
         table.register(ManagementTableViewCell.self, forCellReuseIdentifier: "ManagementTableViewCell")
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
@@ -233,7 +233,7 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
             formatter.dateFormat = "yyyy년 MM월 d일"
             let updatedDateString = formatter.string(from: notification.date)
             cell.configure(title: notification.title, time: updatedDateString)
-            
+//            cell.backgroundColor = .customBackgroundColor
             cell.selectionStyle = .none
             return cell
         } else if tableView == recommendTable {
