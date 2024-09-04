@@ -34,7 +34,7 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
     
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 19)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

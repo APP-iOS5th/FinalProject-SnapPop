@@ -6,8 +6,6 @@
 //
 import UIKit
 
-import UIKit
-
 class TodoTableViewCell: UITableViewCell {
     
     let checkboxButton: UIButton = {
@@ -55,18 +53,31 @@ class TodoTableViewCell: UITableViewCell {
     
     func updateCheckboxState(isChecked: Bool) {
         checkboxButton.isSelected = isChecked
-        let imageName = isChecked ? "checkmark.circle.fill" : "circle"
-        if let image = UIImage(systemName: imageName) {
-            let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
-            let resizedImage = image.withConfiguration(configuration)
-            checkboxButton.setImage(resizedImage, for: .normal)
+        
+        guard let emptyImage = UIImage(named: "emptypopcorn"),
+              let filledImage = UIImage(named: "filledpop") else {
+            return
         }
+        
+        let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
+        let resizedEmptyImage = emptyImage.withConfiguration(configuration)
+        let resizedFilledImage = filledImage.withConfiguration(configuration)
+        
+        if isChecked {
+            let coloredFilledImage = fillImage(originalImage: resizedFilledImage, withColor: checkboxButton.tintColor)
+            let combinedImage = overlayImages(bottomImage: coloredFilledImage, topImage: resizedEmptyImage)
+            checkboxButton.setImage(combinedImage, for: .normal)
+        } else {
+            checkboxButton.setImage(resizedEmptyImage, for: .normal)
+        }
+        
         checkboxButton.imageView?.contentMode = .scaleAspectFit
     }
     
     func updateCheckboxColor(color: String) {
         if let newColor = UIColor(hex: color) {
             checkboxButton.tintColor = newColor
+            updateCheckboxState(isChecked: checkboxButton.isSelected)
         } else {
             checkboxButton.tintColor = .customToggle
         }
@@ -78,12 +89,40 @@ class TodoTableViewCell: UITableViewCell {
             label.textAlignment = .center
             checkboxButton.isHidden = true
         } else {
-            // 체크박스 너비만큼 왼쪽에 공백 추가
-            let spaceWidth = checkboxButton.frame.width + 33 // 체크박스 너비 + 오른쪽 여백
-            let spaceString = String(repeating: " ", count: Int(spaceWidth / 7)) // 대략적인 공백 문자 수 계산
+            let spaceWidth = checkboxButton.frame.width + 33
+            let spaceString = String(repeating: " ", count: Int(spaceWidth / 7))
             label.text = spaceString + text
             label.textAlignment = .left
             checkboxButton.isHidden = false
         }
+    }
+    
+    func fillImage(originalImage: UIImage, withColor color: UIColor) -> UIImage {
+        let rect = CGRect(origin: .zero, size: originalImage.size)
+        
+        UIGraphicsBeginImageContextWithOptions(originalImage.size, false, originalImage.scale)
+        defer { UIGraphicsEndImageContext() }
+        
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return originalImage
+        }
+        
+        originalImage.draw(in: rect)
+        
+        context.setBlendMode(.sourceAtop)
+        context.setFillColor(color.cgColor)
+        context.fill(rect)
+        
+        return UIGraphicsGetImageFromCurrentImageContext() ?? originalImage
+    }
+    
+    func overlayImages(bottomImage: UIImage, topImage: UIImage) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(bottomImage.size, false, 0.0)
+        defer { UIGraphicsEndImageContext() }
+        
+        bottomImage.draw(in: CGRect(origin: .zero, size: bottomImage.size))
+        topImage.draw(in: CGRect(origin: .zero, size: topImage.size))
+        
+        return UIGraphicsGetImageFromCurrentImageContext() ?? bottomImage
     }
 }
