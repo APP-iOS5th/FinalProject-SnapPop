@@ -72,7 +72,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             title = "관리 수정"
             saveButton.setTitle("수정 완료", for: .normal)
         } else {
-            title = "새로운 자기 관리"
+            title = "새로운 관리"
             saveButton.setTitle("등록 완료", for: .normal)
         }
         setupLeftBarButtonItem()
@@ -103,7 +103,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     
     // MARK: - UI Setup
     private func setupUI() {
-        view.backgroundColor = .dynamicBackgroundInsideColor
+        view.backgroundColor = .customBackgroundColor
         
         // 테이블뷰와 버튼들
         view.addSubview(tableView)
@@ -139,8 +139,8 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -10),
             
-            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             saveButton.heightAnchor.constraint(equalToConstant: 50)
         ])
@@ -215,7 +215,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func addDetailButtonTapped() {
-        // 상세 비용 추가 버튼 탭 시, DetailCostViewController를 모달로 표시
+        // 상세 내역 추가 버튼 탭 시, DetailCostViewController를 모달로 표시
         let detailCostVC = DetailCostViewController()
         detailCostVC.delegate = self
         let navController = UINavigationController(rootViewController: detailCostVC)
@@ -336,29 +336,27 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         let screenWidth = UIScreen.main.bounds.width
         
         titleLabel.text = "상세내역 및 비용 추가"
-        titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         titleLabel.textColor = .gray
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let addButton = UIButton(type: .system)
         addButton.setTitle("+", for: .normal)
-        addButton.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .regular)
+        addButton.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .light)
+        addButton.setTitleColor(UIColor.dynamicTextColor, for: .normal)
         addButton.translatesAutoresizingMaskIntoConstraints = false
         addButton.addTarget(self, action: #selector(addDetailButtonTapped), for: .touchUpInside)
         
-        // Add subviews to headerView
         headerView.addSubview(titleLabel)
         headerView.addSubview(addButton)
         
         
         NSLayoutConstraint.activate([
-            // Title label constraints
             titleLabel.leadingAnchor.constraint(equalTo: headerView.contentView.leadingAnchor, constant: leadingConstant(for: screenWidth)),
             titleLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
             
-            // Add button constraints
-            addButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
-            addButton.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            addButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -8),
+            addButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
             
         ])
         
@@ -410,7 +408,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "ColorCell", for: indexPath) as? ColorCell else { return UITableViewCell() }
-                cell.textLabel?.text = "색상"
                 cell.colorPicker.selectedColor = viewModel.color
                 cell.colorPicker.addTarget(self, action: #selector(colorChanged(_:)), for: .valueChanged)
                 return cell
@@ -442,7 +439,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 return cell
             case 1:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "RepeatCell", for: indexPath) as? RepeatCell else { return UITableViewCell() }
-                cell.textLabel?.text = "반복"
                 cell.configure(with: viewModel)
                 return cell
             default:
@@ -451,7 +447,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         case 2:
             if indexPath.row == 0 {
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationCell", for: indexPath) as? NotificationCell else { return UITableViewCell() }
-                cell.textLabel?.text = "알림"
                 cell.switchControl.isOn = viewModel.alertStatus
                 cell.delegate = self
                 return cell

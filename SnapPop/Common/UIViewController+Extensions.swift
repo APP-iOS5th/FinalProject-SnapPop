@@ -13,18 +13,8 @@ extension UIViewController: UIGestureRecognizerDelegate {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(backButtonTapped))
     }
     
-    func setupRightBarButtonItemForNotification() {
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "알림 설정", style: .plain, target: self, action: #selector(moveToNotificationSettingView))
-    }
-    
     @objc func backButtonTapped() {
         navigationController?.popViewController(animated: true)
-    }
-    
-    @objc func moveToNotificationSettingView() {
-        let notiViewModel = NotificationSettingViewModel()
-        let notificationSettingView = NotificationSettingViewController(viewModel: notiViewModel)
-        navigationController?.pushViewController(notificationSettingView, animated: true)
     }
     
     func enableInteractivePopGesture() {

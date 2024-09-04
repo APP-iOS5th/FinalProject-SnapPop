@@ -33,9 +33,9 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(HorizontalSnapPhotoCollectionViewCell.self, forCellWithReuseIdentifier: HorizontalSnapPhotoCollectionViewCell.identifier)
-        collectionView.backgroundColor = .dynamicBackgroundInsideColor
+        collectionView.backgroundColor = .customBackgroundColor
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .dynamicBackgroundInsideColor
+        collectionView.backgroundColor = .customBackgroundColor
         return collectionView
     }()
     
@@ -89,7 +89,7 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
     func updateDate(to date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 d일"
+        formatter.dateFormat = "yy년 M월 d일"
         let updatedDateString = formatter.string(from: date)
         return updatedDateString
     }
@@ -123,7 +123,7 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
             cell.snapPhoto.layer.cornerRadius = 30
             cell.snapPhoto.layer.masksToBounds = true
         }
-        cell.backgroundColor = .dynamicBackgroundInsideColor
+        cell.backgroundColor = .customBackgroundColor
         return cell
     }
     

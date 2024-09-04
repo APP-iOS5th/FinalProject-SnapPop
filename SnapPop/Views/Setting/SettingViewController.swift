@@ -57,7 +57,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     private func configureUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .customBackgroundColor
         
         view.addSubview(settingTableView)
         footerView.addSubview(footerButton)
@@ -77,7 +77,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        4
+        5
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -85,10 +85,12 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 0:
             return 1 // 계정 정보
         case 1:
-            return 3 // 보안 및 개인정보
+            return 1 // 알림
         case 2:
-            return 1 // 앱 정보
+            return 3 // 보안 및 개인정보
         case 3:
+            return 1 // 앱 정보
+        case 4:
             return 1 // 로그아웃
         default:
             return 0
@@ -107,6 +109,13 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
             return cell
         case 1:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            cell.configure(with: "알림 설정")
+            return cell
+        case 2:
             switch indexPath.row {
             case 0:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: AppLockSettingTableViewCell.identifier, for: indexPath) as? AppLockSettingTableViewCell else {
@@ -128,13 +137,13 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
             default:
                 return UITableViewCell()
             }
-        case 2:
+        case 3:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
                 return UITableViewCell()
             }
             cell.configure(with: "이용 약관")
             return cell
-        case 3:
+        case 4:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
                 return UITableViewCell()
             }
@@ -149,6 +158,10 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
         case 1:
+            let notiViewModel = NotificationSettingViewModel()
+            let notificationSettingView = NotificationSettingViewController(viewModel: notiViewModel)
+            navigationController?.pushViewController(notificationSettingView, animated: true)
+        case 2:
             switch indexPath.row {
             case 1:
                 navigationController?.pushViewController(LegalViewController(legalType: .privacyPolicy), animated: true)
@@ -157,9 +170,9 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
             default:
                 break
             }
-        case 2:
-            navigationController?.pushViewController(LegalViewController(legalType: .termsOfService), animated: true)
         case 3:
+            navigationController?.pushViewController(LegalViewController(legalType: .termsOfService), animated: true)
+        case 4:
             showLogoutAlert()
         default:
             break
@@ -171,10 +184,12 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 0:
             return "계정 정보"
         case 1:
-            return "보안 및 개인정보"
+            return "알림"
         case 2:
-            return "앱 정보"
+            return "보안 및 개인정보"
         case 3:
+            return "앱 정보"
+        case 4:
             return "계정 관리"
         default:
             return nil
@@ -183,7 +198,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch section {
-        case 3:
+        case 4:
             return footerView
         default:
             return nil

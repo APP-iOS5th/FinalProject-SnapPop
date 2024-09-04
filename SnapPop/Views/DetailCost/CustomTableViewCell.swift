@@ -8,6 +8,8 @@
 import UIKit
 
 class BaseTableViewCell2: UITableViewCell {
+    private var maskLayer: CAShapeLayer?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureUI()
@@ -18,6 +20,41 @@ class BaseTableViewCell2: UITableViewCell {
     }
     
     func configureUI() {}
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if bounds.width > 0 && bounds.height > 0 {
+            if maskLayer == nil {
+                maskLayer = CAShapeLayer()
+                layer.mask = maskLayer
+            }
+            
+            if let tableView = superview as? UITableView,
+               let indexPath = tableView.indexPath(for: self) {
+                let cornerRadius: CGFloat = 10.0
+                let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
+
+                var corners: UIRectCorner = []
+                if numberOfRows == 1 {
+                    corners = .allCorners
+                } else if indexPath.row == 0 {
+                    corners = [.topLeft, .topRight]
+                } else if indexPath.row == numberOfRows - 1 {
+                    corners = [.bottomLeft, .bottomRight]
+                }
+                
+                let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+                maskLayer?.path = path.cgPath
+            }
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        maskLayer?.removeFromSuperlayer()
+        maskLayer = nil
+    }
 }
 
 // -MARK: 제목
@@ -169,7 +206,7 @@ final class CalculateCostCell: BaseTableViewCell2 {
     
     private lazy var purchasePriceTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "가격을 입력해주세요"
+        textField.placeholder = "가격을 입력해주세요."
         textField.borderStyle = .roundedRect
         textField.keyboardType = .numberPad
         textField.backgroundColor = .dynamicBackgroundInsideColor
@@ -249,8 +286,8 @@ final class CalculateCostCell: BaseTableViewCell2 {
             calculateButton.topAnchor.constraint(equalTo: usageCountTextField.bottomAnchor, constant: 32),
             calculateButton.leadingAnchor.constraint(equalTo: usageCountTextField.leadingAnchor),
             calculateButton.trailingAnchor.constraint(equalTo: usageCountTextField.trailingAnchor),
-            calculateButton.heightAnchor.constraint(equalToConstant: 40),
-            calculateButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+            calculateButton.heightAnchor.constraint(equalToConstant: 50),
+            calculateButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
     }
     

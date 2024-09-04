@@ -40,6 +40,7 @@ class ManagementTableViewCell: UITableViewCell {
     
     // MARK: - Methods
     private func setupLayout() {
+        contentView.backgroundColor = .customBackgroundColor
         contentView.addSubviews([
             titleLabel,
             timeLabel

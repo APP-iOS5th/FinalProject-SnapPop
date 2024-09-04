@@ -44,7 +44,7 @@ class CustomTabBarController: UITabBarController {
     private func setupTabbarItem() {
         let firstViewController = CalendarViewController()
         firstViewController.tabBarItem = UITabBarItem(
-            title: "",
+            title: "달력",
             image: UIImage(systemName: "calendar"),
             selectedImage: UIImage(systemName: "calendar.fill")
         )
@@ -52,7 +52,7 @@ class CustomTabBarController: UITabBarController {
         let customNavigationBarViewModel = CustomNavigationBarViewModel()
         let secondViewController = ConditionalViewController(viewModel: customNavigationBarViewModel)
         secondViewController.tabBarItem = UITabBarItem(
-            title: "",
+            title: "홈",
             image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill")
         )
@@ -60,7 +60,7 @@ class CustomTabBarController: UITabBarController {
         let snapComparisonViewModel = SnapComparisonViewModel()
         let thirdViewController = SnapComparisonViewController(viewModel: snapComparisonViewModel)
         thirdViewController.tabBarItem = UITabBarItem(
-            title: "",
+            title: "비교",
             image: UIImage(systemName: "arrow.left.arrow.right.square"),
             selectedImage: UIImage(systemName: "arrow.left.arrow.right.square.fill")
         )

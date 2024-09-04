@@ -304,29 +304,6 @@ class ChecklistTableViewController: UITableViewController {
 
         return configuration
     }
-
-
-    // 왼쪽으로 스와이프할 때 핀 고정 액션 추가
-    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let viewModel = viewModel, !viewModel.checklistItems.isEmpty else {
-            return nil
-        }
-        let pinAction = UIContextualAction(style: .normal, title: nil) { (action, view, completionHandler) in
-            if let viewModel = self.viewModel {
-                let item = viewModel.checklistItems.remove(at: indexPath.row)
-                viewModel.checklistItems.insert(item, at: 0) // 선택한 항목을 리스트의 맨 앞으로 이동
-                tableView.reloadData()
-            }
-            completionHandler(true)
-        }
-        pinAction.backgroundColor = .systemYellow
-        pinAction.image = UIImage(systemName: "pin")
-        
-        let configuration = UISwipeActionsConfiguration(actions: [pinAction])
-        configuration.performsFirstActionWithFullSwipe = false
-        
-        return configuration
-    }
     
     // 키보드 내리기
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
