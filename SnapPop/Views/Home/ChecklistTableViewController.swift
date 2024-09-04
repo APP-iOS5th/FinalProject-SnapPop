@@ -25,12 +25,6 @@ class ChecklistTableViewController: UITableViewController {
         button.addTarget(self, action: #selector(didSelfcareAddButton), for: .touchUpInside)
         return button
     }()
-    // 로딩 있을 때를 대비한 loading indicator (필요시)
-//    private let loadingIndicator: UIActivityIndicatorView = {
-//        let indicator = UIActivityIndicatorView(style: .large)
-//        indicator.translatesAutoresizingMaskIntoConstraints = false
-//        return indicator
-//    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,14 +53,6 @@ class ChecklistTableViewController: UITableViewController {
         // 데이터 가져오기
         loadData()
     }
-//    // 카테고리 변경 시 로딩 indicator
-//    private func startLoading() {
-//        loadingIndicator.startAnimating()
-//    }
-//
-//    private func stopLoading() {
-//        loadingIndicator.stopAnimating()
-//    }
 
     private func setupButtonConstraints() {
         NSLayoutConstraint.activate([
