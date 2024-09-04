@@ -159,7 +159,7 @@ class CalendarViewController: UIViewController {
             refreshAllData()
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -260,7 +260,7 @@ class CalendarViewController: UIViewController {
     private func setupTableViewConstraints() {
         tableViewHeightConstraint?.isActive = false
         
-        let cellHeight: CGFloat = 45
+        let cellHeight: CGFloat = 46
         let numberOfRows = tableView.numberOfRows(inSection: 0)
         let newHeight = CGFloat(numberOfRows) * cellHeight
         
@@ -282,10 +282,10 @@ class CalendarViewController: UIViewController {
     }
     private func setupdashButtonConstraints() {
         dashBarTopConstraint?.isActive = false
-        if tableView.isHidden {
-            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -25)
-        } else {
+        if !tableView.isHidden {
             dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor)
+        } else {
+            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -25)
         }
         dashBarTopConstraint?.isActive = true
         NSLayoutConstraint.activate([
@@ -641,7 +641,6 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
                 }
             }
         }
-        
         group.notify(queue: .main) {
             completion()
         }
@@ -694,7 +693,6 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
             multiSelection.setSelectedDates([], animated: true)
         }
-        
         // 데이터를 순차적으로 로드하고 차트를 업데이트합니다.
         refreshAllData()
         selectedDateComponents = nil
