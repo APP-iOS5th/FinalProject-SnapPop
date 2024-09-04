@@ -34,9 +34,10 @@ class ChecklistTableViewCell: UITableViewCell {
         contentView.addSubview(checkLabel)
         
         NSLayoutConstraint.activate([
+            checkBox.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             checkBox.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkBox.widthAnchor.constraint(equalToConstant: 30),
+            checkBox.widthAnchor.constraint(equalToConstant: 35),
             checkBox.heightAnchor.constraint(equalTo: checkBox.widthAnchor),
             
             checkLabel.leadingAnchor.constraint(equalTo: checkBox.trailingAnchor, constant: 15),
@@ -81,21 +82,24 @@ class ChecklistTableViewCell: UITableViewCell {
     
     // MARK: - 체크박스 이미지 업데이트
     func updateCheckboxState(isChecked: Bool) {
-            guard let emptyImage = UIImage(named: "emptypopcorn"),
-                  let filledImage = UIImage(named: "filledpop") else {
-                return
-            }
-            
-            let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
-            let resizedEmptyImage = emptyImage.withConfiguration(configuration)
-            let resizedFilledImage = filledImage.withConfiguration(configuration)
-            
-            if isChecked {
-                let coloredFilledImage = fillImage(originalImage: resizedFilledImage, withColor: checkBox.tintColor)
+        guard let emptyImage = UIImage(named: "emptypopcorn"),
+              let filledImage = UIImage(named: "filledpop"),
+              let emptyWhiteImage = UIImage(named: "emptypop")
+        else {
+            return
+        }
+        
+        let configuration = UIImage.SymbolConfiguration(pointSize: 35, weight: .regular)
+        let resizedEmptyImage = emptyImage.withConfiguration(configuration)
+        let resizedEmptyWhiteImage = emptyWhiteImage.withConfiguration(configuration)
+        let resizedFilledImage = filledImage.withConfiguration(configuration)
+        
+        if isChecked {
+            let coloredFilledImage = fillImage(originalImage: resizedFilledImage, withColor: checkBox.tintColor)
                 let combinedImage = overlayImages(bottomImage: coloredFilledImage, topImage: resizedEmptyImage)
                 checkBox.setImage(combinedImage, for: .normal)
             } else {
-                checkBox.setImage(resizedEmptyImage, for: .normal)
+                checkBox.setImage(resizedEmptyWhiteImage, for: .normal)
             }
             
             checkBox.imageView?.contentMode = .scaleAspectFit		
