@@ -8,7 +8,7 @@
 import Foundation
 
 enum LegalType: String {
-    case privacyPolicy = "개인정보 보호 정책"
+    case privacyPolicy = "개인정보 처리방침"
     case dataUsagePolicy = "데이터 사용 정책"
     case termsOfService = "이용 약관"
     

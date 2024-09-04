@@ -22,6 +22,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Launch Screen을 항상 먼저
         showLaunchScreen()
         
+        if let notificationResponse = connectionOptions.notificationResponse {
+            let userInfo = notificationResponse.notification.request.content.userInfo
+            if notificationResponse.notification.request.identifier.contains("dailySnapNotification") {
+                // 추천 알림
+                addRecommendNotificationData(userInfo: userInfo)
+            } else {
+                // 관리 알림
+                addManagementNotificationData(userInfo: userInfo)
+            }
+            
+        }
+        
         // 앱의 초기화 작업이 완료된 후 메인 화면으로 전환
         AuthViewModel.shared.listenAuthState { [weak self] _, user in
             guard let self = self else { return }
@@ -36,7 +48,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                 self.showMainScreen()
                             } else {
                                 // 잠금 인증 실패
-                                self.showMainScreen()
                             }
                         }
                     }
@@ -211,7 +222,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     } // addManagementNotificationData
     
     
-    // 화면 가리기 뷰 구성 (임시)
+    // 화면 가리기 뷰 구성
     private func setupAppSwitcherMode() {
         guard let window = window else { return }
         appSwitcherModeImageView = UIImageView(frame: window.frame)
@@ -268,7 +279,7 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
-        if !response.notification.request.identifier.contains("initialNotification") || response.notification.request.identifier.contains("dailySnapNotification")  {
+        if response.notification.request.identifier.contains("dailySnapNotification")  {
             // 추천 알림
             
             let userInfo = response.notification.request.content.userInfo
