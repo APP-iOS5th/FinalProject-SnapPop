@@ -68,7 +68,7 @@ class SignInViewController: UIViewController {
     // google signing button custom
     private lazy var googleSignInButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Sign in with Google", for: .normal)
+        button.setTitle("Google로 로그인", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
         button.layer.cornerRadius = 10
