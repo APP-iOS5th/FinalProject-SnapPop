@@ -159,7 +159,7 @@ class CalendarViewController: UIViewController {
             refreshAllData()
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -641,7 +641,6 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
                 }
             }
         }
-        
         group.notify(queue: .main) {
             completion()
         }
@@ -694,7 +693,6 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         if let multiSelection = calendarView.selectionBehavior as? UICalendarSelectionMultiDate {
             multiSelection.setSelectedDates([], animated: true)
         }
-        
         // 데이터를 순차적으로 로드하고 차트를 업데이트합니다.
         refreshAllData()
         selectedDateComponents = nil
