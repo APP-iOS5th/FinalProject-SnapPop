@@ -98,7 +98,7 @@ class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
     /// 날자 형식 변환 메소드
     func updateDate(to date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 d일"
+        formatter.dateFormat = "yy년 M월 d일"
         let updatedDateString = formatter.string(from: date)
         return updatedDateString
     }
@@ -106,7 +106,7 @@ class SnapComparisonSheetViewModel: SnapComparisonSheetViewModelProtocol {
     func getDateString() -> String {
         guard let date = currentSnap.createdAt else { return "" }
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 d일"
+        formatter.dateFormat = "yy년 M월 d일"
         let updatedDateString = formatter.string(from: date)
         return updatedDateString
     }
