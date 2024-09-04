@@ -341,7 +341,7 @@ class HomeViewController:
         NSLayoutConstraint.activate([
             snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.01),
-            snapTitle.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -110),
+            snapTitle.trailingAnchor.constraint(equalTo: view.centerXAnchor),
         
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
