@@ -118,7 +118,7 @@ class CalendarViewController: UIViewController {
     
     private let segmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["달성률", "비용"])
-        let font = UIFont.systemFont(ofSize: 14) // Adjust the font size as needed
+        let font = UIFont.boldSystemFont(ofSize: 16	) // Adjust the font size as needed
         let color = UIColor.white
 
         UISegmentedControl.appearance().setTitleTextAttributes([
@@ -450,7 +450,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
             return .customView {
                 let imageView = UIImageView()
                 let originalImage = UIImage(named: "filledpop")
-                let resizedImage = originalImage?.resized(to: CGSize(width: 16, height: 16))
+                let resizedImage = originalImage?.resized(to: CGSize(width: 18, height: 18))
                 imageView.image = resizedImage
                 return imageView
             }
@@ -459,7 +459,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
             return .customView {
                 let imageView = UIImageView()
                 let originalImage = UIImage(named: "emptypop")
-                let resizedImage = originalImage?.resized(to: CGSize(width: 16, height: 16))
+                let resizedImage = originalImage?.resized(to: CGSize(width: 18, height: 18))
                 imageView.image = resizedImage
                 return imageView
             }

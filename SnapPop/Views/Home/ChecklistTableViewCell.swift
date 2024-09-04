@@ -36,7 +36,7 @@ class ChecklistTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             checkBox.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkBox.widthAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.6),
+            checkBox.widthAnchor.constraint(equalToConstant: 30),
             checkBox.heightAnchor.constraint(equalTo: checkBox.widthAnchor),
             
             checkLabel.leadingAnchor.constraint(equalTo: checkBox.trailingAnchor, constant: 15),
@@ -81,14 +81,27 @@ class ChecklistTableViewCell: UITableViewCell {
     
     // MARK: - 체크박스 이미지 업데이트
     func updateCheckboxState(isChecked: Bool) {
-        let imageName = isChecked ? "checkmark.circle.fill" : "circle"
-        let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
-        let image = UIImage(systemName: imageName, withConfiguration: configuration)?.withRenderingMode(.alwaysTemplate)
-        checkBox.setImage(image, for: .normal)
-        checkBox.imageView?.contentMode = .scaleAspectFit
-        checkBox.contentHorizontalAlignment = .fill
-        checkBox.contentVerticalAlignment = .fill
-    }
+            guard let emptyImage = UIImage(named: "emptypopcorn"),
+                  let filledImage = UIImage(named: "filledpop") else {
+                return
+            }
+            
+            let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
+            let resizedEmptyImage = emptyImage.withConfiguration(configuration)
+            let resizedFilledImage = filledImage.withConfiguration(configuration)
+            
+            if isChecked {
+                let coloredFilledImage = fillImage(originalImage: resizedFilledImage, withColor: checkBox.tintColor)
+                let combinedImage = overlayImages(bottomImage: coloredFilledImage, topImage: resizedEmptyImage)
+                checkBox.setImage(combinedImage, for: .normal)
+            } else {
+                checkBox.setImage(resizedEmptyImage, for: .normal)
+            }
+            
+            checkBox.imageView?.contentMode = .scaleAspectFit		
+            checkBox.contentHorizontalAlignment = .fill
+            checkBox.contentVerticalAlignment = .fill
+        }
 
     @objc private func didTapCheckBox() {
         checkBox.isSelected.toggle()
@@ -103,6 +116,35 @@ class ChecklistTableViewCell: UITableViewCell {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.string(from: Date())
     }
+    
+    func fillImage(originalImage: UIImage, withColor color: UIColor) -> UIImage {
+            let rect = CGRect(origin: .zero, size: originalImage.size)
+            
+            UIGraphicsBeginImageContextWithOptions(originalImage.size, false, originalImage.scale)
+            defer { UIGraphicsEndImageContext() }
+            
+            guard let context = UIGraphicsGetCurrentContext() else {
+                return originalImage
+            }
+            
+            originalImage.draw(in: rect)
+            
+            context.setBlendMode(.sourceAtop)
+            context.setFillColor(color.cgColor)
+            context.fill(rect)
+            
+            return UIGraphicsGetImageFromCurrentImageContext() ?? originalImage
+        }
+        
+        func overlayImages(bottomImage: UIImage, topImage: UIImage) -> UIImage {
+            UIGraphicsBeginImageContextWithOptions(bottomImage.size, false, 0.0)
+            defer { UIGraphicsEndImageContext() }
+            
+            bottomImage.draw(in: CGRect(origin: .zero, size: bottomImage.size))
+            topImage.draw(in: CGRect(origin: .zero, size: topImage.size))
+            
+            return UIGraphicsGetImageFromCurrentImageContext() ?? bottomImage
+        }
 }
 
 // UIColor 확장 - HEX 문자열을 UIColor로 변환
@@ -134,4 +176,5 @@ extension UIColor {
         
         self.init(red: red, green: green, blue: blue, alpha: 1.0)
     }
+
 }
