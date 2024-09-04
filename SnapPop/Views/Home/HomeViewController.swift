@@ -394,11 +394,19 @@ class HomeViewController:
     }
     ///스냅뷰 (UICollectionViewDelegateFlowLayout)
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = collectionView.bounds.width * 0.95
-        let width = availableWidth / 2
-        return CGSize(width: width, height: width)
-    }
-    
+           let availableWidth = collectionView.bounds.width * 0.95
+           var width = availableWidth / 2
+           let screenHeight = UIScreen.main.bounds.height
+           // 화면 높이에 따라 셀의 높이 조정
+           let height: CGFloat
+           if screenHeight <= 667 { // iPhone SE, 8, 7, 6s, 6 (4.7" 디스플레이)
+               width *= 0.8
+               height = width
+           } else {
+               height = width // 큰 화면에서는 정사각형 유지
+           }
+           return CGSize(width: width, height: height)
+       }
     /// 스냅 사진 추가
     @objc private func addButtonTapped(_ sender: UIButton) {
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)
