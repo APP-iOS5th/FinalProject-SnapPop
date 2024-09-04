@@ -16,6 +16,8 @@
 		4A6210232C80E634002229C3 /* ManagementTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */; };
 		4A6210252C8152CB002229C3 /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210242C8152CB002229C3 /* NotificationData.swift */; };
 		4A6210272C815344002229C3 /* Notification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210262C815344002229C3 /* Notification+Extensions.swift */; };
+		4A6BC0B82C888D4B00226F0F /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 4A6BC0B72C888D4B00226F0F /* FirebaseAnalytics */; };
+		4A6BC0BA2C888D4B00226F0F /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 4A6BC0B92C888D4B00226F0F /* FirebaseCrashlytics */; };
 		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
 		4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4AC605B32C78769D00D3AF19 /* Kingfisher */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
@@ -181,9 +183,11 @@
 			files = (
 				4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */,
 				C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */,
+				4A6BC0B82C888D4B00226F0F /* FirebaseAnalytics in Frameworks */,
 				8F1685492C6360180010F8D8 /* FirebaseAuth in Frameworks */,
 				C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */,
 				8F16854B2C6360180010F8D8 /* FirebaseFirestore in Frameworks */,
+				4A6BC0BA2C888D4B00226F0F /* FirebaseCrashlytics in Frameworks */,
 				8F83A4B12C7DC73F0095133A /* DGCharts in Frameworks */,
 				8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */,
 			);
@@ -542,6 +546,8 @@
 				C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */,
 				4AC605B32C78769D00D3AF19 /* Kingfisher */,
 				8F83A4B02C7DC73F0095133A /* DGCharts */,
+				4A6BC0B72C888D4B00226F0F /* FirebaseAnalytics */,
+				4A6BC0B92C888D4B00226F0F /* FirebaseCrashlytics */,
 			);
 			productName = SnapPop;
 			productReference = 8F16852C2C6354590010F8D8 /* SnapPop.app */;
@@ -972,6 +978,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4A6BC0B72C888D4B00226F0F /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAnalytics;
+		};
+		4A6BC0B92C888D4B00226F0F /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseCrashlytics;
+		};
 		4AC605B32C78769D00D3AF19 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */;
