@@ -264,15 +264,15 @@ class HomeViewController:
         // Set up constraints
         NSLayoutConstraint.activate([
             // datePickerContainer constraints
-            datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.055),
             datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.02),
             datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
             
             // calendarImageView constraints
             calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor),
             calendarImageView.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
-            calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
-            calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
+            calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.072),
+            calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.071),
             
             // datePicker constraints
             datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: view.bounds.width * 0.02),
@@ -303,13 +303,13 @@ class HomeViewController:
         NSLayoutConstraint.activate([
             // 관리 목록 타이틀 제약 조건
             managementTitle.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: view.bounds.height * 0.02),
-            managementTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            managementTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            managementTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.065),
+            managementTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.065),
             
             // 체크리스트 테이블 제약 조건
             checklistTableViewController.view.topAnchor.constraint(equalTo: managementTitle.bottomAnchor, constant: view.bounds.height * 0.02),
-            checklistTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            checklistTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.035),
+            checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.035),
             checklistTableViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
@@ -339,7 +339,7 @@ class HomeViewController:
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.06),
             snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.01),
             snapTitle.trailingAnchor.constraint(equalTo: view.centerXAnchor),
         
@@ -394,11 +394,19 @@ class HomeViewController:
     }
     ///스냅뷰 (UICollectionViewDelegateFlowLayout)
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = collectionView.bounds.width * 0.95
-        let width = availableWidth / 2
-        return CGSize(width: width, height: width)
-    }
-    
+           let availableWidth = collectionView.bounds.width * 0.95
+           var width = availableWidth / 2
+           let screenHeight = UIScreen.main.bounds.height
+           // 화면 높이에 따라 셀의 높이 조정
+           let height: CGFloat
+           if screenHeight <= 667 { // iPhone SE, 8, 7, 6s, 6 (4.7" 디스플레이)
+               width *= 0.8
+               height = width
+           } else {
+               height = width // 큰 화면에서는 정사각형 유지
+           }
+           return CGSize(width: width, height: height)
+       }
     /// 스냅 사진 추가
     @objc private func addButtonTapped(_ sender: UIButton) {
         let actionSheet = UIAlertController(title: "사진 선택", message: nil, preferredStyle: .actionSheet)

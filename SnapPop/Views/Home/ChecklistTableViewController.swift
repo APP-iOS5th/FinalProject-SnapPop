@@ -59,7 +59,7 @@ class ChecklistTableViewController: UITableViewController {
             selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             selfcareAddButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             selfcareAddButton.heightAnchor.constraint(equalToConstant: 50),
-            selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
+            selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7)
         ])
     }
     
