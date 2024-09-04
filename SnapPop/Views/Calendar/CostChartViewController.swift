@@ -89,9 +89,9 @@ class CostChartViewController: UIViewController, ChartViewDelegate {
             totalButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -55),
             
             pieChartView.topAnchor.constraint(equalTo: monthLabel.topAnchor, constant: 10),
-            pieChartView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            pieChartView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            pieChartView.heightAnchor.constraint(equalTo: pieChartView.widthAnchor)
+            pieChartView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pieChartView.widthAnchor.constraint(equalToConstant: 320),
+            pieChartView.heightAnchor.constraint(equalToConstant: 320)
         ])
     }
     
@@ -227,7 +227,7 @@ extension CostChartViewController {
         centerText.append(NSAttributedString(string: formatCurrency(selectedItem.value), attributes: [
             .font: UIFont.boldSystemFont(ofSize: 20),
             .foregroundColor: selectedItem.color,
-            .paragraphStyle: paragraphStyle,
+            .paragraphStyle: paragraphStyle
         ]))
         
         pieChartView.centerAttributedText = centerText
