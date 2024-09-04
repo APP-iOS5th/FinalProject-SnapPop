@@ -19,19 +19,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .systemBackground
         
-        if let notificationResponse = connectionOptions.notificationResponse {
-            let userInfo = notificationResponse.notification.request.content.userInfo
-            if !notificationResponse.notification.request.identifier.contains("initialNotification") {
-                // 추천 알림
-                addRecommendNotificationData(userInfo: userInfo)
-            } else {
-                // 관리 알림
-                addManagementNotificationData(userInfo: userInfo)
-            }
-            
-        }
+        // Launch Screen을 항상 먼저
+        showLaunchScreen()
         
-        AuthViewModel.shared.listenAuthState { _, user in
+        // 앱의 초기화 작업이 완료된 후 메인 화면으로 전환
+        AuthViewModel.shared.listenAuthState { [weak self] _, user in
+            guard let self = self else { return }
+            
             let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
             
             if user != nil {
@@ -39,32 +33,45 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     LocalAuthenticationViewModel.execute { (success, error) in
                         DispatchQueue.main.async {
                             if success {
-                                self.window?.rootViewController = CustomTabBarController()
+                                self.showMainScreen()
                             } else {
                                 // 잠금 인증 실패
+                                self.showMainScreen()
                             }
-                            self.window?.makeKeyAndVisible()
-                            self.requestNotificationAuthorization()
                         }
                     }
                 } else {
-                    self.window?.rootViewController = CustomTabBarController()
-                    self.window?.makeKeyAndVisible()
-                    self.requestNotificationAuthorization()
+                    self.showMainScreen()
                 }
             } else {
-                self.window?.rootViewController = SignInViewController()
-                self.window?.makeKeyAndVisible()
+                self.showSignInScreen()
             }
         }
-//        // 실제 폰트랑 폰트네임이 달라서 family name 찍어보고 확인하여 호출
-//        UIFont.familyNames.sorted().forEach { familyName in
-//            print("*** \(familyName) ***")
-//            UIFont.fontNames(forFamilyName: familyName).forEach { fontName in
-//                print("\(fontName)")
-//            }
-//            print("---------------------")
-//        }
+    }
+
+    private func showLaunchScreen() {
+        // Launch Screen을 불러와서 표시
+        let launchStoryboard = UIStoryboard(name: "LaunchScreen", bundle: nil)
+        let launchScreenVC = launchStoryboard.instantiateInitialViewController()
+        window?.rootViewController = launchScreenVC
+        window?.makeKeyAndVisible()
+    }
+
+    private func showMainScreen() {
+        // 메인 화면으로 전환
+        DispatchQueue.main.async {
+            self.window?.rootViewController = CustomTabBarController()
+            self.window?.makeKeyAndVisible()
+            self.requestNotificationAuthorization()
+        }
+    }
+
+    private func showSignInScreen() {
+        // 로그인 화면으로 전환
+        DispatchQueue.main.async {
+            self.window?.rootViewController = SignInViewController()
+            self.window?.makeKeyAndVisible()
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
