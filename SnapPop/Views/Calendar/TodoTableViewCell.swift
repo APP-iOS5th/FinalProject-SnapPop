@@ -38,6 +38,7 @@ class TodoTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            checkboxButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             checkboxButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             checkboxButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkboxButton.widthAnchor.constraint(equalToConstant: 35),
