@@ -40,10 +40,10 @@ class TodoTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             checkboxButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             checkboxButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkboxButton.widthAnchor.constraint(equalToConstant: 30),
-            checkboxButton.heightAnchor.constraint(equalToConstant: 30),
+            checkboxButton.widthAnchor.constraint(equalToConstant: 35),
+            checkboxButton.heightAnchor.constraint(equalToConstant: 35),
             
-            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 23),
             label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
@@ -55,12 +55,15 @@ class TodoTableViewCell: UITableViewCell {
         checkboxButton.isSelected = isChecked
         
         guard let emptyImage = UIImage(named: "emptypopcorn"),
-              let filledImage = UIImage(named: "filledpop") else {
+              let filledImage = UIImage(named: "filledpop"),
+              let emptyWhiteImage = UIImage(named: "emptypop")
+        else {
             return
         }
         
-        let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 35, weight: .regular)
         let resizedEmptyImage = emptyImage.withConfiguration(configuration)
+        let resizedEmptyWhiteImage = emptyWhiteImage.withConfiguration(configuration)
         let resizedFilledImage = filledImage.withConfiguration(configuration)
         
         if isChecked {
@@ -68,7 +71,7 @@ class TodoTableViewCell: UITableViewCell {
             let combinedImage = overlayImages(bottomImage: coloredFilledImage, topImage: resizedEmptyImage)
             checkboxButton.setImage(combinedImage, for: .normal)
         } else {
-            checkboxButton.setImage(resizedEmptyImage, for: .normal)
+            checkboxButton.setImage(resizedEmptyWhiteImage, for: .normal)
         }
         
         checkboxButton.imageView?.contentMode = .scaleAspectFit
@@ -89,7 +92,7 @@ class TodoTableViewCell: UITableViewCell {
             label.textAlignment = .center
             checkboxButton.isHidden = true
         } else {
-            let spaceWidth = checkboxButton.frame.width + 33
+            let spaceWidth = checkboxButton.frame.width + 34
             let spaceString = String(repeating: " ", count: Int(spaceWidth / 7))
             label.text = spaceString + text
             label.textAlignment = .left

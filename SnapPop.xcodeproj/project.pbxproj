@@ -135,6 +135,7 @@
 		B8A7253B2C854697002290E4 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B8A725422C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BalooChettan2-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		B8A725442C854FFF002290E4 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		C218CF812C88827C0040C9E3 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		C241D91C2C8548E7006E24E6 /* CategoryEmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryEmptyViewController.swift; sourceTree = "<group>"; };
 		C241D91E2C85800E006E24E6 /* ConditionalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalViewController.swift; sourceTree = "<group>"; };
 		C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountInfoTableViewCell.swift; sourceTree = "<group>"; };
@@ -564,11 +565,12 @@
 			};
 			buildConfigurationList = 8F1685272C6354590010F8D8 /* Build configuration list for PBXProject "SnapPop" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = ko;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 8F1685232C6354590010F8D8;
 			packageReferences = (
@@ -709,6 +711,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8F16853B2C63545A0010F8D8 /* Base */,
+				C218CF812C88827C0040C9E3 /* ko */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -722,6 +725,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -786,6 +790,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
