@@ -536,6 +536,16 @@ class HomeViewController:
             }
         }
     }
+    func collectionView(_ collectionView: UICollectionView, dragPreviewParametersForItemAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+        let parameters = UIDragPreviewParameters()
+        
+        // 꾹 누르고 이미지 이동 시 둥글게 유지되도록
+        if let cell = collectionView.cellForItem(at: indexPath) as? SnapCollectionViewCell {
+            parameters.visiblePath = UIBezierPath(roundedRect: cell.snapImageView.bounds, cornerRadius: 20)
+        }
+        
+        return parameters
+    }
     func updateSnapAndMoveItem(collectionView: UICollectionView, from sourceIndex: Int, to destinationIndex: Int, sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
         guard sourceIndex != destinationIndex, sourceIndex < viewModel.snap?.imageUrls.count ?? 0 else { return }
 

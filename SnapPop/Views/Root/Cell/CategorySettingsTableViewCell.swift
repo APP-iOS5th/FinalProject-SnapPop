@@ -11,7 +11,6 @@ class CategorySettingsTableViewCell: UITableViewCell {
     // MARK: - Properties
     static let identifier = "CategorySettingsTableViewCell"
     
-    var notificationButtonTapped: (() -> Void)?
     var saveEditButtonTapped: ((String) -> Void)?
     
     var isCategoryNameEditing = false
@@ -30,17 +29,6 @@ class CategorySettingsTableViewCell: UITableViewCell {
         textField.isHidden = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
-    }()
-    
-    lazy var notificationButton: UIButton = {
-        var config = UIButton.Configuration.filled()
-        config.image = UIImage(systemName: "bell")
-        config.baseForegroundColor = .dynamicTextColor
-        config.baseBackgroundColor = .customBackgroundColor
-        let button = UIButton(configuration: config)
-        button.addTarget(self, action: #selector(didTapNotificationButton), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
     }()
     
     lazy var editCategoryNameButton: UIButton = {
@@ -69,7 +57,6 @@ class CategorySettingsTableViewCell: UITableViewCell {
         contentView.addSubviews([
             categoryNameLabel,
             categoryNameTextField,
-            notificationButton,
             editCategoryNameButton
         ])
         
@@ -81,19 +68,12 @@ class CategorySettingsTableViewCell: UITableViewCell {
             categoryNameTextField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             categoryNameTextField.trailingAnchor.constraint(equalTo: editCategoryNameButton.leadingAnchor, constant: -10),
             
-            notificationButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            notificationButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            
-            editCategoryNameButton.trailingAnchor.constraint(equalTo: notificationButton.leadingAnchor),
+            editCategoryNameButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             editCategoryNameButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
     
     // MARK: - Actions
-    @objc func didTapNotificationButton() {
-        notificationButtonTapped?()
-    }
-    
     @objc func didTapEditButton() {
         self.isCategoryNameEditing.toggle()
         if isCategoryNameEditing {

@@ -19,7 +19,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
     private var descriptionText: String?
     private var oneTimeCost: Int?
     
-    // 상세 비용 정보를 관리 등록 뷰로 전달하기 위한 Delegate
+    // 상세 내역 정보를 관리 등록 뷰로 전달하기 위한 Delegate
     var delegate: DetailCostViewControllerDelegate?
     
     // MARK: - UIComponents
@@ -129,7 +129,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
         case 0:
             return "상세 정보"
         case 1:
-            return "상세 비용"
+            return "비용"
         default:
             return nil
         }

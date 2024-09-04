@@ -89,7 +89,7 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
     
     func updateDate(to date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 MM월 d일"
+        formatter.dateFormat = "yy년 M월 d일"
         let updatedDateString = formatter.string(from: date)
         return updatedDateString
     }

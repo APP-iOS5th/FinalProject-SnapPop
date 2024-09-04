@@ -72,7 +72,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             title = "관리 수정"
             saveButton.setTitle("수정 완료", for: .normal)
         } else {
-            title = "새로운 자기 관리"
+            title = "새로운 관리"
             saveButton.setTitle("등록 완료", for: .normal)
         }
         setupLeftBarButtonItem()
@@ -215,7 +215,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func addDetailButtonTapped() {
-        // 상세 비용 추가 버튼 탭 시, DetailCostViewController를 모달로 표시
+        // 상세 내역 추가 버튼 탭 시, DetailCostViewController를 모달로 표시
         let detailCostVC = DetailCostViewController()
         detailCostVC.delegate = self
         let navController = UINavigationController(rootViewController: detailCostVC)

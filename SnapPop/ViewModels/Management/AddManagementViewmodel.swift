@@ -20,7 +20,7 @@ class AddManagementViewModel {
     @Published var alertTime: Date = Date()
     @Published var alertStatus: Bool = false
     
-    @Published var detailCostArray: [DetailCost] = [] // 추가한 상세 비용들을 담을 배열
+    @Published var detailCostArray: [DetailCost] = [] // 추가한 상세 내역들을 담을 배열
     
     var edit = false // 편집
     private var cancellables = Set<AnyCancellable>()
@@ -164,7 +164,7 @@ class AddManagementViewModel {
                                     self.saveDetailCost(categoryId: self.categoryId, managementId: managementId, detailCost: detailCost)
                                 }
                             case .failure(let error):
-                                print("전체 상세 비용 삭제 실패: \(error.localizedDescription)")
+                                print("전체 상세 내역 삭제 실패: \(error.localizedDescription)")
                             }
                         }
                         
@@ -233,7 +233,7 @@ class AddManagementViewModel {
             
                 NotificationCenter.default.post(name: .managementSavedNotification, object: nil)
                 
-                // 상세 비용 저장
+                // 상세 내역 저장
                 for detailCost in self.detailCostArray {
                     self.saveDetailCost(categoryId: self.categoryId, managementId: management.id, detailCost: detailCost)
                 }
@@ -353,9 +353,9 @@ class AddManagementViewModel {
             db.saveDetailCost(categoryId: categoryId, managementId: managementId, detailCost: detailCost) { result in
                 switch result {
                 case .success:
-                    print("상세 비용 저장 성공")
+                    print("상세 내역 저장 성공")
                 case .failure(let error):
-                    print("상세 비용 저장 실패: \(error.localizedDescription)")
+                    print("상세 내역 저장 실패: \(error.localizedDescription)")
                 }
             }
         }
