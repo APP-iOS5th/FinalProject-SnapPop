@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 class ChecklistTableViewController: UITableViewController {
-
+    
     var viewModel: HomeViewModel?
     private var cancellables = Set<AnyCancellable>() // Combine 구독을 저장할 Set
     private let managementService = ManagementService() // ManagementService 인스턴스 추가
@@ -25,7 +25,7 @@ class ChecklistTableViewController: UITableViewController {
         button.addTarget(self, action: #selector(didSelfcareAddButton), for: .touchUpInside)
         return button
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(selfcareAddButton)
@@ -41,7 +41,7 @@ class ChecklistTableViewController: UITableViewController {
         let bottomPadding: CGFloat = 20 // 추가 여백
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: buttonHeight + bottomPadding, right: 0)
         tableView.scrollIndicatorInsets = tableView.contentInset
-
+        
         // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
         viewModel?.$filteredItems
             .receive(on: RunLoop.main)
@@ -49,11 +49,11 @@ class ChecklistTableViewController: UITableViewController {
                 self?.tableView.reloadData()
             }
             .store(in: &cancellables)
-
+        
         // 데이터 가져오기
         loadData()
     }
-
+    
     private func setupButtonConstraints() {
         NSLayoutConstraint.activate([
             selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -62,7 +62,7 @@ class ChecklistTableViewController: UITableViewController {
             selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
         ])
     }
-
+    
     private func loadData() {
         guard let viewModel = viewModel else { return }
         viewModel.fetchManagements(categoryId: viewModel.selectedCategoryId ?? "default") { [weak self] result in
@@ -76,7 +76,7 @@ class ChecklistTableViewController: UITableViewController {
             }
         }
     }
-
+    
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
@@ -88,7 +88,7 @@ class ChecklistTableViewController: UITableViewController {
         let addManagementViewModel = AddManagementViewModel(categoryId: viewModel?.selectedCategoryId ?? "default")
         let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
         addManagementVC.homeViewModel = viewModel
-
+        
         // 새로운 항목이 추가되면 뷰모델에 추가
         addManagementVC.onSave = { [weak self] newManagement in
             guard let self = self, let viewModel = self.viewModel else { return }
@@ -98,7 +98,7 @@ class ChecklistTableViewController: UITableViewController {
                 viewModel.addManagement(newManagement)
             }
         }
-
+        
         if let parentVC = self.view.parentViewController(), !(parentVC.navigationController?.viewControllers.contains(addManagementVC) ?? false) {
             addManagementVC.hidesBottomBarWhenPushed = true // 탭바 숨기기
             parentVC.navigationController?.pushViewController(addManagementVC, animated: true)
@@ -158,7 +158,7 @@ class ChecklistTableViewController: UITableViewController {
             return cell
         }
     }
-
+    
     // 높이 설정
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // 관리 항목이 없거나, 현재 선택된 날짜에 관리 항목이 없는 경우
@@ -170,22 +170,22 @@ class ChecklistTableViewController: UITableViewController {
     
     private func handleCheckBoxToggle(managementId: String, isCompleted: Bool) {
         guard let viewModel = viewModel else { return }
-
+        
         // 선택된 항목의 관리 아이템 가져오기
         guard let selectedManagementIndex = viewModel.checklistItems.firstIndex(where: { $0.id == managementId }) else { return }
-
+        
         // 관리 항목이 선택된 날짜를 가져오기
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let selectedDate = viewModel.selectedDate
         let selectedDateString = dateFormatter.string(from: selectedDate)
-
+        
         // 완료 상태 업데이트
         managementService.updateCompletion(categoryId: viewModel.selectedCategoryId ?? "default", managementId: managementId, date: selectedDate, isCompleted: isCompleted) { result in
             switch result {
             case .success():
                 print("Completion status updated successfully")
-
+                
                 // 완료 상태 업데이트 후 ViewModel에서 필터링 다시 적용
                 if isCompleted {
                     viewModel.checklistItems[selectedManagementIndex].completions[selectedDateString] = 1
@@ -194,7 +194,7 @@ class ChecklistTableViewController: UITableViewController {
                 }
                 
                 viewModel.filterManagements(for: viewModel.selectedDate) // 필터링 재적용
-                self.tableView.reloadData()                 
+                self.tableView.reloadData()
             case .failure(let error):
                 print("Failed to update completion status: \(error.localizedDescription)")
                 self.showAlert(title: "업데이트 실패", message: "완료 상태를 업데이트할 수 없습니다. 다시 시도해 주세요.")
@@ -204,65 +204,67 @@ class ChecklistTableViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard let viewModel = viewModel, !viewModel.filteredItems.isEmpty else {
+        guard let viewModel = viewModel, !viewModel.filteredItems.isEmpty, indexPath.row < viewModel.filteredItems.count else {
             return nil
         }
-
-        // 유효한 인덱스인지 확인
-        guard indexPath.row < viewModel.filteredItems.count else {
-            return nil
-        }
-
+        
+        let itemToDelete = viewModel.filteredItems[indexPath.row]
+        
         // 삭제 액션 정의
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] (action, view, completionHandler) in
-            guard let self = self, let viewModel = self.viewModel else {
+            guard let self = self else {
                 completionHandler(false)
                 return
             }
+            
+            let alertController = UIAlertController(title: "관리 항목 삭제", message: "삭제할 항목을 선택하세요.", preferredStyle: .alert)
 
-            let itemToDelete = viewModel.filteredItems[indexPath.row] // filteredItems를 기준으로 삭제
-
-            // Firebase에서 항목 삭제
-            viewModel.deleteManagement(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: viewModel.selectedCategoryId ?? "default", managementId: itemToDelete.id ?? "") { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success():
-                        // 삭제가 성공한 경우 UI 업데이트
-                        viewModel.checklistItems.removeAll { $0.id == itemToDelete.id }
-                        viewModel.filterManagements(for: viewModel.selectedDate) // 필터링 재적용
-                        self.tableView.reloadData() // 전체 테이블 뷰를 다시 로드하여 업데이트
-
-                        completionHandler(true)
-                    case .failure(let error):
-                        // 삭제가 실패한 경우 사용자에게 알림
-                        print("Failed to delete management: \(error.localizedDescription)")
-                        let alert = UIAlertController(title: "삭제 실패", message: "관리 항목을 삭제할 수 없습니다. 다시 시도해 주세요.", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "확인", style: .default))
-                        self.present(alert, animated: true)
-                        completionHandler(false)
-                    }
-                }
+            // 모든 관리 항목 삭제
+            let deleteAllAction = UIAlertAction(title: "모든 항목 삭제", style: .destructive) { _ in
+                self.deleteManagement(item: itemToDelete, deleteAll: true)
+                completionHandler(true)
             }
+
+            // 오늘 이후 관리 항목만 삭제
+            let deleteFutureAction = UIAlertAction(title: "오늘 이후 항목만 삭제", style: .default) { _ in
+                self.deleteManagement(item: itemToDelete, deleteAll: false)
+                completionHandler(true)
+            }
+
+            // 오늘 이후 항목만 삭제 버튼을 검정색으로 설정
+            deleteFutureAction.setValue(UIColor.systemBlue, forKey: "titleTextColor")
+
+            // 취소 버튼
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+                completionHandler(false)
+            }
+
+            alertController.addAction(deleteAllAction)
+            alertController.addAction(deleteFutureAction)
+            alertController.addAction(cancelAction)
+
+            self.present(alertController, animated: true, completion: nil)
+
         }
         deleteAction.backgroundColor = UIColor.red
         deleteAction.image = UIImage(systemName: "trash")
-
+        
         // 편집 액션 정의
         let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
-            guard let self = self, let viewModel = self.viewModel else {
+            guard let self = self else {
                 completionHandler(false)
                 return
             }
-
-            let itemToEdit = viewModel.filteredItems[indexPath.row] // filteredItems를 기준으로 편집
+            
+            let itemToEdit = viewModel.filteredItems[indexPath.row]
             let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
             addManagementViewModel.edit = true // 편집 모드 설정
             let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
             addManagementVC.homeViewModel = viewModel
-
+            
             addManagementVC.onSave = { [weak self] updatedManagement in
                 guard let self = self else { return }
-
+                
                 viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
                     DispatchQueue.main.async {
                         switch result {
@@ -283,14 +285,55 @@ class ChecklistTableViewController: UITableViewController {
         }
         editAction.backgroundColor = .gray
         editAction.image = UIImage(systemName: "pencil")
-
+        
         // 삭제 및 편집 액션을 구성에 추가
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         configuration.performsFirstActionWithFullSwipe = false
-
+        
         return configuration
     }
     
+    private func deleteManagement(item: Management, deleteAll: Bool) {
+        guard let viewModel = viewModel else { return }
+
+        if deleteAll {
+            viewModel.deleteManagement(userId: AuthViewModel.shared.currentUser?.uid ?? "", categoryId: viewModel.selectedCategoryId ?? "default", managementId: item.id ?? "") { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success():
+                        viewModel.checklistItems.removeAll { $0.id == item.id }
+                        viewModel.filterManagements(for: viewModel.selectedDate)
+                        self.tableView.reloadData()
+                    case .failure(let error):
+                        self.showAlert(title: "삭제 실패", message: "관리 항목을 삭제할 수 없습니다. 다시 시도해 주세요.")
+                        print("Failed to delete management: \(error.localizedDescription)")
+                    }
+                }
+            }
+        } else {
+            managementService.deleteFutureCompletions(categoryId: viewModel.selectedCategoryId ?? "default", managementId: item.id ?? "", from: viewModel.selectedDate) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success():
+                        if let index = viewModel.checklistItems.firstIndex(where: { $0.id == item.id }) {
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateFormat = "yyyy-MM-dd"
+                            // 삭제된 날짜에 따라서 completions도 삭제되게
+                            viewModel.checklistItems[index].completions = viewModel.checklistItems[index].completions.filter { key, _ in
+                                return key <= dateFormatter.string(from: self.viewModel!.selectedDate)
+                            }
+                        }
+                        viewModel.filterManagements(for: viewModel.selectedDate)
+                        self.tableView.reloadData()
+                    case .failure(let error):
+                        self.showAlert(title: "업데이트 실패", message: "미래 항목을 삭제할 수 없습니다. 다시 시도해 주세요.")
+                        print("Failed to delete future completions: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+
     // 키보드 내리기
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
