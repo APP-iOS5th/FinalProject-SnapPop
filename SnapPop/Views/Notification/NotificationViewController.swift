@@ -26,8 +26,8 @@ class NotificationViewController: UIViewController {
     private lazy var segmentedControl: UISegmentedControl = {
         let segControl = UISegmentedControl(items: ["추천 알림", "관리 알림"])
         segControl.selectedSegmentIndex = 0
-        segControl.backgroundColor = UIColor.segmentColor
-        segControl.selectedSegmentTintColor = UIColor.segmentSelectedColor
+        segControl.backgroundColor = UIColor.customToggleColor
+        segControl.selectedSegmentTintColor = UIColor.segmentSelected
         segControl.addTarget(self, action: #selector(didChangeValue(segment:)), for: .valueChanged)
         segControl.translatesAutoresizingMaskIntoConstraints = false
         return segControl
@@ -36,7 +36,7 @@ class NotificationViewController: UIViewController {
     /// 추천 알림 테이블뷰
     private var recommendTable = {
         let table = UITableView()
-        table.backgroundColor = .customBackground
+        table.backgroundColor = .customBackgroundColor
         table.register(ManagementTableViewCell.self, forCellReuseIdentifier: "ManagementTableViewCell")
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
@@ -45,7 +45,7 @@ class NotificationViewController: UIViewController {
     /// 관리 알림 테이블뷰
     private var managementTable = {
         let table = UITableView()
-        table.backgroundColor = .customBackground
+        table.backgroundColor = .customBackgroundColor
         table.register(ManagementTableViewCell.self, forCellReuseIdentifier: "ManagementTableViewCell")
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
@@ -159,9 +159,8 @@ class NotificationViewController: UIViewController {
             return
         }
         managementNotifications = savedNotifications.compactMap { try? JSONDecoder().decode(NotificationData.self, from: $0) }
-        
+               
         // 데이터가 없는 경우 테이블뷰를 숨기고 레이블을 표시
-       
         managementTable.isHidden = managementNotifications.isEmpty
         managementEmptyLabel.isHidden = !managementNotifications.isEmpty
         DispatchQueue.main.async {
@@ -170,7 +169,7 @@ class NotificationViewController: UIViewController {
     }
     
     func loadRecommendedNotifications() {
-        guard let savedNotifications = UserDefaults.standard.array(forKey: "savedRecommendedNotifications") as? [Data] else { 
+        guard let savedNotifications = UserDefaults.standard.array(forKey: "savedRecommendNotifications") as? [Data] else {
             self.recommendNotifications = []
             self.recommendTable.isHidden = true
             self.recommendEmptyLabel.isHidden = false
@@ -201,12 +200,12 @@ class NotificationViewController: UIViewController {
     }
     
     @objc func handleNewManagementNotification() {
-        print("New notification received")
+        print("New management notification received")
         loadManagementNotifications()
     }
     
     @objc func handleNewRecommendNotification() {
-        print("New notification received")
+        print("New Recommend notification received")
         loadRecommendedNotifications()
     }
 }
@@ -234,7 +233,7 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
             formatter.dateFormat = "yyyy년 MM월 d일"
             let updatedDateString = formatter.string(from: notification.date)
             cell.configure(title: notification.title, time: updatedDateString)
-            
+//            cell.backgroundColor = .customBackgroundColor
             cell.selectionStyle = .none
             return cell
         } else if tableView == recommendTable {

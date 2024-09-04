@@ -77,8 +77,8 @@ class TitleCell: BaseTableViewCell {
         selectionStyle = .none
 
         NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
@@ -99,14 +99,21 @@ class MemoCell: BaseTableViewCell {
         selectionStyle = .none
 
         NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 }
 // -MARK: 색상
 class ColorCell: BaseTableViewCell {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.text = "색상"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     let colorPicker: UIColorWell = {
         let colorPicker = UIColorWell()
         colorPicker.supportsAlpha = false
@@ -116,12 +123,16 @@ class ColorCell: BaseTableViewCell {
     
     override func setupUI() {
         super.setupUI()
+        contentView.addSubview(label)
         contentView.addSubview(colorPicker)
         selectionStyle = .none
 
         NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
             colorPicker.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            colorPicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
+            colorPicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
     }
 }
@@ -129,6 +140,13 @@ class ColorCell: BaseTableViewCell {
 class DateCell: BaseTableViewCell {
     var dismissHandler: (() -> Void)?
     var dateChangedHandler: ((Date) -> Void)?
+    
+    private let label: UILabel = {
+        let label = UILabel()
+        label.text = "날짜"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -140,16 +158,17 @@ class DateCell: BaseTableViewCell {
     
     override func setupUI() {
         super.setupUI()
-        textLabel?.text = "날짜"
-        imageView?.image = UIImage(systemName: "calendar")
-        imageView?.tintColor = .dynamicTextColor
         
+        contentView.addSubview(label)
         contentView.addSubview(datePicker)
         selectionStyle = .none
 
         NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
             datePicker.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            datePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
+            datePicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
         
         datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
@@ -168,6 +187,13 @@ class DateCell: BaseTableViewCell {
 
 // -MARK: 반복
 class RepeatCell: BaseTableViewCell {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.text = "반복"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     let repeatButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("안함", for: .normal)
@@ -185,11 +211,16 @@ class RepeatCell: BaseTableViewCell {
     
     override func setupUI() {
         super.setupUI()
+        
+        contentView.addSubview(label)
         contentView.addSubview(repeatButton)
         selectionStyle = .none
 
         NSLayoutConstraint.activate([
-            repeatButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            repeatButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             repeatButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
@@ -265,6 +296,13 @@ class TimeCell: BaseTableViewCell {
 
 // -MARK: 알림
 class NotificationCell: BaseTableViewCell {
+    private let label: UILabel = {
+        let label = UILabel()
+        label.text = "알림"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     let switchControl: UISwitch = {
         let switchControl = UISwitch()
         switchControl.onTintColor = UIColor.customToggleColor
@@ -276,11 +314,16 @@ class NotificationCell: BaseTableViewCell {
     
     override func setupUI() {
         super.setupUI()
+        
+        contentView.addSubview(label)
         contentView.addSubview(switchControl)
         selectionStyle = .none
 
         NSLayoutConstraint.activate([
-            switchControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            switchControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             switchControl.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
         

@@ -33,9 +33,9 @@ class SnapComparisonCollectionViewCell: UICollectionViewCell {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(HorizontalSnapPhotoCollectionViewCell.self, forCellWithReuseIdentifier: HorizontalSnapPhotoCollectionViewCell.identifier)
-        collectionView.backgroundColor = .dynamicBackgroundInsideColor
+        collectionView.backgroundColor = .customBackgroundColor
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .dynamicBackgroundInsideColor
+        collectionView.backgroundColor = .customBackgroundColor
         return collectionView
     }()
     
@@ -114,7 +114,7 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
         }
         
         if indexPath.row == 0 {
-            cell.snapPhoto.layer.borderColor = UIColor.customMainColor.cgColor
+            cell.snapPhoto.layer.borderColor = UIColor.customMainColor?.cgColor
             cell.snapPhoto.layer.borderWidth = 3
             cell.snapPhoto.layer.cornerRadius = 30
             cell.snapPhoto.layer.masksToBounds = true
@@ -123,7 +123,7 @@ extension SnapComparisonCollectionViewCell: UICollectionViewDelegate, UICollecti
             cell.snapPhoto.layer.cornerRadius = 30
             cell.snapPhoto.layer.masksToBounds = true
         }
-        cell.backgroundColor = .dynamicBackgroundInsideColor
+        cell.backgroundColor = .customBackgroundColor
         return cell
     }
     

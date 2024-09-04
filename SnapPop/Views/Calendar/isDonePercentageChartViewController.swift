@@ -91,7 +91,7 @@ open class IsDoneDoughnut: UIView {
     
     // MARK: - Private Variables
     private var _percentages: [Double]
-    private var _colors: [UIColor] = [UIColor.customButtonColor, .lightGray]
+    private var _colors: [UIColor] = [UIColor.customButton, .lightGray]
     private var _lineWidth = CGFloat(1)
     lazy var donePercentage = "\(Float(_percentages[0]))%" {
         didSet {
