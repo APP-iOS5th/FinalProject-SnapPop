@@ -264,15 +264,15 @@ class HomeViewController:
         // Set up constraints
         NSLayoutConstraint.activate([
             // datePickerContainer constraints
-            datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            datePickerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.055),
             datePickerContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: view.bounds.height * 0.02),
             datePickerContainer.heightAnchor.constraint(equalToConstant: view.bounds.height * 0.05),
             
             // calendarImageView constraints
             calendarImageView.leadingAnchor.constraint(equalTo: datePickerContainer.leadingAnchor),
             calendarImageView.centerYAnchor.constraint(equalTo: datePickerContainer.centerYAnchor),
-            calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
-            calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.06),
+            calendarImageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.072),
+            calendarImageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 0.071),
             
             // datePicker constraints
             datePicker.leadingAnchor.constraint(equalTo: calendarImageView.trailingAnchor, constant: view.bounds.width * 0.02),
@@ -303,13 +303,13 @@ class HomeViewController:
         NSLayoutConstraint.activate([
             // 관리 목록 타이틀 제약 조건
             managementTitle.topAnchor.constraint(equalTo: snapCollectionView.bottomAnchor, constant: view.bounds.height * 0.02),
-            managementTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            managementTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            managementTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.065),
+            managementTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.065),
             
             // 체크리스트 테이블 제약 조건
             checklistTableViewController.view.topAnchor.constraint(equalTo: managementTitle.bottomAnchor, constant: view.bounds.height * 0.02),
-            checklistTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
-            checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
+            checklistTableViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.035),
+            checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.035),
             checklistTableViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         
@@ -339,7 +339,7 @@ class HomeViewController:
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
+            snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.06),
             snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.01),
             snapTitle.trailingAnchor.constraint(equalTo: view.centerXAnchor),
         
