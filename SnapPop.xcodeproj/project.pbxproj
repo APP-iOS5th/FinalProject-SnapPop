@@ -44,10 +44,10 @@
 		8F8F2C882C82240E0006C30F /* UICalendarView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F8F2C872C82240E0006C30F /* UICalendarView+Extensions.swift */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
 		8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215932C745B4300891F93 /* CostChartViewController.swift */; };
-		8FA6D2722C853BA300E777A4 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8FA6D2712C853BA300E777A4 /* Config.xcconfig */; };
 		B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E002C76C7350021A57D /* AddManagementViewController.swift */; };
 		B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */; };
 		B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */; };
+		B877DC102C881EDD0072C868 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F16853A2C63545A0010F8D8 /* LaunchScreen.storyboard */; };
 		B8A7253A2C854515002290E4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B8A725392C854515002290E4 /* GoogleService-Info.plist */; };
 		B8A7253C2C854697002290E4 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = B8A7253B2C854697002290E4 /* Config.xcconfig */; };
 		B8A725432C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8A725422C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf */; };
@@ -70,7 +70,6 @@
 		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
 		C2734C3B2C69F1D200E45294 /* CategoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2734C3A2C69F1D200E45294 /* CategoryService.swift */; };
 		C2740B082C849D91006CA4F6 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2740B072C849D91006CA4F6 /* UIViewController+Extensions.swift */; };
-		C2740B0A2C84A66C006CA4F6 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = C2740B092C84A66C006CA4F6 /* Config.xcconfig */; };
 		C2A6CAAB2C7EDB1100F7670A /* UITextField+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */; };
 		C2A6CAAD2C7EE2F800F7670A /* UIResponder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */; };
 		C2D4015B2C73788D000E0343 /* DetailCostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */; };
@@ -152,7 +151,6 @@
 		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C2734C3A2C69F1D200E45294 /* CategoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryService.swift; sourceTree = "<group>"; };
 		C2740B072C849D91006CA4F6 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
-		C2740B092C84A66C006CA4F6 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		C2A6CAAA2C7EDB1100F7670A /* UITextField+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extensions.swift"; sourceTree = "<group>"; };
 		C2A6CAAC2C7EE2F800F7670A /* UIResponder+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Extensions.swift"; sourceTree = "<group>"; };
 		C2D4015A2C73788D000E0343 /* DetailCostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCostViewController.swift; sourceTree = "<group>"; };
@@ -284,6 +282,7 @@
 				C24BFA542C647BA600A5B40A /* .swiftlint.yml */,
 				8F16852E2C6354590010F8D8 /* SnapPop */,
 				8F16852D2C6354590010F8D8 /* Products */,
+				B877DC0F2C874E910072C868 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -338,6 +337,14 @@
 				B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */,
 			);
 			path = Management;
+			sourceTree = "<group>";
+		};
+		B877DC0F2C874E910072C868 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				8FA6D2712C853BA300E777A4 /* Config.xcconfig */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		C246CE592C74EF7D00A631BE /* Cells */ = {
@@ -586,6 +593,7 @@
 				B8A7253C2C854697002290E4 /* Config.xcconfig in Resources */,
 				B8A7253A2C854515002290E4 /* GoogleService-Info.plist in Resources */,
 				8F1685392C63545A0010F8D8 /* Assets.xcassets in Resources */,
+				B877DC102C881EDD0072C868 /* LaunchScreen.storyboard in Resources */,
 				B8A725432C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf in Resources */,
 				8F16853C2C63545A0010F8D8 /* Base in Resources */,
 			);
@@ -838,9 +846,11 @@
 				DEVELOPMENT_TEAM = 59FP2PXRXK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "이 앱은 사진을 찍기 위해 카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "이 앱은 사진을 저장하고 접근하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -870,9 +880,11 @@
 				DEVELOPMENT_TEAM = 59FP2PXRXK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "이 앱은 사진을 찍기 위해 카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "이 앱은 사진을 저장하고 접근하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

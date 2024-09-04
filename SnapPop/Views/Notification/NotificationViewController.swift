@@ -82,7 +82,6 @@ class NotificationViewController: UIViewController {
         // 네비게이션
         title = "알림"
         setupLeftBarButtonItem()
-        setupRightBarButtonItemForNotification()
 
         self.segmentedControl.selectedSegmentIndex = 1
         self.didChangeValue(segment: self.segmentedControl)
@@ -230,7 +229,7 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
             let notification = managementNotifications[indexPath.row]
             
             let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy년 MM월 d일"
+            formatter.dateFormat = "yyyy년 M월 d일"
             let updatedDateString = formatter.string(from: notification.date)
             cell.configure(title: notification.title, time: updatedDateString)
 //            cell.backgroundColor = .customBackgroundColor
@@ -247,7 +246,7 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
             let notification = recommendNotifications[indexPath.row]
             
             let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy년 MM월 d일"
+            formatter.dateFormat = "yyyy년 M월 d일"
             let updatedDateString = formatter.string(from: notification.date)
             cell.configure(title: notification.title, time: updatedDateString)
             

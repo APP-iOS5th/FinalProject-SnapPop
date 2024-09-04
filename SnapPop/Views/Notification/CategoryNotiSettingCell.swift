@@ -49,10 +49,10 @@ class CategoryNotiSettingCell: UITableViewCell {
         ])
         
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
-            notificationButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            notificationButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             notificationButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }

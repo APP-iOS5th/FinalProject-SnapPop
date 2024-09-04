@@ -19,19 +19,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .systemBackground
         
-        if let notificationResponse = connectionOptions.notificationResponse {
-            let userInfo = notificationResponse.notification.request.content.userInfo
-            if !notificationResponse.notification.request.identifier.contains("initialNotification") {
-                // 추천 알림
-                addRecommendNotificationData(userInfo: userInfo)
-            } else {
-                // 관리 알림
-                addManagementNotificationData(userInfo: userInfo)
-            }
-            
-        }
+        // Launch Screen을 항상 먼저
+        showLaunchScreen()
         
-        AuthViewModel.shared.listenAuthState { _, user in
+        // 앱의 초기화 작업이 완료된 후 메인 화면으로 전환
+        AuthViewModel.shared.listenAuthState { [weak self] _, user in
+            guard let self = self else { return }
+            
             let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
             
             if user != nil {
@@ -39,32 +33,45 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     LocalAuthenticationViewModel.execute { (success, error) in
                         DispatchQueue.main.async {
                             if success {
-                                self.window?.rootViewController = CustomTabBarController()
+                                self.showMainScreen()
                             } else {
                                 // 잠금 인증 실패
+                                self.showMainScreen()
                             }
-                            self.window?.makeKeyAndVisible()
-                            self.requestNotificationAuthorization()
                         }
                     }
                 } else {
-                    self.window?.rootViewController = CustomTabBarController()
-                    self.window?.makeKeyAndVisible()
-                    self.requestNotificationAuthorization()
+                    self.showMainScreen()
                 }
             } else {
-                self.window?.rootViewController = SignInViewController()
-                self.window?.makeKeyAndVisible()
+                self.showSignInScreen()
             }
         }
-//        // 실제 폰트랑 폰트네임이 달라서 family name 찍어보고 확인하여 호출
-//        UIFont.familyNames.sorted().forEach { familyName in
-//            print("*** \(familyName) ***")
-//            UIFont.fontNames(forFamilyName: familyName).forEach { fontName in
-//                print("\(fontName)")
-//            }
-//            print("---------------------")
-//        }
+    }
+
+    private func showLaunchScreen() {
+        // Launch Screen을 불러와서 표시
+        let launchStoryboard = UIStoryboard(name: "LaunchScreen", bundle: nil)
+        let launchScreenVC = launchStoryboard.instantiateInitialViewController()
+        window?.rootViewController = launchScreenVC
+        window?.makeKeyAndVisible()
+    }
+
+    private func showMainScreen() {
+        // 메인 화면으로 전환
+        DispatchQueue.main.async {
+            self.window?.rootViewController = CustomTabBarController()
+            self.window?.makeKeyAndVisible()
+            self.requestNotificationAuthorization()
+        }
+    }
+
+    private func showSignInScreen() {
+        // 로그인 화면으로 전환
+        DispatchQueue.main.async {
+            self.window?.rootViewController = SignInViewController()
+            self.window?.makeKeyAndVisible()
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -208,9 +215,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func setupAppSwitcherMode() {
         guard let window = window else { return }
         appSwitcherModeImageView = UIImageView(frame: window.frame)
-        appSwitcherModeImageView.image = UIImage(named: "filledpop")?.resized(to: CGSize(width: 100, height: 100))
+        appSwitcherModeImageView.image = UIImage(named: "AppIcon")?.resized(to: CGSize(width: 100, height: 100))
         appSwitcherModeImageView.contentMode = .center
-        appSwitcherModeImageView.backgroundColor = UIColor.customMainColor
+        appSwitcherModeImageView.backgroundColor = UIColor(named: "Iconbackground")
         window.addSubview(appSwitcherModeImageView)
     }
 }
@@ -229,7 +236,34 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .list, .badge, .sound])
+        if !notification.request.identifier.contains("initialNotification") {
+            completionHandler([.banner, .list, .badge, .sound])
+        } else {
+            let userInfo = notification.request.content.userInfo
+            
+            guard let repeatCycle = userInfo["repeatCycle"] as? Int else {
+                completionHandler([])
+                return
+            }
+            
+            if repeatCycle == 0 {
+                completionHandler([.banner, .list, .badge, .sound])
+            } else {
+                // 특정 날짜로부터 시작하여 반복되는 관리 알림을 등록하기 위해 특정 날짜에 알림이 트리거되면 반복 알림을 등록한다
+                guard let categoryId = userInfo["categoryId"] as? String,
+                      let managementID = userInfo["managementId"] as? String,
+                      let startDate = userInfo["startDate"] as? Date,
+                      let alertTime = userInfo["alertTime"] as? Date,
+                      let body = userInfo["body"] as? String else {
+                    completionHandler([])
+                    return
+                }
+                
+                NotificationManager.shared.repeatingNotification(categoryId: categoryId, managementId: managementID, startDate: startDate,
+                                                                 alertTime: alertTime, repeatCycle: repeatCycle, body: body)
+                completionHandler([])
+            }
+        }
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
