@@ -40,22 +40,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             
             let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
             
-            if user != nil {
-                if appLockState {
-                    LocalAuthenticationViewModel.execute { (success, error) in
-                        DispatchQueue.main.async {
-                            if success {
-                                self.showMainScreen()
-                            } else {
-                                // 잠금 인증 실패
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { // launchScreen 1초 지연 
+                if user != nil {
+                    if appLockState {
+                        LocalAuthenticationViewModel.execute { (success, error) in
+                            DispatchQueue.main.async {
+                                if success {
+                                    self.showMainScreen()
+                                } else {
+                                    // 잠금 인증 실패
+                                }
                             }
                         }
+                    } else {
+                        self.showMainScreen()
                     }
                 } else {
-                    self.showMainScreen()
+                    self.showSignInScreen()
                 }
-            } else {
-                self.showSignInScreen()
             }
         }
     }
