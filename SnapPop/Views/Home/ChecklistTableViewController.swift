@@ -203,6 +203,39 @@ class ChecklistTableViewController: UITableViewController {
     }
     
     // MARK: - UITableViewDelegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let viewModel = viewModel, !viewModel.filteredItems.isEmpty, indexPath.row < viewModel.filteredItems.count else {
+            return
+        }
+
+        let itemToEdit = viewModel.filteredItems[indexPath.row]
+        let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
+        addManagementViewModel.edit = true // 편집 모드 설정
+        let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
+        addManagementVC.homeViewModel = viewModel
+
+        addManagementVC.onSave = { [weak self] updatedManagement in
+            guard let self = self else { return }
+
+            viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success():
+                        self.tableView.reloadData()
+                        addManagementViewModel.edit = false // 업데이트 후 edit를 다시 false로 설정
+                    case .failure(let error):
+                        self.showAlert(title: "업데이트 실패", message: "관리 항목을 업데이트할 수 없습니다. 다시 시도해 주세요.")
+                        print("Failed to update management: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+
+        addManagementVC.hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(addManagementVC, animated: true)
+    }
+
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let viewModel = viewModel, !viewModel.filteredItems.isEmpty, indexPath.row < viewModel.filteredItems.count else {
             return nil
@@ -231,7 +264,7 @@ class ChecklistTableViewController: UITableViewController {
                 completionHandler(true)
             }
 
-            // 오늘 이후 항목만 삭제 버튼을 검정색으로 설정
+            // 오늘 이후 항목만 삭제
             deleteFutureAction.setValue(UIColor.systemBlue, forKey: "titleTextColor")
 
             // 취소 버튼
@@ -249,45 +282,8 @@ class ChecklistTableViewController: UITableViewController {
         deleteAction.backgroundColor = UIColor.red
         deleteAction.image = UIImage(systemName: "trash")
         
-        // 편집 액션 정의
-        let editAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completionHandler) in
-            guard let self = self else {
-                completionHandler(false)
-                return
-            }
-            
-            let itemToEdit = viewModel.filteredItems[indexPath.row]
-            let addManagementViewModel = AddManagementViewModel(categoryId: viewModel.selectedCategoryId ?? "default", management: itemToEdit)
-            addManagementViewModel.edit = true // 편집 모드 설정
-            let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
-            addManagementVC.homeViewModel = viewModel
-            
-            addManagementVC.onSave = { [weak self] updatedManagement in
-                guard let self = self else { return }
-                
-                viewModel.updateManagement(categoryId: viewModel.selectedCategoryId ?? "default", managementId: updatedManagement.id ?? "", updatedManagement: updatedManagement) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success():
-                            self.tableView.reloadData()
-                            addManagementViewModel.edit = false // 업데이트 후 edit를 다시 false로 설정
-                        case .failure(let error):
-                            self.showAlert(title: "업데이트 실패", message: "관리 항목을 업데이트할 수 없습니다. 다시 시도해 주세요.")
-                            print("Failed to update management: \(error.localizedDescription)")
-                        }
-                    }
-                }
-            }
-            
-            addManagementVC.hidesBottomBarWhenPushed = true
-            self.navigationController?.pushViewController(addManagementVC, animated: true)
-            completionHandler(true)
-        }
-        editAction.backgroundColor = .gray
-        editAction.image = UIImage(systemName: "pencil")
-        
-        // 삭제 및 편집 액션을 구성에 추가
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        // 삭제 액션만 추가
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         configuration.performsFirstActionWithFullSwipe = false
         
         return configuration
