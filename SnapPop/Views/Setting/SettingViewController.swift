@@ -77,7 +77,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        4
+        5
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -85,7 +85,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 0:
             return 1 // 계정 정보
         case 1:
-            return 1
+            return 1 // 알림
         case 2:
             return 3 // 보안 및 개인정보
         case 3:
