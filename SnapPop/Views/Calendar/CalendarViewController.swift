@@ -118,7 +118,7 @@ class CalendarViewController: UIViewController {
     
     private let segmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["달성률", "비용"])
-        let font = UIFont.systemFont(ofSize: 14) // Adjust the font size as needed
+        let font = UIFont.boldSystemFont(ofSize: 16	) // Adjust the font size as needed
         let color = UIColor.white
 
         UISegmentedControl.appearance().setTitleTextAttributes([

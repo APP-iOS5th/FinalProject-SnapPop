@@ -71,7 +71,7 @@ class HomeViewController:
     private let snapTitle: UILabel = {
         let label = UILabel()
         label.text = "Snap"
-        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.font = UIFont.boldSystemFont(ofSize: 27)
         label.textColor = .dynamicTextColor
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -333,7 +333,6 @@ class HomeViewController:
         view.addSubview(editButton)
         view.addSubview(addButton)
         view.addSubview(snapCollectionView)
-        
         view.addSubview(noImageLabel)
         
         editButton.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
@@ -342,8 +341,8 @@ class HomeViewController:
         NSLayoutConstraint.activate([
             snapTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: view.bounds.width * 0.05),
             snapTitle.topAnchor.constraint(equalTo: datePickerContainer.bottomAnchor, constant: view.bounds.height * 0.01),
-            snapTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
-            
+            snapTitle.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -110),
+        
             editButton.topAnchor.constraint(equalTo: snapTitle.topAnchor),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.05),
             
