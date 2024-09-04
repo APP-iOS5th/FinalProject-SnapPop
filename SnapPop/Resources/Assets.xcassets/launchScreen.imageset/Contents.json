@@ -6,11 +6,28 @@
       "scale" : "1x"
     },
     {
+      "filename" : "SnapPopIcon 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "SnapPopIcon 2.png",
       "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "filename" : "SnapPopIcon 3.png",
+      "idiom" : "iphone",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "SnapPopIcon 4.png",
+      "idiom" : "iphone",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "SnapPopIcon 5.png",
+      "idiom" : "iphone",
       "scale" : "3x"
     }
   ],
