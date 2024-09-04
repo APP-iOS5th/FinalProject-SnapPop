@@ -12,7 +12,7 @@ class AppLockSettingTableViewCell: UITableViewCell {
     
     private let appLockSettingLabel: UILabel = {
         let label = UILabel()
-        label.text = "앱 잠금 설정"
+        label.text = "앱 잠금"
         
         return label
     }()
