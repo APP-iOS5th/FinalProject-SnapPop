@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <device id="retina6_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -13,16 +13,25 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="launchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="jrR-39-HhE">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launchScreen" translatesAutoresizingMaskIntoConstraints="NO" id="jrR-39-HhE">
+                                <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="jrR-39-HhE" secondAttribute="bottom" id="2Kn-ym-9vI"/>
+                            <constraint firstItem="jrR-39-HhE" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="4Pp-a6-3e1"/>
+                            <constraint firstAttribute="trailing" secondItem="jrR-39-HhE" secondAttribute="trailing" id="9WO-Yw-vBQ"/>
+                            <constraint firstAttribute="trailing" secondItem="jrR-39-HhE" secondAttribute="trailing" id="A6y-hX-Tfj"/>
+                            <constraint firstItem="jrR-39-HhE" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="BeP-pC-RkL"/>
+                            <constraint firstItem="jrR-39-HhE" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bk2-1w-KYa"/>
+                            <constraint firstItem="jrR-39-HhE" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="jhe-Lf-vFj"/>
+                            <constraint firstAttribute="bottom" secondItem="jrR-39-HhE" secondAttribute="bottom" id="ue3-ED-H6h"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
