@@ -123,7 +123,7 @@ class HomeViewController:
     // 스냅 추가 안내문구
     private let noImageLabel: UILabel = {
         let label = UILabel()
-        label.text = "오늘의 스냅을 기록하세요!"
+        label.text = "오늘 하루를 스냅으로 기록해보세요"
         label.textColor = .gray
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false

@@ -723,7 +723,7 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         cell.backgroundColor = .dynamicBackgroundInsideColor
         if matchingManagements.isEmpty {
-            cell.setLabelText("등록된 자기관리가 없습니다.", isManagementEmpty: true)
+            cell.setLabelText("등록된 자기관리가 없습니다", isManagementEmpty: true)
         } else {
             let management = matchingManagements[indexPath.row]
             cell.setLabelText(management.title, isManagementEmpty: false)

@@ -124,7 +124,17 @@ class ChecklistTableViewController: UITableViewController {
             // 관리 항목이 없을 때의 셀 반환
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let messageLabel = UILabel()
-            messageLabel.text = "새로운 자기 관리를 시작해보세요!"
+            let message = "오늘은 관리할 항목이 없어요\n여유로운 하루 보내세요"
+
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 4
+
+            let attributedString = NSAttributedString(string: message, attributes: [
+                .paragraphStyle: paragraphStyle,
+                .foregroundColor: UIColor.gray
+            ])
+
+            messageLabel.attributedText = attributedString
             messageLabel.textAlignment = .center
             messageLabel.textColor = .gray
             messageLabel.numberOfLines = 0
