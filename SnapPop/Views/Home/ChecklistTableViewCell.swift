@@ -34,6 +34,7 @@ class ChecklistTableViewCell: UITableViewCell {
         contentView.addSubview(checkLabel)
         
         NSLayoutConstraint.activate([
+            checkBox.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             checkBox.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkBox.widthAnchor.constraint(equalToConstant: 35),
