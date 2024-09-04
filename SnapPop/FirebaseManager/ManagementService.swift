@@ -190,9 +190,9 @@ final class ManagementService {
                     return
                 }
                 
-                // 오늘 이후의 completions만 삭제 (오늘은 포함하지 않음)
+                // 오늘 이후의 completions만 삭제 (오늘 포함)
                 let filteredCompletions = management.completions.filter { key, _ in
-                    return key <= dateString
+                    return key < dateString
                 }
                 
                 // Firestore에서 completions 업데이트
