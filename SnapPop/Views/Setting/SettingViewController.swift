@@ -22,6 +22,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.register(AccountInfoTableViewCell.self, forCellReuseIdentifier: AccountInfoTableViewCell.identifier)
         tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.identifier)
         tableView.register(AppLockSettingTableViewCell.self, forCellReuseIdentifier: AppLockSettingTableViewCell.identifier)
+        tableView.register(AppVersionTableViewCell.self, forCellReuseIdentifier: AppVersionTableViewCell.identifier)
         
         return tableView
     }()
@@ -89,7 +90,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 2:
             return 3 // 보안 및 개인정보
         case 3:
-            return 1 // 앱 정보
+            return 2 // 앱 정보
         case 4:
             return 1 // 로그아웃
         default:
@@ -113,7 +114,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
                 return UITableViewCell()
             }
             
-            cell.configure(with: "알림 설정")
+            cell.configure(with: "알림 수신 설정")
             return cell
         case 2:
             switch indexPath.row {
@@ -126,7 +127,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
                     return UITableViewCell()
                 }
-                cell.configure(with: "개인정보 보호 정책")
+                cell.configure(with: "개인정보 처리방침")
                 return cell
             case 2:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
@@ -138,11 +139,21 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
                 return UITableViewCell()
             }
         case 3:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
+            switch indexPath.row {
+            case 0:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(with: "이용 약관")
+                return cell
+            case 1:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: AppVersionTableViewCell.identifier, for: indexPath) as? AppVersionTableViewCell else {
+                    return UITableViewCell()
+                }
+                return cell
+            default:
                 return UITableViewCell()
             }
-            cell.configure(with: "이용 약관")
-            return cell
         case 4:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
                 return UITableViewCell()
@@ -171,7 +182,12 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
                 break
             }
         case 3:
-            navigationController?.pushViewController(LegalViewController(legalType: .termsOfService), animated: true)
+            switch indexPath.row {
+            case 0:
+                navigationController?.pushViewController(LegalViewController(legalType: .termsOfService), animated: true)
+            default:
+                break
+            }
         case 4:
             showLogoutAlert()
         default:
@@ -184,7 +200,7 @@ class SettingViewController: UIViewController, UITableViewDelegate, UITableViewD
         case 0:
             return "계정 정보"
         case 1:
-            return "알림"
+            return "알림 설정"
         case 2:
             return "보안 및 개인정보"
         case 3:

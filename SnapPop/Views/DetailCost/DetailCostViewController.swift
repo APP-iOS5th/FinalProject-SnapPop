@@ -127,7 +127,7 @@ class DetailCostViewController: UIViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "상세 정보"
+            return "기본 정보"
         case 1:
             return "비용"
         default:

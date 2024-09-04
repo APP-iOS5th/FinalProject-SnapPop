@@ -65,6 +65,7 @@
 		C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24BFA662C649CF700A5B40A /* AuthViewModel.swift */; };
 		C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA692C649E4300A5B40A /* GoogleSignIn */; };
 		C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */; };
+		C2555B242C88525800285B4D /* AppVersionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2555B232C88525800285B4D /* AppVersionTableViewCell.swift */; };
 		C2599B382C699B05004EF6E7 /* LocalAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */; };
 		C259C8142C784610004F569A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C8132C784610004F569A /* UIImageView+Extensions.swift */; };
 		C259C81B2C787B89004F569A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C259C81A2C787B89004F569A /* NotificationManager.swift */; };
@@ -146,6 +147,7 @@
 		C24BFA622C649CBA00A5B40A /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		C24BFA662C649CF700A5B40A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		C24BFA722C64B01400A5B40A /* SnapPop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnapPop.entitlements; sourceTree = "<group>"; };
+		C2555B232C88525800285B4D /* AppVersionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionTableViewCell.swift; sourceTree = "<group>"; };
 		C2599B372C699B05004EF6E7 /* LocalAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		C259C8132C784610004F569A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		C259C81A2C787B89004F569A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 				C246CE562C74EF7D00A631BE /* AccountInfoTableViewCell.swift */,
 				C246CE572C74EF7D00A631BE /* AppLockSettingTableViewCell.swift */,
 				C246CE582C74EF7D00A631BE /* SettingTableViewCell.swift */,
+				C2555B232C88525800285B4D /* AppVersionTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -628,6 +631,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA49D3722C74EAC70002F243 /* CropViewController.swift in Sources */,
+				C2555B242C88525800285B4D /* AppVersionTableViewCell.swift in Sources */,
 				EA141F9C2C69F60800DD4B29 /* SnapCollectionViewCell.swift in Sources */,
 				4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */,
 				C24BFA672C649CF700A5B40A /* AuthViewModel.swift in Sources */,

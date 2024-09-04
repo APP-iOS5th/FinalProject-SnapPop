@@ -43,7 +43,7 @@ class NotificationSettingViewController: UIViewController {
         }
         setupLayout()
         
-        title = "알림 설정"
+        title = "알림 수신 설정"
         setupLeftBarButtonItem()
     }
     
@@ -146,9 +146,9 @@ extension NotificationSettingViewController: UITableViewDelegate, UITableViewDat
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "알림 설정"
+            return "추천 알림 설정"
         case 1:
-            return "카테고리 알림 설정"
+            return "카테고리별"
         default:
             return nil
         }
