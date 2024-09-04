@@ -34,12 +34,17 @@ class AccountInfoTableViewCell: UITableViewCell {
         userEmail.translatesAutoresizingMaskIntoConstraints = false
         socialLogo.translatesAutoresizingMaskIntoConstraints = false
         
+        userEmail.numberOfLines = 1
+        userEmail.lineBreakMode = .byTruncatingTail
+
         NSLayoutConstraint.activate([
             snsLogin.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             snsLogin.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
+            userEmail.leadingAnchor.constraint(equalTo: snsLogin.trailingAnchor, constant: 8),
             userEmail.trailingAnchor.constraint(equalTo: socialLogo.leadingAnchor, constant: -8),
             userEmail.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            userEmail.widthAnchor.constraint(lessThanOrEqualToConstant: 200),
         
             socialLogo.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             socialLogo.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
