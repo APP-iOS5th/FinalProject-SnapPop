@@ -260,7 +260,7 @@ class CalendarViewController: UIViewController {
     private func setupTableViewConstraints() {
         tableViewHeightConstraint?.isActive = false
         
-        let cellHeight: CGFloat = 45
+        let cellHeight: CGFloat = 46
         let numberOfRows = tableView.numberOfRows(inSection: 0)
         let newHeight = CGFloat(numberOfRows) * cellHeight
         
@@ -282,10 +282,10 @@ class CalendarViewController: UIViewController {
     }
     private func setupdashButtonConstraints() {
         dashBarTopConstraint?.isActive = false
-        if tableView.isHidden {
-            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -25)
-        } else {
+        if !tableView.isHidden {
             dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: tableView.bottomAnchor)
+        } else {
+            dashBarTopConstraint = dashButton.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -25)
         }
         dashBarTopConstraint?.isActive = true
         NSLayoutConstraint.activate([
