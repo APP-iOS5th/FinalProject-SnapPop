@@ -168,7 +168,50 @@ final class ManagementService {
             }
         }
     }
-    
+    // 오늘 이후의 것 삭제
+    func deleteFutureCompletions(categoryId: String, managementId: String, from date: Date, completion: @escaping (Result<Void, Error>) -> Void) {
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: date)
+
+        db.collection("Users")
+            .document(AuthViewModel.shared.currentUser?.uid ?? "")
+            .collection("Categories")
+            .document(categoryId)
+            .collection("Managements")
+            .document(managementId)
+            .getDocument { (documentSnapshot, error) in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                
+                guard let document = documentSnapshot, document.exists, var management = try? document.data(as: Management.self) else {
+                    completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "관리 항목을 찾을 수 없습니다."])))
+                    return
+                }
+                
+                // 오늘 이후의 completions만 삭제 (오늘은 포함하지 않음)
+                let filteredCompletions = management.completions.filter { key, _ in
+                    return key <= dateString
+                }
+                
+                // Firestore에서 completions 업데이트
+                self.db.collection("Users")
+                    .document(AuthViewModel.shared.currentUser?.uid ?? "")
+                    .collection("Categories")
+                    .document(categoryId)
+                    .collection("Managements")
+                    .document(managementId)
+                    .updateData(["completions": filteredCompletions]) { error in
+                        if let error = error {
+                            completion(.failure(error))
+                        } else {
+                            completion(.success(()))
+                        }
+                    }
+            }
+    }
+
     func addManagementException(categoryId: String, managementId: String, exceptionDate: Date, completion: @escaping (Result<Void, Error>) -> Void) {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let dateString = dateFormatter.string(from: exceptionDate)
