@@ -63,7 +63,7 @@ final class TitleCell2: BaseTableViewCell2 {
     
     let textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "제목 (ex: 제품 이름)"
+        textField.placeholder = "제목"
         return textField
     }()
     
@@ -87,7 +87,7 @@ final class DescriptionCell: BaseTableViewCell2 {
     
     let textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "설명"
+        textField.placeholder = "메모"
         return textField
     }()
     
@@ -227,7 +227,7 @@ final class CalculateCostCell: BaseTableViewCell2 {
     
     private lazy var usageCountTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "얼마나 쓸수있을까?"
+        textField.placeholder = "0회"
         textField.borderStyle = .roundedRect
         textField.keyboardType = .numberPad
         textField.backgroundColor = .dynamicBackgroundInsideColor
