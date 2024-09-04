@@ -13,59 +13,57 @@ import AuthenticationServices
 
 class SignInViewController: UIViewController {
     
-    private let appName: UILabel = {
+    private let snapLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         label.textAlignment = .center
 
         // 글자 간격 설정
-        let kernValue: CGFloat = 5.0
+        let kernValue: CGFloat = 8.0
 
-        // 행간 조절 NSMutableParagraphStyle
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = -20
-        paragraphStyle.lineHeightMultiple = 0.7
-
-        // 첫 번째 텍스트 Snap\nP 설정
-        let text1Attributes: [NSAttributedString.Key: Any] = [
+        let textAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.balooChettanExtraBold(size: 80),
             .foregroundColor: UIColor.white,
-            .kern: kernValue,
-            .paragraphStyle: paragraphStyle
+            .kern: kernValue
         ]
-        let text1 = NSAttributedString(string: "Snap\n  P", attributes: text1Attributes)
 
-        // 롤리팝 이미지
-        let imageAttachment = NSTextAttachment()
-        imageAttachment.image = UIImage(named: "filledpop")?.withRenderingMode(.alwaysOriginal)
-        imageAttachment.bounds = CGRect(x: 0, y: -15, width: 50, height: 50)
-        let imageString = NSAttributedString(attachment: imageAttachment)
+        let text = NSAttributedString(string: "Snap", attributes: textAttributes)
+        label.attributedText = text
 
-        // 두 번째 텍스트 "p" 설정
-        let text2Attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.balooChettanExtraBold(size: 78),
-            .foregroundColor: UIColor.white,
-            .kern: kernValue,
-            .paragraphStyle: paragraphStyle
-        ]
-        let text2 = NSAttributedString(string: "p", attributes: text2Attributes)
-
-        let completeText = NSMutableAttributedString()
-        completeText.append(text1)
-        completeText.append(imageString)
-        completeText.append(text2)
-
-        label.attributedText = completeText
-
-        // appname shadow
+        // shadow 설정
         label.layer.shadowColor = UIColor.gray.cgColor
         label.layer.shadowOffset = CGSize(width: 2, height: 2)
-        label.layer.shadowOpacity = 0.5
+        label.layer.shadowOpacity = 0.8
         label.layer.shadowRadius = 1
 
         return label
     }()
 
+    private let popLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.textAlignment = .center
+
+        // 글자 간격 설정
+        let kernValue: CGFloat = 10.0
+
+        let textAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.balooChettanExtraBold(size: 80),
+            .foregroundColor: UIColor.white,
+            .kern: kernValue
+        ]
+
+        let text = NSAttributedString(string: "Pop", attributes: textAttributes)
+        label.attributedText = text
+
+        // shadow 설정
+        label.layer.shadowColor = UIColor.gray.cgColor
+        label.layer.shadowOffset = CGSize(width: 2, height: 2)
+        label.layer.shadowOpacity = 0.8
+        label.layer.shadowRadius = 1
+
+        return label
+    }()
 
     // google signing button custom
     private lazy var googleSignInButton: UIButton = {
@@ -140,18 +138,28 @@ class SignInViewController: UIViewController {
     }
     
     func configureUI() {
-        view.backgroundColor = UIColor(named: "customBackground")
-        view.addSubview(appName)
+        let backgroundImageView = UIImageView(frame: UIScreen.main.bounds)
+        backgroundImageView.image = UIImage(named: "signin")
+        backgroundImageView.contentMode = .scaleAspectFill
+        view.addSubview(backgroundImageView)
+        view.sendSubviewToBack(backgroundImageView)
+
+        view.addSubview(snapLabel)
+        view.addSubview(popLabel)
         view.addSubview(googleSignInButton)
         view.addSubview(appleSignInButton)
-        
-        appName.translatesAutoresizingMaskIntoConstraints = false
+
+        snapLabel.translatesAutoresizingMaskIntoConstraints = false
+        popLabel.translatesAutoresizingMaskIntoConstraints = false
         googleSignInButton.translatesAutoresizingMaskIntoConstraints = false
         appleSignInButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            appName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            appName.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 240),
+            snapLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            snapLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 115),
+            
+            popLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            popLabel.topAnchor.constraint(equalTo: snapLabel.bottomAnchor, constant: 105),
             
             googleSignInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             googleSignInButton.bottomAnchor.constraint(equalTo: appleSignInButton.topAnchor, constant: -16),
