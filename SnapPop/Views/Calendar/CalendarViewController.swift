@@ -450,7 +450,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
             return .customView {
                 let imageView = UIImageView()
                 let originalImage = UIImage(named: "filledpop")
-                let resizedImage = originalImage?.resized(to: CGSize(width: 16, height: 16))
+                let resizedImage = originalImage?.resized(to: CGSize(width: 18, height: 18))
                 imageView.image = resizedImage
                 return imageView
             }
@@ -459,7 +459,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
             return .customView {
                 let imageView = UIImageView()
                 let originalImage = UIImage(named: "emptypop")
-                let resizedImage = originalImage?.resized(to: CGSize(width: 16, height: 16))
+                let resizedImage = originalImage?.resized(to: CGSize(width: 18, height: 18))
                 imageView.image = resizedImage
                 return imageView
             }
