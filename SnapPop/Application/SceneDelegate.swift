@@ -228,9 +228,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func setupAppSwitcherMode() {
         guard let window = window else { return }
         appSwitcherModeImageView = UIImageView(frame: window.frame)
-        appSwitcherModeImageView.image = UIImage(named: "AppIcon")?.resized(to: CGSize(width: 100, height: 100))
-        appSwitcherModeImageView.contentMode = .center
-        appSwitcherModeImageView.backgroundColor = UIColor(named: "Iconbackground")
+        appSwitcherModeImageView.image = UIImage(named: "launchScreen")
+        appSwitcherModeImageView.contentMode = .scaleAspectFill
         window.addSubview(appSwitcherModeImageView)
     }
 }
