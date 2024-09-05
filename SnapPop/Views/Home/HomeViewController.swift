@@ -101,7 +101,7 @@ class HomeViewController:
     // 관리 목록 타이틀
     private let managementTitle: UILabel = {
         let label = UILabel()
-        label.text = "관리 목록"
+        label.text = "오늘의 관리"
         label.font = UIFont.boldSystemFont(ofSize: 24)
         label.textColor = .dynamicTextColor
         label.translatesAutoresizingMaskIntoConstraints = false
