@@ -13,6 +13,9 @@ import AuthenticationServices
 
 class SignInViewController: UIViewController {
     
+    private var snapLabelTopConstraint: NSLayoutConstraint?
+    private var popLabelTopConstraint: NSLayoutConstraint?
+    
     private let snapLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
@@ -135,6 +138,7 @@ class SignInViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        adjustLayoutForDeviceSize()
     }
     
     func configureUI() {
@@ -154,12 +158,14 @@ class SignInViewController: UIViewController {
         googleSignInButton.translatesAutoresizingMaskIntoConstraints = false
         appleSignInButton.translatesAutoresizingMaskIntoConstraints = false
         
+        snapLabelTopConstraint = snapLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 115)
+        popLabelTopConstraint = popLabel.topAnchor.constraint(equalTo: snapLabel.bottomAnchor, constant: 105)
+        
         NSLayoutConstraint.activate([
             snapLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            snapLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 115),
-            
+            snapLabelTopConstraint!,
             popLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            popLabel.topAnchor.constraint(equalTo: snapLabel.bottomAnchor, constant: 105),
+            popLabelTopConstraint!,
             
             googleSignInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             googleSignInButton.bottomAnchor.constraint(equalTo: appleSignInButton.topAnchor, constant: -16),
@@ -175,6 +181,83 @@ class SignInViewController: UIViewController {
         ])
     }
     
+    // 화면 크기에 따른 레이아웃 조정 메서드
+    private func adjustLayoutForDeviceSize() {
+        let screenHeight = UIScreen.main.nativeBounds.height
+
+        if screenHeight <= 1334 { // iPhone SE ,iPhone 8, 7, 6s, 6 (4.7인치 디스플레이)
+            adjustForSmallScreen()
+        } else if screenHeight <= 1792 { // iPhone 11, XR (6.1인치 디스플레이)
+            // 기존 레이아웃 유지
+        } else { // iPhone 15 Pro Max, iPhone 14 Pro Max, iPhone 13 Pro Max 등 (6.7인치 디스플레이)
+            adjustForLargeScreen()
+        }
+    }
+    
+    // // iPhone SE ,iPhone 8 (4.7인치 디스플레이) 레이아웃 조정
+    private func adjustForSmallScreen() {
+        // 폰트 크기 조정
+        let snapFont = UIFont.balooChettanExtraBold(size: 60)
+        let popFont = UIFont.balooChettanExtraBold(size: 60)
+        
+        let snapTextAttributes: [NSAttributedString.Key: Any] = [
+            .font: snapFont,
+            .foregroundColor: UIColor.white,
+            .kern: 6.0
+        ]
+        let popTextAttributes: [NSAttributedString.Key: Any] = [
+            .font: popFont,
+            .foregroundColor: UIColor.white,
+            .kern: 8.0
+        ]
+        
+        snapLabel.attributedText = NSAttributedString(string: "Snap", attributes: snapTextAttributes)
+        popLabel.attributedText = NSAttributedString(string: "Pop", attributes: popTextAttributes)
+        
+        // 기존 제약 조건 해제
+        if let snapTopConstraint = snapLabelTopConstraint, let popTopConstraint = popLabelTopConstraint {
+            NSLayoutConstraint.deactivate([snapTopConstraint, popTopConstraint])
+        }
+        
+        // small 제약 조건 설정 및 활성화
+        snapLabelTopConstraint = snapLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 120)
+        popLabelTopConstraint = popLabel.topAnchor.constraint(equalTo: snapLabel.bottomAnchor, constant: 80)
+        
+        NSLayoutConstraint.activate([snapLabelTopConstraint!, popLabelTopConstraint!])
+    }
+    
+    // // iPhone 15 Pro Max, iPhone 14 Pro Max (6.7인치 디스플레이) 레이아웃 조정
+    private func adjustForLargeScreen() {
+        // 폰트 크기 조정
+        let snapFont = UIFont.balooChettanExtraBold(size: 90)
+        let popFont = UIFont.balooChettanExtraBold(size: 90)
+        
+        let snapTextAttributes: [NSAttributedString.Key: Any] = [
+            .font: snapFont,
+            .foregroundColor: UIColor.white,
+            .kern: 8.0
+        ]
+        let popTextAttributes: [NSAttributedString.Key: Any] = [
+            .font: popFont,
+            .foregroundColor: UIColor.white,
+            .kern: 10.0
+        ]
+        
+        snapLabel.attributedText = NSAttributedString(string: "Snap", attributes: snapTextAttributes)
+        popLabel.attributedText = NSAttributedString(string: "Pop", attributes: popTextAttributes)
+        
+        // 기존 제약 조건 해제
+        if let snapTopConstraint = snapLabelTopConstraint, let popTopConstraint = popLabelTopConstraint {
+            NSLayoutConstraint.deactivate([snapTopConstraint, popTopConstraint])
+        }
+        
+        // large 제약 조건 설정 및 활성화
+        snapLabelTopConstraint = snapLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 130)
+        popLabelTopConstraint = popLabel.topAnchor.constraint(equalTo: snapLabel.bottomAnchor, constant: 100)
+        
+        NSLayoutConstraint.activate([snapLabelTopConstraint!, popLabelTopConstraint!])
+    }
+
     func setupNotifications() {
         // 1. 이전에 있던 모든 알림 삭제
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
