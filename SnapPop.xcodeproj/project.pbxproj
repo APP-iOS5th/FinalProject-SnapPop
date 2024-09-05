@@ -16,6 +16,8 @@
 		4A6210232C80E634002229C3 /* ManagementTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210222C80E634002229C3 /* ManagementTableViewCell.swift */; };
 		4A6210252C8152CB002229C3 /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210242C8152CB002229C3 /* NotificationData.swift */; };
 		4A6210272C815344002229C3 /* Notification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6210262C815344002229C3 /* Notification+Extensions.swift */; };
+		4A6BC0B82C888D4B00226F0F /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 4A6BC0B72C888D4B00226F0F /* FirebaseAnalytics */; };
+		4A6BC0BA2C888D4B00226F0F /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 4A6BC0B92C888D4B00226F0F /* FirebaseCrashlytics */; };
 		4A82A7E92C7392D500E27228 /* CategorySettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A82A7E82C7392D500E27228 /* CategorySettingsTableViewCell.swift */; };
 		4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4AC605B32C78769D00D3AF19 /* Kingfisher */; };
 		4AC9A0302C72DDD100EB5FFC /* CustomNavigationBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9A02F2C72DDD100EB5FFC /* CustomNavigationBarController.swift */; };
@@ -131,7 +133,7 @@
 		B8339E002C76C7350021A57D /* AddManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewController.swift; sourceTree = "<group>"; };
 		B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAddTableViewCell.swift; sourceTree = "<group>"; };
 		B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewmodel.swift; sourceTree = "<group>"; };
-		B8A725392C854515002290E4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B8A725392C854515002290E4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "SnapPop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B8A7253B2C854697002290E4 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B8A725422C854EA8002290E4 /* BalooChettan2-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BalooChettan2-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		B8A725442C854FFF002290E4 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
@@ -182,9 +184,11 @@
 			files = (
 				4AC605B42C78769D00D3AF19 /* Kingfisher in Frameworks */,
 				C24BFA6C2C649E4300A5B40A /* GoogleSignInSwift in Frameworks */,
+				4A6BC0B82C888D4B00226F0F /* FirebaseAnalytics in Frameworks */,
 				8F1685492C6360180010F8D8 /* FirebaseAuth in Frameworks */,
 				C24BFA6A2C649E4300A5B40A /* GoogleSignIn in Frameworks */,
 				8F16854B2C6360180010F8D8 /* FirebaseFirestore in Frameworks */,
+				4A6BC0BA2C888D4B00226F0F /* FirebaseCrashlytics in Frameworks */,
 				8F83A4B12C7DC73F0095133A /* DGCharts in Frameworks */,
 				8F16854D2C6360180010F8D8 /* FirebaseStorage in Frameworks */,
 			);
@@ -282,6 +286,7 @@
 			isa = PBXGroup;
 			children = (
 				B8A7253B2C854697002290E4 /* Config.xcconfig */,
+				B8A725392C854515002290E4 /* GoogleService-Info.plist */,
 				C24BFA542C647BA600A5B40A /* .swiftlint.yml */,
 				8F16852E2C6354590010F8D8 /* SnapPop */,
 				8F16852D2C6354590010F8D8 /* Products */,
@@ -309,7 +314,6 @@
 				C24BFA5B2C64801100A5B40A /* ViewModels */,
 				C24BFA582C647E9800A5B40A /* Resources */,
 				8F16853D2C63545A0010F8D8 /* Info.plist */,
-				B8A725392C854515002290E4 /* GoogleService-Info.plist */,
 			);
 			path = SnapPop;
 			sourceTree = "<group>";
@@ -529,6 +533,7 @@
 				8F1685292C6354590010F8D8 /* Frameworks */,
 				8F16852A2C6354590010F8D8 /* Resources */,
 				C24BFA532C647B7C00A5B40A /* SwiftLint Script */,
+				4A6BC0BB2C888DE200226F0F /* Firebase crashlytics */,
 			);
 			buildRules = (
 			);
@@ -543,6 +548,8 @@
 				C24BFA6B2C649E4300A5B40A /* GoogleSignInSwift */,
 				4AC605B32C78769D00D3AF19 /* Kingfisher */,
 				8F83A4B02C7DC73F0095133A /* DGCharts */,
+				4A6BC0B72C888D4B00226F0F /* FirebaseAnalytics */,
+				4A6BC0B92C888D4B00226F0F /* FirebaseCrashlytics */,
 			);
 			productName = SnapPop;
 			productReference = 8F16852C2C6354590010F8D8 /* SnapPop.app */;
@@ -607,6 +614,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4A6BC0BB2C888DE200226F0F /* Firebase crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Firebase crashlytics";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# debug버전에서는 dSYM을 올리지 않으므로 (배포하지 않으므로) debug버전이 아니면 crashlytics를 실행하라는 의미\nif [ \"${CONFIGURATION}\" != \"Debug\" ]; then\n    \"${PODS_ROOT}/FirebaseCrashlytics/run\"\n    \"${PODS_ROOT}/FirebaseCrashlytics/upload-symbols\" -gsp ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist -p ios ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\nfi\n";
+		};
 		C24BFA532C647B7C00A5B40A /* SwiftLint Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -852,15 +879,15 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 59FP2PXRXK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "이 앱은 사진을 찍기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "SnapPop 앱은 사진을 찍기 위해 카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "이 앱은 사진을 저장하고 접근하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SnapPop 앱은 사진을 저장하고 접근하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -870,9 +897,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.codegrove.SnapPop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -889,12 +919,11 @@
 				DEVELOPMENT_TEAM = 59FP2PXRXK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "이 앱은 사진을 찍기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "SnapPop 앱은 사진을 찍기 위해 카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "이 앱은 사진을 저장하고 접근하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SnapPop 앱은 사진을 저장하고 접근하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -904,9 +933,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.codegrove.SnapPop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -977,6 +1009,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4A6BC0B72C888D4B00226F0F /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAnalytics;
+		};
+		4A6BC0B92C888D4B00226F0F /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseCrashlytics;
+		};
 		4AC605B32C78769D00D3AF19 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4AC605B22C78769D00D3AF19 /* XCRemoteSwiftPackageReference "Kingfisher" */;

@@ -99,11 +99,17 @@ extension CustomTabBarController: UITabBarControllerDelegate {
 }
 
 class CustomTabBar: UITabBar {
-    var customHeight: CGFloat = 95
-
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        var sizeThatFits = super.sizeThatFits(size)
-        sizeThatFits.height = customHeight
-        return sizeThatFits
-    }
+           var sizeThatFits = super.sizeThatFits(size)
+           
+           // 디바이스 크기에 따라 탭바 높이 조절
+           let screenHeight = UIScreen.main.bounds.height
+           if screenHeight <= 667 { // iPhone SE, 8, 7, 6s, 6 (4.7" 디스플레이)
+               sizeThatFits.height = 60
+           } else {
+               sizeThatFits.height = 95 // 큰 화면에 대해서는 기존 높이 유지
+           }
+           
+           return sizeThatFits
+       }
 }

@@ -59,7 +59,7 @@ class ChecklistTableViewController: UITableViewController {
             selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             selfcareAddButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             selfcareAddButton.heightAnchor.constraint(equalToConstant: 50),
-            selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
+            selfcareAddButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7)
         ])
     }
     
@@ -326,7 +326,7 @@ class ChecklistTableViewController: UITableViewController {
                             dateFormatter.dateFormat = "yyyy-MM-dd"
                             // 삭제된 날짜에 따라서 completions도 삭제되게
                             viewModel.checklistItems[index].completions = viewModel.checklistItems[index].completions.filter { key, _ in
-                                return key <= dateFormatter.string(from: self.viewModel!.selectedDate)
+                                return key < dateFormatter.string(from: self.viewModel!.selectedDate)
                             }
                         }
                         viewModel.filterManagements(for: viewModel.selectedDate)
