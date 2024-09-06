@@ -46,9 +46,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             // 온보딩이 완료된 상태에서는 로그인 상태에 따라 화면 전환
             AuthViewModel.shared.listenAuthState { [weak self] _, user in
                 guard let self = self else { return }
-                DispatchQueue.main.async {
+                
+                let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     if user != nil {
-                        self.showMainScreen()
+                        if appLockState {
+                            LocalAuthenticationViewModel.execute { (success, error) in
+                                if success {
+                                    self.showMainScreen()
+                                } else {
+                                    
+                                }
+                            }
+                        } else {
+                            self.showMainScreen()
+                        }
                     } else {
                         self.showSignInScreen()
                     }
