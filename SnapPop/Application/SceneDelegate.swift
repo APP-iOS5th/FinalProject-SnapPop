@@ -34,34 +34,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             
         }
         
-        // 앱의 초기화 작업이 완료된 후 메인 화면으로 전환
-        AuthViewModel.shared.listenAuthState { [weak self] _, user in
-            guard let self = self else { return }
-            
-            let appLockState = UserDefaults.standard.bool(forKey: "appLockState")
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { // launchScreen 1초 지연 
-                if user != nil {
-                    if appLockState {
-                        LocalAuthenticationViewModel.execute { (success, error) in
-                            DispatchQueue.main.async {
-                                if success {
-                                    self.showMainScreen()
-                                } else {
-                                    // 잠금 인증 실패
-                                }
-                            }
-                        }
-                    } else {
+        // 로그인 상태 확인 및 온보딩 여부 확인
+        let userDefaults = UserDefaults.standard
+        
+        if !userDefaults.bool(forKey: "onboardingCompleted") {
+            // 온보딩 화면을 1초 후에 표시
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.showOnboardingScreen()
+            }
+        } else {
+            // 온보딩이 완료된 상태에서는 로그인 상태에 따라 화면 전환
+            AuthViewModel.shared.listenAuthState { [weak self] _, user in
+                guard let self = self else { return }
+                DispatchQueue.main.async {
+                    if user != nil {
                         self.showMainScreen()
+                    } else {
+                        self.showSignInScreen()
                     }
-                } else {
-                    self.showSignInScreen()
                 }
             }
         }
     }
 
+    private func showOnboardingScreen() {
+        let onboardingVC = OnboardingPageViewController()
+        onboardingVC.onboardingDelegate = self
+        window?.rootViewController = onboardingVC
+        window?.makeKeyAndVisible()
+    }
+    
     private func showLaunchScreen() {
         // Launch Screen을 불러와서 표시
         let launchStoryboard = UIStoryboard(name: "LaunchScreen", bundle: nil)
@@ -412,5 +414,36 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
         }
         
         
+    }
+}
+// 델리게이트 프로토콜 채택 및 넘어갈떄 애니메이션(페이드아웃)
+extension SceneDelegate: OnboardingPageViewControllerDelegate {
+    func didFinishOnboarding() {
+        let loginVC = SignInViewController()
+        loginVC.view.alpha = 0
+        
+        // 애니메이션 시작: 온보딩 화면에서 로그인 화면으로 전환
+        UIView.transition(with: self.window!, duration: 0.2, options: .transitionCrossDissolve, animations: {
+            self.window?.rootViewController = loginVC
+        }) { _ in
+            // 애니메이션 완료 후 로그인 화면의 뷰를 서서히 나타나게 함
+            UIView.animate(withDuration: 0.2) {
+                loginVC.view.alpha = 1
+            }
+            // 온보딩 완료 상태를 UserDefaults에 저장
+            UserDefaults.standard.set(true, forKey: "onboardingCompleted")
+            
+            // 로그인 후 애니메이션이 끝난 후 메인 화면으로 전환
+            AuthViewModel.shared.listenAuthState { [weak self] _, user in
+                guard let self = self else { return }
+                DispatchQueue.main.async {
+                    if user != nil {
+                        self.showMainScreen()
+                    } else {
+                        self.showSignInScreen()
+                    }
+                }
+            }
+        }
     }
 }

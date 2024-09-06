@@ -46,6 +46,7 @@
 		8F8F2C882C82240E0006C30F /* UICalendarView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F8F2C872C82240E0006C30F /* UICalendarView+Extensions.swift */; };
 		8FA215912C731E0500891F93 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215902C731E0500891F93 /* TodoTableViewCell.swift */; };
 		8FA215942C745B4300891F93 /* CostChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA215932C745B4300891F93 /* CostChartViewController.swift */; };
+		B805A8C62C8B06D7005D4BF6 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B805A8C52C8B06D7005D4BF6 /* OnboardingViewController.swift */; };
 		B8339E042C76C7350021A57D /* AddManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E002C76C7350021A57D /* AddManagementViewController.swift */; };
 		B8339E052C76C7350021A57D /* CustomAddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */; };
 		B8339E0B2C76C7E80021A57D /* AddManagementViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */; };
@@ -130,6 +131,7 @@
 		8FA215902C731E0500891F93 /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
 		8FA215932C745B4300891F93 /* CostChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostChartViewController.swift; sourceTree = "<group>"; };
 		8FA6D2712C853BA300E777A4 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		B805A8C52C8B06D7005D4BF6 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		B8339E002C76C7350021A57D /* AddManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewController.swift; sourceTree = "<group>"; };
 		B8339E012C76C7350021A57D /* CustomAddTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAddTableViewCell.swift; sourceTree = "<group>"; };
 		B8339E092C76C7E80021A57D /* AddManagementViewmodel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddManagementViewmodel.swift; sourceTree = "<group>"; };
@@ -510,6 +512,7 @@
 				EA4D6BF02C800EBE000B00F9 /* SnapExpandSheetViewController.swift */,
 				C241D91C2C8548E7006E24E6 /* CategoryEmptyViewController.swift */,
 				C241D91E2C85800E006E24E6 /* ConditionalViewController.swift */,
+				B805A8C52C8B06D7005D4BF6 /* OnboardingViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -726,6 +729,7 @@
 				EA50475B2C64A1390033D807 /* HomeViewController.swift in Sources */,
 				C246CE5A2C74EF7D00A631BE /* AccountInfoTableViewCell.swift in Sources */,
 				4AD29AD82C6B35BE00A9BEDD /* Color+Extensions.swift in Sources */,
+				B805A8C62C8B06D7005D4BF6 /* OnboardingViewController.swift in Sources */,
 				C246CE622C74EF8200A631BE /* SettingViewController.swift in Sources */,
 				4AD29AAC2C65F2B700A9BEDD /* SnapComparisonSheetViewController.swift in Sources */,
 			);
