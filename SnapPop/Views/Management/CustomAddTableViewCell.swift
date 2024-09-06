@@ -342,6 +342,8 @@ protocol NotificationCellDelegate: AnyObject {
 class DetailCostCell: BaseTableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
+        label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
         
         return label
     }()
@@ -373,6 +375,7 @@ class DetailCostCell: BaseTableViewCell {
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            titleLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 200),
             
             oneTimeLabel.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 80),
             oneTimeLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
