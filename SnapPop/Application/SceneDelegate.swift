@@ -58,6 +58,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     private func showOnboardingScreen() {
         let onboardingVC = OnboardingPageViewController()
+        onboardingVC.onboardingDelegate = self
         window?.rootViewController = onboardingVC
         window?.makeKeyAndVisible()
     }
@@ -412,5 +413,20 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
         }
         
         
+    }
+}
+// 델리게이트 프로토콜 채택 및 넘어갈떄 애니메이션(페이드아웃)
+extension SceneDelegate: OnboardingPageViewControllerDelegate {
+    func didFinishOnboarding() {
+        let loginVC = SignInViewController()
+        loginVC.view.alpha = 0
+        
+        UIView.transition(with: self.window!, duration: 0.2, options: .transitionCrossDissolve, animations: {
+            self.window?.rootViewController = loginVC
+        }) { _ in
+            UIView.animate(withDuration: 0.2) {
+                loginVC.view.alpha = 1
+            }
+        }
     }
 }

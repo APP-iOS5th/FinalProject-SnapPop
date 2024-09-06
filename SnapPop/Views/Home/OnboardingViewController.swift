@@ -7,19 +7,25 @@
 
 import UIKit
 
+protocol OnboardingPageViewControllerDelegate: AnyObject {
+    func didFinishOnboarding()
+}
+
 class OnboardingPageViewController: UIPageViewController {
-    
+
+    weak var onboardingDelegate: OnboardingPageViewControllerDelegate?
+
     let pages = [OnboardingViewController1(), OnboardingViewController2(), OnboardingViewController3(), OnboardingViewController4()]
     let pageControl = UIPageControl()
-    
+
     override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: options)
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,10 +36,13 @@ class OnboardingPageViewController: UIPageViewController {
             setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
         }
         
+        if let lastVC = pages.last as? OnboardingViewController4 {
+            lastVC.delegate = onboardingDelegate
+        }
+        
         setupPageControl()
-        setupSwipeGesture()
     }
-    
+
     func setupPageControl() {
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
@@ -44,46 +53,19 @@ class OnboardingPageViewController: UIPageViewController {
         view.addSubview(pageControl)
         
         NSLayoutConstraint.activate([
-            pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .valueChanged)
     }
-    
+
     @objc func pageControlTapped(_ sender: UIPageControl) {
         let currentIndex = sender.currentPage
-        let direction: UIPageViewController.NavigationDirection = currentIndex > pageControl.currentPage ? .forward : .reverse
-        setViewControllers([pages[currentIndex]], direction: direction, animated: true, completion: nil)
-    }
-    
-    func setupSwipeGesture() {
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
-        swipeGesture.direction = .left
-        view.addGestureRecognizer(swipeGesture)
-    }
-    
-    @objc func handleSwipe(_ gesture: UISwipeGestureRecognizer) {
         if let currentVC = viewControllers?.first,
-           let currentIndex = pages.firstIndex(of: currentVC),
-           currentIndex == pages.count - 1 {
-            transitionToLoginView()
-        }
-    }
-    
-    func transitionToLoginView() {
-        if let navigationController = self.navigationController {
-            let signinVC = SignInViewController()
-            navigationController.pushViewController(signinVC, animated: true)
-        } else if let window = UIApplication.shared.windows.first {
-            let signinVC = SignInViewController()
-            window.rootViewController = signinVC
-            window.makeKeyAndVisible()
-            
-//            // 옵션: 전환 애니메이션 추가
-//            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
-        } else {
-            print("Error: Unable to transition to login view")
+           let currentVCIndex = pages.firstIndex(of: currentVC) {
+            let direction: UIPageViewController.NavigationDirection = currentIndex > currentVCIndex ? .forward : .reverse
+            setViewControllers([pages[currentIndex]], direction: direction, animated: true, completion: nil)
         }
     }
 }
@@ -182,29 +164,55 @@ class OnboardingViewController3: UIViewController {
 }
 
 class OnboardingViewController4: UIViewController {
+    weak var delegate: OnboardingPageViewControllerDelegate?
+    
+    private let imageView = UIImageView()
+    private let label = UILabel()
+    private let startButton = UIButton(type: .system)
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let imageView = UIImageView(image: UIImage(named: "onboarding4"))
+        setupUI()
+    }
+    
+    private func setupUI() {
+        setupImageView()
+        setupLabel()
+        setupStartButton()
+        setupConstraints()
+    }
+    
+    private func setupImageView() {
+        imageView.image = UIImage(named: "onboarding4")
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let label = UILabel()
+        view.addSubview(imageView)
+    }
+    
+    private func setupLabel() {
         label.text = "나의 스냅 기록을\n한 눈에 비교하세요"
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
-        
-        let startButton = UIButton(type: .system)
-        startButton.setTitle("밀어서 시작하기", for: .normal)
+        view.addSubview(label)
+    }
+    
+    private func setupStartButton() {
+        startButton.setTitle("시작하기", for: .normal)
         startButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         startButton.translatesAutoresizingMaskIntoConstraints = false
+        startButton.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
         
-        view.addSubview(imageView)
-        view.addSubview(label)
+        startButton.backgroundColor = UIColor(named: "customMain") // #5D4FFF
+        startButton.setTitleColor(.white, for: .normal)
+        startButton.layer.cornerRadius = 25
+        startButton.clipsToBounds = true
+        
         view.addSubview(startButton)
-        
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: view.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -216,11 +224,32 @@ class OnboardingViewController4: UIViewController {
             label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
             startButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            startButton.widthAnchor.constraint(equalToConstant: 200),
+            startButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
+    
+    @objc func startButtonTapped() {
+        UIView.animate(withDuration: 0.1, animations: {
+            self.startButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }) { _ in
+            UIView.animate(withDuration: 0.1, animations: {
+                self.startButton.transform = CGAffineTransform.identity
+            }) { _ in
+                self.animateToLoginScreen()
+            }
+        }
+    }
+    
+    private func animateToLoginScreen() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.view.alpha = 0
+        }) { _ in
+            self.delegate?.didFinishOnboarding()
+        }
+    }
 }
-
 extension OnboardingPageViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let currentIndex = pages.firstIndex(of: viewController) else { return nil }
