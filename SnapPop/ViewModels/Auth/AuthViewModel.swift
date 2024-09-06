@@ -169,12 +169,18 @@ final class AuthViewModel {
     }
     
     func resetUserDefaults() {
+        // 온보딩 완료상태 저장
+        let appFirstTimeOpen = UserDefaults.standard.bool(forKey: "appFirstTimeOpen")
+        let onboardingCompleted = UserDefaults.standard.bool(forKey: "onboardingCompleted")
+
         for key in UserDefaults.standard.dictionaryRepresentation().keys {
             // 로그아웃, 회원탈퇴 시에 앱 첫 시작여부를 담는 UserDefault는 삭제할 필요가 없음. 앱 삭제시에만 지워지면 됨
             if key.description != "appFirstTimeOpen" {
                 UserDefaults.standard.removeObject(forKey: key.description)
             }
         }
+        UserDefaults.standard.set(appFirstTimeOpen, forKey: "appFirstTimeOpen")
+        UserDefaults.standard.set(onboardingCompleted, forKey: "onboardingCompleted")
     }
     
     private func randomNonceString(length: Int = 32) -> String {
