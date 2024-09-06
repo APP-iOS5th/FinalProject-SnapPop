@@ -187,7 +187,7 @@ class SignInViewController: UIViewController {
 
         if screenHeight <= 1334 { // iPhone SE ,iPhone 8, 7, 6s, 6 (4.7인치 디스플레이)
             adjustForSmallScreen()
-        } else if screenHeight <= 1792 { // iPhone 11, XR (6.1인치 디스플레이)
+        } else if screenHeight <= 1792 { // iPhone 15(6.1인치 디스플레이)
             // 기존 레이아웃 유지
         } else { // iPhone 15 Pro Max, iPhone 14 Pro Max, iPhone 13 Pro Max 등 (6.7인치 디스플레이)
             adjustForLargeScreen()

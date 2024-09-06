@@ -83,6 +83,7 @@ class OnboardingViewController1: UIViewController {
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textAlignment = .center
+        label.textColor = UIColor.black
         label.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(imageView)
@@ -114,6 +115,7 @@ class OnboardingViewController2: UIViewController {
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textAlignment = .center
+        label.textColor = UIColor.black
         label.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(imageView)
@@ -145,6 +147,7 @@ class OnboardingViewController3: UIViewController {
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textAlignment = .center
+        label.textColor = UIColor.black
         label.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(imageView)
@@ -194,6 +197,7 @@ class OnboardingViewController4: UIViewController {
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textAlignment = .center
+        label.textColor = UIColor.black
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
     }
