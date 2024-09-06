@@ -88,7 +88,7 @@ class ChecklistTableViewController: UITableViewController {
         let addManagementViewModel = AddManagementViewModel(categoryId: viewModel?.selectedCategoryId ?? "default")
         let addManagementVC = AddManagementViewController(viewModel: addManagementViewModel)
         addManagementVC.homeViewModel = viewModel
-        
+        addManagementVC.selectedDate = viewModel?.selectedDate ?? Date()
         // 새로운 항목이 추가되면 뷰모델에 추가
         addManagementVC.onSave = { [weak self] newManagement in
             guard let self = self, let viewModel = self.viewModel else { return }
