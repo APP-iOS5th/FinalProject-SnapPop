@@ -184,12 +184,21 @@ class SignInViewController: UIViewController {
     // 화면 크기에 따른 레이아웃 조정 메서드
     private func adjustLayoutForDeviceSize() {
         let screenHeight = UIScreen.main.nativeBounds.height
-
-        if screenHeight <= 1334 { // iPhone SE ,iPhone 8, 7, 6s, 6 (4.7인치 디스플레이)
+        if screenHeight <= 1334 {
             adjustForSmallScreen()
-        } else if screenHeight <= 1792 { // iPhone 15(6.1인치 디스플레이)
-            // 기존 레이아웃 유지
-        } else { // iPhone 15 Pro Max, iPhone 14 Pro Max, iPhone 13 Pro Max 등 (6.7인치 디스플레이)
+        } else if screenHeight >= 2532 && screenHeight <= 2556 { // iPhone 13, iPhone 14, iPhone 15 Pro (6.1인치 디스플레이)
+
+            if let snapTopConstraint = snapLabelTopConstraint, let popTopConstraint = popLabelTopConstraint {
+                snapTopConstraint.constant = 115
+                popTopConstraint.constant = 100
+                // 레이아웃 즉시 업데이트되게함 에휴 
+                view.setNeedsLayout()
+                view.layoutIfNeeded()
+            } else {
+                print("제약 조건이 nil 입니다.")
+            }
+
+        } else { // iPhone 15 Pro Max, iPhone 14 Pro Max 등 (6.7인치 디스플레이)
             adjustForLargeScreen()
         }
     }
