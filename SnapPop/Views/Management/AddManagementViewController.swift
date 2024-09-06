@@ -14,7 +14,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     private let viewModel: AddManagementViewModel
     var homeViewModel: HomeViewModel?
     var onSave: ((Management) -> Void)? 
-    
+    var selectedDate = Date()
     private var cancellables = Set<AnyCancellable>()
     private var isTimePickerVisible = false
     
@@ -52,7 +52,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         setupUI()
         bindViewModel()
         setupTapGesture()
-        
+        viewModel.startDate = self.selectedDate
         // 알림 다시 꺼도 앱 안터지게
         isTimePickerVisible = viewModel.alertStatus
 
@@ -491,6 +491,37 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         return configuration
     }
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+           if section == 1 {
+               return 30 // footer의 높이
+           }
+           return 0 // 다른 섹션은 footer 없음
+       }
+
+       // 섹션 footer 뷰 반환
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+           if section == 1 {
+               let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 30))
+               footerView.backgroundColor = .clear
+
+               let label = UILabel()
+               label.text = "반복은 6개월까지 저장됩니다"
+               label.textAlignment = .right
+               label.textColor = .gray
+               label.font = UIFont.systemFont(ofSize: 12)
+               label.translatesAutoresizingMaskIntoConstraints = false
+
+               footerView.addSubview(label)
+
+               NSLayoutConstraint.activate([
+                label.trailingAnchor.constraint(equalTo: footerView.trailingAnchor, constant: -16),
+                label.centerYAnchor.constraint(equalTo: footerView.centerYAnchor)
+               ])
+
+               return footerView
+           }
+           return nil
+       }
 
     
 // MARK: - Keyboard Handling
