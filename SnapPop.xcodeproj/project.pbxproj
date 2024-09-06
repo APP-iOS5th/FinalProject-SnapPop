@@ -635,7 +635,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# debug버전에서는 dSYM을 올리지 않으므로 (배포하지 않으므로) debug버전이 아니면 crashlytics를 실행하라는 의미\nif [ \"${CONFIGURATION}\" != \"Debug\" ]; then\n    \"${PODS_ROOT}/FirebaseCrashlytics/run\"\n    \"${PODS_ROOT}/FirebaseCrashlytics/upload-symbols\" -gsp ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist -p ios ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\nfi\n";
+			shellScript = "# debug버전에서는 dSYM을 올리지 않으므로 (배포하지 않으므로) debug버전이 아니면 crashlytics를 실행하라는 의미\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
 		};
 		C24BFA532C647B7C00A5B40A /* SwiftLint Script */ = {
 			isa = PBXShellScriptBuildPhase;
