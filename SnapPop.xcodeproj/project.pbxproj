@@ -887,9 +887,9 @@
 				DEVELOPMENT_TEAM = 59FP2PXRXK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "SnapPop 앱은 사진을 찍기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "SnapPop 앱은 사진을 촬영하여 스냅 기록을 남기고 비교하기 위해 카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SnapPop 앱은 사진을 저장하고 접근하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SnapPop 앱은 사진을 불러와 스냅으로 저장하고 비교하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -923,9 +923,9 @@
 				DEVELOPMENT_TEAM = 59FP2PXRXK;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnapPop/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "SnapPop 앱은 사진을 찍기 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "SnapPop 앱은 사진을 촬영하여 스냅 기록을 남기고 비교하기 위해 카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "SnapPop 앱 잠금 해제를 위해 Face ID가 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SnapPop 앱은 사진을 저장하고 접근하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "SnapPop 앱은 사진을 불러와 스냅으로 저장하고 비교하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
