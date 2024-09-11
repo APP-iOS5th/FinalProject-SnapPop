@@ -51,7 +51,7 @@ class OnboardingPageViewController: UIPageViewController {
         pageControl.pageIndicatorTintColor = .lightGray
         
         view.addSubview(pageControl)
-        
+        view.backgroundColor = UIColor(hex: "#D8D5FF")
         NSLayoutConstraint.activate([
             pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
