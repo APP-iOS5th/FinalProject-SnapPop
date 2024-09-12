@@ -89,7 +89,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate, UITa
     }()
     // 이미지 추가 버튼
     private let addButton: UIButton = {
-        let button = UIButton(type: .system)
+        let button = UIButton(type: .custom)
         button.setTitle("+", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor.customButtonColor
@@ -321,6 +321,8 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate, UITa
             checklistTableViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -view.bounds.width * 0.035),
             checklistTableViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+        
+        checklistTableViewController.tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
     }
     /// 체크리스트( UITableViewDataSource - Number of Rows)
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

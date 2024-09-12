@@ -8,31 +8,14 @@
 import UIKit
 import Combine
 
-class ChecklistTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ChecklistTableViewController: UITableViewController {
     
     var viewModel: HomeViewModel?
     private var cancellables = Set<AnyCancellable>() // Combine 구독을 저장할 Set
     private let managementService = ManagementService() // ManagementService 인스턴스 추가
     
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        let buttonHeight: CGFloat = 50 // 버튼의 높이
-        let bottomPadding: CGFloat = 20 // 추가 여백
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
-        tableView.layer.cornerRadius = 20
-        tableView.layer.masksToBounds = true
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: buttonHeight + bottomPadding, right: 0)
-        tableView.scrollIndicatorInsets = tableView.contentInset
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return tableView
-    }()
-    
     // 관리 항목 추가 버튼
-    private lazy var selfcareAddButton: UIButton = {
+    private let selfcareAddButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("새로운 관리 등록하기 +", for: .normal)
         button.setTitleColor(.white, for: .normal)
@@ -45,10 +28,19 @@ class ChecklistTableViewController: UIViewController, UITableViewDelegate, UITab
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .dynamicBackgroundInsideColor
-        view.addSubview(tableView)
         view.addSubview(selfcareAddButton)
-        setupConstraints()
+        setupButtonConstraints()
+        view.backgroundColor = .dynamicBackgroundInsideColor
+        tableView.layer.cornerRadius = 20
+        tableView.layer.masksToBounds = true
+        
+        tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
+        tableView.dataSource = self
+        tableView.delegate = self
+        let buttonHeight: CGFloat = 50 // 버튼의 높이
+        let bottomPadding: CGFloat = 20 // 추가 여백
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: buttonHeight + bottomPadding, right: 0)
+        tableView.scrollIndicatorInsets = tableView.contentInset
         
         // Combine을 사용하여 checklistItems가 변경될 때마다 테이블 뷰 업데이트
         viewModel?.$filteredItems
@@ -62,13 +54,8 @@ class ChecklistTableViewController: UIViewController, UITableViewDelegate, UITab
         loadData()
     }
     
-    private func setupConstraints() {
+    private func setupButtonConstraints() {
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: selfcareAddButton.topAnchor, constant: -10),
-            
             selfcareAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             selfcareAddButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             selfcareAddButton.heightAnchor.constraint(equalToConstant: 50),
@@ -121,16 +108,16 @@ class ChecklistTableViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     // MARK: - UITableViewDataSource
-    func numberOfSections(in tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // filteredItems를 기준으로 테이블 뷰 셀 수 결정
         return viewModel?.filteredItems.isEmpty ?? true ? 1 : viewModel?.filteredItems.count ?? 0
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel else { return UITableViewCell() }
         // 모든 관리 항목이 없거나 현재 날짜에 관리 항목이 없는 경우
         if viewModel.checklistItems.isEmpty || viewModel.filteredItems.isEmpty {
@@ -183,7 +170,7 @@ class ChecklistTableViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     // 높이 설정
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // 관리 항목이 없거나, 현재 선택된 날짜에 관리 항목이 없는 경우
         if viewModel?.checklistItems.isEmpty ?? true || viewModel?.filteredItems.isEmpty ?? true {
             return tableView.frame.height - tableView.contentInset.top - tableView.contentInset.bottom - selfcareAddButton.frame.height - 20
@@ -227,7 +214,7 @@ class ChecklistTableViewController: UIViewController, UITableViewDelegate, UITab
     
     // MARK: - UITableViewDelegate
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let viewModel = viewModel, !viewModel.filteredItems.isEmpty, indexPath.row < viewModel.filteredItems.count else {
             return
         }
@@ -259,7 +246,7 @@ class ChecklistTableViewController: UIViewController, UITableViewDelegate, UITab
         self.navigationController?.pushViewController(addManagementVC, animated: true)
     }
 
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let viewModel = viewModel, !viewModel.filteredItems.isEmpty, indexPath.row < viewModel.filteredItems.count else {
             return nil
         }
