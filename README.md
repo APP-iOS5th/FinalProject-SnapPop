@@ -1,5 +1,13 @@
-#  FinalProject - SnapPop
-팀 챌린저스 최종 프로젝트
+<br>
+<br>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/a5b1b7d0-8361-475b-aca0-80d72e4d68ca" alt="snappop_icon" width="300px"/>
+  <h3>SnapPop</h3>
+</div>
+
+<br>
+<br>
 
 ## 🔍 프로젝트 소개 
 
