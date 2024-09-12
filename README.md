@@ -75,5 +75,10 @@
 - 기간을 설정하고 나의 변화를 한 눈에 확인하세요
 - 원하는 날짜나 스냅을 필터링 해서 볼 수 있어요
 
+
+## 🎬 시연
+
+[![Watch the video](https://img.youtube.com/vi/0u_8kLCgKnY/mqdefault.jpg)](https://www.youtube.com/watch?v=0u_8kLCgKnY)
+
 ---------
 ##### © 2024 Challengers. This project was developed by the Challengers team for the APP-iOS5th final project.
