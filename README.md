@@ -78,7 +78,7 @@
 
 ## 🎬 시연
 
-[![Watch the video](https://img.youtube.com/vi/0u_8kLCgKnY/mqdefault.jpg)](https://www.youtube.com/watch?v=0u_8kLCgKnY)
+[![Watch the video](https://img.youtube.com/vi/Np8dwwVDayQ/mqdefault.jpg)](https://www.youtube.com/watch?v=Np8dwwVDayQ)
 
 ---------
 ##### © 2024 Challengers. This project was developed by the Challengers team for the APP-iOS5th final project.
