@@ -78,7 +78,7 @@
 
 ## 📁 자료
 
-- [발표 자료](https://docs.google.com/presentation/d/-1RDBDWfrlNI0skLYHRhqs08he_VY/edit?usp=sharing)  
+- [발표 자료](https://drive.google.com/file/d/1kw7M6ju4VNDoLfRP0voEcrGV1MkkcfSk/view?usp=drive_link) 
 - [시연 영상](https://www.youtube.com/watch?v=Np8dwwVDayQ)
 
 ---------
