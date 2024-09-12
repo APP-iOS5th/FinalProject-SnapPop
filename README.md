@@ -76,9 +76,10 @@
 - 원하는 날짜나 스냅을 필터링 해서 볼 수 있어요
 
 
-## 🎬 시연
+## 📁 자료
 
-[![Watch the video](https://img.youtube.com/vi/Np8dwwVDayQ/mqdefault.jpg)](https://www.youtube.com/watch?v=Np8dwwVDayQ)
+- [발표 자료](https://docs.google.com/presentation/d/-1RDBDWfrlNI0skLYHRhqs08he_VY/edit?usp=sharing)  
+- [시연 영상](https://www.youtube.com/watch?v=Np8dwwVDayQ)
 
 ---------
 ##### © 2024 Challengers. This project was developed by the Challengers team for the APP-iOS5th final project.
