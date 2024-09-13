@@ -84,7 +84,7 @@
 
 ## 📁 자료
 
-- [발표 자료](https://drive.google.com/file/d/1fo-UJqPfWZOej-NFUyJ94vb35mT6V4Q5/view?usp=drive_link)
+- [발표 자료](https://drive.google.com/file/d/1OXqtvrFUgWo2A0oq3FJJ1bM00xuyUC9u/view?usp=sharing)
 - [시연 영상](https://www.youtube.com/watch?v=Np8dwwVDayQ)
 
 ---------
