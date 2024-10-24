@@ -52,7 +52,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         setupUI()
         bindViewModel()
         setupTapGesture()
-        viewModel.startDate = self.selectedDate
+        
+        if !viewModel.edit {
+            viewModel.startDate = self.selectedDate // 수정시에 management.startDate를 selectedDate가 업데이트해버려서 처음 등록시에만 실행되게 변경
+        }
         // 알림 다시 꺼도 앱 안터지게
         isTimePickerVisible = viewModel.alertStatus
 
