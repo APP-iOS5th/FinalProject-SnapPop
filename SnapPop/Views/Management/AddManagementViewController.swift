@@ -151,6 +151,24 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
     
     // MARK: - Actions    
     @objc private func saveButtonTapped() {
+        if viewModel.updateStartDate {
+            let alert = UIAlertController(title: "변경사항 안내", message: "날짜 변경시 완료내역이 초기화됩니다.\n 그래도 변경하시겠습니까?", preferredStyle: .alert)
+            
+            let changeAction = UIAlertAction(title: "변경", style: .default) { _ in
+                self.saveManagement()
+            }
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            
+            alert.addAction(changeAction)
+            alert.addAction(cancelAction)
+            
+            present(alert, animated: true, completion: nil)
+        } else {
+            saveManagement()
+        }
+    }
+    
+    private func saveManagement() {
         viewModel.saveOrUpdate { [weak self] result in
             switch result {
             case .success:
@@ -165,7 +183,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             }
         }
     }
-
     
     @objc private func titleChanged(_ sender: UITextField) {
         // 타이틀 텍스트 필드 값 변경 시 ViewModel에 반영
