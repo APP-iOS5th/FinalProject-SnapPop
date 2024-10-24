@@ -104,7 +104,7 @@ class AddManagementViewModel {
                 guard let self = self else { return }
                 self.management.repeatCycle = newValue
                 if self.edit {
-                    self.updateCompletions()
+                    self.updateCompletionsWhenRepeatCycleChanged()
                 }
             }
             .store(in: &cancellables)
@@ -142,6 +142,18 @@ class AddManagementViewModel {
         self.management.completions.removeAll()
         // 새로운 completions 값 생성
         self.management.completions = generateSixMonthsCompletions(startDate: self.management.startDate, repeatInterval: self.management.repeatCycle)
+    }
+    
+    private func updateCompletionsWhenRepeatCycleChanged() {
+        var newCompletions = generateSixMonthsCompletions(startDate: self.management.startDate, repeatInterval: self.management.repeatCycle)
+        
+        for (key, value) in self.management.completions {
+            if newCompletions.keys.contains(key) {
+                newCompletions[key] = value
+            }
+        }
+        
+        self.management.completions = newCompletions
     }
     
     func categoryDidChange(to newCategoryId: String?) {
