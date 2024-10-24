@@ -23,6 +23,7 @@ class AddManagementViewModel {
     @Published var detailCostArray: [DetailCost] = [] // 추가한 상세 내역들을 담을 배열
     
     var edit = false // 편집
+    var updateStartDate: Bool = false
     private var cancellables = Set<AnyCancellable>()
     var management: Management
     private let db = ManagementService()
@@ -92,6 +93,7 @@ class AddManagementViewModel {
                     let newDateComponents = calendar.dateComponents([.year, .month, .day], from: newValue)
                     
                     if startDateComponents != newDateComponents {
+                        self.updateStartDate = true
                         self.updateCompletions()
                     }
                 }
