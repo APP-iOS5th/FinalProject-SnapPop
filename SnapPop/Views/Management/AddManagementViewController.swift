@@ -52,7 +52,10 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
         setupUI()
         bindViewModel()
         setupTapGesture()
-        viewModel.startDate = self.selectedDate
+        
+        if !viewModel.edit {
+            viewModel.startDate = self.selectedDate // 수정시에 management.startDate를 selectedDate가 업데이트해버려서 처음 등록시에만 실행되게 변경
+        }
         // 알림 다시 꺼도 앱 안터지게
         isTimePickerVisible = viewModel.alertStatus
 
@@ -162,7 +165,6 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
             }
         }
     }
-
     
     @objc private func titleChanged(_ sender: UITextField) {
         // 타이틀 텍스트 필드 값 변경 시 ViewModel에 반영
@@ -428,13 +430,32 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "DateCell", for: indexPath) as? DateCell else {
                     return UITableViewCell()
                 }
+                
                 cell.configure(with: viewModel.startDate)
                 cell.dateChangedHandler = { [weak self] newDate in
-                    self?.viewModel.startDate = newDate
+                    guard let self = self else { return }
+                    
+                    let previousDate = self.viewModel.startDate
+                    self.viewModel.startDate = newDate
+                    
+                    if self.viewModel.edit {
+                        let alert = UIAlertController(title: "변경사항 안내", message: "날짜 변경시 완료내역이 초기화됩니다.\n 그래도 변경하시겠습니까?", preferredStyle: .alert)
+                        
+                        let changeAction = UIAlertAction(title: "변경", style: .default) { _ in
+                            self.viewModel.updateCompletions()
+                            self.presentedViewController?.dismiss(animated: false, completion: nil)
+                        }
+                        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+                            self.viewModel.startDate = previousDate // 취소시 변경전 날짜로 되돌림
+                            self.presentedViewController?.dismiss(animated: false, completion: nil)
+                        }
+                        
+                        alert.addAction(changeAction)
+                        alert.addAction(cancelAction)
+                        
+                        self.presentedViewController?.present(alert, animated: true, completion: nil)
+                    }
                     print("ViewModel startDate updated to: \(newDate)")
-                }
-                cell.dismissHandler = { [weak self] in
-                    self?.presentedViewController?.dismiss(animated: false, completion: nil)
                 }
                 return cell
             case 1:

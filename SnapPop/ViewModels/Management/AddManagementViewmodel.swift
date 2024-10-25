@@ -81,11 +81,7 @@ class AddManagementViewModel {
         
         $startDate
             .sink { [weak self] newValue in
-                guard let self = self else { return }
-                self.management.startDate = newValue
-                if self.edit {
-                    self.updateCompletions()
-                }
+                self?.management.startDate = newValue
             }
             .store(in: &cancellables)
         
@@ -95,7 +91,7 @@ class AddManagementViewModel {
                 guard let self = self else { return }
                 self.management.repeatCycle = newValue
                 if self.edit {
-                    self.updateCompletions()
+                    self.updateCompletionsWhenRepeatCycleChanged()
                 }
             }
             .store(in: &cancellables)
@@ -128,11 +124,23 @@ class AddManagementViewModel {
         }
     }
     
-    private func updateCompletions() {
+    func updateCompletions() {
         // 초기화
         self.management.completions.removeAll()
         // 새로운 completions 값 생성
         self.management.completions = generateSixMonthsCompletions(startDate: self.management.startDate, repeatInterval: self.management.repeatCycle)
+    }
+    
+    private func updateCompletionsWhenRepeatCycleChanged() {
+        var newCompletions = generateSixMonthsCompletions(startDate: self.management.startDate, repeatInterval: self.management.repeatCycle)
+        
+        for (key, value) in self.management.completions {
+            if newCompletions.keys.contains(key) {
+                newCompletions[key] = value
+            }
+        }
+        
+        self.management.completions = newCompletions
     }
     
     func categoryDidChange(to newCategoryId: String?) {
@@ -194,7 +202,6 @@ class AddManagementViewModel {
         }
     }
 
-    
     // 유효성 검증 프로퍼티
     var isValid: AnyPublisher<Bool, Never> {
         return Publishers.CombineLatest3($title, $color, $startDate)
