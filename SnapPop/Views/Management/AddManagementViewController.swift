@@ -442,6 +442,7 @@ class AddManagementViewController: UIViewController, UITableViewDelegate, UITabl
                         let alert = UIAlertController(title: "변경사항 안내", message: "날짜 변경시 완료내역이 초기화됩니다.\n 그래도 변경하시겠습니까?", preferredStyle: .alert)
                         
                         let changeAction = UIAlertAction(title: "변경", style: .default) { _ in
+                            self.viewModel.updateCompletions()
                             self.presentedViewController?.dismiss(animated: false, completion: nil)
                         }
                         let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
