@@ -81,20 +81,7 @@ class AddManagementViewModel {
         
         $startDate
             .sink { [weak self] newValue in
-                guard let self = self else { return }
-                
-                let startDate = self.management.startDate // 수정전 날짜 담아둘 변수
-                self.management.startDate = newValue
-                
-                if self.edit {
-                    let calendar = Calendar.current
-                    let startDateComponents = calendar.dateComponents([.year, .month, .day], from: startDate)
-                    let newDateComponents = calendar.dateComponents([.year, .month, .day], from: newValue)
-                    
-                    if startDateComponents != newDateComponents {
-                        self.updateCompletions()
-                    }
-                }
+                self?.management.startDate = newValue
             }
             .store(in: &cancellables)
         
@@ -137,7 +124,7 @@ class AddManagementViewModel {
         }
     }
     
-    private func updateCompletions() {
+    func updateCompletions() {
         // 초기화
         self.management.completions.removeAll()
         // 새로운 completions 값 생성
