@@ -577,24 +577,26 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
         
         guard let year = components.year, let month = components.month else { return }
         
-        snapService.loadSnapsForMonth(categoryId: categoryId, year: year, month: month) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let snaps):
-                self.hasSnapDates = Set(snaps.compactMap { snap in
-                    guard let date = snap.createdAt else { return nil }
-                    return Calendar.current.dateComponents([.year, .month, .day], from: date)
-                })
+        if let currentCategoryId = UserDefaults.standard.string(forKey: "currentCategoryId") {
+            snapService.loadSnapsForMonth(categoryId: currentCategoryId, year: year, month: month) { [weak self] result in
+                guard let self = self else { return }
                 
-                DispatchQueue.main.async {
-                    // 모든 날짜에 대해 데코레이션을 다시 로드합니다.
-                    let allDates = self.getAllDatesForMonth(year: year, month: month)
-                    self.calendarView.reloadDecorations(forDateComponents: allDates, animated: true)
+                switch result {
+                case .success(let snaps):
+                    self.hasSnapDates = Set(snaps.compactMap { snap in
+                        guard let date = snap.createdAt else { return nil }
+                        return Calendar.current.dateComponents([.year, .month, .day], from: date)
+                    })
+                    
+                    DispatchQueue.main.async {
+                        // 모든 날짜에 대해 데코레이션을 다시 로드합니다.
+                        let allDates = self.getAllDatesForMonth(year: year, month: month)
+                        self.calendarView.reloadDecorations(forDateComponents: allDates, animated: true)
+                    }
+                    
+                case .failure(let error):
+                    print("Failed to load snaps: \(error)")
                 }
-                
-            case .failure(let error):
-                print("Failed to load snaps: \(error)")
             }
         }
     }
