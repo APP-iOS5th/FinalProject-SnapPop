@@ -175,31 +175,43 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
             return
         }
         
-        filteredSnapData = snapData
+        // firebase에서 가져온 시간대는 UTC+9 가 적용이 안됨 따라서 밑의 로직을 추가하여 한국 시간대로 설정
+        filteredSnapData = snapData.map { snap in
+            var koreanSnap = snap
+            if let utcDate = snap.createdAt {
+                let calendar = Calendar.current
+                var components = calendar.dateComponents([.year, .month, .day], from: utcDate)
+                components.timeZone = TimeZone(identifier: "Asia/Seoul")!
+                components.hour = 0
+                components.minute = 0
+                components.second = 0
+                if let koreanDate = calendar.date(from: components) {
+                    koreanSnap.createdAt = koreanDate
+                }
+            }
+            return koreanSnap
+        }
+                
+        if selectedDate == nil {
+            // snapData는 오름차순이기에 최신 snap은 마지막 배열의 인덱스
+            selectedDate = filteredSnapData.last?.createdAt
+        }
         
+        // 선택된 날짜가 있는 경우
         if let selectedDate = selectedDate {
             // 선택한 날짜를 기준으로 과거 스냅 필터링
             filteredSnapData = filteredSnapData.filter { snap in
                 guard let snapDate = snap.createdAt else { return false }
                 return snapDate <= selectedDate
             }
-            
-            // 기간 필터링이 있는 경우
-            if snapPeriodType != "전체" {
-                filteredSnapData = filterSnapsByPeriod(filteredSnapData, periodType: snapPeriodType)
-            }
-            
-            // 선택된 날짜의 스냅이 포함되지 않았으면 맨 앞에 추가
-            if !filteredSnapData.contains(where: { Calendar.current.isDate($0.createdAt ?? Date(), inSameDayAs: selectedDate) }) {
-                if let selectedSnap = snapData.first(where: { Calendar.current.isDate($0.createdAt ?? Date(), inSameDayAs: selectedDate) }) {
-                    filteredSnapData.insert(selectedSnap, at: 0)
-                }
-            }
-        } else if snapPeriodType != "전체" {
-            // 선택된 날짜가 없고 기간 필터링이 있는 경우
+        }
+        
+        // 기간 필터링이 있는 경우
+        if snapPeriodType != "전체" {
             filteredSnapData = filterSnapsByPeriod(filteredSnapData, periodType: snapPeriodType)
         }
-                
+        
+        // 메인 필터링이 있는 경우
         if snapPhotoSelectionType == "메인" {
             filteredSnapData = filteredSnapData.map({ snap in
                 let mainImage = snap.imageUrls.first.map { [$0] } ?? []
@@ -208,9 +220,9 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
             })
         }
         
-        // 과거의 스냅부터 보여주기 위한 정렬
+        // 최신의 스냅부터 보여주기 위한 내림차순 정렬
         filteredSnapData.sort { ($0.createdAt ?? Date()) > ($1.createdAt ?? Date()) }
-        
+                
         if filteredSnapData.isEmpty {
             snapisEmpty?()
         } else {
@@ -219,34 +231,41 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     }
     
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap] {
-        // 기준이 되는 날짜
-        guard let firstSnapDate = snaps.first?.createdAt else { return snaps }
-        
-        var filteredSnaps: [Snap] = []
-        var standardDate: Date = firstSnapDate
-        
-        for snap in snaps.dropFirst() { // 첫번째 스냅은 포함, 따라서 제외 (중복 방지)
-            guard let date = snap.createdAt else { return snaps }
-            
-            let shouldInclude: Bool
-            switch periodType {
-            case "일주일":
-                // 기준 스냅과 일주일 간격이라면
-                shouldInclude = date >= Calendar.current.date(byAdding: .day, value: 7, to: standardDate) ?? date
-            case "한달":
-                // 기준 스냅과 한달 간격이라면
-                shouldInclude = date >= Calendar.current.date(byAdding: .month, value: 1, to: standardDate) ?? date
-            case "일년":
-                // 기준 스냅과 일년 간격이라면
-                shouldInclude = date >= Calendar.current.date(byAdding: .year, value: 1, to: standardDate) ?? date
-            default:
-                shouldInclude = true
+        guard let firstSnap = snaps.last else { return snaps } // 기준이 되는 날짜를 가진 스냅데이터 [ 1월 1일, 1월 2일, 1월 3일 ... ]
+        var filteredSnaps: [Snap] = [firstSnap] // 날자 필터링이된 스냅
+        var standardDate: Date = firstSnap.createdAt ?? Date() // 기준 날자
+        let calendar = Calendar.current
+                        
+        switch periodType {
+        case "일주일":
+            for snap in snaps.reversed() { // 내림차순 비교 [1월 30일, 1월 29일, ...]
+                if let createdAt = snap.createdAt,
+                   abs(calendar.dateComponents([.day], from: createdAt, to: standardDate).day ?? 0) >= 7 {
+                    filteredSnaps.append(snap) // 기준 날짜와 7일 이상인 인덱스 추가
+                    standardDate = createdAt // 기준 날짜를 변경
+                }
             }
             
-            if shouldInclude {
-                filteredSnaps.append(snap)
-                standardDate = date // 새로운 기준 날짜로 업데이트
+        case "한달":
+            for snap in snaps.reversed() {
+                if let createdAt = snap.createdAt,
+                   abs(calendar.dateComponents([.month], from: createdAt, to: standardDate).month ?? 0) >= 1 {
+                    filteredSnaps.append(snap)
+                    standardDate = createdAt
+                }
             }
+            
+        case "일년":
+            for snap in snaps.reversed() {
+                if let createdAt = snap.createdAt,
+                   abs(calendar.dateComponents([.year], from: createdAt, to: standardDate).year ?? 0) >= 1 {
+                    filteredSnaps.append(snap)
+                    standardDate = createdAt
+                }
+            }
+            
+        default:
+            return snaps
         }
         
         return filteredSnaps
