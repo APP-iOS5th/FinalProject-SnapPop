@@ -291,7 +291,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate, UITa
     @objc private func dateChanged(_ sender: UIDatePicker) {
         viewModel.dateChanged(sender)
         updateDateLabel(sender.date)
-        self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기
+//        self.dismiss(animated: false, completion: nil) // UIDatePicker 닫기 
     }
     private func updateDateLabel(_ date: Date) {
         let dateFormatter = DateFormatter()

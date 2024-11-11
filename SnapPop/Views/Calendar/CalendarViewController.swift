@@ -22,7 +22,7 @@ class CalendarViewController: UIViewController {
     private var snapService = SnapService()
     private var managementService = ManagementService()
     private var tableViewHeightConstraint: NSLayoutConstraint?
-    private var underBarTopConstraint: NSLayoutConstraint?
+    private var fakeUnderBarTopConstraint: NSLayoutConstraint?
     private var isDoneChart: IsDonePercentageChart!
     private var costChart =  CostChartViewController()
     private let dateFormatter = DateFormatter()
@@ -91,7 +91,7 @@ class CalendarViewController: UIViewController {
         return button
     }()
     
-    private let underBar: UIButton = {
+    private let fakeUnderBar: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor.dynamicBackgroundInsideColor
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -116,7 +116,7 @@ class CalendarViewController: UIViewController {
     
     private let segmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["달성률", "비용"])
-        let font = UIFont.boldSystemFont(ofSize: 16	) // Adjust the font size as needed
+        let font = UIFont.boldSystemFont(ofSize: 16	)
         let color = UIColor.white
 
         UISegmentedControl.appearance().setTitleTextAttributes([
@@ -156,7 +156,7 @@ class CalendarViewController: UIViewController {
             self.categoryId = categoryId
             refreshAllData()
             tableView.isHidden = true
-            setupUnderBarConstraints()
+            setupFakeUnderBarConstraints()
         }
     }
 
@@ -177,11 +177,12 @@ class CalendarViewController: UIViewController {
         segmentedControl.isUserInteractionEnabled = true
         secondStackView.distribution = .equalCentering
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
-        segmentChange()
         guard let visibleMonth = calendarView.visibleDateComponents.month,
               let visibleYear = calendarView.visibleDateComponents.year else {
             return
         }
+        isDoneChart.view.isHidden = false
+        costChart.view.isHidden = true
         updateIsDoneChart(month: visibleMonth, year: visibleYear)
         setupLoadingIndicator()
         loadAllData()
@@ -202,7 +203,7 @@ class CalendarViewController: UIViewController {
         firstStackView.addArrangedSubview(calendarBar)
         firstStackView.addArrangedSubview(calendarView)
         firstStackView.addArrangedSubview(tableView)
-        firstStackView.addArrangedSubview(underBar)
+        firstStackView.addArrangedSubview(fakeUnderBar)
         firstStackView.bringSubviewToFront(calendarBar)
         secondStackView.addArrangedSubview(segmentedControl)
         secondStackView.addArrangedSubview(graphView)
@@ -216,7 +217,7 @@ class CalendarViewController: UIViewController {
         setupdashButtonConstraints()
         setupCalendarViewConstraints()
         setupTableViewConstraints()
-        setupUnderBarConstraints()
+        setupFakeUnderBarConstraints()
         setupSegmentedControlConstraints()
         setupsecondStackViewConstraints()
         setupgraphViewConstraints()
@@ -291,19 +292,19 @@ class CalendarViewController: UIViewController {
             calendarBar.heightAnchor.constraint(equalToConstant: 17)
         ])
     }
-    private func setupUnderBarConstraints() {
-        underBarTopConstraint?.isActive = false
+    private func setupFakeUnderBarConstraints() {
+        fakeUnderBarTopConstraint?.isActive = false
         if tableView.isHidden {
-            underBarTopConstraint = underBar.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -26)
+            fakeUnderBarTopConstraint = fakeUnderBar.topAnchor.constraint(equalTo: calendarView.bottomAnchor, constant: -26)
         } else {
-            underBarTopConstraint = underBar.topAnchor.constraint(equalTo: tableView.bottomAnchor)
+            fakeUnderBarTopConstraint = fakeUnderBar.topAnchor.constraint(equalTo: tableView.bottomAnchor)
         }
-        underBarTopConstraint?.isActive = true
+        fakeUnderBarTopConstraint?.isActive = true
         NSLayoutConstraint.activate([
-            underBarTopConstraint!,
-            underBar.leadingAnchor.constraint(equalTo: firstStackView.leadingAnchor),
-            underBar.trailingAnchor.constraint(equalTo: firstStackView.trailingAnchor),
-            underBar.heightAnchor.constraint(equalToConstant: 1)
+            fakeUnderBarTopConstraint!,
+            fakeUnderBar.leadingAnchor.constraint(equalTo: firstStackView.leadingAnchor),
+            fakeUnderBar.trailingAnchor.constraint(equalTo: firstStackView.trailingAnchor),
+            fakeUnderBar.heightAnchor.constraint(equalToConstant: 1)
         ])
         
     }
@@ -348,15 +349,6 @@ class CalendarViewController: UIViewController {
     }
 
     @objc func segmentedControlValueChanged() {
-        segmentChange()
-    }
-    private func setupLoadingIndicator() {
-        costChart.view.addSubview(loadingIndicator)
-        loadingIndicator.center = costChart.view.center
-           loadingIndicator.hidesWhenStopped = true
-       }
-    
-    private func segmentChange() {
         switch segmentedControl.selectedSegmentIndex {
         case 0: // 달성률
             isDoneChart.view.isHidden = false
@@ -368,6 +360,11 @@ class CalendarViewController: UIViewController {
             break
         }
     }
+    private func setupLoadingIndicator() {
+        costChart.view.addSubview(loadingIndicator)
+        loadingIndicator.center = costChart.view.center
+           loadingIndicator.hidesWhenStopped = true
+       }
     
     @objc private func categoryDidChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
@@ -466,7 +463,16 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
                 return imageView
             }
         }
-        else if hasSnapDates.contains(where: { $0.year == dateComponents.year && $0.month == dateComponents.month && $0.day == dateComponents.day }), !isAllDone {
+//        else if hasSnapDates.contains(where: { $0.year == dateComponents.year && $0.month == dateComponents.month && $0.day == dateComponents.day }), !isAllDone {
+//            return .customView {
+//                let imageView = UIImageView()
+//                let originalImage = UIImage(named: "emptypop")
+//                let resizedImage = originalImage?.resized(to: CGSize(width: 18, height: 18))
+//                imageView.image = resizedImage
+//                return imageView
+//            }
+//        }
+        else {
             return .customView {
                 let imageView = UIImageView()
                 let originalImage = UIImage(named: "emptypop")
@@ -474,7 +480,7 @@ extension CalendarViewController: UICalendarViewDelegate, UICalendarSelectionMul
                 imageView.image = resizedImage
                 return imageView
             }
-        } else { return nil }
+        }
     }
     
     func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
