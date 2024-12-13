@@ -138,10 +138,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     // 추천 알림 데이터를 UserDefaults에 저장하는 메서드
     func addRecommendNotificationData(userInfo: [AnyHashable: Any]) {
-        guard let alertTime = userInfo["alertTime"] as? Date,
-              let body = userInfo["body"] as? String else {
-            return
-        }
+        guard let body = userInfo["body"] as? String else { return }
+        let alertTime = Date()
         
         let notificationData = NotificationData(categoryId: nil, managementId: nil, title: body, date: alertTime)
         
@@ -265,6 +263,7 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
         if !notification.request.identifier.contains("initialNotification") {
             completionHandler([.banner, .list, .badge, .sound])
         } else {
+            // 1. 반복 알림 등록에 쓰일 정보들을 단일 알림 userInfo에 저장해뒀다가 가져옴
             let userInfo = notification.request.content.userInfo
             
             guard let repeatCycle = userInfo["repeatCycle"] as? Int else {
@@ -281,7 +280,6 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
                       let startDate = userInfo["startDate"] as? Date,
                       let alertTime = userInfo["alertTime"] as? Date,
                       let body = userInfo["body"] as? String else {
-                    completionHandler([])
                     return
                 }
                 
@@ -298,8 +296,8 @@ extension SceneDelegate: UNUserNotificationCenterDelegate {
             // 추천 알림
             
             let userInfo = response.notification.request.content.userInfo
-            guard let alertTime = userInfo["alertTime"] as? Date,
-                  let body = userInfo["body"] as? String else { return }
+            guard let body = userInfo["body"] as? String else { return }
+            let alertTime = Date()
             
             let notificationData = NotificationData(categoryId: nil,
                                                     managementId: nil,
