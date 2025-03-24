@@ -304,6 +304,8 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate, UITa
     private func setupChecklistView() {
         view.addSubview(managementTitle)
         checklistTableViewController.viewModel = viewModel
+        checklistTableViewController.view.layer.cornerRadius = 20
+        checklistTableViewController.view.layer.masksToBounds = true
         addChild(checklistTableViewController)
         view.addSubview(checklistTableViewController.view)
         checklistTableViewController.didMove(toParent: self)

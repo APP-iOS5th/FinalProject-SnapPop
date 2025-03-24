@@ -22,10 +22,9 @@ class ChecklistTableViewController: UIViewController, UITableViewDelegate, UITab
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(ChecklistTableViewCell.self, forCellReuseIdentifier: "ChecklistCell")
-        tableView.layer.cornerRadius = 20
-        tableView.layer.masksToBounds = true
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: buttonHeight + bottomPadding, right: 0)
         tableView.scrollIndicatorInsets = tableView.contentInset
+        tableView.backgroundColor = .dynamicBackgroundInsideColor
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
