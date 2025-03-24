@@ -18,7 +18,7 @@ class AppVersionTableViewCell: UITableViewCell {
     
     private let versionLabel: UILabel = {
         let label = UILabel()
-        label.text = "1.0"
+        label.text = "1.0.1"
         label.textColor = .gray
         return label
     }()
