@@ -124,6 +124,7 @@ class SnapComparisonViewController: UIViewController {
     private lazy var snapAndCategoryCheckLabel: UILabel = {
         let label = UILabel()
         label.isHidden = true
+        label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
