@@ -289,12 +289,17 @@ class SnapComparisonViewController: UIViewController {
     
     @objc private func categoryDidChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let categoryId = userInfo["categoryId"] as? String {
-            print("[스냅 비교뷰] 카테고리가 변경되었습니다: \(categoryId)")
-            viewModel.categoryDidChange(to: categoryId)
+            if viewModel.categoryId != categoryId {
+                print("[스냅 비교뷰] 카테고리가 변경되었습니다: \(categoryId)")
+                viewModel.categoryDidChange(to: categoryId)
+            } else {
+                print("[스냅 비교뷰] 같은 카테고리입니다.")
+            }
         } else {
             print("카테고리가 없습니다.")
             viewModel.categoryDidChange(to: nil)
         }
+        
     }
 }
 

@@ -37,13 +37,15 @@ protocol SnapComparisonViewModelProtocol {
     func loadSanpstoFireStore(to categoryId: String)
     func filterSnapsByPeriod(_ snaps: [Snap], periodType: String) -> [Snap]
     func categoryDidChange(to newCategoryId: String?)
+    
+    var categoryId: String? { get set }
 }
 
 class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
     
     // MARK: - Properties
     private let snapService = SnapService()
-    private let categoryId = UserDefaults.standard.string(forKey: "currentCategoryId")
+    var categoryId = UserDefaults.standard.string(forKey: "currentCategoryId")
     
     var snapData: [Snap] = []
     var filteredSnapData: [Snap] = []
@@ -192,10 +194,10 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
             return koreanSnap
         }
                 
-        if selectedDate == nil {
-            // snapData는 오름차순이기에 최신 snap은 마지막 배열의 인덱스
-            selectedDate = filteredSnapData.last?.createdAt
-        }
+//        if selectedDate == nil {
+//            // snapData는 오름차순이기에 최신 snap은 마지막 배열의 인덱스
+//            selectedDate = filteredSnapData.last?.createdAt
+//        }
         
         // 선택된 날짜가 있는 경우
         if let selectedDate = selectedDate {
@@ -309,9 +311,11 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
             categoryisEmpty?()
             return }
         print("[Snap비교] 스냅 비교뷰 카테고리 변경됨 \(newCategoryId)")
+        categoryId = newCategoryId
         loadSanpstoFireStore(to: newCategoryId)
         snapDateMenuItems = []
         updateSnapDateButtonTitle?("날짜 선택")
+        selectedDate = nil
         updateMenu?()
         reloadCollectionView?()
     }
@@ -339,7 +343,7 @@ class SnapComparisonViewModel: SnapComparisonViewModelProtocol {
                     self.filterSnaps()
                     // SnapDateButton의 메뉴를 다시 설정
                     self.snapDateMenuItems = self.createSnapDateMenuItems(from: snaps)
-                    self.updateSnapDateButtonTitle?("날짜 선택")
+//                    self.updateSnapDateButtonTitle?("날짜 선택")
                     self.showSnapCollectionView?()
                 }
             case.failure(let error):
